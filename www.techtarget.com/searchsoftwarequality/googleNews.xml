@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:ns2="http://www.google.com/schemas/sitemap-news/0.9">
+    <url>
+        <loc>https://www.techtarget.com/searchsoftwarequality/tip/Scrum-master-interview-questions-and-answers</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-10-03</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>Scrum master interview questions and answers</ns2:title>
+        </ns2:news>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchsoftwarequality/tip/The-benefits-of-WIP-limits-in-Kanban</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-10-02</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>The benefits of WIP limits in Kanban</ns2:title>
+        </ns2:news>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchsoftwarequality/tip/How-to-test-a-predictive-model</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-29</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>How to test a predictive model</ns2:title>
+        </ns2:news>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchsoftwarequality/tip/The-dos-and-donts-of-visual-testing</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-28</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>The dos and don'ts of visual testing</ns2:title>
+        </ns2:news>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchsoftwarequality/opinion/3-QA-testing-tools-to-consider</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-27</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>3 QA testing tools to consider</ns2:title>
+        </ns2:news>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchsoftwarequality/news/366552837/New-Git-repository-faces-corporate-open-source-doubts</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-21</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>New Git repository faces corporate open source doubts</ns2:title>
+        </ns2:news>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchsoftwarequality/tip/Collaborative-coding-basics-and-best-practices</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-20</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>Collaborative coding basics and best practices</ns2:title>
+        </ns2:news>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchsoftwarequality/tip/How-to-develop-a-test-data-management-strategy</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-18</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>How to develop a test data management strategy</ns2:title>
+        </ns2:news>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchsoftwarequality/tip/Roles-and-responsibilities-in-an-Agile-center-of-excellence</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-08</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>Roles and responsibilities in an Agile center of excellence</ns2:title>
+        </ns2:news>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchsoftwarequality/opinion/Docker-vs-VMs-Is-the-VM-all-that-bad</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-07</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>Containers vs. VMs: Is the VM all that bad?</ns2:title>
+        </ns2:news>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchsoftwarequality/tip/What-does-a-developer-advocate-do</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-06</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>What does a developer advocate do?</ns2:title>
+        </ns2:news>
+    </url>
+</urlset>

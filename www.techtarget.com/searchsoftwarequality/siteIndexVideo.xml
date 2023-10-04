@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
+    <url>
+        <loc>https://www.techtarget.com/searchsoftwarequality/video/Explore-low-code-features-examples-in-this-Power-Apps-tutorial</loc>
+        <video:video>
+            <video:title>Explore low-code features, examples in this Power Apps tutorial</video:title>
+            <video:publication_date>2021-01-29T13:39:00-05:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/prHm4TdxNRM/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=prHm4TdxNRM</video:player_loc>
+            <video:duration>458</video:duration>
+            <video:description>Microsoft Power Apps is a capable low-code platform. This tutorial shows how it can be used to build software from scratch as well as from Excel files.</video:description>
+        </video:video>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchsoftwarequality/video/5-advantages-of-GitLab-CI-CD-pipelines</loc>
+        <video:video>
+            <video:title>5 advantages of GitLab CI/CD pipelines</video:title>
+            <video:publication_date>2020-08-05T10:16:00-04:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/PYkSwtHnutk/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=PYkSwtHnutk</video:player_loc>
+            <video:duration>556</video:duration>
+            <video:description>Products can ease the oft-cumbersome CI/CD process. In this video tutorial, walk through five ways GitLab enables and eases CI/CD for DevOps teams and professionals.</video:description>
+        </video:video>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchsoftwarequality/video/Xray-for-Jira-tutorial-on-test-management-execution</loc>
+        <video:video>
+            <video:title>Xray for Jira tutorial on test management, execution</video:title>
+            <video:publication_date>2020-06-26T22:39:00-04:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/WpfnBXKnL04/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=WpfnBXKnL04</video:player_loc>
+            <video:duration>231</video:duration>
+            <video:description>The Xray plugin makes test management easier within Jira. Follow along with this video tutorial to take some of the friction out of your test management process.</video:description>
+        </video:video>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchsoftwarequality/video/Follow-this-step-by-step-Bamboo-CI-CD-tutorial</loc>
+        <video:video>
+            <video:title>Follow this step-by-step Bamboo CI/CD tutorial</video:title>
+            <video:publication_date>2020-05-22T10:13:00-04:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/BLkoRvw6jaE/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=BLkoRvw6jaE</video:player_loc>
+            <video:duration>560</video:duration>
+            <video:description>Train with this video tutorial to learn how to use Bamboo, setting up a CI/CD pipeline. Customize it with triggers, learn how to control branches and more.</video:description>
+        </video:video>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchsoftwarequality/video/Set-up-a-CI-CD-workflow-in-this-GitHub-Actions-tutorial</loc>
+        <video:video>
+            <video:title>GitHub Actions tutorial walks through a CI/CD setup</video:title>
+            <video:publication_date>2020-04-22T14:51:00-04:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/yVCkQLXGL_8/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=yVCkQLXGL_8</video:player_loc>
+            <video:duration>482</video:duration>
+            <video:description>New to GitHub Actions? Get started with this video tutorial, which walks step by step through the process to make a CI/CD workflow, using Terraform and Azure as an example.</video:description>
+        </video:video>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchsoftwarequality/video/Watch-this-Atlassian-Confluence-tutorial-for-beginners</loc>
+        <video:video>
+            <video:title>Watch this Atlassian Confluence tutorial for beginners</video:title>
+            <video:publication_date>2020-04-16T19:42:00-04:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/b20VTYcrn2Y/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=b20VTYcrn2Y</video:player_loc>
+            <video:duration>504</video:duration>
+            <video:description>Agile leaders must manage and connect with their development teams, no matter where they're located. In this Atlassian Confluence demo, learn how to boost remote developer collaboration.</video:description>
+        </video:video>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchsoftwarequality/video/Get-to-work-with-Python-in-this-PyCharm-tutorial</loc>
+        <video:video>
+            <video:title>Get to work with Python in this PyCharm tutorial</video:title>
+            <video:publication_date>2020-01-13T15:26:00-05:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/H9JbJPAVBbM/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=H9JbJPAVBbM</video:player_loc>
+            <video:duration>571</video:duration>
+            <video:description>IDEs make it a lot easier to work with programming languages like Python. In this video PyCharm tutorial, learn how to use features to catch syntax errors, debug issues and run code.</video:description>
+        </video:video>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchsoftwarequality/video/Step-by-step-tutorial-to-install-Git-Integration-for-Jira</loc>
+        <video:video>
+            <video:title>Step-by-step tutorial to install Git Integration for Jira</video:title>
+            <video:publication_date>2019-06-19T10:30:00-04:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/jV9bRNkB07Q/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=jV9bRNkB07Q</video:player_loc>
+            <video:duration>633</video:duration>
+            <video:description>If your team uses Jira and desperately needs more streamlined and comprehensible project updates, check out this video overview of the Git integration add-on.</video:description>
+        </video:video>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchsoftwarequality/video/Run-code-complexity-tools-and-Java-coverage-tests-with-Maven</loc>
+        <video:video>
+            <video:title>Run code complexity tools and Java coverage tests with Maven</video:title>
+            <video:publication_date>2018-05-30T09:00:00-04:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/ZE4VKzKV2SA/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=ZE4VKzKV2SA</video:player_loc>
+            <video:duration>773</video:duration>
+            <video:description>No software should go into production without complete test coverage. Here, we look at how to install Maven and use it to run code complexity tools and ensure full Java code coverage.</video:description>
+        </video:video>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchsoftwarequality/video/Learn-how-to-install-Jenkins-CI-to-enhance-your-DevOps-skills</loc>
+        <video:video>
+            <video:title>Learn how to install Jenkins CI to enhance your DevOps skills</video:title>
+            <video:publication_date>2018-05-16T16:39:00-04:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/GssT82ekVjQ/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=GssT82ekVjQ</video:player_loc>
+            <video:duration>282</video:duration>
+            <video:description>In this video tutorial, we demonstrate how to install Jenkins CI, and subsequently run a simple build job. It's a first step to acquire key DevOps skills.</video:description>
+        </video:video>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchsoftwarequality/video/How-to-create-CI-builds-with-the-Jenkins-freestyle-project</loc>
+        <video:video>
+            <video:title>How to create CI builds with the Jenkins freestyle project</video:title>
+            <video:publication_date>2018-05-14T11:48:00-04:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/p2p6DFkGZjQ/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=p2p6DFkGZjQ</video:player_loc>
+            <video:duration>549</video:duration>
+            <video:description>In this video tutorial, we explore how build jobs work in the Jenkins continuous integration tool. Watch as we create a simple freestyle Jenkins project and then run the corresponding job.</video:description>
+        </video:video>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchsoftwarequality/video/Java-video-tutorial-JDK-download-and-JRE-installation</loc>
+        <video:video>
+            <video:title>Java video tutorial: JDK download and JRE installation</video:title>
+            <video:publication_date>2018-04-19T13:57:00-04:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/Kz5G0TtO4Pg/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=Kz5G0TtO4Pg</video:player_loc>
+            <video:duration>410</video:duration>
+            <video:description>This quick and concise Java video tutorial shows you how to perform a JDK download and JRE installation, while also explaining how to configure PATH and JAVA_HOME system variables.</video:description>
+        </video:video>
+    </url>
+</urlset>

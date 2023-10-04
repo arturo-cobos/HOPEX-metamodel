@@ -1,0 +1,443 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="keywords" content="">
+<meta name="description" content="">    
+<LINK REL="icon" HREF="../standard/assets/img/favicon.ico">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/bootstrap.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nav.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/eaportal.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/font-awesome.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/animate.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/datatables.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/grid.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nae.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/custom.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/chosen.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/prism.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery.dataTables.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jsTreeStyle.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.theme.css" media="screen" />
+<script type="text/javascript" src="../standard/assets/js/jquery-3.2.1.min.js" ></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-ui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.columnFilter.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3-force.v2.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.gui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.search.js"></script> 
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.util.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-2.1.1.min.js"></script>
+<script src="../standard/assets/js/ws_zoomtemplate_firefox.js"></script>
+<script src="../standard/assets/js/bootstrap.min.js"></script>
+<script src="../standard/assets/js/datatables.min.js"></script>
+<script src="../standard/assets/js/moment.min.js"></script>
+<script src="../standard/assets/js/datetime-moment.js"></script>
+<script src="../standard/assets/js/chartjs.min.js"></script>
+<script src="../standard/assets/js/searchindexcontent.json"></script>
+<script src="../standard/assets/js/anls.js"></script>
+<script src="../../../cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script src="../standard/assets/js/gauge.js"></script> 
+<script src="../standard/assets/js/domesticApi.js"></script> 
+<script src="../standard/assets/js/piecelabel.js"></script>
+<script src="../standard/assets/js/popper.min.js"></script>
+<script src="../standard/assets/js/custom.js"></script>
+<script src="../standard/assets/js/chosen.jquery.js"></script>
+<script src="../standard/assets/js/prism.js"></script>
+<script src="../standard/assets/js/init-chosen.js"></script>
+<script src="../standard/assets/js/chart-data-flow.js"></script>
+<script src="../standard/assets/js/chart-data-gantt.js"></script>
+<script type="module" src="../standard/assets/js/Fuse.esm.min.js"></script>
+<script type="module">
+import Fuse from '../standard/assets/js/Fuse.esm.min.js';
+$(document).ready(function () {
+console.log('getjson');
+window.$.getJSON('../standard/assets/js/searchindexcontent.json', function (response) {
+console.log('getjson ok');
+var isIndex = "";
+var url = window.location.pathname;
+var filename = url.substring(url.lastIndexOf('/')+1);
+if( filename.includes("index") || filename === "" ){
+isIndex = "pages/";
+} else {
+isIndex = "";
+}
+const fuse = new Fuse(response, {
+keys: ['title','text'],
+shouldSort: true,
+includeMatches : true,
+findAllMatches : true
+});
+$('#search-fuse').on('keyup', function () {
+let result = fuse.search($(this).val());
+console.log(result);
+let resultdiv = $('div.searchresults-fuse');
+if (result.length === 0) {
+resultdiv.hide();
+} else {
+resultdiv.empty();
+resultdiv.append('<table class="table-search" width="100%" cellspacing="0"><thead ><tr><th>Name</th><th>Object Type</th><th>Modification date</th></tr></thead><tbody>');
+
+for (let obj in result.slice(0,10)) {
+
+let searchObj = '<tr><td><a href="./'+ isIndex + result[obj].item.url + '">' + result[obj].item.title +'</a></td><td>' + result[obj].item.ObjectType + '</td><td>' + result[obj].item.ModificationDate + '</td></tr>' ;
+
+
+resultdiv.find('tbody').append(searchObj);
+}
+resultdiv.append('</tbody></table>');
+resultdiv.show();
+}
+});
+});
+});
+</script>
+<title>HOPEX Metamodel Overview (Beta Version)</title>
+</head>
+<nav class="navbar navbar-expand-md navbar-dark  navbar-mega"><!-- Brand --><!--<a class="navbar-brand" href="#">Navbar</a>--><a class="" href="../index.htm"><img class="logo-mega" src="../standard/assets/img/logo.png"  alt="">(Beta Version)</a><!-- Toggler/collapsibe Button --><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><!-- Navbar links -->
+<div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsibleNavbar"><div class="col-sm-auto col-md-auto col-lg-5"></div>
+<div class="col-sm-auto">
+<ul class="navbar-nav">      
+<li><a class="dropdown-item" href="ad30ce115ebf7e90.htm">EA Grid</a></li> 
+<li><a class="dropdown-item" href="fdd5018459bc3c6a.htm">EA Domains</a></li> 
+<li><a class="dropdown-item" href="07e731775ecc93f4.htm">Solutions</a></li> 
+<li><a class="dropdown-item" href="c5dfc62c54810c2c.htm">Glossary</a></li> 
+<li class="nav-item dropdown mx-1">
+<a class="nav-link" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</a>
+<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<li><a class="dropdown-item" href="5446555d5f88c32e.htm">Outcome Driven Metamodel</a></li> 
+<li><a class="dropdown-item" href="e1ccfc295f8f7b90.htm">Playbooks</a></li> 
+<li><a class="dropdown-item" href="42bc992862d20ea7.htm">Framework Mappings</a></li> 
+<li><a class="dropdown-item" href="e93aebb35fa20550.htm">Metamodel Patterns</a></li> 
+<li><a class="dropdown-item" href="d599fe87602b2b85.htm">References</a></li> 
+<li><a class="dropdown-item" href="333f3a7f5dde11de.htm">Legend</a></li> 
+</ul>									                                            
+</li>
+</ul>
+</div>
+<div class="col-sm-auto"><a class="nav-link search" href="#" onclick=showHideSearch("search-section-fuse")><i class="fa fa-search mr-1 form-control-feedback"></i></a></div>
+</div>
+</nav>
+<div id="search-section-fuse" style="display:none">>
+<div class="search_header"><span class="closesearch">&times;</span>
+<nav class="breadcrumb">
+<a class="breadcrumb-item" href="../index.htm">Home </a> 
+<span class="breadcrumb-item active">Search</span> 
+</nav>
+</div>
+<input id="search-fuse" placeholder="Search..."  name="q" onfocus="this.value=''" type="search">
+<div class="searchresults-fuse"></div>
+</div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>function showHideSearch(elementId) {var contentDivs = document.getElementsByClassName('content');var footerDivs = document.getElementsByClassName('footer'); var containerDivs = document.getElementsByClassName('container');var containerfluidDivs = document.getElementsByClassName('container-fluid');var x = document.getElementById(elementId);if (x.style.display === "none") {x.style.display = "block";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "none";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "none";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "none";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "none";}} else {x.style.display = "none";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "block";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "block";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "block";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "block";}}} ;<!-- END WIDGET DRILL DOWN --></script><script>$(document).ready(function() {$(window).scroll(function() {if ($(this).scrollTop() > 100) {$('.scrollup').fadeIn();} else {$('.scrollup').fadeOut();}});$('.scrollup').click(function() {$("html, body").animate({scrollTop: 0}, 600);return false;});});</script><script>
+var modal = document.getElementById("search-section-fuse");
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = "none";
+}
+}
+$(document).on('click', '.closesearch', function() {
+showHideSearch("search-section-fuse");
+
+
+
+
+
+});</script><div class="container-fluid col-lg-11"><nav class="breadcrumb"><a class="breadcrumb-item" href="../index.htm">Home</a> <span class="breadcrumb-item active">
+<a  href="533b53775c916e32.htm" target="_top">HOPEX - DoDAF 2</a>&nbsp;/&nbsp;DODAF2 - DV-2 - Logical Data Model</span></nav></div>
+<div class="container-fluid col-lg-11 content">
+<section class="fadeInDown animated"><a href="#idt" class="btn btn-d">DEFINITION</a> <a href="#grf" class="btn btn-d">CONCEPT GRAPH</a> <a href="#des" class="btn btn-d">CONCEPT DESCRIPTIONS</a> 
+</section>
+<a class="object-section-anchor" id="idt"></a>
+<section class="object-section">
+<h4>CONCEPT DOMAIN - DODAF2 - DV-2 - Logical Data Model</h4><hr class="sectionbreak" /><table class="table table-vertical-headers table-set-col-width"><tr><th>Description</th><td class="description-text">The documentation of the data requirements and structural business process (activity) rules. In DoDAF V1.5, this was the OV-7.<div></div></td></tr><tr><th>Dictionary</th><td><img src="../standard/dicsubjectarea.ico.gif"/>&nbsp;
+<a  href="533b53775c916e32.htm" target="_top">HOPEX - DoDAF 2</a></td></tr><tr><th>Parent Domain</th><td><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="f1f118335f244fc5.htm" target="_top">DODAF2 - Data and Information Viewpoint</a>&nbsp;</td></tr></table></section>
+<a class="object-section-anchor" id="grf"></a>
+<section class="object-section">
+<h4>DOMAIN CONCEPT GRAPH</h4>
+<hr class="sectionbreak" />
+<a href="#" class="btn btn-d" value="Relationship1" onclick="showDiagOnClick(this)">Diagram</a>
+<a href="#" class="btn btn-d" value="Relationship2" onclick="showDiagOnClick(this)">Graph</a>
+<div class="Relationship" id="Relationship1">
+
+<map  name="527F582A5F243B04">
+  <area  href=#OBMK240328005FC66CE8 shape="polygon" coords="119, 322, 252, 322, 252, 333, 119, 333"    title="-">
+  
+  <area  href=#OBMKFD1BF4D65FBC69CF shape="polygon" coords="502, 210, 550, 210, 550, 221, 502, 221"    title="-">
+  
+  <area  href=fd1bf4d65fbc69be.htm shape="polygon" coords="406, 210, 550, 210, 550, 221, 406, 221"   target="_top"  title="-">
+  
+  <area  href=#OBMKFD1BF4D85FBC6A29 shape="polygon" coords="406, 210, 454, 210, 454, 221, 406, 221"    title="-">
+  
+  <area  href=#OBMK2B5858D65EEC52B9 shape="polygon" coords="657, 431, 595, 367, 603, 360, 665, 424"    title="-">
+  
+  <area  href=#OBMKFD1BF2ED5FBC65E1 shape="polygon" coords="630, 237, 604, 364, 594, 362, 620, 235"    title="-">
+  
+  <area  href=81f182ab646c0dfa.htm#OBMK81F182AB646C0DFA shape="polygon" coords="187, 241, 158, 241, 158, 255, 44, 255, 44, 241, 187, 241"   target="_top"  title="-">
+  
+  <area  href=2b588c2b5ef08eef.htm shape="polygon" coords="57, 75, 57, 286, 47, 286, 47, 75"   target="_top"  title="-">
+  
+  <area  href=#OBMKCB08CFB55ED041CF shape="polygon" coords="603, 271, 603, 289, 593, 289, 593, 271"    title="-">
+  
+  <area  href=cb08cfb55ed041cb.htm shape="polygon" coords="603, 236, 603, 289, 593, 289, 593, 236"   target="_top"  title="-">
+  
+  <area  href=#OBMKCB08CFB55ED041E7 shape="polygon" coords="603, 236, 603, 254, 593, 254, 593, 236"    title="-">
+  
+  <area  href=#OBMK2B58627D5EEC61F2 shape="polygon" coords="336, 482, 336, 422, 403, 422, 403, 433, 347, 433, 347, 482"    title="-">
+  
+  <area  href=2b58627c5eec61ec.htm shape="polygon" coords="541, 520, 336, 520, 336, 422, 403, 422, 403, 433, 347, 433, 347, 509, 541, 509"   target="_top"  title="-">
+  
+  <area  href=#OBMK2B58627D5EEC6230 shape="polygon" coords="541, 520, 425, 520, 425, 509, 541, 509"    title="-">
+  
+  <area  href=#OBMK2B5862E95EEC633C shape="polygon" coords="641, 437, 641, 414, 651, 414, 651, 437"    title="-">
+  
+  <area  href=2b5862e95eec6337.htm shape="polygon" coords="641, 482, 641, 414, 651, 414, 651, 482"   target="_top"  title="-">
+  
+  <area  href=#OBMK2B5862E95EEC637D shape="polygon" coords="641, 482, 641, 460, 651, 460, 651, 482"    title="-">
+  
+  <area  href=#OBMK2B585C895EEC5824 shape="polygon" coords="567, 437, 567, 414, 577, 414, 577, 437"    title="-">
+  
+  <area  href=2b585c895eec581f.htm shape="polygon" coords="567, 483, 567, 414, 577, 414, 577, 483"   target="_top"  title="-">
+  
+  <area  href=#OBMK2B585C8A5EEC5862 shape="polygon" coords="567, 483, 567, 460, 577, 460, 577, 483"    title="-">
+  
+  <area  href=#OBMK2B585AD05EEC56A4 shape="polygon" coords="863, 433, 871, 433, 871, 415, 882, 415, 882, 443, 863, 443"    title="-">
+  
+  <area  href=2b585ad05eec569f.htm shape="polygon" coords="818, 415, 818, 433, 871, 433, 871, 415, 882, 415, 882, 443, 807, 443, 807, 415"   target="_top"  title="-">
+  
+  <area  href=#OBMK2B585AD05EEC56E5 shape="polygon" coords="818, 415, 818, 433, 826, 433, 826, 443, 807, 443, 807, 415"    title="-">
+  
+  <area  href=325c32fc5eb02d02.htm#OBMK325C32FC5EB02D02 shape="polygon" coords="592, 496, 592, 485, 645, 485, 645, 496, 592, 496"   target="_top"  title="A&#160; Data Entity is an abstract structure of an Information Entity. It has an independent existence and can be uniquely identified.">
+  
+  <area  href=2b5858b85eec51d9.htm#OBMK2B5858B85EEC51D9 shape="polygon" coords="575, 507, 575, 496, 662, 496, 662, 507, 575, 507"   target="_top"  title="A&#160; Logical Data Object represents the logical structure of any kind of data that can be memorized by a Software System.">
+  
+  <area  href=e282a51250a43d49.htm#OBMKE282A51250A43D49 shape="polygon" coords="593, 539, 593, 526, 644, 526, 644, 539, 593, 539"   target="_top"  title="A data view enables representation of the scope covered by a data model element. A data view is based on the selection of several classes connected in the specific context of the view.">
+  
+  <area  href="7eaa886156121e80.htm" shape="rect" coords="542, 483, 697, 548"   target="_top"  title="A&#160; Logical Data View a collection of filtered Logical Data Entitys.">
+  
+  <area  href=#OBMKF4BE36695EE1C801 shape="polygon" coords="752, 377, 781, 377, 781, 388, 752, 387"    title="-">
+  
+  <area  href=f4be36695ee1c7fa.htm shape="polygon" coords="695, 377, 781, 377, 781, 388, 695, 387"   target="_top"  title="An&#160; Attribute is a value property of a Logical Data Entity.">
+  
+  <area  href=#OBMKF4BE366A5EE1C838 shape="polygon" coords="695, 377, 724, 377, 724, 388, 695, 388"    title="-">
+  
+  <area  href=#OBMKF4BE36B65EE1C969 shape="polygon" coords="501, 404, 501, 399, 540, 399, 540, 410, 491, 410, 491, 404"    title="-">
+  
+  <area  href=f4be36b65ee1c923.htm shape="polygon" coords="544, 368, 501, 368, 501, 399, 540, 399, 540, 410, 491, 410, 491, 358, 544, 358"   target="_top"  title="A part of a class, a component, etc. or a role of a collaboration.">
+  
+  <area  href=#OBMKF4BE36B65EE1C929 shape="polygon" coords="544, 368, 500, 368, 500, 358, 544, 358"    title="-">
+  
+  <area  href=325c32fc5eb02d02.htm#OBMK325C32FC5EB02D02 shape="polygon" coords="590, 363, 590, 352, 642, 352, 642, 363, 590, 363"   target="_top"  title="A&#160; Data Entity is an abstract structure of an Information Entity. It has an independent existence and can be uniquely identified.">
+  
+  <area  href=2b5858b85eec51d9.htm#OBMK2B5858B85EEC51D9 shape="polygon" coords="573, 374, 573, 363, 660, 363, 660, 374, 573, 374"   target="_top"  title="A&#160; Logical Data Object represents the logical structure of any kind of data that can be memorized by a Software System.">
+  
+  <area  href=7db8824033340504.htm#OBMK7DB8824033340504 shape="polygon" coords="599, 406, 599, 393, 633, 393, 633, 406, 599, 406"   target="_top"  title="A class groups objects that share the same characteristics and have similar behavior. Persistent classes are management elements considered useful for representing enterprise activity, and are therefore reserved for this purpose. ">
+  
+  <area  href="4619527e560d45eb.htm" shape="rect" coords="537, 350, 695, 414"   target="_top"  title="A&#160; Logical Data Entity is a logical structure of a Data Entity. As any Data Entity, it has an independent existence and can be uniquely identified.">
+  
+  <area  href=6d2b7fce5fbb69c7.htm#OBMK6D2B7FCE5FBB69C7 shape="polygon" coords="812, 364, 812, 353, 876, 353, 876, 364, 812, 364"   target="_top"  title="A&#160; Data Property is a Data Object that is fundamentally defined by its value. It doesn&#39;t evolve over time is thereby immutable.">
+  
+  <area  href=2b5858b85eec51d9.htm#OBMK2B5858B85EEC51D9 shape="polygon" coords="800, 375, 800, 364, 887, 364, 887, 375, 800, 375"   target="_top"  title="A&#160; Logical Data Object represents the logical structure of any kind of data that can be memorized by a Software System.">
+  
+  <area  href=28cb2b9f422f001e.htm#OBMK28CB2B9F422F001E shape="polygon" coords="820, 407, 820, 394, 868, 394, 868, 407, 820, 407"   target="_top"  title="A data type is used to group characteristics common to several attributes. Data types are implemented as classes.">
+  
+  <area  href="7d5286635eae7273.htm" shape="rect" coords="782, 351, 907, 416"   target="_top"  title="A&#160; Logical Data Property is an immutable type that is distinguishable only by the state of its properties. That is, unlike a Logical Data Entity, which has a unique identifier and remains distinct even if its properties are otherwise identical, two Value Objects with the exact same properties can be considered equal.">
+  
+  <area  href=744b935d5fbfe0f9.htm#OBMK744B935D5FBFE0F9 shape="polygon" coords="93, 298, 93, 287, 116, 287, 116, 298, 93, 298"   target="_top"  title="A&#160; Class is collection of Entitys which it classifies according to one or more criteria.">
+  
+  <area  href=82c3b89c5fdcbd0f.htm#OBMK82C3B89C5FDCBD0F shape="polygon" coords="25, 309, 25, 298, 95, 298, 95, 309, 25, 309"   target="_top"  title="A&#160; Data Dictionary is a dictionary of Data Assets used to describe a data architecture. This includes:">
+  
+  <area  href=3b523b6e32c20001.htm#OBMK3B523B6E32C20001 shape="polygon" coords="35, 354, 35, 340, 86, 340, 86, 354, 35, 354"   target="_top"  title="A package partitions the domain and the associated work. It is used to organize elements into groups, particularly use cases and classes. Packages may be nested within other packages. Packages are linked by contractual relationships that define their interface.">
+  
+  <area  href="7eaa87e856121db2.htm" shape="rect" coords="1, 284, 119, 357"   target="_top"  title="Dictionary of Logical Data Entity.">
+  
+  <area  href=0dc20f885e9b5e29.htm#OBMK0DC20F885E9B5E29 shape="polygon" coords="1077, 378, 1083, 378, 1083, 392, 925, 392, 925, 378, 1077, 378"   target="_top"  title="-">
+  
+  <area  href=0378157D5B572280.htm shape="polygon" coords="920, 388, 1087, 388, 1087, 399, 920, 399"   target="_top"  title="Data Category to which an Information Object belongs.">
+  
+  <area  href=0dc20f4d5e9b5ca9.htm#OBMK0DC20F4D5E9B5CA9 shape="polygon" coords="1093, 375, 1093, 364, 1190, 364, 1190, 375, 1093, 375"   target="_top"  title="An&#160; Architecture Category is a Categorization Block used to classify Architecture Blocks. Examples are Data Category, Business Line.">
+  
+  <area  href=ab19c05d58cb79e7.htm#OBMKAB19C05D58CB79E7 shape="polygon" coords="1109, 407, 1109, 394, 1174, 394, 1174, 407, 1109, 407"   target="_top"  title="A class or division of Data regarded as having particular shared characteristics.">
+  
+  <area  href="6cce7d6d5a2e4834.htm" shape="rect" coords="1087, 362, 1196, 427"   target="_top"  title="A&#160; Data Category is a classification or division of Information Objects regarded as having particular shared characteristics.">
+  
+  <area  href=6d2b7c935fbb6270.htm#OBMK6D2B7C935FBB6270 shape="polygon" coords="633, 302, 633, 291, 689, 291, 689, 302, 633, 302"   target="_top"  title="A&#160; Data Object&#160; represents the abstract structure of any kind of data that can be memorized by a Software System.">
+  
+  <area  href=fd1bf2a45fbc64fb.htm#OBMKFD1BF2A45FBC64FB shape="polygon" coords="619, 313, 619, 302, 704, 302, 704, 313, 619, 313"   target="_top"  title="A&#160; Logical Data Asset is a Data Asset used for the description of data consumed and produced by Logical Software Systems.">
+  
+  <area  href="2b5858b85eec51d9.htm" shape="rect" coords="403, 289, 920, 566"   target="_top"  title="A&#160; Logical Data Object represents the logical structure of any kind of data that can be memorized by a Software System.">
+  
+  <area  href=d342d91a5b121454.htm#OBMKD342D91A5B121454 shape="polygon" coords="40, 14, 40, 3, 149, 3, 149, 14, 40, 14"   target="_top"  title="An&#160; Architecture Namespace is a Model Namespace&#160; that packages Architecture Blocks used to describe the architecture of the enterprise.">
+  
+  <area  href=d321c226601262ae.htm#OBMKD321C226601262AE shape="polygon" coords="55, 25, 55, 14, 134, 14, 134, 25, 55, 25"   target="_top"  title="An&#160; Enduring Initiative is a long term Initiative which involves roadmapping and governance. Enterprises and their Management Systems are typical&#160; Enduring Initiatives.">
+  
+  <area  href=50666200529c2b9a.htm#OBMK50666200529C2B9A shape="polygon" coords="69, 52, 69, 38, 120, 38, 120, 52, 69, 52"   target="_top"  title="An Enterprise is a purposeful undertaking, conducted by one or more organizations, aiming at delivering goods and services, in accordance with the enterprise mission in its changing environment.">
+  
+  <area  href="b181b82a54891668.htm" shape="rect" coords="1, 1, 190, 76"   target="_top"  title="An&#160; Enterprise is an Enduring Initiative that delivers added-value Products (goods &amp; services) to its target Customers.">
+  
+  <area  href=#OBMKCB08CF795ED040B6 shape="polygon" coords="502, 187, 551, 187, 551, 197, 502, 197"    title="-">
+  
+  <area  href=cb08cf795ed040b2.htm shape="polygon" coords="404, 187, 551, 187, 551, 197, 404, 197"   target="_top"  title="-">
+  
+  <area  href=#OBMKCB08CF795ED040D6 shape="polygon" coords="404, 187, 453, 187, 453, 197, 404, 197"    title="-">
+  
+  <area  href=#OBMKF4BEE9605EE1C29D shape="polygon" coords="743, 257, 656, 257, 656, 236, 667, 236, 667, 246, 743, 246"    title="-">
+  
+  <area  href=f4bee9605ee1c292.htm shape="polygon" coords="706, 178, 792, 178, 792, 257, 656, 257, 656, 236, 667, 236, 667, 246, 782, 246, 782, 189, 706, 189"   target="_top"  title="-">
+  
+  <area  href=#OBMKF4BEE9625EE1C2DC shape="polygon" coords="706, 178, 792, 178, 792, 199, 782, 199, 782, 189, 706, 189"    title="-">
+  
+  <area  href=325C32165EB02A4A.htm#OBMK325C32165EB02A4A shape="polygon" coords="601, 186, 601, 175, 662, 175, 662, 186, 601, 186"   target="_top"  title="A&#160; Data Domain is subset of the enterprise&rsquo;s data that are meant to be manipulated together in the context of business operations.">
+  
+  <area  href=fd1bf2a45fbc64fb.htm#OBMKFD1BF2A45FBC64FB shape="polygon" coords="589, 196, 589, 186, 674, 186, 674, 196, 589, 196"   target="_top"  title="A&#160; Logical Data Asset is a Data Asset used for the description of data consumed and produced by Logical Software Systems.">
+  
+  <area  href=c014c8b155301e47.htm#OBMKC014C8B155301E47 shape="polygon" coords="588, 228, 588, 215, 675, 215, 675, 228, 588, 228"   target="_top"  title="A logical data area is used to define a logical data structure made up of classes and data views.">
+  
+  <area  href="461950e9560d4461.htm" shape="rect" coords="549, 172, 714, 236"   target="_top"  title="A&#160; Logical Data Domain is used to define a logical data structure made up of Logical Data Entity(ies) and data views.">
+  
+  <area  href=6d2b80db5fbb700b.htm#OBMK6D2B80DB5FBB700B shape="polygon" coords="311, 186, 311, 175, 359, 175, 359, 186, 311, 186"   target="_top"  title="A&#160; Data Map is an urbanization tool for&#160; Data Asset. It represents a set of Data Domains in a particular context.">
+  
+  <area  href=fd1bf2a45fbc64fb.htm#OBMKFD1BF2A45FBC64FB shape="polygon" coords="292, 196, 292, 186, 377, 186, 377, 196, 292, 196"   target="_top"  title="A&#160; Logical Data Asset is a Data Asset used for the description of data consumed and produced by Logical Software Systems.">
+  
+  <area  href=5c8262f7588b2da2.htm#OBMK5C8262F7588B2DA2 shape="polygon" coords="296, 228, 296, 215, 374, 215, 374, 228, 296, 228"   target="_top"  title="-">
+  
+  <area  href="325c30de5eb0244c.htm" shape="rect" coords="263, 172, 407, 236"   target="_top"  title="-">
+  
+  <area  href="24ae4a185ed16aaa.htm" shape="rect" coords="4, 286, 101, 336"   target="_top"  title="An&#160; Information Dictionary is a dictionary of&#160; Information Assets used to describe an information architecture. This includes:">
+  
+  <area  href=30efb18261f374d5.htm#OBMK30EFB18261F374D5 shape="polygon" coords="572, 138, 572, 127, 626, 127, 626, 138, 572, 138"   target="_top"  title="A&#160; Data Asset is an Information Asset used for the description of data consumed and produced by Software Systems.">
+  
+  <area  href="fd1bf2a45fbc64fb.htm" shape="rect" coords="252, 125, 947, 602"   target="_top"  title="A&#160; Logical Data Asset is a Data Asset used for the description of data consumed and produced by Logical Software Systems.">
+  
+</map>
+<img  src="../images/4a774b455f246e63_527f582a5f243b04_i.png" alt="../images/4a774b455f246e63_527f582a5f243b04_i.png" usemap="#527F582A5F243B04" height="612" width="1196" border=0>
+
+</div>
+<div class="Relationship" id="Relationship2">
+<div id="klmm" style="width: 100vw; height: 100vh;" ></div>
+<!-- <script src="../standard/assets/js/keylines_domain.js"></script> -->
+<script >
+const data = {
+ type: 'LinkChart',
+  items: [
+  //nodes
+    {type: 'node', id:'4A774B455F246E63', t:"DODAF2 - DV-2 - Logical Data Model", sh:'box', d:"The documentation of the data requirements and structural business process (activity) rules. In DoDAF V1.5, this was the OV-7."},
+  //edges
+
+  ]
+}
+</script>
+<script src="../standard/assets/js/keylines_domain.js" type="module"></script>
+</div>
+</section>
+<a class="object-section-anchor" id="des"></a>
+<section class="object-section">
+<h4>CONCEPT DESCRIPTIONS</h4> 
+<hr class="sectionbreak" />
+<h5>Concrete Concepts</h5>
+<table class="table  table-set-col-width">
+<thead>
+<tr><th>Concept</th><th>Description</th><th>HOPEX Metaclass</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="6cce7d6d5a2e4834.htm" target="_top">Data Category</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Data Category</b> is a classification or division of <a href="e6f250185f772ee1.htm" target="_top"><b><u>Information Object</u></b></a>s regarded as having particular shared characteristics.</div><div align="left" style="min-height: 12pt; ">Examples of&#160;<b> Data Category</b>s are <a href="229128385a567d63.htm" target="_top"><b><u>Health</u></b></a> data, <a href="2291283b5a567d86.htm" target="_top"><b><u>Financial</u></b></a> data, <a href="49aa4b505a563520.htm" target="_top"><b><u>Contact</u></b></a> data.</div>       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="ab19c05d58cb79e7.htm" target="_top">Data Category</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="b181b82a54891668.htm" target="_top">Enterprise</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Enterprise</b> is an <a href="d321c226601262ae.htm" target="_top"><b><u>Enduring Initiative</u></b></a> that delivers added-value <a href="215cceda606c35c6.htm" target="_top"><b><u>Product</u></b></a>s (goods &amp; services) to its target <a href="d6cdfdbc5ab86331.htm" target="_top"><b><u>Customer</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">It requires a formal organization of groups of people and resources to achieve its purposes.</div><i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#WholeLifeEnterprise"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - WholeLifeEnterprise</a></li> <li><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_42"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Definition - Enterprise</a></li> <li><a href="https://www.scaledagileframework.com/enterprise/"><img src="../standard/extr.ico.gif">&nbsp;SAFe&copy; - Enterprise</a></li> <li><a href="https://www.scaledagileframework.com/portfolio-safe/"><img src="../standard/extr.ico.gif">&nbsp;SAFe&copy; - Portfolio SAFe</a></li> <li><a href="http://wordnetweb.princeton.edu/perl/webwn?o2=&amp;o0=1&amp;o8=1&amp;o1=1&amp;o7=&amp;o5=&amp;o9=&amp;o6=&amp;o3=&amp;o4=&amp;r=1&amp;s=enterprise&amp;i=2&amp;h=100000#c"><img src="../standard/extr.ico.gif">&nbsp;WordNet - Enterprise</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="50666200529c2b9a.htm" target="_top">Enterprise</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="7eaa87e856121db2.htm" target="_top">Logical Data Dictionary</a></td>
+<td class="description-text">Dictionary of <a href="4619527e560d45eb.htm" target="_top"><b><u>Logical Data Entity</u></b></a>.       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="3b523b6e32c20001.htm" target="_top">Package</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="461950e9560d4461.htm" target="_top">Logical Data Domain</a></td>
+<td class="description-text">A&#160;<b> Logical Data Domain</b> is used to define a logical data structure made up of <a href="4619527e560d45eb.htm" target="_top"><b><u>Logical Data Entity</u></b></a>(ies) and data views.       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="c014c8b155301e47.htm" target="_top">Logical Data Domain</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="4619527e560d45eb.htm" target="_top">Logical Data Entity</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Logical Data Entity</b> is a logical structure of a <a href="325c32fc5eb02d02.htm" target="_top"><b><u>Data Entity</u></b></a>. As any <a href="325c32fc5eb02d02.htm" target="_top"><b><u>Data Entity</u></b></a>, it has an independent existence and can be uniquely identified.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Logical Data Entity</b> is characterized by <a href="f4be36b65ee1c923.htm" target="_top"><b><u>Logical Relationship</u></b></a>s it has with other&#160;<b> Logical Data Entity</b>(ies) and by its <a href="f4be36695ee1c7fa.htm" target="_top"><b><u>Attribute</u></b></a>s.</div><i><ul>References:<li><a href="https://www.google.com/search?q=site%3Ahttps%3A%2F%2Fwww.dddcommunity.org%2Fresources%2Fddd_terms%2F+Entity"><img src="../standard/extr.ico.gif">&nbsp;DDD - Glossary - Entity</a></li> <li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ResourceInformation"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - ResourceInformation</a></li> <li><a href="https://pubs.opengroup.org/togaf-standard/introduction/apdxb.html#tag_06_10"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Definition - Data Element</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="7db8824033340504.htm" target="_top">Class</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="325c30de5eb0244c.htm" target="_top">Logical Data Map</a></td>
+<td class="description-text">        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="5c8262f7588b2da2.htm" target="_top">Data Domain Map</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="7d5286635eae7273.htm" target="_top">Logical Data Property</a></td>
+<td class="description-text">A&#160;<b> Logical Data Property</b> is an immutable type that is distinguishable only by the state of its properties. <br />That is, unlike a <a href="4619527e560d45eb.htm" target="_top"><b><u>Logical Data Entity</u></b></a>, which has a unique identifier and remains distinct even if its properties are otherwise identical, two Value Objects with the exact same properties can be considered equal.       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="28cb2b9f422f001e.htm" target="_top">Data type</a></td>
+</tr>  
+</tbody>
+</table>
+<hr class="sectionbreak" />
+<h5>Abstract Concepts</h5>
+<table class="table  table-set-col-width">
+<thead >
+<tr><th>Concept</th><th>Description</th><th>HOPEX Metaclass</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="24ae4a185ed16aaa.htm" target="_top">Information Dictionary</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Information Dictionary</b> is a dictionary of&#160;<b> Information Asset</b>s used to describe an information architecture. This includes:</div><div align="left" style="min-height: 12pt; ">1. <a href="d6cd116d5ab97525.htm" target="_top"><b><u>Information Domain</u></b></a> </div><div align="left" style="min-height: 12pt; ">2. <a href="d6cd2cea5ab98e5f.htm" target="_top"><b><u>Information Entity</u></b></a> </div><div align="left" style="min-height: 12pt; ">3. <a href="362fc5a85b3c3c03.htm" target="_top"><b><u>Concept Property</u></b></a> </div><div align="left" style="min-height: 12pt; ">Concrete implementations are <a href="d2a7dc875ee8740b.htm" target="_top"><b><u>Business Dictionary</u></b></a>, <a href="7eaa87e856121db2.htm" target="_top"><b><u>Logical Data Dictionary</u></b></a>, etc.</div>       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="eb5e1fbe578552e0.htm" target="_top">Architecture Information Container</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="fd1bf2a45fbc64fb.htm" target="_top">Logical Data Asset</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Logical Data Asset</b> is a <a href="30efb18261f374d5.htm" target="_top"><b><u>Data Asset</u></b></a> used for the description of data consumed and produced by <a href="2558338d5c6d1d1b.htm" target="_top"><b><u>Logical Software System</u></b></a>s.</div><div align="left" style="min-height: 12pt; "><b>&#160;Logical Data Asset</b>s are defined in <a href="7eaa87e856121db2.htm" target="_top"><b><u>Logical Data Dictionary</u></b></a>(ies).</div>       </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="2b5858b85eec51d9.htm" target="_top">Logical Data Object</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Logical Data Object</b> represents the logical structure of any kind of data that can be memorized by a <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a>.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Logical Data Object</b> is either a <a href="4619527e560d45eb.htm" target="_top"><b><u>Logical Data Entity</u></b></a> or a <a href="7d5286635eae7273.htm" target="_top"><b><u>Logical Data Property</u></b></a>.</div><div align="left" style="min-height: 12pt; ">Only <a href="4619527e560d45eb.htm" target="_top"><b><u>Logical Data Entity</u></b></a>s can have identity and can be referenced by <a href="f4be36b65ee1c923.htm" target="_top"><b><u>Logical Relationship</u></b></a>s. <a href="7d5286635eae7273.htm" target="_top"><b><u>Logical Data Property</u></b></a>s only handle raw data.</div>       </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="7eaa886156121e80.htm" target="_top">Logical Data View</a></td>
+<td class="description-text">A&#160;<b> Logical Data View</b> a collection of filtered <a href="4619527e560d45eb.htm" target="_top"><b><u>Logical Data Entity</u></b></a>s.       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="e282a51250a43d49.htm" target="_top">Data View</a></td>
+</tr>  
+</tbody>
+</table>
+<section>
+
+</div>
+<button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button>
+<script>window.onscroll = function() {scrollFunction()};$(document).on('click', 'a[href^="#"]', function (event) {event.preventDefault();$('html, body').animate({scrollTop: $($.attr(this, 'href')).offset().top}, 500);});function showDiagOnClick(elem){ var x = document.getElementsByClassName('Relationship');var e = elem.getAttribute("value"); for (var i=0; i < x.length ;i++){x[i].style.display="none"; if (x[i].id == e){x[i].style.display="block";x[i].style.textAlign="left";}}}
+</script></html>

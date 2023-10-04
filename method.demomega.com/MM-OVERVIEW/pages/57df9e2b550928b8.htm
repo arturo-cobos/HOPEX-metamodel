@@ -1,0 +1,494 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="keywords" content="">
+<meta name="description" content="">    
+<LINK REL="icon" HREF="../standard/assets/img/favicon.ico">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/bootstrap.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nav.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/eaportal.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/font-awesome.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/animate.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/datatables.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/grid.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nae.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/custom.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/chosen.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/prism.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery.dataTables.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jsTreeStyle.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.theme.css" media="screen" />
+<script type="text/javascript" src="../standard/assets/js/jquery-3.2.1.min.js" ></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-ui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.columnFilter.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3-force.v2.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.gui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.search.js"></script> 
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.util.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-2.1.1.min.js"></script>
+<script src="../standard/assets/js/ws_zoomtemplate_firefox.js"></script>
+<script src="../standard/assets/js/bootstrap.min.js"></script>
+<script src="../standard/assets/js/datatables.min.js"></script>
+<script src="../standard/assets/js/moment.min.js"></script>
+<script src="../standard/assets/js/datetime-moment.js"></script>
+<script src="../standard/assets/js/chartjs.min.js"></script>
+<script src="../standard/assets/js/searchindexcontent.json"></script>
+<script src="../standard/assets/js/anls.js"></script>
+<script src="../../../cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script src="../standard/assets/js/gauge.js"></script> 
+<script src="../standard/assets/js/domesticApi.js"></script> 
+<script src="../standard/assets/js/piecelabel.js"></script>
+<script src="../standard/assets/js/popper.min.js"></script>
+<script src="../standard/assets/js/custom.js"></script>
+<script src="../standard/assets/js/chosen.jquery.js"></script>
+<script src="../standard/assets/js/prism.js"></script>
+<script src="../standard/assets/js/init-chosen.js"></script>
+<script src="../standard/assets/js/chart-data-flow.js"></script>
+<script src="../standard/assets/js/chart-data-gantt.js"></script>
+<script type="module" src="../standard/assets/js/Fuse.esm.min.js"></script>
+<script type="module">
+import Fuse from '../standard/assets/js/Fuse.esm.min.js';
+$(document).ready(function () {
+console.log('getjson');
+window.$.getJSON('../standard/assets/js/searchindexcontent.json', function (response) {
+console.log('getjson ok');
+var isIndex = "";
+var url = window.location.pathname;
+var filename = url.substring(url.lastIndexOf('/')+1);
+if( filename.includes("index") || filename === "" ){
+isIndex = "pages/";
+} else {
+isIndex = "";
+}
+const fuse = new Fuse(response, {
+keys: ['title','text'],
+shouldSort: true,
+includeMatches : true,
+findAllMatches : true
+});
+$('#search-fuse').on('keyup', function () {
+let result = fuse.search($(this).val());
+console.log(result);
+let resultdiv = $('div.searchresults-fuse');
+if (result.length === 0) {
+resultdiv.hide();
+} else {
+resultdiv.empty();
+resultdiv.append('<table class="table-search" width="100%" cellspacing="0"><thead ><tr><th>Name</th><th>Object Type</th><th>Modification date</th></tr></thead><tbody>');
+
+for (let obj in result.slice(0,10)) {
+
+let searchObj = '<tr><td><a href="./'+ isIndex + result[obj].item.url + '">' + result[obj].item.title +'</a></td><td>' + result[obj].item.ObjectType + '</td><td>' + result[obj].item.ModificationDate + '</td></tr>' ;
+
+
+resultdiv.find('tbody').append(searchObj);
+}
+resultdiv.append('</tbody></table>');
+resultdiv.show();
+}
+});
+});
+});
+</script>
+<title>HOPEX Metamodel Overview (Beta Version)</title>
+</head>
+<nav class="navbar navbar-expand-md navbar-dark  navbar-mega"><!-- Brand --><!--<a class="navbar-brand" href="#">Navbar</a>--><a class="" href="../index.htm"><img class="logo-mega" src="../standard/assets/img/logo.png"  alt="">(Beta Version)</a><!-- Toggler/collapsibe Button --><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><!-- Navbar links -->
+<div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsibleNavbar"><div class="col-sm-auto col-md-auto col-lg-5"></div>
+<div class="col-sm-auto">
+<ul class="navbar-nav">      
+<li><a class="dropdown-item" href="ad30ce115ebf7e90.htm">EA Grid</a></li> 
+<li><a class="dropdown-item" href="fdd5018459bc3c6a.htm">EA Domains</a></li> 
+<li><a class="dropdown-item" href="07e731775ecc93f4.htm">Solutions</a></li> 
+<li><a class="dropdown-item" href="c5dfc62c54810c2c.htm">Glossary</a></li> 
+<li class="nav-item dropdown mx-1">
+<a class="nav-link" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</a>
+<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<li><a class="dropdown-item" href="5446555d5f88c32e.htm">Outcome Driven Metamodel</a></li> 
+<li><a class="dropdown-item" href="e1ccfc295f8f7b90.htm">Playbooks</a></li> 
+<li><a class="dropdown-item" href="42bc992862d20ea7.htm">Framework Mappings</a></li> 
+<li><a class="dropdown-item" href="e93aebb35fa20550.htm">Metamodel Patterns</a></li> 
+<li><a class="dropdown-item" href="d599fe87602b2b85.htm">References</a></li> 
+<li><a class="dropdown-item" href="333f3a7f5dde11de.htm">Legend</a></li> 
+</ul>									                                            
+</li>
+</ul>
+</div>
+<div class="col-sm-auto"><a class="nav-link search" href="#" onclick=showHideSearch("search-section-fuse")><i class="fa fa-search mr-1 form-control-feedback"></i></a></div>
+</div>
+</nav>
+<div id="search-section-fuse" style="display:none">>
+<div class="search_header"><span class="closesearch">&times;</span>
+<nav class="breadcrumb">
+<a class="breadcrumb-item" href="../index.htm">Home </a> 
+<span class="breadcrumb-item active">Search</span> 
+</nav>
+</div>
+<input id="search-fuse" placeholder="Search..."  name="q" onfocus="this.value=''" type="search">
+<div class="searchresults-fuse"></div>
+</div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>function showHideSearch(elementId) {var contentDivs = document.getElementsByClassName('content');var footerDivs = document.getElementsByClassName('footer'); var containerDivs = document.getElementsByClassName('container');var containerfluidDivs = document.getElementsByClassName('container-fluid');var x = document.getElementById(elementId);if (x.style.display === "none") {x.style.display = "block";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "none";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "none";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "none";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "none";}} else {x.style.display = "none";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "block";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "block";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "block";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "block";}}} ;<!-- END WIDGET DRILL DOWN --></script><script>$(document).ready(function() {$(window).scroll(function() {if ($(this).scrollTop() > 100) {$('.scrollup').fadeIn();} else {$('.scrollup').fadeOut();}});$('.scrollup').click(function() {$("html, body").animate({scrollTop: 0}, 600);return false;});});</script><script>
+var modal = document.getElementById("search-section-fuse");
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = "none";
+}
+}
+$(document).on('click', '.closesearch', function() {
+showHideSearch("search-section-fuse");
+
+
+
+
+
+});</script><div class="container-fluid col-lg-11"><nav class="breadcrumb"><a class="breadcrumb-item" href="../index.htm">Home</a> <span class="breadcrumb-item active">
+<a  href="c5dfc62c54810c2c.htm" target="_top">Dictionary of HOPEX concepts</a>&nbsp;/&nbsp;Drivers &amp; Stakeholders</span></nav></div>
+<div class="container-fluid col-lg-11 content">
+<section class="fadeInDown animated"><a href="#idt" class="btn btn-d">DEFINITION</a> <a href="#grf" class="btn btn-d">CONCEPT GRAPH</a> <a href="#des" class="btn btn-d">CONCEPT DESCRIPTIONS</a> 
+</section>
+<a class="object-section-anchor" id="idt"></a>
+<section class="object-section">
+<h4>CONCEPT DOMAIN - Drivers &amp; Stakeholders</h4><hr class="sectionbreak" /><table class="table table-vertical-headers table-set-col-width"><tr><th>Description</th><td class="description-text"><div></div></td></tr><tr><th>Dictionary</th><td><img src="../standard/dicsubjectarea.ico.gif"/>&nbsp;
+<a  href="c5dfc62c54810c2c.htm" target="_top">Dictionary of HOPEX concepts</a></td></tr><tr><th>Parent Domain</th><td></td></tr>
+<tr><th>Domain dependencies</th><td><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="c30bd1505a5d97f9.htm" target="_top">Architecture Model Management</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="e2ef086d62147802.htm" target="_top">EA Pattern - Business Operating Pattern</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="57df58ab55091a58.htm" target="_top">Enterprise Strategy &amp; Roadmapping</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="02af0a4b5a182417.htm" target="_top">Operating Semantic</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="02F70FDC600F4179.htm" target="_top">Policy Pattern</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="dc0bed9d5ae95bc0.htm" target="_top">Teams Pattern</a>&nbsp;</td></tr></table></section>
+<a class="object-section-anchor" id="grf"></a>
+<section class="object-section">
+<h4>DOMAIN CONCEPT GRAPH</h4>
+<hr class="sectionbreak" />
+<a href="#" class="btn btn-d" value="Relationship1" onclick="showDiagOnClick(this)">Diagram</a>
+<a href="#" class="btn btn-d" value="Relationship2" onclick="showDiagOnClick(this)">Graph</a>
+<div class="Relationship" id="Relationship1">
+
+<map  name="57DF9E2C550928D9">
+  <area  href=#OBMK9BB4A609626A9B3B shape="polygon" coords="572, 357, 563, 357, 563, 371, 487, 371, 487, 357, 572, 357"    title="Functional Asset that is the subject of a Governance Event.">
+  
+  <area  href=#OBMK9BB4A55D626A9A6C shape="polygon" coords="439, 352, 638, 352, 638, 362, 439, 362"    title="Functional Asset that is the subject of a Driver.">
+  
+  <area  href=514E62CE620F22C1.htm#OBMK514E62CE620F22C1 shape="polygon" coords="667, 601, 667, 590, 768, 590, 768, 601, 667, 601"   target="_top"  title="An&#160; Aggregate Block (Type) is a class of&#160; Aggregate Blocks.">
+  
+  <area  href=A4A5B3F855585CE1.htm#OBMKA4A5B3F855585CE1 shape="polygon" coords="663, 612, 663, 601, 772, 601, 772, 612, 663, 612"   target="_top"  title="An&#160; Architecture Block (Type) is a type of Architecture Block which is used in the description of the enterprise, such as Processes, Org-Units, Applications.">
+  
+  <area  href=c229c44e5d0c649f.htm#OBMKC229C44E5D0C649F shape="polygon" coords="666, 644, 666, 630, 770, 630, 770, 644, 666, 644"   target="_top"  title="Blocks used to describe the functional architecture of an ~BR6K086dIfvA[Enterprise].">
+  
+  <area  href="07ca0f015dd84efa.htm" shape="rect" coords="638, 588, 798, 653"   target="_top"  title="&#160;Functional Assets encompasse Architecture Blocks used to describe how an enterprise function. This includes the purposes of an enterprise (Capability) and the way the enterprise operates to fulfill these purposes (Agents and their&#160; Behaviors).">
+  
+  <area  href=514E62CE620F22C1.htm#OBMK514E62CE620F22C1 shape="polygon" coords="664, 337, 664, 326, 766, 326, 766, 337, 664, 337"   target="_top"  title="An&#160; Aggregate Block (Type) is a class of&#160; Aggregate Blocks.">
+  
+  <area  href=A4A5B3F855585CE1.htm#OBMKA4A5B3F855585CE1 shape="polygon" coords="660, 348, 660, 337, 770, 337, 770, 348, 660, 348"   target="_top"  title="An&#160; Architecture Block (Type) is a type of Architecture Block which is used in the description of the enterprise, such as Processes, Org-Units, Applications.">
+  
+  <area  href=c229c44e5d0c649f.htm#OBMKC229C44E5D0C649F shape="polygon" coords="663, 380, 663, 367, 767, 367, 767, 380, 663, 380"   target="_top"  title="Blocks used to describe the functional architecture of an ~BR6K086dIfvA[Enterprise].">
+  
+  <area  href="07ca0f015dd84efa.htm" shape="rect" coords="638, 324, 792, 388"   target="_top"  title="&#160;Functional Assets encompasse Architecture Blocks used to describe how an enterprise function. This includes the purposes of an enterprise (Capability) and the way the enterprise operates to fulfill these purposes (Agents and their&#160; Behaviors).">
+  
+  <area  href=fbd63aa15500b4c4.htm shape="polygon" coords="207, 89, 641, 89, 641, 100, 207, 100"   target="_top"  title="&#160;&#160;Stakeholder&#160;participating to an assessment.">
+  
+  <area  href=2cc9b61d55264ee2.htm shape="polygon" coords="135, 241, 246, 241, 246, 252, 135, 252"   target="_top"  title="Driver&#160;.which motivates an&#160;Driver Assessment&#160;.">
+  
+  <area  href=#OBMK63F8763455AE1B3D shape="polygon" coords="439, 200, 639, 200, 639, 210, 439, 210"    title="-">
+  
+  <area  href=ca353b065fc5e146.htm#OBMKCA353B065FC5E146 shape="polygon" coords="674, 189, 674, 178, 763, 178, 763, 189, 674, 189"   target="_top"  title="A&#160; Categorization Block is a Model Building Block used to provid classification and qualification of other Model Building Blocks.For instance, Tags are used for classification. Constraint Value are used for qualification or quantification.">
+  
+  <area  href=4d035025569f42f3.htm#OBMK4D035025569F42F3 shape="polygon" coords="659, 221, 659, 208, 778, 208, 778, 221, 659, 221"   target="_top"  title="KPI dimensions can be elementary or composite.">
+  
+  <area  href="63f8870255ae1ba2.htm" shape="rect" coords="638, 176, 799, 240"   target="_top"  title="A&#160; Constraining Property expresses a type of constraint that can be applied to Architecture Blocks.">
+  
+  <area  href=#OBMK9BB4A55D626A9A6C shape="polygon" coords="578, 515, 567, 515, 567, 529, 488, 529, 488, 515, 578, 515"    title="Functional Asset that is the subject of a Driver.">
+  
+  <area  href=#OBMK2CC9764F55263E70 shape="polygon" coords="405, 513, 639, 513, 639, 523, 405, 523"    title="Partner Type which is the subject of a business need.">
+  
+  <area  href=e2ef091962147ad7.htm#OBMKE2EF091962147AD7 shape="polygon" coords="662, 506, 662, 495, 775, 495, 775, 506, 662, 506"   target="_top"  title="&#160;Business Operating Agent is the supertype of all types of Agents that produce Business Outcomes which benefit to internal or external parties (especially Customers) of the enterprise.">
+  
+  <area  href=99c2b8f455b05cbf.htm#OBMK99C2B8F455B05CBF shape="polygon" coords="681, 538, 681, 525, 756, 525, 756, 538, 681, 538"   target="_top"  title="A conceptual stakeholder type that interacts with the enterprise in the context of the enterprise business architecture environment. Examples : &#39;Private Sector Customer&#39;, &#39;Regulation Authority&#39;, &#39;Supplier&#39;.">
+  
+  <area  href="bcebd65854913935.htm" shape="rect" coords="638, 493, 799, 552"   target="_top"  title="A&#160; Business Partner is a party who interacts with the enterprise in the context its operating eco-system (the Business Operating Ecosystem).">
+  
+  <area  href=#OBMK9BB4A55D626A9A6C shape="polygon" coords="571, 443, 564, 443, 564, 457, 485, 457, 485, 443, 571, 443"    title="Functional Asset that is the subject of a Driver.">
+  
+  <area  href=#OBMK8D5E95F8552E2474 shape="polygon" coords="402, 436, 639, 436, 639, 447, 402, 447"    title="Regulation Framework which is the subject of a Regulation Concern.">
+  
+  <area  href=a67dc9f45f8eb2a9.htm#OBMKA67DC9F45F8EB2A9 shape="polygon" coords="672, 429, 672, 418, 764, 418, 764, 429, 672, 429"   target="_top"  title="A&#160; Reference Dictionary is an aspect of Model Namespace that are used as reference libraries used to hold reference materials used to develop architectures.">
+  
+  <area  href=083d120d5d6d84a3.htm#OBMK083D120D5D6D84A3 shape="polygon" coords="685, 461, 685, 448, 752, 448, 752, 461, 685, 461"   target="_top"  title="-">
+  
+  <area  href="8d5e9560552e22b2.htm" shape="rect" coords="638, 416, 799, 480"   target="_top"  title="A&#160; Policy Dictionary is a set of Policy(ies), defined in laws published by governements or in policy frameworks defined by the enterprise.">
+  
+  <area  href=#OBMK9BB4A55D626A9A6C shape="polygon" coords="572, 619, 564, 619, 564, 633, 485, 633, 485, 619, 572, 619"    title="Functional Asset that is the subject of a Driver.">
+  
+  <area  href=#OBMK2CC9977D55264886 shape="polygon" coords="409, 614, 638, 614, 638, 625, 409, 625"    title="Enterprise Architecture item which is the subject of an architectural issue.">
+  
+  <area  href=#OBMKBCEBD062549128BC shape="polygon" coords="347, 620, 310, 613, 300, 610, 303, 600, 313, 602, 350, 610"    title="-">
+  
+  <area  href=7a717b8455962a34.htm#OBMK7A717B8455962A34 shape="polygon" coords="307, 600, 307, 589, 391, 589, 391, 600, 307, 600"   target="_top"  title="Endogenous Drivers are those which subject of concern are within an enterprise that can impact its employment of Means or achievement of Ends.">
+  
+  <area  href=061112e056466fff.htm#OBMK061112E056466FFF shape="polygon" coords="307, 626, 307, 613, 390, 613, 390, 626, 307, 626"   target="_top"  title="Kind of Stakeholder Driver which subject is a specific characteristic of one or several Enterprise Architecture Building Block. This characteristic can be a strengh or a weakness.">
+  
+  <area  href="91be945354882b15.htm" shape="rect" coords="287, 586, 410, 646"   target="_top"  title="An&#160; Architectural Driver is a kind of Endogenous Driver which is a change in some aspects of Functional Assets of the Enterprise (defect, obsolescence, attrition, etc.), which will have significant impacts on the Enterprise&#39;s activities and goals.">
+  
+  <area  href=8d5e9c24552e2b8a.htm shape="polygon" coords="439, 270, 639, 270, 639, 280, 439, 280"   target="_top"  title="Potential&#160;geopolitical&#160;location where the concern is relevant.">
+  
+  <area  href=ebcfaeac5ad76ed7.htm#OBMKEBCFAEAC5AD76ED7 shape="polygon" coords="655, 264, 655, 253, 782, 253, 782, 264, 655, 264"   target="_top"  title="An Individual which is used in the description of the enterprise.">
+  
+  <area  href=b1edb2612c1401d3.htm#OBMKB1EDB2612C1401D3 shape="polygon" coords="704, 290, 704, 277, 733, 277, 733, 290, 704, 290"   target="_top"  title="A site is the geographical location of an organization. Examples: Boston subsidiary, Seattle plant, and more generally the headquarters, subsidiaries, plants, warehouses, etc.">
+  
+  <area  href="8d5e986f552e28d5.htm" shape="rect" coords="638, 250, 799, 310"   target="_top"  title="A&#160; Location is a geopolitical location anywhere on the earth.">
+  
+  <area  href=2cc9b802552653f2.htm shape="polygon" coords="439, 138, 644, 138, 644, 149, 439, 149"   target="_top"  title="Set of Stakeholders having an interest or concern in the state of the enterprise.">
+  
+  <area  href=3B539CBB551E4C2A.htm#OBMK3B539CBB551E4C2A shape="polygon" coords="40, 230, 40, 219, 101, 219, 101, 230, 40, 230"   target="_top"  title="An&#160; Assessment is the result of the act of judging or assessing an aspect of the enterprise, based on an enterprise description and on the comparison of this description with the actual state of the enterprise.">
+  
+  <area  href="2cc9b5a755264db7.htm" shape="rect" coords="5, 216, 136, 264"   target="_top"  title="A&#160; Driver Assessment is a kind of Assessment which is motivated by a Stakeholder Driver.">
+  
+  <area  href=3B539CBB551E4C2A.htm#OBMK3B539CBB551E4C2A shape="polygon" coords="52, 329, 52, 318, 113, 318, 113, 329, 52, 329"   target="_top"  title="An&#160; Assessment is the result of the act of judging or assessing an aspect of the enterprise, based on an enterprise description and on the comparison of this description with the actual state of the enterprise.">
+  
+  <area  href="12d73cfb552e4d0f.htm" shape="rect" coords="12, 315, 154, 363"   target="_top"  title="A series of actions advancing a principle or tending toward a particular end.">
+  
+  <area  href=#OBMK2CC969EB552634E6 shape="polygon" coords="396, 436, 396, 461, 345, 461, 345, 450, 386, 450, 386, 436"    title="-">
+  
+  <area  href=7a717ae75596283e.htm#OBMK7A717AE75596283E shape="polygon" coords="303, 420, 303, 409, 380, 409, 380, 420, 303, 420"   target="_top"  title="An&#160; Exogenous Driver is an external Driver whose source of change is outside the enterprise&rsquo;s organizational boundaries and that can impact its employment of Means or achievement of Ends.">
+  
+  <area  href=06110f7256466d33.htm#OBMK06110F7256466D33 shape="polygon" coords="303, 446, 303, 433, 380, 433, 380, 446, 303, 446"   target="_top"  title="Driver which includes acts of parliament and associated regulations, international and national standards, local government by-laws, and mechanisms to monitor and ensure compliance with these.">
+  
+  <area  href="2cc969e45526346d.htm" shape="rect" coords="281, 406, 404, 466"   target="_top"  title="A&#160; Regulatory Driver is an Exogenous Driver which includes acts of parliament and associated regulations, international and national standards, local government by-laws, and mechanisms to monitor and ensure compliance with these.">
+  
+  <area  href=#OBMKBCEBD06854912929 shape="polygon" coords="356, 480, 356, 461, 345, 461, 345, 450, 367, 450, 367, 480"    title="-">
+  
+  <area  href=7a717ae75596283e.htm#OBMK7A717AE75596283E shape="polygon" coords="307, 493, 307, 482, 384, 482, 384, 493, 307, 493"   target="_top"  title="An&#160; Exogenous Driver is an external Driver whose source of change is outside the enterprise&rsquo;s organizational boundaries and that can impact its employment of Means or achievement of Ends.">
+  
+  <area  href=061111b056466f24.htm#OBMK061111B056466F24 shape="polygon" coords="311, 520, 311, 506, 380, 506, 380, 520, 311, 520"   target="_top"  title="Kind of Stakeholder Driver which expresses expectations coming from partners, customers or suppliers, which interact directly with the enterprise.">
+  
+  <area  href="a10ab13f54886125.htm" shape="rect" coords="285, 480, 408, 537"   target="_top"  title="A&#160; Business Driver is a kind of Exogenous Driver which expresses expectations coming from Business Partners (customers or suppliers) who interact directly with the enterprise.">
+  
+  <area  href=#OBMK7A717B9155962AA8 shape="polygon" coords="309, 557, 309, 389, 343, 389, 343, 400, 320, 400, 320, 557"    title="-">
+  
+  <area  href=bcebd0565491287e.htm#OBMKBCEBD0565491287E shape="polygon" coords="330, 570, 330, 559, 362, 559, 362, 570, 330, 570"   target="_top"  title="A&#160; Driver is a factor which can have a significant impact on the activities, and goals of an Enterprise or a Management System.">
+  
+  <area  href="7a717b8455962a34.htm" shape="rect" coords="268, 557, 425, 654"   target="_top"  title="Endogenous Drivers are those which subject of concern are within an enterprise that can impact its employment of Means or achievement of Ends.">
+  
+  <area  href=#OBMK7A717B54559629E9 shape="polygon" coords="284, 457, 284, 395, 343, 395, 343, 406, 295, 406, 295, 457"    title="-">
+  
+  <area  href=bcebd0565491287e.htm#OBMKBCEBD0565491287E shape="polygon" coords="329, 386, 329, 375, 361, 375, 361, 386, 329, 386"   target="_top"  title="A&#160; Driver is a factor which can have a significant impact on the activities, and goals of an Enterprise or a Management System.">
+  
+  <area  href="7a717ae75596283e.htm" shape="rect" coords="266, 373, 425, 542"   target="_top"  title="An&#160; Exogenous Driver is an external Driver whose source of change is outside the enterprise&rsquo;s organizational boundaries and that can impact its employment of Means or achievement of Ends.">
+  
+  <area  href=BCDBC016617A55BE.htm#OBMKBCDBC016617A55BE shape="polygon" coords="88, 65, 88, 54, 135, 54, 135, 65, 88, 65"   target="_top"  title="An&#160; Appraisal is a time bound statement expressed by stakeholders to qualify Architecture Blocks with respect to their worth.">
+  
+  <area  href=9500e0484e37c835.htm#OBMK9500E0484E37C835 shape="polygon" coords="71, 91, 71, 78, 151, 78, 151, 91, 71, 91"   target="_top"  title="Objects of this type are created either at assessment session deployment or at aggregation. Objects created at deployment are owned by the session and enable determination of the object that will be evaluated, by whom and where. It is also associated with values calculated from answers given in the assessor questionnaire for each of the assessed characteristics. ">
+  
+  <area  href="3B539CBB551E4C2A.htm" shape="rect" coords="15, 51, 207, 125"   target="_top"  title="An&#160; Assessment is the result of the act of judging or assessing an aspect of the enterprise, based on an enterprise description and on the comparison of this description with the actual state of the enterprise.">
+  
+  <area  href=8a228c0e550a3122.htm#OBMK8A228C0E550A3122 shape="polygon" coords="670, 91, 670, 80, 767, 80, 767, 91, 670, 91"   target="_top"  title="&#160;Governance Resources include Governing Teams, Governance Activitys, Governance Events and Measures used to guide and steer Initiatives.">
+  
+  <area  href=000000008000003f.htm#OBMK000000008000003F shape="polygon" coords="681, 117, 681, 104, 756, 104, 756, 117, 681, 117"   target="_top"  title="-">
+  
+  <area  href="bcebd0175491272a.htm" shape="rect" coords="638, 78, 799, 167"   target="_top"  title="A&#160; Stakeholder is an individual, team, organization, or classes thereof, having an interest in the enterprise.">
+  
+  <area  href=1737b50b5fe27cba.htm#OBMK1737B50B5FE27CBA shape="polygon" coords="302, 132, 302, 121, 383, 121, 383, 132, 302, 132"   target="_top"  title="A&#160; Governance Event is any event that has an impact on the management and governance of an Enduring Initiative.">
+  
+  <area  href=06110e0d56466c02.htm#OBMK06110E0D56466C02 shape="polygon" coords="302, 158, 302, 145, 383, 145, 383, 158, 302, 158"   target="_top"  title="Interest in an enterprise (or a system) relevant to one or more of its stakeholders.">
+  
+  <area  href="bcebd0565491287e.htm" shape="rect" coords="247, 118, 440, 674"   target="_top"  title="A&#160; Driver is a factor which can have a significant impact on the activities, and goals of an Enterprise or a Management System.">
+  
+  <area  href="57df9e2b550928b8.htm" shape="rect" coords="0, 0, 850, 714"   target="_top"  title="-">
+  
+</map>
+<img  src="../images/57df9e2b550928b8_57df9e2c550928d9_i.png" alt="../images/57df9e2b550928b8_57df9e2c550928d9_i.png" usemap="#57DF9E2C550928D9" height="724" width="850" border=0>
+
+</div>
+<div class="Relationship" id="Relationship2">
+<div id="klmm" style="width: 100vw; height: 100vh;" ></div>
+<!-- <script src="../standard/assets/js/keylines_domain.js"></script> -->
+<script >
+const data = {
+ type: 'LinkChart',
+  items: [
+  //nodes
+    {type: 'node', id:'57DF9E2B550928B8', t:"Drivers & Stakeholders", sh:'box', d:""},
+    {type: 'node', id:'A10AB13F54886125', t:"Business Driver", parentId:'7A717AE75596283E', sh:'circle', d:"A Business Driver is a kind of Exogenous Driver which expresses expectations coming from Business Partners (customers or suppliers) who interact directly with the enterprise."},
+    {type: 'node', id:'E2EF086D62147802', t:"EA Pattern - Business Operating Pattern", sh:'box', d:"The EA Pattern - Business Operating Pattern domain defines concepts and relationships used to model how a Business Operating Agent operates/functions in its Operating Eco-System to produce Business Outcomes."},
+    {type: 'node', id:'BCEBD65854913935', t:"Business Partner", parentId:'E2EF086D62147802', sh:'circle', d:"A Business Partner is a party who interacts with the enterprise in the context its operating eco-system (the Business Operating Ecosystem)."},
+    {type: 'node', id:'7A717B8455962A34', t:"Endogenous Driver", parentId:'BCEBD0565491287E', sh:'circle', d:"Endogenous Drivers are those which subject of concern are within an enterprise that can impact its employment of Means or achievement of Ends."},
+    {type: 'node', id:'7A717AE75596283E', t:"Exogenous Driver", parentId:'BCEBD0565491287E', sh:'circle', d:"An Exogenous Driver is an external Driver whose source of change is outside the enterprises organizational boundaries and that can impact its employment of Means or achievement of Ends."},
+    {type: 'node', id:'91BE945354882B15', t:"Architectural Driver", parentId:'7A717B8455962A34', sh:'circle', d:"An Architectural Driver is a kind of Endogenous Driver which is a change in some aspects of Functional Assets of the Enterprise (defect, obsolescence, attrition, etc.), which will have significant impacts on the Enterprises activities and goals."},
+    {type: 'node', id:'02AF0A4B5A182417', t:"Operating Semantic", sh:'box', d:"The Operating Semantic domain is used to model how a system (Agent) operates/functions (Behavior) in its Operating Eco-System to produce Outcomes that benefit (value) to other Agents or affect (have an effect upon) these Agents."},
+    {type: 'node', id:'07CA0F015DD84EFA', t:"Functional Asset", parentId:'02AF0A4B5A182417', sh:'circle', d:"Functional Assets encompasse Architecture Blocks used to describe how an enterprise function. This includes the purposes of an enterprise (Capability) and the way the enterprise operates to fulfill these purposes (Agents and their  Behaviors)."},
+    {type: 'node', id:'2CC9B5A755264DB7', t:"Driver Assessment", parentId:'3B539CBB551E4C2A', sh:'circle', d:"A Driver Assessment is a kind of Assessment which is motivated by a Stakeholder Driver."},
+    {type: 'node', id:'2CC969E45526346D', t:"Regulatory Driver", parentId:'7A717AE75596283E', sh:'circle', d:"A Regulatory Driver is an Exogenous Driver which includes acts of parliament and associated regulations, international and national standards, local government by-laws, and mechanisms to monitor and ensure compliance with these."},
+    {type: 'node', id:'02F70FDC600F4179', t:"Policy Pattern", sh:'box', d:"The Policy Pattern domain defines Directives and rules that constrain enterprise structures and behaviors."},
+    {type: 'node', id:'8D5E9560552E22B2', t:"Policy Dictionary", parentId:'02F70FDC600F4179', sh:'circle', d:"A Policy Dictionary is a set of Policy(ies), defined in laws published by governements or in policy frameworks defined by the enterprise."},
+    {type: 'node', id:'12D73CFB552E4D0F', t:"Stragegy Evaluation", parentId:'3B539CBB551E4C2A', sh:'circle', d:"A series of actions advancing a principle or tending toward a particular end."},
+    {type: 'node', id:'57DF58AB55091A58', t:"Enterprise Strategy & Roadmapping", sh:'box', d:"The Enterprise Strategy & Roadmapping domain supports the process of analysing and optimising the delivery of Business Operating Capability(ies) in line with the Enterprise market analysis and strategic intent. "},
+    {type: 'node', id:'036A3DE3548F229E', t:"Enterprise Stage", parentId:'57DF58AB55091A58', sh:'circle', d:"An Enterprise Stage is a past, current or future state of the enterprise. "},
+    {type: 'node', id:'BCEBD0565491287E', t:"Driver", parentId:'57DF9E2B550928B8', sh:'circle', d:"A Driver is a factor which can have a significant impact on the activities, and goals of an Enterprise or a Management System."},
+    {type: 'node', id:'C30BD1505A5D97F9', t:"Architecture Model Management", sh:'box', d:"The Architecture Model Management domain defines top level constructs used in enterprise architecting: Architecture Blocks, Architecture Namespaces, Architecture Category(ies), Constraint Value, Location."},
+    {type: 'node', id:'63F8870255AE1BA2', t:"Constraining Property", parentId:'C30BD1505A5D97F9', sh:'circle', d:"A Constraining Property expresses a type of constraint that can be applied to Architecture Blocks."},
+    {type: 'node', id:'8D5E986F552E28D5', t:"Location", parentId:'C30BD1505A5D97F9', sh:'circle', d:"A Location is a geopolitical location anywhere on the earth."},
+    {type: 'node', id:'DC0BED9D5AE95BC0', t:"Teams Pattern", sh:'box', d:"The Teams Pattern domain defines organization structure and behavior as well as instrurments required to govern Enduring Initiatives."},
+    {type: 'node', id:'BCEBD0175491272A', t:"Stakeholder", parentId:'DC0BED9D5AE95BC0', sh:'circle', d:"A Stakeholder is an individual, team, organization, or classes thereof, having an interest in the enterprise."},
+    {type: 'node', id:'3B539CBB551E4C2A', t:"Assessment", parentId:'57DF9E2B550928B8', sh:'circle', d:"An Assessment is the result of the act of judging or assessing an aspect of the enterprise, based on an enterprise description and on the comparison of this description with the actual state of the enterprise."},
+    {type: 'node', id:'83BB9D706192357B', t:"Appraisal Pattern", sh:'box', d:"The Appraisal Pattern domain defines constructs used by stakeholders to asses and qualify Architecture Blocks."},
+    {type: 'node', id:'83BBA14F619242E6', t:"Assessment Value", parentId:'83BB9D706192357B', sh:'circle', d:""},
+  //edges
+    { type: 'link', id:'A10AB13F54886125-2CC9764F55263E70', id1:'A10AB13F54886125', id2:'BCEBD65854913935', t:"Subject Partner"},
+    { type: 'link', id:'91BE945354882B15-2CC9977D55264886', id1:'91BE945354882B15', id2:'07CA0F015DD84EFA', t:"Subject Asset"},
+    { type: 'link', id:'2CC9B5A755264DB7-2CC9B61D55264EE2', id1:'2CC9B5A755264DB7', id2:'BCEBD0565491287E', t:"assessment motivation"},
+    { type: 'link', id:'2CC969E45526346D-8D5E95F8552E2474', id1:'2CC969E45526346D', id2:'8D5E9560552E22B2', t:"Subject Policy"},
+    { type: 'link', id:'12D73CFB552E4D0F-12D73F2B552E4F67', id1:'12D73CFB552E4D0F', id2:'BCEBD0565491287E', t:"/identified concern"},
+    { type: 'link', id:'12D73CFB552E4D0F-12D73F96552E4FC8', id1:'12D73CFB552E4D0F', id2:'2CC9B5A755264DB7', t:"Driver Assessment"},
+    { type: 'link', id:'12D73CFB552E4D0F-67F06CEC552E1FC4', id1:'12D73CFB552E4D0F', id2:'036A3DE3548F229E', t:"governed enterprise"},
+    { type: 'link', id:'BCEBD0565491287E-63F8763455AE1B3D', id1:'BCEBD0565491287E', id2:'63F8870255AE1BA2', t:"Driver Measure"},
+    { type: 'link', id:'BCEBD0565491287E-9BB4A55D626A9A6C', id1:'BCEBD0565491287E', id2:'07CA0F015DD84EFA', t:"Driver Subject"},
+    { type: 'link', id:'BCEBD0565491287E-8D5E9C24552E2B8A', id1:'BCEBD0565491287E', id2:'8D5E986F552E28D5', t:"Relevant Location"},
+    { type: 'link', id:'BCEBD0565491287E-2CC9B802552653F2', id1:'BCEBD0565491287E', id2:'BCEBD0175491272A', t:"concerned stakeholder"},
+    { type: 'link', id:'3B539CBB551E4C2A-83BBA17A61924460', id1:'3B539CBB551E4C2A', id2:'83BBA14F619242E6', t:"Assessment Value"},
+    { type: 'link', id:'3B539CBB551E4C2A-9BB4A184626A922C', id1:'3B539CBB551E4C2A', id2:'07CA0F015DD84EFA', t:"Assessed Asset"},
+    { type: 'link', id:'3B539CBB551E4C2A-FBD63AA15500B4C4', id1:'3B539CBB551E4C2A', id2:'BCEBD0175491272A', t:"assessor"}
+  ]
+}
+</script>
+<script src="../standard/assets/js/keylines_domain.js" type="module"></script>
+</div>
+</section>
+<a class="object-section-anchor" id="des"></a>
+<section class="object-section">
+<h4>CONCEPT DESCRIPTIONS</h4> 
+<hr class="sectionbreak" />
+<h5>Concrete Concepts</h5>
+<table class="table  table-set-col-width">
+<thead>
+<tr><th>Concept</th><th>Description</th><th>HOPEX Metaclass</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="91be945354882b15.htm" target="_top">Architectural Driver</a></td>
+<td class="description-text">An&#160;<b> Architectural Driver</b> is a kind of <a href="7a717b8455962a34.htm" target="_top"><b><u>Endogenous Driver</u></b></a> which is a change in some aspects of <a href="07ca0f015dd84efa.htm" target="_top"><b><u>Functional Asset</u></b></a>s of the <a href="b181b82a54891668.htm" target="_top"><b><u>Enterprise</u></b></a> (defect, obsolescence, attrition, etc.), which will have significant impacts on the <a href="b181b82a54891668.htm" target="_top"><b><u>Enterprise</u></b></a>&#39;s activities and goals.       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="061112e056466fff.htm" target="_top">Architectural Driver</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="a10ab13f54886125.htm" target="_top">Business Driver</a></td>
+<td class="description-text">A&#160;<b> Business Driver</b> is a kind of <a href="7a717ae75596283e.htm" target="_top"><b><u>Exogenous Driver</u></b></a> which expresses expectations coming from <a href="bcebd65854913935.htm" target="_top"><b><u>Business Partner</u></b></a>s (customers or suppliers) who interact directly with the enterprise.       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="061111b056466f24.htm" target="_top">Business Driver</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="2cc9b5a755264db7.htm" target="_top">Driver Assessment</a></td>
+<td class="description-text">A&#160;<b> Driver Assessment</b> is a kind of <a href="3B539CBB551E4C2A.htm" target="_top"><b><u>Assessment</u></b></a> which is motivated by a Stakeholder Driver.<i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Challenge"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - Challenge</a></li></ul></i>        </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="8d5e986f552e28d5.htm" target="_top">Location</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Location</b> is a geopolitical location anywhere on the earth.</div><div align="left" style="min-height: 12pt; ">Examples: </div><div align="left" style="min-height: 12pt; ">- France</div><div align="left" style="min-height: 12pt; ">- Paris</div><div align="left" style="min-height: 12pt; ">- Washington DC</div><div align="left" style="min-height: 12pt; ">- Cairo</div><div align="left" style="min-height: 12pt; ">- Buenos-Aires</div><div align="left" style="min-height: 12pt; ">- Asia</div><i><ul>References:<li><a href="https://15926.blog/topics/data-model/index.htm#SpatialLocation"><img src="../standard/extr.ico.gif">&nbsp;ISO 15926 - SpatialLocation</a></li> <li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ActualLocation"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - ActualLocation</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="b1edb2612c1401d3.htm" target="_top">Site</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="2cc969e45526346d.htm" target="_top">Regulatory Driver</a></td>
+<td class="description-text"><div align="left" style="min-height: 13pt; ">A&#160;<b> Regulatory Driver</b> is an <a href="7a717ae75596283e.htm" target="_top"><b><u>Exogenous Driver</u></b></a> which includes acts of parliament and associated regulations, international and national standards, local government by-laws, and mechanisms to monitor and ensure compliance with these.</div><div align="left" style="min-height: 13pt; "></div>       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="06110f7256466d33.htm" target="_top">Regulatory Driver</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="12d73cfb552e4d0f.htm" target="_top">Stragegy Evaluation</a></td>
+<td class="description-text">A series of actions advancing a principle or tending toward a particular end.       </td>
+<td></td>
+</tr>  
+</tbody>
+</table>
+<hr class="sectionbreak" />
+<h5>Abstract Concepts</h5>
+<table class="table  table-set-col-width">
+<thead >
+<tr><th>Concept</th><th>Description</th><th>HOPEX Metaclass</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="3B539CBB551E4C2A.htm" target="_top">Assessment</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Assessment</b> is the result of the act of judging or assessing an aspect of the enterprise, based on an enterprise description and on the comparison of this description with the actual state of the enterprise.</div><div align="left" style="min-height: 12pt; ">An&#160;<b> Assessment</b> is made by one or several <a href="bcebd0175491272a.htm" target="_top"><b><u>Stakeholder</u></b></a> s.</div>       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="9500e0484e37c835.htm" target="_top">Assessment Node</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="bcebd65854913935.htm" target="_top">Business Partner</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Business Partner</b> is a party who interacts with the enterprise in the context its operating eco-system (the <a href="f8e64b51621dd3f3.htm" target="_top"><b><u>Business Operating Ecosystem</u></b></a>).</div><div align="left" style="min-height: 12pt; ">Example : Private Sector Customer, Regulation Authority,&#160;<b> Public health Authority</b>.</div>       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="99c2b8f455b05cbf.htm" target="_top">Business Partner</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="63f8870255ae1ba2.htm" target="_top">Constraining Property</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Constraining Property</b> expresses a type of constraint that can be applied to <a href="d342d88e5b121401.htm" target="_top"><b><u>Architecture Block</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">These constraints can be either <a href="48d2c45c63b57003.htm" target="_top"><b><u>Measurable Property (Abstract)</u></b></a> (Time, Mass, Cost, ..), <a href="f68d26e263b8e425.htm" target="_top"><b><u>Environmental Property</u></b></a>s (Terrain Type, Light conditions, Weather conditions) or a grouping of these (<a href="48d2bc1a63b567da.htm" target="_top"><b><u>Set of Constraining Properties</u></b></a>).</div><div align="left" style="min-height: 12pt; "><b>&#160;Constraining Property</b>s are used to constrain <a href="d342d88e5b121401.htm" target="_top"><b><u>Architecture Block</u></b></a>s in the context of non-functional requirement analysis and <a href="abba950e62a94390.htm" target="_top"><b><u>Value Proposition</u></b></a> analysis.</div><i><ul>References:<li><a href="https://method.demomega.com/MM-OVERVIEW/pages/architecture-content/chap02.html#tag_02_04"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Content Metamodel - Measure</a></li> <li><a href="../resources/Ackoff-Choice-Communication-and-Conflict.pdf#MorphologicalProperty"><img src="../standard/extr.ico.gif">&nbsp;Russell Ackoff - Choice &amp; Communication - MorphologicalProperty</a></li> <li><a href="https://en.wikipedia.org/wiki/List_of_system_quality_attributes"><img src="../standard/extr.ico.gif">&nbsp;Wikipeddia - List of quality attributes</a></li> <li><a href="https://en.wikipedia.org/wiki/Measurement"><img src="../standard/extr.ico.gif">&nbsp;Wikipedia - Measurement</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="4d035025569f42f3.htm" target="_top">KPI Dimension Building Block</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="bcebd0565491287e.htm" target="_top">Driver</a></td>
+<td class="description-text">A&#160;<b> Driver</b> is a factor which can have a significant impact on the activities, and goals of an <a href="b181b82a54891668.htm" target="_top"><b><u>Enterprise</u></b></a> or a <a href="29df3f4060084c07.htm" target="_top"><b><u>Management System</u></b></a>.<i><ul>References:<li><a href="https://www.iso.org/obp/ui/#iso:std:iso-iec-ieee:42010:ed-2:v1:enConcern"><img src="../standard/extr.ico.gif">&nbsp;ISO 42010 - Concern</a></li> <li><a href="../../../www.omg.org/spec/BMM/1.3/formal-15-05-19.pdf#page=24"><img src="../standard/extr.ico.gif">&nbsp;OMG - BMM - Influencer</a></li> <li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Driver"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - Driver</a></li> <li><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_37"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Definitions - Concern</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="06110e0d56466c02.htm" target="_top">Stakeholder Driver</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="7a717b8455962a34.htm" target="_top">Endogenous Driver</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">Endogenous Drivers are those which subject of concern are within an enterprise that can impact its employment of Means or achievement of Ends.</div><div align="left" style="min-height: 12pt; "></div><div align="left" style="min-height: 12pt; "></div><i><ul>References:<li><a href="../../../www.omg.org/spec/BMM/1.3/formal-15-05-19.pdf#page=49"><img src="../standard/extr.ico.gif">&nbsp;OMG - BMM - Internal Influencer</a></li></ul></i>        </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="7a717ae75596283e.htm" target="_top">Exogenous Driver</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Exogenous Driver</b> is an external <a href="bcebd0565491287e.htm" target="_top"><b><u>Driver</u></b></a> whose source of change is outside the enterprise&rsquo;s organizational boundaries and that can impact its employment of Means or achievement of Ends.</div><div align="left" style="min-height: 12pt; "></div><div align="left" style="min-height: 12pt; "></div><i><ul>References:<li><a href="../../../www.omg.org/spec/BMM/1.3/formal-15-05-19.pdf#page=49"><img src="../standard/extr.ico.gif">&nbsp;OMG - BMM - External Influencer</a></li></ul></i>        </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="07ca0f015dd84efa.htm" target="_top">Functional Asset</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; "><b>&#160;Functional Asset</b>s encompasse <a href="d342d88e5b121401.htm" target="_top"><b><u>Architecture Block</u></b></a>s used to describe how an enterprise function. This includes the purposes of an enterprise (<a href="b181b98c54891882.htm" target="_top"><b><u>Capability</u></b></a>) and the way the enterprise operates to fulfill these purposes (<a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s and their&#160; <a href="986cd4ec5ffca3ac.htm" target="_top"><b><u>Behavior</u></b></a>s).</div><div align="left" style="min-height: 12pt; "><b>&#160;Functional Asset</b>s include:</div><div align="left" style="min-height: 12pt; ">1. Blocks defining results of <a href="986cd4ec5ffca3ac.htm" target="_top"><b><u>Behavior</u></b></a>s of the enterprise or its sub-systems, that benefit to it internal or external customers : <a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>,</div><div align="left" style="min-height: 12pt; ">2. Blocks used to describe the capabilities of the enterprise or its sub-systems: <a href="b181b98c54891882.htm" target="_top"><b><u>Capability</u></b></a>,</div><div align="left" style="min-height: 12pt; ">3. Blocks used to describe information: <a href="e6f250185f772ee1.htm" target="_top"><b><u>Information Object</u></b></a>.</div><div align="left" style="min-height: 12pt; ">4. Blocks used to describe how the enterprise operates: <a href="a371a43b5b865817.htm" target="_top"><b><u>Operating Asset</u></b></a>s (<a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>, <a href="d682ef5e56144e77.htm" target="_top"><b><u>Process</u></b></a>, <a href="333f35ee5dde0c8c.htm" target="_top"><b><u>Interaction Scenario</u></b></a>, <a href="24ae31b55ed1c66d.htm" target="_top"><b><u>Service Interface</u></b></a>).</div><div align="left" style="min-height: 12pt; ">All&#160;<b> Functional Asset</b>s are constrained by <a href="959320325ee7fe24.htm" target="_top"><b><u>Policy</u></b></a>s and are exposed to <a href="427c1c7d64b5d4a1.htm" target="_top"><b><u>Risk Type</u></b></a>s.</div><i><ul>References:<li><a href="../../../complexsystems.mst.edu/media/conference/complexsystems/documents/de_Weck_CAS_Keynote_Nov_2015_updated.pdf#page=40"><img src="../standard/extr.ico.gif">&nbsp;de Weck - The three dimensions of complexity</a></li> <li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Asset"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - Asset</a></li> <li><a href="../resources/Ackoff-Choice-Communication-and-Conflict.pdf#FunctionalClass"><img src="../standard/extr.ico.gif">&nbsp;Russell Ackoff - Choice &amp; Communication - FunctionalClass</a></li> <li><a href="https://www.sebokwiki.org/wiki/Functional_Architecture_(glossary)"><img src="../standard/extr.ico.gif">&nbsp;SEBoK - Functional Architecture</a></li> <li><a href="https://en.wikipedia.org/wiki/Functional_software_architecture#:~:text=A%20functional%20software%20architecture%20(FSA,%2Doperative%20information%2Ddriven%20enterprise."><img src="../standard/extr.ico.gif">&nbsp;Wikipedia - Software Functional Architecture</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="c229c44e5d0c649f.htm" target="_top">Functional Building Block</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="8d5e9560552e22b2.htm" target="_top">Policy Dictionary</a></td>
+<td class="description-text">A&#160;<b> Policy Dictionary</b> is a set of <a href="959320325ee7fe24.htm" target="_top"><b><u>Policy</u></b></a>(ies), defined in laws published by governements or in policy frameworks defined by the enterprise.<br />Both <a href="283131a65da81fbd.htm" target="_top"><b><u>Policy Framework</u></b></a>s and <a href="744b8d735fbfcfa9.htm" target="_top"><b><u>Regulatory Framework</u></b></a>s are&#160;<b> Policy Dictionary</b>(ies).<i><ul>References:<li><a href="https://compliancedictionary.com/term/572"><img src="../standard/extr.ico.gif">&nbsp;UCF Glossary - Framework</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="083d120d5d6d84a3.htm" target="_top">Policy Schema</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="bcebd0175491272a.htm" target="_top">Stakeholder</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Stakeholder</b> is an individual, team, organization, or classes thereof, having an interest in the enterprise.</div><div align="left" style="min-height: 12pt; "><b>&#160;Stakeholder</b>s have concerns with respect to the enterprise considered in relation to its environment.</div><i><ul>References:<li><a href="https://www.iso.org/obp/ui/#iso:std:iso-iec-ieee:42010:ed-2:v1:enStakeholder"><img src="../standard/extr.ico.gif">&nbsp;ISO 42010 - Terms - 3.10 - Stakeholder</a></li> <li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Stakeholder"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - Stakeholder</a></li> <li><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_75"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Definitions - Stakeholder</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="000000008000003f.htm" target="_top">Assignable Entity</a></td>
+</tr>  
+</tbody>
+</table>
+<section>
+
+</div>
+<button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button>
+<script>window.onscroll = function() {scrollFunction()};$(document).on('click', 'a[href^="#"]', function (event) {event.preventDefault();$('html, body').animate({scrollTop: $($.attr(this, 'href')).offset().top}, 500);});function showDiagOnClick(elem){ var x = document.getElementsByClassName('Relationship');var e = elem.getAttribute("value"); for (var i=0; i < x.length ;i++){x[i].style.display="none"; if (x[i].id == e){x[i].style.display="block";x[i].style.textAlign="left";}}}
+</script></html>

@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
+    <url>
+        <loc>https://www.techtarget.com/searchitoperations/video/Install-Calico-for-Kubernetes-in-this-video-walkthrough</loc>
+        <video:video>
+            <video:title>Install Calico for Kubernetes in this video walkthrough</video:title>
+            <video:publication_date>2023-06-12T16:29:00-04:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/SAFch_KvoeY/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=SAFch_KvoeY</video:player_loc>
+            <video:duration>378</video:duration>
+            <video:description>In this video tutorial and demo, a DevOps engineer explains how to manage network traffic in Kubernetes clusters with Calico, a Container Network Interface plugin.</video:description>
+        </video:video>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchitoperations/video/Check-out-this-Docker-Compose-tutorial-for-beginners</loc>
+        <video:video>
+            <video:title>Check out this Docker Compose tutorial for beginners</video:title>
+            <video:publication_date>2020-12-08T11:13:00-05:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/iMx3OoYwP98/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=iMx3OoYwP98</video:player_loc>
+            <video:duration>322</video:duration>
+            <video:description>IT admins tasked with running multi-container applications can use this Docker Compose tutorial -- which also features Redis -- to get started.</video:description>
+        </video:video>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchitoperations/video/Try-out-an-Ansible-dry-run-in-under-5-minutes</loc>
+        <video:video>
+            <video:title>Try out an Ansible dry run in under 5 minutes</video:title>
+            <video:publication_date>2020-08-31T13:10:00-04:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/6F7ugbTQVbs/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=6F7ugbTQVbs</video:player_loc>
+            <video:duration>282</video:duration>
+            <video:description>Learn how the dry run tests Ansible configurations without making any accidental changes to the IT environment. This tutorial covers the steps in less time than it takes to make coffee.</video:description>
+        </video:video>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchitoperations/video/Walk-through-5-essential-DevOps-pipeline-stages</loc>
+        <video:video>
+            <video:title>Walk through 5 essential DevOps pipeline stages</video:title>
+            <video:publication_date>2020-06-23T14:26:00-04:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/IY9WvL95azs/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=IY9WvL95azs</video:player_loc>
+            <video:duration>180</video:duration>
+            <video:description>A DevOps pipeline won't look the same in every organization, but the five phases outlined in this video play a prominent role in most software development and delivery lifecycles.</video:description>
+        </video:video>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchitoperations/video/Implement-compliance-as-code-with-this-Chef-InSpec-tutorial</loc>
+        <video:video>
+            <video:title>Implement compliance-as-code with this Chef InSpec tutorial</video:title>
+            <video:publication_date>2020-05-26T15:35:00-04:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/OUfNSsgtIZQ/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=OUfNSsgtIZQ</video:player_loc>
+            <video:duration>179</video:duration>
+            <video:description>Rather than rely on manual compliance checks, IT admins can use Chef InSpec to automate the process. Watch this brief video to learn essential InSpec commands and run some practice scans.</video:description>
+        </video:video>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchitoperations/video/Perform-Nagios-configuration-step-by-step</loc>
+        <video:video>
+            <video:title>Perform Nagios configuration step by step</video:title>
+            <video:publication_date>2020-03-19T09:45:00-04:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/OtBI58JFMW8/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=OtBI58JFMW8</video:player_loc>
+            <video:duration>478</video:duration>
+            <video:description>Nagios Core helps IT teams monitor system uptime and availability -- but first, they have to install and configure the tool properly. Follow this video tutorial to get started.</video:description>
+        </video:video>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchitoperations/video/Follow-this-Ansible-Vault-example-for-encryption-best-practices</loc>
+        <video:video>
+            <video:title>Follow this Ansible Vault example for encryption best practices</video:title>
+            <video:publication_date>2020-03-11T10:48:00-04:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/vJcNl5QVT4E/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=vJcNl5QVT4E</video:player_loc>
+            <video:duration>164</video:duration>
+            <video:description>IT admins can choose between two types of encryption methods when they use Ansible Vault: file-level and variable-level. Walk through each model with this brief video.</video:description>
+        </video:video>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchitoperations/video/Follow-this-Jenkins-video-tutorial-to-set-up-a-project</loc>
+        <video:video>
+            <video:title>A Jenkins video tutorial to set up a build job</video:title>
+            <video:publication_date>2019-12-09T10:05:00-05:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/IbNCsQjzTnQ/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=IbNCsQjzTnQ</video:player_loc>
+            <video:duration>638</video:duration>
+            <video:description>Jenkins can help IT operations admins perform a number of IT automation tasks -- but first, they have to be familiar with the tool. Learn how to create a Jenkins project, or job, with this video.</video:description>
+        </video:video>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchitoperations/video/Kubernetes-explained-in-5-minutes</loc>
+        <video:video>
+            <video:title>Kubernetes explained in 5 minutes</video:title>
+            <video:publication_date>2019-11-26T09:16:00-05:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/fO3vUMc_WbI/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=fO3vUMc_WbI</video:player_loc>
+            <video:duration>347</video:duration>
+            <video:description>Kubernetes brings order to enterprise container deployments -- but it's a complex technology to learn. Use this video to grasp core Kubernetes concepts in under 10 minutes.</video:description>
+        </video:video>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchitoperations/video/Explore-the-basics-of-Kubernetes-cluster-networking</loc>
+        <video:video>
+            <video:title>Explore the basics of Kubernetes cluster networking</video:title>
+            <video:publication_date>2019-08-21T10:19:00-04:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/eGqSlsKFXYM/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=eGqSlsKFXYM</video:player_loc>
+            <video:duration>237</video:duration>
+            <video:description>IT admins who need a crash course in basic Kubernetes networking concepts can follow along with this four-minute video.</video:description>
+        </video:video>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchitoperations/video/Build-a-GitOps-pipeline-with-this-Kubernetes-Jenkins-X-tutorial</loc>
+        <video:video>
+            <video:title>Build a GitOps pipeline with this Kubernetes, Jenkins X tutorial</video:title>
+            <video:publication_date>2019-06-12T14:49:00-04:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/p7GByEX57og/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=p7GByEX57og</video:player_loc>
+            <video:duration>516</video:duration>
+            <video:description>Follow the steps outlined in this video tutorial to establish a GitOps deployment workflow with Google Kubernetes Engine, GitHub and Jenkins X.</video:description>
+        </video:video>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchitoperations/video/Mitigate-IT-risks-with-this-vulnerability-assessment-tutorial</loc>
+        <video:video>
+            <video:title>Mitigate IT risks with this vulnerability assessment tutorial</video:title>
+            <video:publication_date>2019-05-22T11:47:00-04:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/uhTPtbmx8Qs/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=uhTPtbmx8Qs</video:player_loc>
+            <video:duration>634</video:duration>
+            <video:description>IT professionals can set up a home lab to learn the ins and outs of software vulnerability assessments. Follow this step-by-step video tutorial to install and configure VMs, and perform a security scan.</video:description>
+        </video:video>
+    </url>
+</urlset>

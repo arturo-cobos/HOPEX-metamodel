@@ -1,0 +1,18 @@
+# See http://www.robotstxt.org/wc/norobots.html for documentation on how to use the robots.txt file
+#
+# To ban all spiders from the entire site uncomment the next two lines:
+User-agent: *
+Disallow: /sign-up
+Disallow: /team-building-software-tour
+Disallow: /modal
+Disallow: /feed/
+Disallow: /static_assets/
+Allow: /static_assets/styles
+Allow: /static_assets/blog_js
+Allow: /wp-content/uploads/
+Disallow: /trackback/
+Disallow: /wp-admin/
+Disallow: /marketing_helpers/
+Disallow: /terms?*t=*
+
+Sitemap: https://pingboard.com/sitemap.xml

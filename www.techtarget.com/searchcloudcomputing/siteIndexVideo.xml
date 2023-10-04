@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
+    <url>
+        <loc>https://www.techtarget.com/searchcloudcomputing/video/How-to-migrate-from-AWS-to-Azure-using-Azure-Migrate</loc>
+        <video:video>
+            <video:title>How to migrate from AWS to Azure using Azure Migrate</video:title>
+            <video:publication_date>2021-01-15T14:21:00-05:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/dBAdNV3KXpQ/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=dBAdNV3KXpQ</video:player_loc>
+            <video:duration>668</video:duration>
+            <video:description>Watch how to set up and configure Azure Migrate to easily convert your existing Amazon EC2 instances into Azure VMs.</video:description>
+        </video:video>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchcloudcomputing/video/How-to-deploy-machine-learning-models-on-Googles-AI-Platform</loc>
+        <video:video>
+            <video:title>How to deploy machine learning models on Google's AI Platform</video:title>
+            <video:publication_date>2020-06-15T11:55:00-04:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/vOOoYjBBbKU/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=vOOoYjBBbKU</video:player_loc>
+            <video:duration>301</video:duration>
+            <video:description>Follow along with this video demo, which walks through how to build and deploy machine learning models on Google Cloud with the scikit-learn framework.</video:description>
+        </video:video>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchcloudcomputing/video/Get-started-with-this-AWS-IoT-tutorial-for-beginners</loc>
+        <video:video>
+            <video:title>Get started with this AWS IoT tutorial for beginners</video:title>
+            <video:publication_date>2020-04-07T10:06:00-04:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/jd0ixmtardY/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=jd0ixmtardY</video:player_loc>
+            <video:duration>546</video:duration>
+            <video:description>Learn how to connect a device to AWS IoT Core in this video tutorial. Go through the IoT connection, workflow and security process to get your fleet of devices up and running.</video:description>
+        </video:video>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchcloudcomputing/video/Watch-this-Azure-Arc-tutorial-on-hybrid-cloud-management</loc>
+        <video:video>
+            <video:title>Watch this Azure Arc tutorial on hybrid cloud management</video:title>
+            <video:publication_date>2020-03-05T09:19:00-05:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/zz_D83mcBhg/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=zz_D83mcBhg</video:player_loc>
+            <video:duration>826</video:duration>
+            <video:description>Get to know Microsoft's hybrid cloud service. Learn to use Azure Arc to connect a local machine to Azure, apply configuration policies and check configurations.</video:description>
+        </video:video>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchcloudcomputing/video/Learn-to-run-a-CI-pipeline-with-this-Google-Cloud-Build-tutorial</loc>
+        <video:video>
+            <video:title>Learn to run a CI pipeline with this Google Cloud Build tutorial</video:title>
+            <video:publication_date>2019-12-27T14:31:00-05:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/l9lGzHBAASE/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=l9lGzHBAASE</video:player_loc>
+            <video:duration>248</video:duration>
+            <video:description>Follow this Google Cloud Build tutorial to build a continuous integration pipeline in Google Cloud. Incorporate Cloud Build with Cloud Source Repositories to make it work.</video:description>
+        </video:video>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchcloudcomputing/video/Watch-this-Google-Cloud-Console-tutorial</loc>
+        <video:video>
+            <video:title>Watch this Google Cloud Console tutorial</video:title>
+            <video:publication_date>2019-10-18T12:52:00-04:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/iusTVsRDDf4/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=iusTVsRDDf4</video:player_loc>
+            <video:duration>196</video:duration>
+            <video:description>Get accustomed to the Google Cloud Console. Explore the management features the admin UI has to offer and learn how to customize it to meet your needs.</video:description>
+        </video:video>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchcloudcomputing/video/Get-started-with-this-Azure-cloud-migration-tool</loc>
+        <video:video>
+            <video:title>Get started with this Azure cloud migration tool</video:title>
+            <video:publication_date>2019-09-27T22:52:00-04:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/gmwT7XdIHcw/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=gmwT7XdIHcw</video:player_loc>
+            <video:duration>971</video:duration>
+            <video:description>There are a lot of moving parts to a cloud migration, which leaves a lot of room for error. Follow Douglas Francis as he demonstrates how to seamlessly migrate to Microsoft Azure.</video:description>
+        </video:video>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchcloudcomputing/video/How-to-build-Azure-Functions-with-PowerShell</loc>
+        <video:video>
+            <video:title>How to build Azure Functions with PowerShell</video:title>
+            <video:publication_date>2019-06-28T10:47:00-04:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/kZea5mYCL6E/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=kZea5mYCL6E</video:player_loc>
+            <video:duration>570</video:duration>
+            <video:description>Follow along with Anthony Howell as he gives a step-by-step demonstration to help you use PowerShell to kick start your Azure Functions app.</video:description>
+        </video:video>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchcloudcomputing/video/How-to-set-up-a-CI-CD-pipeline-in-the-Azure-DevOps-console</loc>
+        <video:video>
+            <video:title>How to set up a CI/CD pipeline in the Azure DevOps console</video:title>
+            <video:publication_date>2019-03-20T11:31:00-04:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/8k5Eh8wOIAs/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=8k5Eh8wOIAs</video:player_loc>
+            <video:duration>608</video:duration>
+            <video:description>Follow the steps in this how-to video from Matt Browne of TechSnips to quickly get your web app up and running on Microsoft Azure with a CI/CD pipeline.</video:description>
+        </video:video>
+    </url>
+</urlset>

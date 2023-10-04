@@ -1,0 +1,489 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="keywords" content="">
+<meta name="description" content="">    
+<LINK REL="icon" HREF="../standard/assets/img/favicon.ico">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/bootstrap.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nav.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/eaportal.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/font-awesome.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/animate.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/datatables.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/grid.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nae.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/custom.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/chosen.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/prism.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery.dataTables.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jsTreeStyle.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.theme.css" media="screen" />
+<script type="text/javascript" src="../standard/assets/js/jquery-3.2.1.min.js" ></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-ui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.columnFilter.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3-force.v2.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.gui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.search.js"></script> 
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.util.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-2.1.1.min.js"></script>
+<script src="../standard/assets/js/ws_zoomtemplate_firefox.js"></script>
+<script src="../standard/assets/js/bootstrap.min.js"></script>
+<script src="../standard/assets/js/datatables.min.js"></script>
+<script src="../standard/assets/js/moment.min.js"></script>
+<script src="../standard/assets/js/datetime-moment.js"></script>
+<script src="../standard/assets/js/chartjs.min.js"></script>
+<script src="../standard/assets/js/searchindexcontent.json"></script>
+<script src="../standard/assets/js/anls.js"></script>
+<script src="../../../cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script src="../standard/assets/js/gauge.js"></script> 
+<script src="../standard/assets/js/domesticApi.js"></script> 
+<script src="../standard/assets/js/piecelabel.js"></script>
+<script src="../standard/assets/js/popper.min.js"></script>
+<script src="../standard/assets/js/custom.js"></script>
+<script src="../standard/assets/js/chosen.jquery.js"></script>
+<script src="../standard/assets/js/prism.js"></script>
+<script src="../standard/assets/js/init-chosen.js"></script>
+<script src="../standard/assets/js/chart-data-flow.js"></script>
+<script src="../standard/assets/js/chart-data-gantt.js"></script>
+<script type="module" src="../standard/assets/js/Fuse.esm.min.js"></script>
+<script type="module">
+import Fuse from '../standard/assets/js/Fuse.esm.min.js';
+$(document).ready(function () {
+console.log('getjson');
+window.$.getJSON('../standard/assets/js/searchindexcontent.json', function (response) {
+console.log('getjson ok');
+var isIndex = "";
+var url = window.location.pathname;
+var filename = url.substring(url.lastIndexOf('/')+1);
+if( filename.includes("index") || filename === "" ){
+isIndex = "pages/";
+} else {
+isIndex = "";
+}
+const fuse = new Fuse(response, {
+keys: ['title','text'],
+shouldSort: true,
+includeMatches : true,
+findAllMatches : true
+});
+$('#search-fuse').on('keyup', function () {
+let result = fuse.search($(this).val());
+console.log(result);
+let resultdiv = $('div.searchresults-fuse');
+if (result.length === 0) {
+resultdiv.hide();
+} else {
+resultdiv.empty();
+resultdiv.append('<table class="table-search" width="100%" cellspacing="0"><thead ><tr><th>Name</th><th>Object Type</th><th>Modification date</th></tr></thead><tbody>');
+
+for (let obj in result.slice(0,10)) {
+
+let searchObj = '<tr><td><a href="./'+ isIndex + result[obj].item.url + '">' + result[obj].item.title +'</a></td><td>' + result[obj].item.ObjectType + '</td><td>' + result[obj].item.ModificationDate + '</td></tr>' ;
+
+
+resultdiv.find('tbody').append(searchObj);
+}
+resultdiv.append('</tbody></table>');
+resultdiv.show();
+}
+});
+});
+});
+</script>
+<title>HOPEX Metamodel Overview (Beta Version)</title>
+</head>
+<nav class="navbar navbar-expand-md navbar-dark  navbar-mega"><!-- Brand --><!--<a class="navbar-brand" href="#">Navbar</a>--><a class="" href="../index.htm"><img class="logo-mega" src="../standard/assets/img/logo.png"  alt="">(Beta Version)</a><!-- Toggler/collapsibe Button --><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><!-- Navbar links -->
+<div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsibleNavbar"><div class="col-sm-auto col-md-auto col-lg-5"></div>
+<div class="col-sm-auto">
+<ul class="navbar-nav">      
+<li><a class="dropdown-item" href="ad30ce115ebf7e90.htm">EA Grid</a></li> 
+<li><a class="dropdown-item" href="fdd5018459bc3c6a.htm">EA Domains</a></li> 
+<li><a class="dropdown-item" href="07e731775ecc93f4.htm">Solutions</a></li> 
+<li><a class="dropdown-item" href="c5dfc62c54810c2c.htm">Glossary</a></li> 
+<li class="nav-item dropdown mx-1">
+<a class="nav-link" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</a>
+<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<li><a class="dropdown-item" href="5446555d5f88c32e.htm">Outcome Driven Metamodel</a></li> 
+<li><a class="dropdown-item" href="e1ccfc295f8f7b90.htm">Playbooks</a></li> 
+<li><a class="dropdown-item" href="42bc992862d20ea7.htm">Framework Mappings</a></li> 
+<li><a class="dropdown-item" href="e93aebb35fa20550.htm">Metamodel Patterns</a></li> 
+<li><a class="dropdown-item" href="d599fe87602b2b85.htm">References</a></li> 
+<li><a class="dropdown-item" href="333f3a7f5dde11de.htm">Legend</a></li> 
+</ul>									                                            
+</li>
+</ul>
+</div>
+<div class="col-sm-auto"><a class="nav-link search" href="#" onclick=showHideSearch("search-section-fuse")><i class="fa fa-search mr-1 form-control-feedback"></i></a></div>
+</div>
+</nav>
+<div id="search-section-fuse" style="display:none">>
+<div class="search_header"><span class="closesearch">&times;</span>
+<nav class="breadcrumb">
+<a class="breadcrumb-item" href="../index.htm">Home </a> 
+<span class="breadcrumb-item active">Search</span> 
+</nav>
+</div>
+<input id="search-fuse" placeholder="Search..."  name="q" onfocus="this.value=''" type="search">
+<div class="searchresults-fuse"></div>
+</div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>function showHideSearch(elementId) {var contentDivs = document.getElementsByClassName('content');var footerDivs = document.getElementsByClassName('footer'); var containerDivs = document.getElementsByClassName('container');var containerfluidDivs = document.getElementsByClassName('container-fluid');var x = document.getElementById(elementId);if (x.style.display === "none") {x.style.display = "block";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "none";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "none";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "none";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "none";}} else {x.style.display = "none";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "block";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "block";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "block";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "block";}}} ;<!-- END WIDGET DRILL DOWN --></script><script>$(document).ready(function() {$(window).scroll(function() {if ($(this).scrollTop() > 100) {$('.scrollup').fadeIn();} else {$('.scrollup').fadeOut();}});$('.scrollup').click(function() {$("html, body").animate({scrollTop: 0}, 600);return false;});});</script><script>
+var modal = document.getElementById("search-section-fuse");
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = "none";
+}
+}
+$(document).on('click', '.closesearch', function() {
+showHideSearch("search-section-fuse");
+
+
+
+
+
+});</script><div class="container-fluid col-lg-11"><nav class="breadcrumb"><a class="breadcrumb-item" href="../index.htm">Home</a> <span class="breadcrumb-item active">
+<a  href="c5dfc62c54810c2c.htm" target="_top">Dictionary of HOPEX concepts</a>&nbsp;/&nbsp;EA Module - Enterprise Capabilites</span></nav></div>
+<div class="container-fluid col-lg-11 content">
+<section class="fadeInDown animated"><a href="#idt" class="btn btn-d">DEFINITION</a> <a href="#grf" class="btn btn-d">CONCEPT GRAPH</a> <a href="#des" class="btn btn-d">CONCEPT DESCRIPTIONS</a> 
+</section>
+<a class="object-section-anchor" id="idt"></a>
+<section class="object-section">
+<h4>CONCEPT DOMAIN - EA Module - Enterprise Capabilites</h4><hr class="sectionbreak" /><table class="table table-vertical-headers table-set-col-width"><tr><th>Description</th><td class="description-text"><div></div></td></tr><tr><th>Dictionary</th><td><img src="../standard/dicsubjectarea.ico.gif"/>&nbsp;
+<a  href="c5dfc62c54810c2c.htm" target="_top">Dictionary of HOPEX concepts</a></td></tr><tr><th>Parent Domain</th><td><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="8ddea4de6037fd99.htm" target="_top">EA Module - Capability Models</a>&nbsp;</td></tr>
+<tr><th>Domain dependencies</th><td><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="255cd30862aa0da8.htm" target="_top">EA Pattern - Business System Operating Model</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="02af08f05a1821d3.htm" target="_top">Enterprise Glossary</a>&nbsp;</td></tr></table></section>
+<a class="object-section-anchor" id="grf"></a>
+<section class="object-section">
+<h4>DOMAIN CONCEPT GRAPH</h4>
+<hr class="sectionbreak" />
+<a href="#" class="btn btn-d" value="Relationship1" onclick="showDiagOnClick(this)">Diagram</a>
+<a href="#" class="btn btn-d" value="Relationship2" onclick="showDiagOnClick(this)">Graph</a>
+<div class="Relationship" id="Relationship1">
+
+<map  name="C2DBD7A15B0260A7">
+  <area  href=#OBMK22B733605F0843DE shape="polygon" coords="698, 147, 868, 147, 868, 158, 698, 158"    title="-">
+  
+  <area  href=22b733605f0843d9.htm shape="polygon" coords="358, 147, 868, 147, 868, 158, 358, 158"   target="_top"  title="Information entity that is in the scope of the business capability.">
+  
+  <area  href=#OBMK22B733625F084437 shape="polygon" coords="358, 147, 528, 147, 528, 158, 358, 158"    title="-">
+  
+  <area  href=30efab2361f36b46.htm#OBMK30EFAB2361F36B46 shape="polygon" coords="888, 129, 888, 118, 1002, 118, 1002, 129, 888, 129"   target="_top"  title="An&#160; Business Dictionary Asset is an Information Asset involved in informative descriptions of the enterprise.">
+  
+  <area  href=43ee3c7963725899.htm#OBMK43EE3C7963725899 shape="polygon" coords="908, 140, 908, 129, 982, 129, 982, 140, 908, 140"   target="_top"  title="A&#160; Business Object is an aspect of any tangible or intanglible resource or state of such resource, that can be the subject of a business transaction.">
+  
+  <area  href=e6f250185f772ee1.htm#OBMKE6F250185F772EE1 shape="polygon" coords="904, 151, 904, 140, 987, 140, 987, 151, 904, 151"   target="_top"  title="An&#160; Information Object&#160; represents anything that can be communicated or memorized by an Agent in order to produce its Outcomes.">
+  
+  <area  href=aeacfb3c4eae21a3.htm#OBMKAEACFB3C4EAE21A3 shape="polygon" coords="873, 183, 873, 170, 1017, 170, 1017, 183, 873, 183"   target="_top"  title="-">
+  
+  <area  href="362fc8045b3c3e65.htm" shape="rect" coords="868, 116, 1023, 186"   target="_top"  title="A&#160; Conceptual Object is the representation of any tangible or intanglible resource, or its respective state, that is critical for comprehending an enterprise, including its data, resources, and activities.">
+  
+  <area  href=#OBMK4C3A567261DB4990 shape="polygon" coords="639, 304, 700, 304, 700, 315, 639, 315"    title="-">
+  
+  <area  href=4C3A567261DB4986.htm shape="polygon" coords="559, 356, 559, 304, 700, 304, 700, 315, 570, 315, 570, 356"   target="_top"  title="-">
+  
+  <area  href=#OBMK4C3A567261DB49BD shape="polygon" coords="559, 356, 559, 304, 579, 304, 579, 315, 570, 315, 570, 356"    title="-">
+  
+  <area  href=6d2b7c935fbb6270.htm#OBMK6D2B7C935FBB6270 shape="polygon" coords="726, 284, 726, 274, 782, 274, 782, 284, 726, 284"   target="_top"  title="A&#160; Data Object&#160; represents the abstract structure of any kind of data that can be memorized by a Software System.">
+  
+  <area  href=fd1bf2a45fbc64fb.htm#OBMKFD1BF2A45FBC64FB shape="polygon" coords="712, 295, 712, 284, 797, 284, 797, 295, 712, 295"   target="_top"  title="A&#160; Logical Data Asset is a Data Asset used for the description of data consumed and produced by Logical Software Systems.">
+  
+  <area  href="2b5858b85eec51d9.htm" shape="rect" coords="699, 271, 809, 335"   target="_top"  title="A&#160; Logical Data Object represents the logical structure of any kind of data that can be memorized by a Software System.">
+  
+  <area  href=#OBMK9DCEA49D5EC76F24 shape="polygon" coords="723, 247, 723, 234, 869, 234, 869, 247, 723, 247"    title="-">
+  
+  <area  href=#OBMK9DCEA7D35EC770D3 shape="polygon" coords="654, 236, 905, 236, 905, 247, 654, 247"    title="-">
+  
+  <area  href=#OBMKEBCFF1FE5AD8B717 shape="polygon" coords="358, 284, 394, 284, 394, 333, 383, 333, 383, 294, 358, 294"    title="-">
+  
+  <area  href=#OBMK0BCA0FFB5EB823BD shape="polygon" coords="626, 483, 691, 483, 691, 493, 626, 493"    title="-">
+  
+  <area  href=0BCA0FFB5EB823B8.htm shape="polygon" coords="569, 419, 569, 483, 691, 483, 691, 493, 558, 493, 558, 419"   target="_top"  title="Software Technology Capability that is requirmeent constraint for the implementation of a Functionality.">
+  
+  <area  href=#OBMK0BCA0FFC5EB823D6 shape="polygon" coords="569, 419, 569, 485, 558, 485, 558, 419"    title="-">
+  
+  <area  href=ef69a4bd63db2ecc.htm#OBMKEF69A4BD63DB2ECC shape="polygon" coords="724, 467, 724, 456, 820, 456, 820, 467, 724, 467"   target="_top"  title="A&#160; Technology Capability is a Capability offered by Technology Systems and aimed at delivering Technology Outcomes.">
+  
+  <area  href=386839aa589366f8.htm#OBMK386839AA589366F8 shape="polygon" coords="724, 499, 724, 486, 820, 486, 820, 499, 724, 499"   target="_top"  title="A technical functionality is the ability to deliver a technical information which is required by a technical artifact in order to function. This technical functionality is generally required within a technical process handled by the technical artifact.">
+  
+  <area  href="0b3013565a1875a8.htm" shape="rect" coords="690, 454, 854, 505"   target="_top"  title="A&#160; Software Technology Capability is a Capability offered by Software Technology Systems and aimed at delivering Software Technology Outcomes.">
+  
+  <area  href=#OBMKC334CCDC5ECB4D64 shape="polygon" coords="295, 593, 295, 669, 285, 669, 285, 593"    title="A Business Capability Dependency is a relationship which asserts that a dependent Capability depends upon a needed capability in the context of a capability dependency owner, with respect to its needed effect">
+  
+  <area  href="c334cc435ecb4b98.htm" shape="rect" coords="229, 669, 351, 748"   target="_top"  title="-">
+  
+  <area  href=#OBMK173F2A905EB82AE0 shape="polygon" coords="451, 566, 498, 566, 498, 577, 451, 577"    title="-">
+  
+  <area  href=173F2A905EB82AD4.htm shape="polygon" coords="358, 566, 498, 566, 498, 577, 358, 577"   target="_top"  title="Functionality that is expected to be delivered by solutions implementing the business capability.">
+  
+  <area  href=#OBMK173F2A915EB82B12 shape="polygon" coords="358, 566, 405, 566, 405, 577, 358, 577"    title="-">
+  
+  <area  href=#OBMK00E803D15EB841B6 shape="polygon" coords="451, 378, 497, 378, 497, 389, 451, 389"    title="-">
+  
+  <area  href=00E803D15EB841AA.htm shape="polygon" coords="358, 378, 497, 378, 497, 389, 358, 389"   target="_top"  title="Functionality that is expected to be delivered by solutions implementing the Business Capability.">
+  
+  <area  href=#OBMK00E803D25EB841E8 shape="polygon" coords="358, 378, 404, 378, 404, 389, 358, 389"    title="-">
+  
+  <area  href=#OBMKEC14F14F5EB728E6 shape="polygon" coords="439, 232, 479, 232, 479, 243, 439, 243"    title="-">
+  
+  <area  href=EC14F14F5EB728DA.htm shape="polygon" coords="358, 232, 479, 232, 479, 243, 358, 243"   target="_top"  title="Skill that is expected to be possessed by human resources contributing to implementing the business capability.">
+  
+  <area  href=#OBMKEC14F1505EB72918 shape="polygon" coords="358, 232, 399, 232, 399, 243, 358, 243"    title="-">
+  
+  <area  href=#OBMKEC14F0B65EB727FF shape="polygon" coords="165, 437, 165, 448, 216, 448, 216, 458, 155, 458, 155, 437"    title="-">
+  
+  <area  href=EC14F0B65EB727F3.htm shape="polygon" coords="216, 355, 165, 355, 165, 448, 216, 448, 216, 458, 155, 458, 155, 345, 216, 345"   target="_top"  title="A Business Capability Component is the involvement (the usage) of an Abstract Capability in the context of a parent Capability (one and only one) under a set of prescribed service level requirement.">
+  
+  <area  href=#OBMKEC14F0B65EB72831 shape="polygon" coords="216, 355, 165, 355, 165, 366, 155, 366, 155, 345, 216, 345"    title="-">
+  
+  <area  href=d5c9ef915ecf206a.htm#OBMKD5C9EF915ECF206A shape="polygon" coords="841, 78, 822, 78, 822, 92, 693, 92, 693, 78, 841, 78"   target="_top"  title="-">
+  
+  <area  href=D5C9EFE85ECF210D.htm shape="polygon" coords="652, 75, 870, 75, 870, 85, 652, 85"   target="_top"  title="-">
+  
+  <area  href=ca353b065fc5e146.htm#OBMKCA353B065FC5E146 shape="polygon" coords="902, 65, 902, 54, 992, 54, 992, 65, 902, 65"   target="_top"  title="A&#160; Categorization Block is a Model Building Block used to provid classification and qualification of other Model Building Blocks.For instance, Tags are used for classification. Constraint Value are used for qualification or quantification.">
+  
+  <area  href=4d035025569f42f3.htm#OBMK4D035025569F42F3 shape="polygon" coords="888, 97, 888, 84, 1007, 84, 1007, 97, 888, 97"   target="_top"  title="KPI dimensions can be elementary or composite.">
+  
+  <area  href="63f8870255ae1ba2.htm" shape="rect" coords="869, 51, 1025, 103"   target="_top"  title="A&#160; Constraining Property expresses a type of constraint that can be applied to Architecture Blocks.">
+  
+  <area  href=#OBMK07E708A75ECC05C1 shape="polygon" coords="957, 511, 957, 288, 968, 288, 968, 511"    title="-">
+  
+  <area  href=#OBMKC334E2D65ECB8FCE shape="polygon" coords="706, 580, 706, 567, 848, 567, 848, 580, 706, 580"    title="-">
+  
+  <area  href=#OBMKC334E34D5ECB90F5 shape="polygon" coords="632, 568, 908, 568, 908, 578, 632, 578"    title="-">
+  
+  <area  href=8df59576591126d7.htm#OBMK8DF59576591126D7 shape="polygon" coords="911, 584, 911, 571, 1022, 571, 1022, 584, 911, 584"   target="_top"  title="-">
+  
+  <area  href=9dcea4535ec76e6c.htm#OBMK9DCEA4535EC76E6C shape="polygon" coords="924, 558, 924, 547, 1009, 547, 1009, 558, 924, 558"   target="_top"  title="A&#160; Business Outcome is a Business Event that indicates the availability of an expected change in the state of a Business Object, produced by a Business Operating Agent, for the benefits of an internal or external consumer (especially Customers).">
+  
+  <area  href="c334e2925ecb8db4.htm" shape="rect" coords="907, 512, 1025, 621"   target="_top"  title="A&#160; Physical Outcome is a Business Outcome that indicates the availability of an expected change in the state of a physical resource offered by the enterprise or one of its sub-system, for the benefits of an internal or external party.">
+  
+  <area  href=#OBMK302238E25EC902E4 shape="polygon" coords="671, 394, 671, 381, 779, 381, 779, 394, 671, 394"    title="-">
+  
+  <area  href=#OBMK30223A0C5EC905EC shape="polygon" coords="631, 382, 811, 382, 811, 392, 631, 392"    title="-">
+  
+  <area  href=#OBMK302239025EC90343 shape="polygon" coords="862, 334, 862, 309, 957, 309, 957, 288, 968, 288, 968, 320, 873, 320, 873, 334"    title="-">
+  
+  <area  href=d9fdded9582953e7.htm#OBMKD9FDDED9582953E7 shape="polygon" coords="909, 264, 909, 251, 1015, 251, 1015, 264, 909, 264"   target="_top"  title="-">
+  
+  <area  href=0185cc626221bb37.htm#OBMK0185CC626221BB37 shape="polygon" coords="927, 227, 927, 216, 997, 216, 997, 227, 927, 227"   target="_top"  title="A&#160; Business Event is a type of business change that is used to coordinate Business Behaviors.">
+  
+  <area  href=30223b5c5ec90c01.htm#OBMK30223B5C5EC90C01 shape="polygon" coords="939, 238, 939, 227, 985, 227, 985, 238, 939, 238"   target="_top"  title="An&#160; Outcome is an Event that indicates the availability of an expected change in the state of a Value Added Object brought about by a specific Behavior,">
+  
+  <area  href="9dcea4535ec76e6c.htm" shape="rect" coords="905, 192, 1019, 289"   target="_top"  title="A&#160; Business Outcome is a Business Event that indicates the availability of an expected change in the state of a Business Object, produced by a Business Operating Agent, for the benefits of an internal or external consumer (especially Customers).">
+  
+  <area  href=ea52ea613aac006d.htm#OBMKEA52EA613AAC006D shape="polygon" coords="844, 406, 844, 393, 891, 393, 891, 406, 844, 406"   target="_top"  title="A content designates the content of a message or a message flow, independently of its structure. A content may be used by several messages or message flows, since it is not associated with an sender and a destination.">
+  
+  <area  href=9dcea4535ec76e6c.htm#OBMK9DCEA4535EC76E6C shape="polygon" coords="825, 380, 825, 369, 910, 369, 910, 380, 825, 380"   target="_top"  title="A&#160; Business Outcome is a Business Event that indicates the availability of an expected change in the state of a Business Object, produced by a Business Operating Agent, for the benefits of an internal or external consumer (especially Customers).">
+  
+  <area  href="302238be5ec9020a.htm" shape="rect" coords="811, 333, 924, 441"   target="_top"  title="An&#160; Information Outcome is a Business Outcome that indicates the availability of an expected change in the state of Data Objects produced by the enterprise or by one of its sub-system, for the benefits of an internal or external party.">
+  
+  <area  href=aea4936060645978.htm#OBMKAEA4936060645978 shape="polygon" coords="500, 370, 500, 359, 628, 359, 628, 370, 500, 370"   target="_top"  title="A&#160; Business Operating Capability is a Capability that benefits to Customers (internal or external) of the enterprise. It expresses an ability to deliver Business Outcomes.This includes Business Capability, Functionality, Hardware Capability and Skill.">
+  
+  <area  href=e939e9cf2c140236.htm#OBMKE939E9CF2C140236 shape="polygon" coords="533, 402, 533, 388, 594, 388, 594, 402, 533, 402"   target="_top"  title="A functionality is a service required by an org-unit in order to perform its work. This functionality is generally necessary within an activity in order to execute a specific operation. If it is a software functionality, it can be provided by an application.">
+  
+  <area  href="598272e954c622f4.htm" shape="rect" coords="496, 357, 631, 420"   target="_top"  title="A&#160; Functionality is a Business Operating Capability offered by Business Systems (software or hardware) and aimed at delivering Information Outcomes.">
+  
+  <area  href=aea4936060645978.htm#OBMKAEA4936060645978 shape="polygon" coords="501, 553, 501, 542, 629, 542, 629, 553, 501, 553"   target="_top"  title="A&#160; Business Operating Capability is a Capability that benefits to Customers (internal or external) of the enterprise. It expresses an ability to deliver Business Outcomes.This includes Business Capability, Functionality, Hardware Capability and Skill.">
+  
+  <area  href=38683ca958936a67.htm#OBMK38683CA958936A67 shape="polygon" coords="517, 585, 517, 572, 614, 572, 614, 585, 517, 585"   target="_top"  title="A hardware functionality is the ability to deliver a physical outcome which is required by an organizational resource in order to perform its work. This hardware functionality is generally necessary within an organizational process in order to execute a specific operation. ">
+  
+  <area  href="0b3016c05a1876d2.htm" shape="rect" coords="498, 540, 633, 603"   target="_top"  title="A&#160; Hardware Capability is a Business Operating Capability offered by Hardware Systems and aimed at delivering Physical Outcomes.">
+  
+  <area  href=5B77657161F414FE.htm#OBMK5B77657161F414FE shape="polygon" coords="207, 265, 207, 279, 34, 279, 34, 265, 207, 265"   target="_top"  title="-">
+  
+  <area  href=225B23D05B175F1C.htm shape="polygon" coords="216, 215, 159, 215, 159, 299, 216, 299, 216, 310, 148, 310, 148, 205, 216, 205"   target="_top"  title="-">
+  
+  <area  href=aea4936060645978.htm#OBMKAEA4936060645978 shape="polygon" coords="482, 222, 482, 211, 610, 211, 610, 222, 482, 222"   target="_top"  title="A&#160; Business Operating Capability is a Capability that benefits to Customers (internal or external) of the enterprise. It expresses an ability to deliver Business Outcomes.This includes Business Capability, Functionality, Hardware Capability and Skill.">
+  
+  <area  href=99c2c55055b066da.htm#OBMK99C2C55055B066DA shape="polygon" coords="515, 254, 515, 240, 578, 240, 578, 254, 515, 254"   target="_top"  title="A Business Skill is a Capability of an Organization (human resource) that has been acquired by training.">
+  
+  <area  href="7c409e95552724ab.htm" shape="rect" coords="479, 209, 613, 268"   target="_top"  title="A&#160; Skill is an ability of a human resource that has been acquired by training.">
+  
+  <area  href=aea4936060645978.htm#OBMKAEA4936060645978 shape="polygon" coords="223, 120, 223, 109, 351, 109, 351, 120, 223, 120"   target="_top"  title="A&#160; Business Operating Capability is a Capability that benefits to Customers (internal or external) of the enterprise. It expresses an ability to deliver Business Outcomes.This includes Business Capability, Functionality, Hardware Capability and Skill.">
+  
+  <area  href=da99dae349820097.htm#OBMKDA99DAE349820097 shape="polygon" coords="246, 149, 246, 136, 328, 136, 328, 149, 246, 149"   target="_top"  title="A Business Capability is a set of features that can be made available by a system (an enterprise or an automated system).">
+  
+  <area  href="9810abf3551135c4.htm" shape="rect" coords="216, 107, 358, 594"   target="_top"  title="A&#160; Business Capability is a Capability that benefits to Customers (internal or external) of the enterprise. It expresses an ability to deliver Business Outcomes.">
+  
+  <area  href=b181b98c54891882.htm#OBMKB181B98C54891882 shape="polygon" coords="367, 55, 367, 44, 415, 44, 415, 55, 367, 55"   target="_top"  title="A&#160; Capability&#160; is an ability to produce an Outcome.">
+  
+  <area  href=8fc9091a640b9f4a.htm#OBMK8FC9091A640B9F4A shape="polygon" coords="350, 66, 350, 55, 432, 55, 432, 66, 350, 66"   target="_top"  title="A&#160; Product Capability is a Capability that benefits to Customers of the enterprise. It expresses an ability to deliver Business Outcomes as part of the Value Propositions of a Product.">
+  
+  <area  href=90759f5559472c5e.htm#OBMK90759F5559472C5E shape="polygon" coords="347, 92, 347, 79, 434, 79, 434, 92, 347, 92"   target="_top"  title="-">
+  
+  <area  href="aea4936060645978.htm" shape="rect" coords="128, 43, 655, 624"   target="_top"  title="A&#160; Business Operating Capability is a Capability that benefits to Customers (internal or external) of the enterprise. It expresses an ability to deliver Business Outcomes.This includes Business Capability, Functionality, Hardware Capability and Skill.">
+  
+  <area  href="c2dbd7985b02607c.htm" shape="rect" coords="1, 1, 1090, 760"   target="_top"  title="-">
+  
+</map>
+<img  src="../images/c2dbd7985b02607c_c2dbd7a15b0260a7_i.png" alt="../images/c2dbd7985b02607c_c2dbd7a15b0260a7_i.png" usemap="#C2DBD7A15B0260A7" height="759" width="1089" border=0>
+
+</div>
+<div class="Relationship" id="Relationship2">
+<div id="klmm" style="width: 100vw; height: 100vh;" ></div>
+<!-- <script src="../standard/assets/js/keylines_domain.js"></script> -->
+<script >
+const data = {
+ type: 'LinkChart',
+  items: [
+  //nodes
+    {type: 'node', id:'C2DBD7985B02607C', t:"EA Module - Enterprise Capabilites", sh:'box', d:""},
+    {type: 'node', id:'9810ABF3551135C4', t:"Business Capability", parentId:'AEA4936060645978', sh:'circle', d:"A Business Capability is a Capability that benefits to Customers (internal or external) of the enterprise. It expresses an ability to deliver Business Outcomes."},
+    {type: 'node', id:'255CD30862AA0DA8', t:"EA Pattern - Business System Operating Model", sh:'box', d:"The EA Pattern - Business System Operating Model domain defines concepts and relationships used to model how a Business System operates/functions in its Operating Eco-System.."},
+    {type: 'node', id:'598272E954C622F4', t:"Functionality", parentId:'255CD30862AA0DA8', sh:'circle', d:"A Functionality is a Business Operating Capability offered by Business Systems (software or hardware) and aimed at delivering Information Outcomes."},
+    {type: 'node', id:'02AF08F05A1821D3', t:"Enterprise Glossary", sh:'box', d:"The Enterprise Glossary domain comprises the Concepts, relationships and Terms used to build the glossary of an enterprise."},
+    {type: 'node', id:'362FC8045B3C3E65', t:"Conceptual Object", parentId:'02AF08F05A1821D3', sh:'circle', d:"A Conceptual Object is the representation of any tangible or intanglible resource, or its respective state, that is critical for comprehending an enterprise, including its data, resources, and activities."},
+    {type: 'node', id:'0B3016C05A1876D2', t:"Hardware Capability", parentId:'AEA4936060645978', sh:'circle', d:"A Hardware Capability is a Business Operating Capability offered by Hardware Systems and aimed at delivering Physical Outcomes."},
+    {type: 'node', id:'C334E2925ECB8DB4', t:"Physical Outcome", parentId:'C2DBD7985B02607C', sh:'circle', d:"A Physical Outcome is a Business Outcome that indicates the availability of an expected change in the state of a physical resource offered by the enterprise or one of its sub-system, for the benefits of an internal or external party."},
+    {type: 'node', id:'7C409E95552724AB', t:"Skill", parentId:'AEA4936060645978', sh:'circle', d:"A Skill is an ability of a human resource that has been acquired by training."},
+    {type: 'node', id:'AEA4936060645978', t:"Business Operating Capability", parentId:'C2DBD7985B02607C', sh:'circle', d:"A Business Operating Capability is a Capability that benefits to Customers (internal or external) of the enterprise. It expresses an ability to deliver Business Outcomes."},
+    {type: 'node', id:'C30BD1505A5D97F9', t:"Architecture Model Management", sh:'box', d:"The Architecture Model Management domain defines top level constructs used in enterprise architecting: Architecture Blocks, Architecture Namespaces, Architecture Category(ies), Constraint Value, Location."},
+    {type: 'node', id:'63F8870255AE1BA2', t:"Constraining Property", parentId:'C30BD1505A5D97F9', sh:'circle', d:"A Constraining Property expresses a type of constraint that can be applied to Architecture Blocks."},
+  //edges
+    { type: 'link', id:'9810ABF3551135C4-225B23D05B175F1C', id1:'9810ABF3551135C4', id2:'9810ABF3551135C4', t:"Specialized Business Capability"},
+    { type: 'link', id:'9810ABF3551135C4-00E803D15EB841AA', id1:'9810ABF3551135C4', id2:'598272E954C622F4', t:"enabling functionality"},
+    { type: 'link', id:'9810ABF3551135C4-173F2A905EB82AD4', id1:'9810ABF3551135C4', id2:'0B3016C05A1876D2', t:"enabling hardware functionality"},
+    { type: 'link', id:'9810ABF3551135C4-22B733605F0843D9', id1:'9810ABF3551135C4', id2:'362FC8045B3C3E65', t:"Involved Conceptual Object"},
+    { type: 'link', id:'9810ABF3551135C4-EC14F0B65EB727F3', id1:'9810ABF3551135C4', id2:'9810ABF3551135C4', t:"Business Capability Component"},
+    { type: 'link', id:'9810ABF3551135C4-EC14F14F5EB728DA', id1:'9810ABF3551135C4', id2:'7C409E95552724AB', t:"enabling skill"},
+    { type: 'link', id:'0B3016C05A1876D2-250F457E5FFF6382', id1:'0B3016C05A1876D2', id2:'0B3016C05A1876D2', t:"Specialized Hardware Functionality"},
+    { type: 'link', id:'0B3016C05A1876D2-4CF14D5C5EBC2726', id1:'0B3016C05A1876D2', id2:'0B3016C05A1876D2', t:"Hardware Functionality Component"},
+    { type: 'link', id:'7C409E95552724AB-B0AE9A9F600A33F7', id1:'7C409E95552724AB', id2:'7C409E95552724AB', t:"Specialized Skill"},
+    { type: 'link', id:'7C409E95552724AB-520E52945EB863BB', id1:'7C409E95552724AB', id2:'7C409E95552724AB', t:"skill component (my)"},
+    { type: 'link', id:'AEA4936060645978-5B77657161F414FE', id1:'AEA4936060645978', id2:'AEA4936060645978', t:"Specialized Enterprise Capability"},
+    { type: 'link', id:'AEA4936060645978-D5C9EFE85ECF210D', id1:'AEA4936060645978', id2:'63F8870255AE1BA2', t:"Enterprise Capability Measure"},
+    { type: 'link', id:'AEA4936060645978-AEA4987460646328', id1:'AEA4936060645978', id2:'AEA4936060645978', t:"Enterprise Capability Component"}
+  ]
+}
+</script>
+<script src="../standard/assets/js/keylines_domain.js" type="module"></script>
+</div>
+</section>
+<a class="object-section-anchor" id="des"></a>
+<section class="object-section">
+<h4>CONCEPT DESCRIPTIONS</h4> 
+<hr class="sectionbreak" />
+<h5>Concrete Concepts</h5>
+<table class="table  table-set-col-width">
+<thead>
+<tr><th>Concept</th><th>Description</th><th>HOPEX Metaclass</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="9810abf3551135c4.htm" target="_top">Business Capability</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Business Capability</b> is a <a href="b181b98c54891882.htm" target="_top"><b><u>Capability</u></b></a> that benefits to Customers (internal or external) of the enterprise. It expresses an ability to deliver <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Business Capability</b> is defined by its intended <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s and the conditions (<a href="63f8870255ae1ba2.htm" target="_top"><b><u>Constraining Property</u></b></a>) under which the delivery of the <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s shall be proceeded.<br />The actual <a href="7c40a5b455272bb4.htm" target="_top"><b><u>Constraint Value</u></b></a>s for a given&#160;<b> Business Capability</b> at the different <a href="036a3de3548f229e.htm" target="_top"><b><u>Enterprise Stage</u></b></a>s is given by their exhibition (<b> Exhibited Capability</b>).</div><i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Capability"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - Capability</a></li> <li><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_28"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Definition - Business Capability</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="da99dae349820097.htm" target="_top">Business Capability</a></td>
+</tr>
+<tr>
+<td><img src="../standard/relationship-concepttype.ico.gif"/>&nbsp;
+<a  href="9dcea4535ec76e6c.htm" target="_top">Business Outcome</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Business Outcome</b> is a <a href="0185cc626221bb37.htm" target="_top"><b><u>Business Event</u></b></a> that indicates the availability of an expected change in the state of a <a href="43ee3c7963725899.htm" target="_top"><b><u>Business Object</u></b></a>, produced by a <a href="e2ef091962147ad7.htm" target="_top"><b><u>Business Operating Agent</u></b></a>, for the benefits of an internal or external consumer (especially <a href="d6cdfdbc5ab86331.htm" target="_top"><b><u>Customer</u></b></a>s).</div><div align="left" style="min-height: 12pt; "><a href="43ee3c7963725899.htm" target="_top"><b><u>Business Object</u></b></a>s range from <a href="e6f250185f772ee1.htm" target="_top"><b><u>Information Object</u></b></a>s to any organizational constructs (<a href="1ce356355c48c0e2.htm" target="_top"><b><u>People &amp; Accountability</u></b></a>) or <a href="62466ea661b80d09.htm" target="_top"><b><u>Resource Operating Asset</u></b></a>s offered, produced and delivered by an <a href="b181b82a54891668.htm" target="_top"><b><u>Enterprise</u></b></a>.</div><i><ul>References:<li><a href="../../../www.omg.org/spec/BACM/1.0/Beta1/dtc-22-06-01.pdf#page=28"><img src="../standard/extr.ico.gif">&nbsp;OMG - BACM - Outcome</a></li> <li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Effect"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - Effect</a></li> <li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#operationalsignal"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - OperationalSignal</a></li> <li><a href="https://publications.opengroup.org/w161"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - IT4IT - Defining Service Reference Architecture</a></li> <li><a href="https://pubs.opengroup.org/architecture/o-aa-standard/definitions.html#Outcome"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - OAA - Definition - Outcome</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="d9fdded9582953e7.htm" target="_top">Class of Work Product</a></td>
+</tr>
+<tr>
+<td><img src="../standard/relationship-concepttype.ico.gif"/>&nbsp;
+<a  href="c334cc435ecb4b98.htm" target="_top">Business Outcome Dependency</a></td>
+<td class="description-text">        </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="598272e954c622f4.htm" target="_top">Functionality</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Functionality</b> is a <a href="aea4936060645978.htm" target="_top"><b><u>Business Operating Capability</u></b></a> offered by <a href="278675d65b252f4d.htm" target="_top"><b><u>Business System</u></b></a>s (software or hardware) and aimed at delivering <a href="302238be5ec9020a.htm" target="_top"><b><u>Information Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Functionality</b> describes WHAT a software or hardware system can provide.</div><div align="left" style="min-height: 12pt; "><b>&#160;Functionality</b>(ies) are used to express the features required by people when performing their job.</div><div align="left" style="min-height: 12pt; ">For internal customers, these jobs correspond to <a href="0f9213fd5ebc1b87.htm" target="_top"><b><u>Operation</u></b></a>s described in <a href="57dfc52d550932ef.htm" target="_top"><b><u>Business Process</u></b></a> (see <a href="0f9213345ebc1a67.htm" target="_top"><b><u>Instrument</u></b></a>)</div><div align="left" style="min-height: 12pt; ">For enterprise <a href="d6cdfdbc5ab86331.htm" target="_top"><b><u>Customer</u></b></a>s, these jobs correspond to <a href="d17034875be85304.htm" target="_top"><b><u>Job-to-be-done</u></b></a> in the context of <a href="d170d6a25be734ed.htm" target="_top"><b><u>Customer Journey</u></b></a>s.</div><i><ul>References:<li><a href="https://www.scaledagileframework.com/glossary/#goto-letter-F"><img src="../standard/extr.ico.gif">&nbsp;SAFe&copy; - Feature</a></li> <li><a href="https://www.scaledagileframework.com/features-and-capabilities/"><img src="../standard/extr.ico.gif">&nbsp;SAFe&copy; - Features and Capabilities</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="e939e9cf2c140236.htm" target="_top">Functionality</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="0b3016c05a1876d2.htm" target="_top">Hardware Capability</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Hardware Capability</b> is a <a href="aea4936060645978.htm" target="_top"><b><u>Business Operating Capability</u></b></a> offered by <a href="c30bf4015a5da72b.htm" target="_top"><b><u>Hardware System</u></b></a>s and aimed at delivering <a href="c334e2925ecb8db4.htm" target="_top"><b><u>Physical Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">A <a href="c30bf4015a5da72b.htm" target="_top"><b><u>Hardware System</u></b></a> describes WHAT a <a href="c30bf4015a5da72b.htm" target="_top"><b><u>Hardware System</u></b></a> can provide.</div><div align="left" style="min-height: 12pt; "><b>&#160;Hardware Capability</b>(ies) are used to express the features required by people when performing their job.</div><div align="left" style="min-height: 12pt; ">For internal customers, these jobs correspond to&#160;<b> Operation</b>s described in <a href="57dfc52d550932ef.htm" target="_top"><b><u>Business Process</u></b></a>es (see <a href="0f9213345ebc1a67.htm" target="_top"><b><u>Instrument</u></b></a>).</div><div align="left" style="min-height: 12pt; ">For enterprise Customers, these jobs correspond to <a href="d17034875be85304.htm" target="_top"><b><u>Job-to-be-done</u></b></a> in the context of <a href="d170d6a25be734ed.htm" target="_top"><b><u>Customer Journey</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">Examples: </div><div align="left" style="min-height: 12pt; ">- 3D Printing.</div><div align="left" style="min-height: 12pt; ">-&#160; Automated Parcel Delivery.</div><div align="left" style="min-height: 12pt; ">- Metal Shaping.</div>       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="38683ca958936a67.htm" target="_top">Hardware Functionality</a></td>
+</tr>
+<tr>
+<td><img src="../standard/relationship-concepttype.ico.gif"/>&nbsp;
+<a  href="302238be5ec9020a.htm" target="_top">Information Outcome</a></td>
+<td class="description-text"><div align="left" style="min-height: 11pt; ">An&#160;<b> Information Outcome</b> is a <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a> that indicates the availability of an expected change in the state of <a href="6d2b7c935fbb6270.htm" target="_top"><b><u>Data Object</u></b></a>s produced by the enterprise or by one of its sub-system, for the benefits of an internal or external party.</div><div align="left" style="min-height: 11pt; ">Example: </div><div align="left" style="min-height: 11pt; ">- Order received</div><div align="left" style="min-height: 11pt; ">- Payment rejected</div><i><ul>References:<li><a href="../../../www.omg.org/spec/UML/2.5.1/formal-17-12-05.pdf#page=211"><img src="../standard/extr.ico.gif">&nbsp;OMG - UML - Signal</a></li> <li><a href="https://publications.opengroup.org/w161"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - IT4IT - Defining Service Reference Architecture</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="ea52ea613aac006d.htm" target="_top">Content</a></td>
+</tr>
+<tr>
+<td><img src="../standard/relationship-concepttype.ico.gif"/>&nbsp;
+<a  href="c334e2925ecb8db4.htm" target="_top">Physical Outcome</a></td>
+<td class="description-text">A&#160;<b> Physical Outcome</b> is a <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a> that indicates the availability of an expected change in the state of a physical resource offered by the enterprise or one of its sub-system, for the benefits of an internal or external party.       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="8df59576591126d7.htm" target="_top">Hardware Work Product</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="7c409e95552724ab.htm" target="_top">Skill</a></td>
+<td class="description-text">A&#160;<b> Skill</b> is an ability of a human resource that has been acquired by training.<i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Competence"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - Competence</a></li> <li><a href="http://wordnetweb.princeton.edu/perl/webwn?o2=&amp;o0=1&amp;o8=1&amp;o1=1&amp;o7=&amp;o5=&amp;o9=&amp;o6=&amp;o3=&amp;o4=&amp;s=Skill&amp;i=0&amp;h=00#c"><img src="../standard/extr.ico.gif">&nbsp;Wordnet - Skill</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="99c2c55055b066da.htm" target="_top">Business Skill</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="0b3013565a1875a8.htm" target="_top">Software Technology Capability</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Software Technology Capability</b> is a <a href="b181b98c54891882.htm" target="_top"><b><u>Capability</u></b></a> offered by <a href="0463ea9a63fd8b6c.htm" target="_top"><b><u>Software Technology System</u></b></a>s and aimed at delivering <a href="a24da7786408781d.htm" target="_top"><b><u>Software Technology Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; "><b>&#160;Software Technology Capability</b>(ies) define WHAT <a href="0463ea9a63fd8b6c.htm" target="_top"><b><u>Software Technology System</u></b></a>s can do, They are used to understand whether two types of <a href="0463ea9a63fd8b6c.htm" target="_top"><b><u>Software Technology System</u></b></a>s are fundamentally doing the same thing.<br />They are also used in <a href="c2dbe1db5b026b30.htm" target="_top"><b><u>Software Technology ArcDevOps</u></b></a> to identify where there are redundancies in <a href="6ce61b9d5ef382cf.htm" target="_top"><b><u>Technology Portfolio</u></b></a>s.</div>       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="386839aa589366f8.htm" target="_top">Technical Functionality</a></td>
+</tr>  
+</tbody>
+</table>
+<hr class="sectionbreak" />
+<h5>Abstract Concepts</h5>
+<table class="table  table-set-col-width">
+<thead >
+<tr><th>Concept</th><th>Description</th><th>HOPEX Metaclass</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="aea4936060645978.htm" target="_top">Business Operating Capability</a></td>
+<td class="description-text">A&#160;<b> Business Operating Capability</b> is a <a href="b181b98c54891882.htm" target="_top"><b><u>Capability</u></b></a> that benefits to <a href="d6cdfdbc5ab86331.htm" target="_top"><b><u>Customer</u></b></a>s (internal or external) of the enterprise. It expresses an ability to deliver <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s.<br />This includes <a href="9810abf3551135c4.htm" target="_top"><b><u>Business Capability</u></b></a>, <a href="598272e954c622f4.htm" target="_top"><b><u>Functionality</u></b></a>, <a href="0b3016c05a1876d2.htm" target="_top"><b><u>Hardware Capability</u></b></a> and <a href="7c409e95552724ab.htm" target="_top"><b><u>Skill</u></b></a>.       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="90759f5559472c5e.htm" target="_top">Enterprise Capability</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="362fc8045b3c3e65.htm" target="_top">Conceptual Object</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Conceptual Object</b> is the representation of any tangible or intanglible resource, or its respective state, that is critical for comprehending an enterprise, including its data, resources, and activities.</div><div align="left" style="min-height: 12pt; ">Similar to any <a href="e6f250185f772ee1.htm" target="_top"><b><u>Information Object</u></b></a>, a&#160;<b> Conceptual Object</b> can be classified into three categories:</div><div align="left" style="min-height: 12pt; ">1)&#160; <a href="229b34eb5b3f79d2.htm" target="_top"><b><u>Conceptual Entity</u></b></a>s denote entities that can change over time.</div><div align="left" style="min-height: 12pt; ">2) <a href="362ff4b55b3c45e6.htm" target="_top"><b><u>Event Concept</u></b></a>s embody the temporal boundaries associated with <a href="229b34eb5b3f79d2.htm" target="_top"><b><u>Conceptual Entity</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">3) <a href="362fc5a85b3c3c03.htm" target="_top"><b><u>Concept Property</u></b></a>s represent immutable characteristics of <a href="229b34eb5b3f79d2.htm" target="_top"><b><u>Conceptual Entity</u></b></a>s.</div><i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#OperationalInformation"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - OperationalInformation</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="aeacfb3c4eae21a3.htm" target="_top">Class of Business Information Entity</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="63f8870255ae1ba2.htm" target="_top">Constraining Property</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Constraining Property</b> expresses a type of constraint that can be applied to <a href="d342d88e5b121401.htm" target="_top"><b><u>Architecture Block</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">These constraints can be either <a href="48d2c45c63b57003.htm" target="_top"><b><u>Measurable Property (Abstract)</u></b></a> (Time, Mass, Cost, ..), <a href="f68d26e263b8e425.htm" target="_top"><b><u>Environmental Property</u></b></a>s (Terrain Type, Light conditions, Weather conditions) or a grouping of these (<a href="48d2bc1a63b567da.htm" target="_top"><b><u>Set of Constraining Properties</u></b></a>).</div><div align="left" style="min-height: 12pt; "><b>&#160;Constraining Property</b>s are used to constrain <a href="d342d88e5b121401.htm" target="_top"><b><u>Architecture Block</u></b></a>s in the context of non-functional requirement analysis and <a href="abba950e62a94390.htm" target="_top"><b><u>Value Proposition</u></b></a> analysis.</div><i><ul>References:<li><a href="https://method.demomega.com/MM-OVERVIEW/pages/architecture-content/chap02.html#tag_02_04"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Content Metamodel - Measure</a></li> <li><a href="../resources/Ackoff-Choice-Communication-and-Conflict.pdf#MorphologicalProperty"><img src="../standard/extr.ico.gif">&nbsp;Russell Ackoff - Choice &amp; Communication - MorphologicalProperty</a></li> <li><a href="https://en.wikipedia.org/wiki/List_of_system_quality_attributes"><img src="../standard/extr.ico.gif">&nbsp;Wikipeddia - List of quality attributes</a></li> <li><a href="https://en.wikipedia.org/wiki/Measurement"><img src="../standard/extr.ico.gif">&nbsp;Wikipedia - Measurement</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="4d035025569f42f3.htm" target="_top">KPI Dimension Building Block</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="2b5858b85eec51d9.htm" target="_top">Logical Data Object</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Logical Data Object</b> represents the logical structure of any kind of data that can be memorized by a <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a>.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Logical Data Object</b> is either a <a href="4619527e560d45eb.htm" target="_top"><b><u>Logical Data Entity</u></b></a> or a <a href="7d5286635eae7273.htm" target="_top"><b><u>Logical Data Property</u></b></a>.</div><div align="left" style="min-height: 12pt; ">Only <a href="4619527e560d45eb.htm" target="_top"><b><u>Logical Data Entity</u></b></a>s can have identity and can be referenced by <a href="f4be36b65ee1c923.htm" target="_top"><b><u>Logical Relationship</u></b></a>s. <a href="7d5286635eae7273.htm" target="_top"><b><u>Logical Data Property</u></b></a>s only handle raw data.</div>       </td>
+<td></td>
+</tr>  
+</tbody>
+</table>
+<section>
+
+</div>
+<button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button>
+<script>window.onscroll = function() {scrollFunction()};$(document).on('click', 'a[href^="#"]', function (event) {event.preventDefault();$('html, body').animate({scrollTop: $($.attr(this, 'href')).offset().top}, 500);});function showDiagOnClick(elem){ var x = document.getElementsByClassName('Relationship');var e = elem.getAttribute("value"); for (var i=0; i < x.length ;i++){x[i].style.display="none"; if (x[i].id == e){x[i].style.display="block";x[i].style.textAlign="left";}}}
+</script></html>

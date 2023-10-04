@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:ns2="http://www.google.com/schemas/sitemap-news/0.9">
+    <url>
+        <loc>https://www.techtarget.com/searchsap/news/366553638/SAP-joins-generative-AI-crowd-with-Joule</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-28</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>SAP joins generative AI crowd with Joule</ns2:title>
+        </ns2:news>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchsap/news/366551416/SAP-acquires-enterprise-architecture-vendor-LeanIX</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-07</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>SAP acquires enterprise architecture vendor LeanIX</ns2:title>
+        </ns2:news>
+    </url>
+</urlset>

@@ -1,0 +1,599 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="keywords" content="">
+<meta name="description" content="">    
+<LINK REL="icon" HREF="../standard/assets/img/favicon.ico">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/bootstrap.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nav.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/eaportal.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/font-awesome.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/animate.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/datatables.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/grid.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nae.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/custom.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/chosen.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/prism.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery.dataTables.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jsTreeStyle.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.theme.css" media="screen" />
+<script type="text/javascript" src="../standard/assets/js/jquery-3.2.1.min.js" ></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-ui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.columnFilter.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3-force.v2.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.gui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.search.js"></script> 
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.util.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-2.1.1.min.js"></script>
+<script src="../standard/assets/js/ws_zoomtemplate_firefox.js"></script>
+<script src="../standard/assets/js/bootstrap.min.js"></script>
+<script src="../standard/assets/js/datatables.min.js"></script>
+<script src="../standard/assets/js/moment.min.js"></script>
+<script src="../standard/assets/js/datetime-moment.js"></script>
+<script src="../standard/assets/js/chartjs.min.js"></script>
+<script src="../standard/assets/js/searchindexcontent.json"></script>
+<script src="../standard/assets/js/anls.js"></script>
+<script src="../../../cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script src="../standard/assets/js/gauge.js"></script> 
+<script src="../standard/assets/js/domesticApi.js"></script> 
+<script src="../standard/assets/js/piecelabel.js"></script>
+<script src="../standard/assets/js/popper.min.js"></script>
+<script src="../standard/assets/js/custom.js"></script>
+<script src="../standard/assets/js/chosen.jquery.js"></script>
+<script src="../standard/assets/js/prism.js"></script>
+<script src="../standard/assets/js/init-chosen.js"></script>
+<script src="../standard/assets/js/chart-data-flow.js"></script>
+<script src="../standard/assets/js/chart-data-gantt.js"></script>
+<script type="module" src="../standard/assets/js/Fuse.esm.min.js"></script>
+<script type="module">
+import Fuse from '../standard/assets/js/Fuse.esm.min.js';
+$(document).ready(function () {
+console.log('getjson');
+window.$.getJSON('../standard/assets/js/searchindexcontent.json', function (response) {
+console.log('getjson ok');
+var isIndex = "";
+var url = window.location.pathname;
+var filename = url.substring(url.lastIndexOf('/')+1);
+if( filename.includes("index") || filename === "" ){
+isIndex = "pages/";
+} else {
+isIndex = "";
+}
+const fuse = new Fuse(response, {
+keys: ['title','text'],
+shouldSort: true,
+includeMatches : true,
+findAllMatches : true
+});
+$('#search-fuse').on('keyup', function () {
+let result = fuse.search($(this).val());
+console.log(result);
+let resultdiv = $('div.searchresults-fuse');
+if (result.length === 0) {
+resultdiv.hide();
+} else {
+resultdiv.empty();
+resultdiv.append('<table class="table-search" width="100%" cellspacing="0"><thead ><tr><th>Name</th><th>Object Type</th><th>Modification date</th></tr></thead><tbody>');
+
+for (let obj in result.slice(0,10)) {
+
+let searchObj = '<tr><td><a href="./'+ isIndex + result[obj].item.url + '">' + result[obj].item.title +'</a></td><td>' + result[obj].item.ObjectType + '</td><td>' + result[obj].item.ModificationDate + '</td></tr>' ;
+
+
+resultdiv.find('tbody').append(searchObj);
+}
+resultdiv.append('</tbody></table>');
+resultdiv.show();
+}
+});
+});
+});
+</script>
+<title>HOPEX Metamodel Overview (Beta Version)</title>
+</head>
+<nav class="navbar navbar-expand-md navbar-dark  navbar-mega"><!-- Brand --><!--<a class="navbar-brand" href="#">Navbar</a>--><a class="" href="../index.htm"><img class="logo-mega" src="../standard/assets/img/logo.png"  alt="">(Beta Version)</a><!-- Toggler/collapsibe Button --><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><!-- Navbar links -->
+<div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsibleNavbar"><div class="col-sm-auto col-md-auto col-lg-5"></div>
+<div class="col-sm-auto">
+<ul class="navbar-nav">      
+<li><a class="dropdown-item" href="ad30ce115ebf7e90.htm">EA Grid</a></li> 
+<li><a class="dropdown-item" href="fdd5018459bc3c6a.htm">EA Domains</a></li> 
+<li><a class="dropdown-item" href="07e731775ecc93f4.htm">Solutions</a></li> 
+<li><a class="dropdown-item" href="c5dfc62c54810c2c.htm">Glossary</a></li> 
+<li class="nav-item dropdown mx-1">
+<a class="nav-link" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</a>
+<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<li><a class="dropdown-item" href="5446555d5f88c32e.htm">Outcome Driven Metamodel</a></li> 
+<li><a class="dropdown-item" href="e1ccfc295f8f7b90.htm">Playbooks</a></li> 
+<li><a class="dropdown-item" href="42bc992862d20ea7.htm">Framework Mappings</a></li> 
+<li><a class="dropdown-item" href="e93aebb35fa20550.htm">Metamodel Patterns</a></li> 
+<li><a class="dropdown-item" href="d599fe87602b2b85.htm">References</a></li> 
+<li><a class="dropdown-item" href="333f3a7f5dde11de.htm">Legend</a></li> 
+</ul>									                                            
+</li>
+</ul>
+</div>
+<div class="col-sm-auto"><a class="nav-link search" href="#" onclick=showHideSearch("search-section-fuse")><i class="fa fa-search mr-1 form-control-feedback"></i></a></div>
+</div>
+</nav>
+<div id="search-section-fuse" style="display:none">>
+<div class="search_header"><span class="closesearch">&times;</span>
+<nav class="breadcrumb">
+<a class="breadcrumb-item" href="../index.htm">Home </a> 
+<span class="breadcrumb-item active">Search</span> 
+</nav>
+</div>
+<input id="search-fuse" placeholder="Search..."  name="q" onfocus="this.value=''" type="search">
+<div class="searchresults-fuse"></div>
+</div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>function showHideSearch(elementId) {var contentDivs = document.getElementsByClassName('content');var footerDivs = document.getElementsByClassName('footer'); var containerDivs = document.getElementsByClassName('container');var containerfluidDivs = document.getElementsByClassName('container-fluid');var x = document.getElementById(elementId);if (x.style.display === "none") {x.style.display = "block";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "none";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "none";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "none";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "none";}} else {x.style.display = "none";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "block";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "block";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "block";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "block";}}} ;<!-- END WIDGET DRILL DOWN --></script><script>$(document).ready(function() {$(window).scroll(function() {if ($(this).scrollTop() > 100) {$('.scrollup').fadeIn();} else {$('.scrollup').fadeOut();}});$('.scrollup').click(function() {$("html, body").animate({scrollTop: 0}, 600);return false;});});</script><script>
+var modal = document.getElementById("search-section-fuse");
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = "none";
+}
+}
+$(document).on('click', '.closesearch', function() {
+showHideSearch("search-section-fuse");
+
+
+
+
+
+});</script><div class="container-fluid col-lg-11"><nav class="breadcrumb"><a class="breadcrumb-item" href="../index.htm">Home </a> <span class="breadcrumb-item active">Framework Mapping/UAF - Project Views</span> </nav></div>
+<div class="container-fluid col-lg-11 content">
+<section class="fadeInDown animated"><a href="#det" class="btn btn-d">IDENTITY</a><a href="#dia" class="btn btn-d">DIAGRAM</a> <a href="#map" class="btn btn-d">MAPPING</a> <a href="#ext" class="btn btn-d">EXTERNAL REFERENCES</a> 
+</section>
+<a class="object-section-anchor" id="det"></a>
+<section class="object-section">
+<h4>IDENTITY - UAF - Project Views</h4> 
+<hr class="sectionbreak" />
+<table class="table table-vertical-headers table-set-col-width">
+<tr><th>Description</th><td class="description-text">Describes projects and project milestones, how those projects deliver capabilities, the organizations contributing to the projects and dependencies between projects.</td></tr>
+<tr><th>References</th><td>
+<a  href="9bf8a5d263c19702.htm" target="_top">OMG - UAF - View - Project Views</a></td></tr>
+<tr><th>Parent Mapping</th><td class="description-text">UAF Mappings</td></tr>            
+</table>
+</section>
+<a class="object-section-anchor" id="dia"></a>
+<section class="object-section">
+<hr class="sectionbreak" />
+<map  name="EF5D0F3963229FF3">
+  <area  href=6d2b7c935fbb6270.htm#OBMK6D2B7C935FBB6270 shape="polygon" coords="1002, 1331, 1002, 1315, 1015, 1315, 1015, 1331, 1002, 1331"   target="_self"  title="A&#160; Data Object&#160; represents the abstract structure of any kind of data that can be memorized by a Software System.">
+  
+  <area  href="#OBMK726D80B063C133E0" shape="rect" coords="995, 1307, 1143, 1340"   target="_self"  title="A formalized representation of information that is managed by or exchanged between systems.">
+  
+  <area  href="#OBMK5ACF5C9663C11260" shape="rect" coords="995, 1229, 1153, 1261"   target="_self"  title="GeopoliticalExtentType is not implemented as a subtype of OperationalExchangeItem.">
+  
+  <area  href="#OBMK5ACF5B5863C111D1" shape="rect" coords="1310, 1142, 1477, 1183"   target="_self"  title="An interaction point for a ResourcePerformer through which it can interact with the outside environment and which is defined by a ResourceInterface.">
+  
+  <area  href=48d4d4c963b699df.htm#OBMK48D4D4C963B699DF shape="polygon" coords="32, 2092, 32, 2078, 45, 2078, 45, 2092, 32, 2092"   target="_self"  title="A Project Milestone defines an intermediate delivery gate in the project lifecycle.">
+  
+  <area  href="#OBMK48D4D5B163B69B01" shape="rect" coords="9, 2064, 183, 2106"   target="_self"  title="An event with a start date in a ActualProject from which progress is measured.">
+  
+  <area  href=bcebd31f5491302c.htm#OBMKBCEBD31F5491302C shape="polygon" coords="1647, 1972, 1647, 1959, 1660, 1959, 1660, 1972, 1647, 1972"   target="_self"  title="A&#160; Resource Agent is a Business Operating Agent which represents physical resources that produce Business Outcomes of the enterprise.">
+  
+  <area  href="#OBMK19531BF063C13554" shape="rect" coords="1555, 1928, 1851, 2003"   target="_self"  title="An abstract grouping of elements that can perform Functions.">
+  
+  <area  href=9810abf3551135c4.htm#OBMK9810ABF3551135C4 shape="polygon" coords="1120, 1973, 1120, 1957, 1133, 1957, 1133, 1973, 1120, 1973"   target="_self"  title="A&#160; Business Capability is a Capability that benefits to Customers (internal or external) of the enterprise. It expresses an ability to deliver Business Outcomes.">
+  
+  <area  href="#OBMK19533FB163C13851" shape="rect" coords="960, 1928, 1348, 2002"   target="_self"  title="An enterprise&#39;s ability to Achieve a desired effect realized through a combination of ways and means (e.g. CapabilityConfigurations) along with specified measures.">
+  
+  <area  href=bcebd31f5491302c.htm#OBMKBCEBD31F5491302C shape="polygon" coords="634, 1896, 634, 1883, 647, 1883, 647, 1896, 634, 1896"   target="_self"  title="A&#160; Resource Agent is a Business Operating Agent which represents physical resources that produce Business Outcomes of the enterprise.">
+  
+  <area  href="#OBMK19531BF063C13554" shape="rect" coords="550, 1867, 829, 1911"   target="_self"  title="An abstract grouping of elements that can perform Functions.">
+  
+  <area  href=24ac695354881cbe.htm#OBMK24AC695354881CBE shape="polygon" coords="779, 1707, 779, 1691, 792, 1691, 792, 1707, 779, 1707"   target="_self"  title="A category of project.">
+  
+  <area  href="#OBMK9FBEA19F63B66355" shape="rect" coords="737, 1675, 874, 1723"   target="_self"  title="A type that represents a planned endeavor executed by an ActualOrganization responsible for developing, deploying or decommissioning ResourcePerformers in accordance with ActualProjectMilestones.">
+  
+  <area  href=24ac695354881cbe.htm#OBMK24AC695354881CBE shape="polygon" coords="260, 2097, 260, 2081, 273, 2081, 273, 2097, 260, 2097"   target="_self"  title="A category of project.">
+  
+  <area  href="#OBMK9FBEA19F63B66355" shape="rect" coords="219, 2065, 354, 2113"   target="_self"  title="A type that represents a planned endeavor executed by an ActualOrganization responsible for developing, deploying or decommissioning ResourcePerformers in accordance with ActualProjectMilestones.">
+  
+  <area  href="#OBMK9FBEA47963B663C4" shape="rect" coords="220, 1957, 357, 2005"   target="_self"  title="The role played by a ProjectMilestone in the context of a Project">
+  
+  <area  href=48d4d4c963b699df.htm#OBMK48D4D4C963B699DF shape="polygon" coords="241, 1878, 241, 1864, 254, 1864, 254, 1878, 241, 1878"   target="_self"  title="A Project Milestone defines an intermediate delivery gate in the project lifecycle.">
+  
+  <area  href="#OBMK9FBEA55963B663F6" shape="rect" coords="228, 1840, 354, 1902"   target="_self"  title="A type of event in a Project by which progress is measured.">
+  
+  <area  href=48d4d4c963b699df.htm#OBMK48D4D4C963B699DF shape="polygon" coords="449, 1793, 449, 1779, 462, 1779, 462, 1793, 449, 1793"   target="_self"  title="A Project Milestone defines an intermediate delivery gate in the project lifecycle.">
+  
+  <area  href="#OBMK48D4D5B163B69B01" shape="rect" coords="410, 1742, 615, 1830"   target="_self"  title="An event with a start date in a ActualProject from which progress is measured.">
+  
+  <area  href=48d4d4c963b699df.htm#OBMK48D4D4C963B699DF shape="polygon" coords="1682, 1637, 1682, 1624, 1695, 1624, 1695, 1637, 1682, 1637"   target="_self"  title="A Project Milestone defines an intermediate delivery gate in the project lifecycle.">
+  
+  <area  href="#OBMK48D4D5B163B69B01" shape="rect" coords="1557, 1592, 1933, 1670"   target="_self"  title="An event with a start date in a ActualProject from which progress is measured.">
+  
+  <area  href=91be97ff54882d9f.htm#OBMK91BE97FF54882D9F shape="polygon" coords="1025, 1666, 1025, 1653, 1039, 1653, 1039, 1666, 1025, 1666"   target="_self"  title="A&#160; Project is a course of action that is being executed or has been selected for execution. An organization&#39;s Initiatives represent the choices the organization has made about how to pursue the change that allows it to achieve its objectives.">
+  
+  <area  href="#OBMK5EF4606B63B566BA" shape="rect" coords="963, 1646, 1169, 1673"   target="_self"  title="A time-limited planned endeavor executed by an ActualOrganization responsible for developing, deploying or">
+  
+  <area  href=d26b6b685fe0c6b9.htm#OBMKD26B6B685FE0C6B9 shape="polygon" coords="1018, 1641, 1018, 1628, 1031, 1628, 1031, 1641, 1018, 1641"   target="_self"  title="A Project Portfolio gathers all the projects of a given Project Domain in the defined project state (Demands, Candidate Projects, Ongoing Projects).">
+  
+  <area  href="#OBMK1E0C224C63B84A78" shape="rect" coords="962, 1623, 1169, 1647"   target="_self"  title="-">
+  
+  <area  href=24032c315fc6780a.htm#OBMK24032C315FC6780A shape="polygon" coords="1029, 1614, 1029, 1601, 1043, 1601, 1043, 1614, 1029, 1614"   target="_self"  title="A&#160; Transformation Program is an Initiative that is a temporary, flexible organisation created to co-ordinate, direct and oversee the implementation of a set of related Projects and Tasks in order to deliver outcomes and benefits related to the organisation&rsquo;s strategic objectives.">
+  
+  <area  href="#OBMK1E0C1F9F63B84A45" shape="rect" coords="962, 1593, 1168, 1622"   target="_self"  title="-">
+  
+  <area  href="#OBMK1E0C1F2A63B84A07" shape="rect" coords="961, 1579, 1172, 1675"   target="_self"  title="-">
+  
+  <area  href=91be97ff54882d9f.htm#OBMK91BE97FF54882D9F shape="polygon" coords="470, 1693, 470, 1679, 483, 1679, 483, 1693, 470, 1693"   target="_self"  title="A&#160; Project is a course of action that is being executed or has been selected for execution. An organization&#39;s Initiatives represent the choices the organization has made about how to pursue the change that allows it to achieve its objectives.">
+  
+  <area  href="#OBMK5EF4606B63B566BA" shape="rect" coords="412, 1671, 611, 1701"   target="_self"  title="A time-limited planned endeavor executed by an ActualOrganization responsible for developing, deploying or">
+  
+  <area  href=d26b6b685fe0c6b9.htm#OBMKD26B6B685FE0C6B9 shape="polygon" coords="463, 1663, 463, 1650, 476, 1650, 476, 1663, 463, 1663"   target="_self"  title="A Project Portfolio gathers all the projects of a given Project Domain in the defined project state (Demands, Candidate Projects, Ongoing Projects).">
+  
+  <area  href="#OBMK1E0C224C63B84A78" shape="rect" coords="410, 1641, 610, 1673"   target="_self"  title="-">
+  
+  <area  href=24032c315fc6780a.htm#OBMK24032C315FC6780A shape="polygon" coords="474, 1631, 474, 1618, 488, 1618, 488, 1631, 474, 1631"   target="_self"  title="A&#160; Transformation Program is an Initiative that is a temporary, flexible organisation created to co-ordinate, direct and oversee the implementation of a set of related Projects and Tasks in order to deliver outcomes and benefits related to the organisation&rsquo;s strategic objectives.">
+  
+  <area  href="#OBMK1E0C1F9F63B84A45" shape="rect" coords="412, 1608, 611, 1641"   target="_self"  title="-">
+  
+  <area  href="#OBMK1E0C1F2A63B84A07" shape="rect" coords="410, 1593, 613, 1703"   target="_self"  title="-">
+  
+  <area  href=bcebd31f5491302c.htm#OBMKBCEBD31F5491302C shape="polygon" coords="1316, 1252, 1316, 1239, 1329, 1239, 1329, 1252, 1316, 1252"   target="_self"  title="A&#160; Resource Agent is a Business Operating Agent which represents physical resources that produce Business Outcomes of the enterprise.">
+  
+  <area  href="#OBMK19531BF063C13554" shape="rect" coords="1295, 1229, 1450, 1262"   target="_self"  title="An abstract grouping of elements that can perform Functions.">
+  
+  <area  href=91be97ff54882d9f.htm#OBMK91BE97FF54882D9F shape="polygon" coords="1416, 978, 1416, 965, 1429, 965, 1429, 978, 1416, 978"   target="_self"  title="A&#160; Project is a course of action that is being executed or has been selected for execution. An organization&#39;s Initiatives represent the choices the organization has made about how to pursue the change that allows it to achieve its objectives.">
+  
+  <area  href="#OBMK5EF4606B63B566BA" shape="rect" coords="1330, 962, 1583, 980"   target="_self"  title="A time-limited planned endeavor executed by an ActualOrganization responsible for developing, deploying or">
+  
+  <area  href=d26b6b685fe0c6b9.htm#OBMKD26B6B685FE0C6B9 shape="polygon" coords="1409, 959, 1409, 946, 1422, 946, 1422, 959, 1409, 959"   target="_self"  title="A Project Portfolio gathers all the projects of a given Project Domain in the defined project state (Demands, Candidate Projects, Ongoing Projects).">
+  
+  <area  href="#OBMK1E0C224C63B84A78" shape="rect" coords="1330, 943, 1582, 963"   target="_self"  title="-">
+  
+  <area  href=24032c315fc6780a.htm#OBMK24032C315FC6780A shape="polygon" coords="1420, 938, 1420, 925, 1433, 925, 1433, 938, 1420, 938"   target="_self"  title="A&#160; Transformation Program is an Initiative that is a temporary, flexible organisation created to co-ordinate, direct and oversee the implementation of a set of related Projects and Tasks in order to deliver outcomes and benefits related to the organisation&rsquo;s strategic objectives.">
+  
+  <area  href="#OBMK1E0C1F9F63B84A45" shape="rect" coords="1331, 922, 1581, 942"   target="_self"  title="-">
+  
+  <area  href="#OBMK1E0C1F2A63B84A07" shape="rect" coords="1328, 908, 1585, 980"   target="_self"  title="-">
+  
+  <area  href=24ac695354881cbe.htm#OBMK24AC695354881CBE shape="polygon" coords="1190, 1093, 1190, 1077, 1203, 1077, 1203, 1093, 1190, 1093"   target="_self"  title="A category of project.">
+  
+  <area  href="#OBMK9FBEA19F63B66355" shape="rect" coords="1169, 1069, 1266, 1102"   target="_self"  title="A type that represents a planned endeavor executed by an ActualOrganization responsible for developing, deploying or decommissioning ResourcePerformers in accordance with ActualProjectMilestones.">
+  
+  <area  href=076d151c5a5e1561.htm#OBMK076D151C5A5E1561 shape="polygon" coords="1107, 1093, 1107, 1077, 1121, 1077, 1121, 1093, 1107, 1093"   target="_self"  title="An&#160; Organizational Position is a type of position held by people when part of an Org-Unit. ">
+  
+  <area  href="#OBMK1953350C63C13797" shape="rect" coords="1102, 1068, 1152, 1102"   target="_self"  title="A type of job title or position that a person can fill (e.g. Lawyer, Solution Architect, Machine Operator or Chief Executive Officer).">
+  
+  <area  href=7c408aa155270eea.htm#OBMK7C408AA155270EEA shape="polygon" coords="998, 1094, 998, 1078, 1011, 1078, 1011, 1094, 998, 1094"   target="_self"  title="An&#160; Org-Unit is a type of administrative unit in government or business that is a template of Organization .">
+  
+  <area  href="#OBMK19532E3763C13720" shape="rect" coords="994, 1069, 1087, 1104"   target="_self"  title="A group of OrganizationalResources (Persons, Posts, Organizations and Responsibilities) associated for a particular purpose.">
+  
+  <area  href=076d15425a5e158c.htm#OBMK076D15425A5E158C shape="polygon" coords="1064, 1002, 1064, 989, 1078, 989, 1078, 1002, 1064, 1002"   target="_self"  title="A&#160; Human Resource is a Resource Agent&#160; used to describe both the Organizational Positions of people who work for an organization and the type of department (Org-Unit) responsible for running business operations.">
+  
+  <area  href="#OBMK19532D5763C13694" shape="rect" coords="1044, 979, 1219, 1012"   target="_self"  title="An abstract type for Organization, Person, Post and Responsibility.">
+  
+  <area  href=bcebd31f5491302c.htm#OBMKBCEBD31F5491302C shape="polygon" coords="1068, 859, 1068, 846, 1081, 846, 1081, 859, 1068, 859"   target="_self"  title="A&#160; Resource Agent is a Business Operating Agent which represents physical resources that produce Business Outcomes of the enterprise.">
+  
+  <area  href="#OBMK19531BF063C13554" shape="rect" coords="1045, 833, 1202, 872"   target="_self"  title="An abstract grouping of elements that can perform Functions.">
+  
+  <area  href=910196ca550a2ec2.htm#OBMK910196CA550A2EC2 shape="polygon" coords="1139, 286, 1139, 272, 1152, 272, 1152, 286, 1139, 286"   target="_self"  title="An&#160; Organization is a group of people who share a common purpose and establish a functional division of labor in pursuit of their common purpose.">
+  
+  <area  href="#OBMK19532C7C63C13613" shape="rect" coords="1080, 237, 1306, 321"   target="_self"  title="An actual formal or informal organizational unit, e.g. &quot;Driving and Vehicle Licensing Agency&quot;, &quot;UAF team Alpha&quot;. ">
+  
+  <area  href=bcebd31f5491302c.htm#OBMKBCEBD31F5491302C shape="polygon" coords="114, 1256, 114, 1242, 127, 1242, 127, 1256, 114, 1256"   target="_self"  title="A&#160; Resource Agent is a Business Operating Agent which represents physical resources that produce Business Outcomes of the enterprise.">
+  
+  <area  href="#OBMK19531BF063C13554" shape="rect" coords="61, 1226, 280, 1272"   target="_self"  title="An abstract grouping of elements that can perform Functions.">
+  
+  <area  href="#OBMK0D61317963C01B5E" shape="rect" coords="926, 237, 1070, 281"   target="_self"  title="An actual, specific post, an instance of a Post &quot;type&quot; - e.g., &quot;President of the United States of America.&quot; where the Post would be president.">
+  
+  <area  href=c7dad03f5ae92ae9.htm#OBMKC7DAD03F5AE92AE9 shape="polygon" coords="995, 152, 995, 139, 1008, 139, 1008, 152, 995, 152"   target="_self"  title="A Person or Organisation.">
+  
+  <area  href="#OBMK0D61101D63C01AA8" shape="rect" coords="926, 117, 1216, 174"   target="_self"  title="An abstract type grouping responsible OrganizationalResources.">
+  
+  <area  href=48d4d4c963b699df.htm#OBMK48D4D4C963B699DF shape="polygon" coords="632, 1266, 632, 1252, 645, 1252, 645, 1266, 632, 1266"   target="_self"  title="A Project Milestone defines an intermediate delivery gate in the project lifecycle.">
+  
+  <area  href="#OBMK9FBEA55963B663F6" shape="rect" coords="544, 1226, 819, 1292"   target="_self"  title="A type of event in a Project by which progress is measured.">
+  
+  <area  href="#OBMK9FBEA47963B663C4" shape="rect" coords="543, 1070, 821, 1139"   target="_self"  title="The role played by a ProjectMilestone in the context of a Project">
+  
+  <area  href=24ac695354881cbe.htm#OBMK24AC695354881CBE shape="polygon" coords="657, 941, 657, 925, 671, 925, 671, 941, 657, 941"   target="_self"  title="A category of project.">
+  
+  <area  href="#OBMK9FBEA19F63B66355" shape="rect" coords="544, 901, 824, 966"   target="_self"  title="A type that represents a planned endeavor executed by an ActualOrganization responsible for developing, deploying or decommissioning ResourcePerformers in accordance with ActualProjectMilestones.">
+  
+  <area  href=48d4d4c963b699df.htm#OBMK48D4D4C963B699DF shape="polygon" coords="1828, 606, 1828, 593, 1841, 593, 1841, 606, 1828, 606"   target="_self"  title="A Project Milestone defines an intermediate delivery gate in the project lifecycle.">
+  
+  <area  href="#OBMK9FBEA55963B663F6" shape="rect" coords="1779, 571, 1976, 628"   target="_self"  title="A type of event in a Project by which progress is measured.">
+  
+  <area  href="#OBMK9FBEA47963B663C4" shape="rect" coords="1779, 430, 1980, 486"   target="_self"  title="The role played by a ProjectMilestone in the context of a Project">
+  
+  <area  href=24ac695354881cbe.htm#OBMK24AC695354881CBE shape="polygon" coords="1496, 478, 1496, 462, 1509, 462, 1509, 478, 1496, 478"   target="_self"  title="A category of project.">
+  
+  <area  href="#OBMK9FBEA19F63B66355" shape="rect" coords="1403, 432, 1643, 509"   target="_self"  title="A type that represents a planned endeavor executed by an ActualOrganization responsible for developing, deploying or decommissioning ResourcePerformers in accordance with ActualProjectMilestones.">
+  
+  <area  href=24032c315fc6780a.htm#OBMK24032C315FC6780A shape="polygon" coords="1415, 251, 1415, 237, 1428, 237, 1428, 251, 1415, 251"   target="_self"  title="A&#160; Transformation Program is an Initiative that is a temporary, flexible organisation created to co-ordinate, direct and oversee the implementation of a set of related Projects and Tasks in order to deliver outcomes and benefits related to the organisation&rsquo;s strategic objectives.">
+  
+  <area  href="#OBMK1E0C1F9F63B84A45" shape="rect" coords="1338, 237, 1564, 252"   target="_self"  title="-">
+  
+  <area  href=d26b6b685fe0c6b9.htm#OBMKD26B6B685FE0C6B9 shape="polygon" coords="1404, 267, 1404, 254, 1417, 254, 1417, 267, 1404, 267"   target="_self"  title="A Project Portfolio gathers all the projects of a given Project Domain in the defined project state (Demands, Candidate Projects, Ongoing Projects).">
+  
+  <area  href="#OBMK1E0C224C63B84A78" shape="rect" coords="1338, 255, 1566, 268"   target="_self"  title="-">
+  
+  <area  href=91be97ff54882d9f.htm#OBMK91BE97FF54882D9F shape="polygon" coords="1411, 284, 1411, 271, 1424, 271, 1424, 284, 1411, 284"   target="_self"  title="A&#160; Project is a course of action that is being executed or has been selected for execution. An organization&#39;s Initiatives represent the choices the organization has made about how to pursue the change that allows it to achieve its objectives.">
+  
+  <area  href="#OBMK5EF4606B63B566BA" shape="rect" coords="1338, 271, 1567, 285"   target="_self"  title="A time-limited planned endeavor executed by an ActualOrganization responsible for developing, deploying or">
+  
+  <area  href="#OBMK1E0C1F2A63B84A07" shape="rect" coords="1325, 219, 1581, 288"   target="_self"  title="-">
+  
+  <area  href=91be97ff54882d9f.htm#OBMK91BE97FF54882D9F shape="polygon" coords="156, 193, 156, 180, 170, 180, 170, 193, 156, 193"   target="_self"  title="A&#160; Project is a course of action that is being executed or has been selected for execution. An organization&#39;s Initiatives represent the choices the organization has made about how to pursue the change that allows it to achieve its objectives.">
+  
+  <area  href="#OBMK5EF4606B63B566BA" shape="rect" coords="63, 166, 331, 207"   target="_self"  title="A time-limited planned endeavor executed by an ActualOrganization responsible for developing, deploying or">
+  
+  <area  href=d26b6b685fe0c6b9.htm#OBMKD26B6B685FE0C6B9 shape="polygon" coords="149, 146, 149, 133, 163, 133, 163, 146, 149, 146"   target="_self"  title="A Project Portfolio gathers all the projects of a given Project Domain in the defined project state (Demands, Candidate Projects, Ongoing Projects).">
+  
+  <area  href="#OBMK1E0C224C63B84A78" shape="rect" coords="63, 120, 331, 161"   target="_self"  title="-">
+  
+  <area  href=24032c315fc6780a.htm#OBMK24032C315FC6780A shape="polygon" coords="161, 99, 161, 86, 174, 86, 174, 99, 161, 99"   target="_self"  title="A&#160; Transformation Program is an Initiative that is a temporary, flexible organisation created to co-ordinate, direct and oversee the implementation of a set of related Projects and Tasks in order to deliver outcomes and benefits related to the organisation&rsquo;s strategic objectives.">
+  
+  <area  href="#OBMK1E0C1F9F63B84A45" shape="rect" coords="63, 73, 331, 114"   target="_self"  title="-">
+  
+  <area  href="#OBMK1E0C1F2A63B84A07" shape="rect" coords="53, 50, 341, 220"   target="_self"  title="-">
+  
+  <area  href=48d4d4c963b699df.htm#OBMK48D4D4C963B699DF shape="polygon" coords="133, 518, 133, 504, 147, 504, 147, 518, 133, 518"   target="_self"  title="A Project Milestone defines an intermediate delivery gate in the project lifecycle.">
+  
+  <area  href="#OBMK48D4D5B163B69B01" shape="rect" coords="53, 475, 341, 547"   target="_self"  title="An event with a start date in a ActualProject from which progress is measured.">
+  
+  <area  href=48d4d4c963b699df.htm#OBMK48D4D4C963B699DF shape="polygon" coords="638, 520, 638, 507, 651, 507, 651, 520, 638, 520"   target="_self"  title="A Project Milestone defines an intermediate delivery gate in the project lifecycle.">
+  
+  <area  href="#OBMK9FBEA55963B663F6" shape="rect" coords="543, 475, 832, 551"   target="_self"  title="A type of event in a Project by which progress is measured.">
+  
+  <area  href="#OBMK9FBEA47963B663C4" shape="rect" coords="543, 334, 833, 409"   target="_self"  title="The role played by a ProjectMilestone in the context of a Project">
+  
+  <area  href=24ac695354881cbe.htm#OBMK24AC695354881CBE shape="polygon" coords="663, 194, 663, 178, 676, 178, 676, 194, 663, 194"   target="_self"  title="A category of project.">
+  
+  <area  href="#OBMK9FBEA19F63B66355" shape="rect" coords="543, 150, 836, 222"   target="_self"  title="A type that represents a planned endeavor executed by an ActualOrganization responsible for developing, deploying or decommissioning ResourcePerformers in accordance with ActualProjectMilestones.">
+  
+</map>
+<img  src="../images/ef5d0f3263229fd7_ef5d0f3963229ff3_i.png" alt="../images/ef5d0f3263229fd7_ef5d0f3963229ff3_i.png" usemap="#EF5D0F3963229FF3" height="2254" width="1995" border=0>
+
+</section>
+<a class="object-section-anchor" id="map"></a>
+<section class="object-section">
+<h4>MAPPED ENTITIES</h4> 
+<hr class="sectionbreak" />
+<table id="sortabletable" class="table table-sm  table-bordered table-cell-resizable table-index-set-col-width-4 table-custom-style table-scrollX" width="100%" cellspacing="0">
+<tr><th>Framework Concept</th><th>Framework Definition</th><th>HOPEX Concept</th><th>HOPEX Definition</th></tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK19532C7C63C13613"/>ActualOrganization</td>
+<td>An actual formal or informal organizational unit, e.g. &quot;Driving and Vehicle Licensing Agency&quot;, &quot;UAF team Alpha&quot;. <i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ActualOrganization" target="_blank">OMG - UAF - ActualOrganization</a></i></td>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="910196ca550a2ec2.htm" target="_top">Organization</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="9853b9f259c32674.htm" target="_top">Organization</a></td>
+<td class="description-text"><div align="left" style="min-height: 11pt; ">An&#160;<b> Organization</b> is a group of people who share a common purpose and establish a functional division of labor in pursuit of their common purpose.</div><div align="left" style="min-height: 11pt; ">It is the relationships between its members in the pursuit of their common purpose that give unity and identity to an organization.</div><i><br/>References:<br/><a href="../../../www.omg.org/spec/BMM/1.3/formal-15-05-19.pdf#page=63" target="_blank">OMG - BMM - Organizational Unit</a><br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ActualOrganization" target="_blank">OMG - UAF - ActualOrganization</a><br/><a href="../resources/Ackoff-Towards-a-system-of-systems-concepts.pdf#FunctionalDivisionOfLabor" target="_blank">Russell Ackoff - System of concepts - FunctionalDivisionOfLabor</a><br/><a href="../resources/Ackoff-Towards-a-system-of-systems-concepts.pdf#Organizations" target="_blank">Russell Ackoff - System of Concepts - Organizations</a><br/><a href="https://www.scaledagileframework.com/organizational-agility/" target="_blank">SAFe&copy; - Organizational Agility</a><br/><a href="http://wordnetweb.princeton.edu/perl/webwn?o2=&amp;o0=1&amp;o8=1&amp;o1=1&amp;o7=&amp;o5=&amp;o9=&amp;o6=&amp;o3=&amp;o4=&amp;r=1&amp;s=organization&amp;i=3&amp;h=10000000000#c" target="_blank">WordNet - Organization</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK0D61317963C01B5E"/>ActualPost</td>
+<td>An actual, specific post, an instance of a Post &quot;type&quot; - e.g., &quot;President of the United States of America.&quot; where the Post would be president.<i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ActualPost" target="_blank">OMG - UAF - ActualPost</a></i></td>
+<td></td>
+<td class="description-text"><p style="color:red"><b>ActualPost</b> is not directly implemented in HOPEX.</p>Rational:<br/>ActualPost overlaps with realtime management of HR resources, which is out of scope of Architecture Management tools."</td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK5EF4606B63B566BA"/>ActualProject</td>
+<td><div align="left" style="min-height: 12pt; ">A time-limited planned endeavor executed by an ActualOrganization responsible for developing, deploying or</div><div align="left" style="min-height: 12pt; ">decommissioning ResourcePerformers in accordance with ActualProjectMilestones.</div><i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Project" target="_blank">OMG - UAF - Project</a></i></td>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="91be97ff54882d9f.htm" target="_top">Project</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="8a1f952c585256cc.htm" target="_top">Project</a></td>
+<td class="description-text">A&#160;<b> Project</b> is a course of action that is being executed or has been selected for execution. An organization&#39;s <a href="0ffeec41600be08a.htm" target="_top"><b><u>Initiative</u></b></a>s represent the choices the organization has made about how to pursue the change that allows it to achieve its objectives.<i><br/>References:<br/><a href="https://dodcio.defense.gov/Library/DoD-Architecture-Framework/dodaf20_project/" target="_blank">DoDAF2 - Project Viewpoint</a><br/><a href="https://martinfowler.com/articles/products-over-projects.html" target="_blank">Martin Fowler - Products over Projects</a><br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ActualProject" target="_blank">OMG - UAF - ActualProject</a><br/><a href="https://pubs.opengroup.org/architecture/togaf9-doc/m/chap03.html#tag_03_85" target="_blank">OpenGroup - TOGAF - Definitions - Work Package</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK1E0C1F2A63B84A07"/>ActualProject(Abstract)</td>
+<td></td>
+<td></td>
+<td class="description-text"></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK48D4D5B163B69B01"/>ActualProjectMilesone</td>
+<td>An event with a start date in a ActualProject from which progress is measured.<i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ActualProjectMileStone" target="_blank">OMG - UAF - ActualProjectMileStone</a></i></td>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="48d4d4c963b699df.htm" target="_top">Project Milesone</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="29e22aa158d15af1.htm" target="_top">Project Milestone</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A Project Milestone defines an intermediate delivery gate in the project lifecycle.</div><div align="left" style="min-height: 12pt; "><b>&#160;Project Deliverable</b>s can be associated with a&#160;<b> Project Milesone</b> in case they are delivered during the project and not at the end of the project.</div><div align="left" style="min-height: 12pt; ">Note: the association of deliverables to milestone do not affect their object life initialization; the object life should be manually updated accordingly if this is relevant.</div></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK0D61101D63C01AA8"/>ActualResponsibleResource</td>
+<td>An abstract type grouping responsible OrganizationalResources.<i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ActualResponsibleResource" target="_blank">OMG - UAF - ActualResponsibleResource</a></i></td>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="c7dad03f5ae92ae9.htm" target="_top">Responsible Human Entity</a><br>   <img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="81f7b7d35a438bbf.htm" target="_top">Individual Responsible Human Agent</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A Person or Organisation.</div><div align="left" style="min-height: 12pt; ">These can be held responsible for their actions, hence are&#160;<b> Responsible Human Entity</b>ies.</div><i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ActualResponsibleResource" target="_blank">OMG - UAF - ActualResponsibleResource</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK19533FB163C13851"/>Capability</td>
+<td>An enterprise&#39;s ability to Achieve a desired effect realized through a combination of ways and means (e.g. CapabilityConfigurations) along with specified measures.<i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Capability" target="_blank">OMG - UAF - Capability</a></i></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="9810abf3551135c4.htm" target="_top">Business Capability</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="da99dae349820097.htm" target="_top">Business Capability</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Business Capability</b> is a <a href="b181b98c54891882.htm" target="_top"><b><u>Capability</u></b></a> that benefits to Customers (internal or external) of the enterprise. It expresses an ability to deliver <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Business Capability</b> is defined by its intended <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s and the conditions (<a href="63f8870255ae1ba2.htm" target="_top"><b><u>Constraining Property</u></b></a>) under which the delivery of the <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s shall be proceeded.<br />The actual <a href="7c40a5b455272bb4.htm" target="_top"><b><u>Constraint Value</u></b></a>s for a given&#160;<b> Business Capability</b> at the different <a href="036a3de3548f229e.htm" target="_top"><b><u>Enterprise Stage</u></b></a>s is given by their exhibition (<b> Exhibited Capability</b>).</div><i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Capability" target="_blank">OMG - UAF - Capability</a><br/><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_28" target="_blank">OpenGroup - TOGAF - Definition - Business Capability</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK5ACF5C9663C11260"/>GeopoliticalExtentType</td>
+<td><div align="left" style="min-height: 12pt; ">GeopoliticalExtentType is not implemented as a subtype of OperationalExchangeItem.</div><div align="left" style="min-height: 12pt; ">GeopoliticalExtentType was an initial requirement from DoDAF2 which hasn&#39;t been adopted by the final DoDAF specification. It is a legacy component of UAF.</div><i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#GeopoliticalExtentType" target="_blank">OMG - UAF - GeopoliticalExtentType</a></i></td>
+<td></td>
+<td class="description-text"><p style="color:red"><b>GeopoliticalExtentType</b> is not directly implemented in HOPEX.</p>Rational:<br/>GeopoliticalExtentType was an initial requirement from DoDAF2 which hasn&#39;t been adopted by the final DoDAF specification. It is a legacy component of UAF."</td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK19532E3763C13720"/>Organization</td>
+<td>A group of OrganizationalResources (Persons, Posts, Organizations and Responsibilities) associated for a particular purpose.</td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="7c408aa155270eea.htm" target="_top">Org-Unit</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="b1edb2562c140173.htm" target="_top">Org-Unit</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Org-Unit</b> is a type of administrative unit in government or business that is a template of <a href="910196ca550a2ec2.htm" target="_top"><b><u>Organization</u></b></a> .</div><div align="left" style="min-height: 12pt; ">Example : Sales Department, Finance Department, Logistics Deparment.</div><i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Organization" target="_blank">OMG - UAF - Organization</a><br/><a href="https://method.demomega.com/MM-OVERVIEW/pages/architecture-content/chap02.html#tag_02_04" target="_blank">OpenGroup - TOGAF - Content Metamodel - Organization Unit</a><br/><a href="../resources/Ackoff-Towards-a-system-of-systems-concepts.pdf#FunctionalDivisionOfLabor" target="_blank">Russell Ackoff - System of concepts - FunctionalDivisionOfLabor</a><br/><a href="../resources/Ackoff-Towards-a-system-of-systems-concepts.pdf#Organizations" target="_blank">Russell Ackoff - System of Concepts - Organizations</a><br/><a href="https://compliancedictionary.com/term/1463" target="_blank">UCF Glossary - Department</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK19532D5763C13694"/>OrganizationalResource</td>
+<td>An abstract type for Organization, Person, Post and Responsibility.<i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#organizationalresource" target="_blank">OMG - UAF - OrganizationalResource</a></i></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="076d15425a5e158c.htm" target="_top">Human Resource</a><br>   <img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="f3b7f5bc58806f49.htm" target="_top">Class of Organizational Agent</a></td>
+<td class="description-text">A&#160;<b> Human Resource</b> is a <a href="bcebd31f5491302c.htm" target="_top"><b><u>Resource Agent</u></b></a>&#160; used to describe both the <a href="076d151c5a5e1561.htm" target="_top"><b><u>Organizational Position</u></b></a>s of people who work for an organization and the type of department (<a href="7c408aa155270eea.htm" target="_top"><b><u>Org-Unit</u></b></a>) responsible for running business operations.<i><br/>References:<br/><a href="https://www.humanresourcesedu.org/what-is-human-resources/" target="_blank">Humanresourcesedu.org - Human Resource</a><br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#organizationalresource" target="_blank">OMG - UAF - OrganizationalResource</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK1953350C63C13797"/>Post</td>
+<td>A type of job title or position that a person can fill (e.g. Lawyer, Solution Architect, Machine Operator or Chief Executive Officer).<i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Post" target="_blank">OMG - UAF - Post</a></i></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="076d151c5a5e1561.htm" target="_top">Organizational Position</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="fb5f6ff8587e40e3.htm" target="_top">Position Type</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Organizational Position</b> is a type of position held by people when part of an <a href="7c408aa155270eea.htm" target="_top"><b><u>Org-Unit</u></b></a>. </div><div align="left" style="min-height: 12pt; ">Examples: </div><div align="left" style="min-height: 13pt; ">- Sales representative</div><div align="left" style="min-height: 13pt; ">- Developer</div><div align="left" style="min-height: 13pt; ">- Storekeeper</div><div align="left" style="min-height: 13pt; ">- Architect</div><i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Post" target="_blank">OMG - UAF - Post</a><br/><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_66" target="_blank">OpenGroup - TOGAF - Definition - Role</a><br/><a href="https://compliancedictionary.com/term/252897" target="_blank">UCF Glossary - Position Description</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK1E0C1F9F63B84A45"/>Programme</td>
+<td><i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Project" target="_blank">OMG - UAF - Project</a></i></td>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="24032c315fc6780a.htm" target="_top">Transformation Program</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="8a1f953b58525710.htm" target="_top">Project Domain</a></td>
+<td class="description-text"><div align="left" style="min-height: 11pt; ">A&#160;<b> Transformation Program</b> is an <a href="0ffeec41600be08a.htm" target="_top"><b><u>Initiative</u></b></a> that is a temporary, flexible organisation created to co-ordinate, direct and oversee the implementation of a set of related Projects and Tasks in order to deliver outcomes and benefits related to the organisation&rsquo;s strategic objectives.</div><div align="left" style="min-height: 11pt; ">A programme is likely to have a lifespan of several years. During a programme lifecycle, projects are initiated, executed, and closed.&#160; Programmes provide an umbrella under which these projects can be co-ordinated. The programme integrates the projects so that it can deliver an outcome greater than the sum of its parts.</div><div align="left" style="min-height: 11pt; ">Programs are defined upon a given domain (e.g. Business, Information Technology)</div><div align="left" style="min-height: 11pt; ">A program domain gathers all the projects managed from the same perspective in terms of portfolio management decisions. Project Portfolios are therefore also attached to programs; by default, one portfolio of each portfolio type is created when creating a new program.</div><i><br/>References:<br/><a href="https://martinfowler.com/articles/products-over-projects.html" target="_blank">Martin Fowler - Products over Projects</a><br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ProjectKind" target="_blank">OMG - UAF - ProjectKind</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK9FBEA19F63B66355"/>Project</td>
+<td>A type that represents a planned endeavor executed by an ActualOrganization responsible for developing, deploying or decommissioning ResourcePerformers in accordance with ActualProjectMilestones.</td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="24ac695354881cbe.htm" target="_top">Project Type</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="8a1f95a2585257a9.htm" target="_top">Project Category</a></td>
+<td class="description-text">A category of project.<i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Project" target="_blank">OMG - UAF - Project</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK1E0C224C63B84A78"/>Project Portfolio</td>
+<td><i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Project" target="_blank">OMG - UAF - Project</a></i></td>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="d26b6b685fe0c6b9.htm" target="_top">Project Portfolio</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="ba8fff38587c87b2.htm" target="_top">Projects Portfolio</a></td>
+<td class="description-text">A Project Portfolio gathers all the projects of a given Project Domain in the defined project state (Demands, Candidate Projects, Ongoing Projects).<br><br>In a Portfolio, Projects can be assessed and compared against several criteria:<br>- Projects Criteria: these are derived from projects information (e.g. costs) or from project qualitative assessment (e.g. strategic alignment level, business value level)<br>- Portfolio criteria: these are additional criteria which can be defined at portfolio level on top of the projects criteria (ex : score, priority, rank)<br><br>The project workflow can be actioned from the project portfolio lines.<i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/UAFML/dtc-21-12-07.pdf#ProjectKind" target="_blank">OMG - UAF - ProjectKind</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK9FBEA55963B663F6"/>ProjectMilestone</td>
+<td>A type of event in a Project by which progress is measured.</td>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="48d4d4c963b699df.htm" target="_top">Project Milesone</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="29e22aa158d15af1.htm" target="_top">Project Milestone</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A Project Milestone defines an intermediate delivery gate in the project lifecycle.</div><div align="left" style="min-height: 12pt; "><b>&#160;Project Deliverable</b>s can be associated with a&#160;<b> Project Milesone</b> in case they are delivered during the project and not at the end of the project.</div><div align="left" style="min-height: 12pt; ">Note: the association of deliverables to milestone do not affect their object life initialization; the object life should be manually updated accordingly if this is relevant.</div></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK9FBEA47963B663C4"/>ProjectMilestoneRole</td>
+<td>The role played by a ProjectMilestone in the context of a Project<i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ProjectMilestoneRole" target="_blank">OMG - UAF - ProjectMilestoneRole</a></i></td>
+<td></td>
+<td class="description-text"></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK726D80B063C133E0"/>ResourceInformation</td>
+<td>A formalized representation of information that is managed by or exchanged between systems.<i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ResourceInformation" target="_blank">OMG - UAF - ResourceInformation</a></i></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="6d2b7c935fbb6270.htm" target="_top">Data Object</a><br>   <img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="650bc5d9550fd138.htm" target="_top">Data Entity</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Data Object</b>&#160; represents the abstract structure of any kind of data that can be memorized by a <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a>.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Data Object</b> is either a <a href="325c32fc5eb02d02.htm" target="_top"><b><u>Data Entity</u></b></a> or a <a href="6d2b7fce5fbb69c7.htm" target="_top"><b><u>Data Property</u></b></a>.</div><div align="left" style="min-height: 12pt; ">Only <a href="325c32fc5eb02d02.htm" target="_top"><b><u>Data Entity</u></b></a>s can have identity and states. <a href="6d2b7fce5fbb69c7.htm" target="_top"><b><u>Data Property</u></b></a>s only handle raw data.</div><i><br/>References:<br/><a href="https://csrc.nist.gov/glossary/term/data_asset" target="_blank">NIST - Data Asset</a><br/><a href="https://compliancedictionary.com/term/270" target="_blank">UCF Glossary - Data</a><br/><a href="https://compliancedictionary.com/term/2969" target="_blank">UCF Glossary - Data Element</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK19531BF063C13554"/>ResourcePerformer</td>
+<td>An abstract grouping of elements that can perform Functions.<i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#resourceperformer" target="_blank">OMG - UAF - ResourcePerformer</a></i></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="bcebd31f5491302c.htm" target="_top">Resource Agent</a><br>   <img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="79a98236563c7174.htm" target="_top">Class of Enterprise Resource Agent Assembly</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Resource Agent</b> is a <a href="e2ef091962147ad7.htm" target="_top"><b><u>Business Operating Agent</u></b></a> which represents physical resources that produce <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s of the enterprise.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Resource Agent</b> can be a <a href="076d15425a5e158c.htm" target="_top"><b><u>Human Resource</u></b></a> (<a href="076d151c5a5e1561.htm" target="_top"><b><u>Organizational Position</u></b></a> or <a href="7c408aa155270eea.htm" target="_top"><b><u>Org-Unit</u></b></a>), a <a href="278675d65b252f4d.htm" target="_top"><b><u>Business System</u></b></a> (<a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a> or <a href="c30bf4015a5da72b.htm" target="_top"><b><u>Hardware System</u></b></a>) or a <a href="d1600c7062e093eb.htm" target="_top"><b><u>Capability Configuration</u></b></a> (an assembly of <a href="076d15425a5e158c.htm" target="_top"><b><u>Human Resource</u></b></a>s and <a href="278675d65b252f4d.htm" target="_top"><b><u>Business System</u></b></a>s.)</div><i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#resourceperformer" target="_blank">OMG - UAF - ResourcePerformer</a><br/><a href="https://pubs.opengroup.org/togaf-standard/introduction/apdxb.html#tag_06_03" target="_blank">OpenGroup - TOGAF - Definition - Business System</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK5ACF5B5863C111D1"/>ResourceRole</td>
+<td>An interaction point for a ResourcePerformer through which it can interact with the outside environment and which is defined by a ResourceInterface.<i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ResourceRole" target="_blank">OMG - UAF - ResourceRole</a><br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/UAFML/dtc-21-12-07.pdf#ResourceRole" target="_blank">OMG - UAF - ResourceRole (Profile Spec)</a></i></td>
+<td><img src="../standard/ctx-concepttype.ico.gif"/>&nbsp;
+<a  href="24034F6D5FC79C3F.htm" target="_top">Resource Agent Component</a><br>   <img src="../standard/metaclasspart_abstract.ico.gif"/>&nbsp;
+<a  href="79a97ef3563c70c5.htm" target="_top">Class of Enterprise Resource Agent Assembly Component</a></td>
+<td class="description-text"></td>
+</tr>
+</table>
+</section>
+<a class="object-section-anchor" id="ext"></a>
+<section class="object-section">
+<h4>EXTERNAL REFERENCES</h4> 
+<hr class="sectionbreak" />
+<table id="sortabletable" class="table table-sm  table-bordered table-cell-resizable table-index-set-col-width-4 table-custom-style table-scrollX" width="100%" cellspacing="0">
+<tr><th>Framework reference</th><th>HOPEX Description</th></tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMK9746AC9161A05A3B"/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ActualOrganization">OMG - UAF - ActualOrganization</a></td>
+<td><br/> An actual formal or informal organizational unit, e.g. &quot;Driving and Vehicle Licensing Agency&quot;, &quot;UAF team Alpha&quot;. <br/><br/><br/> An actual formal or informal organizational unit, e.g. &quot;Driving and Vehicle Licensing Agency&quot;, &quot;UAF team Alpha&quot;. <br/><br/><br/> An actual formal or informal organizational unit, e.g. &quot;Driving and Vehicle Licensing Agency&quot;, &quot;UAF team Alpha&quot;. <br/><br/><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="910196ca550a2ec2.htm" target="_top">Organization</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="9853b9f259c32674.htm" target="_top">Organization</a><br/> <div align="left" style="min-height: 11pt; ">An&#160;<b> Organization</b> is a group of people who share a common purpose and establish a functional division of labor in pursuit of their common purpose.</div><div align="left" style="min-height: 11pt; ">It is the relationships between its members in the pursuit of their common purpose that give unity and identity to an organization.</div></td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMK14CC1D306387717A"/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ActualPost">OMG - UAF - ActualPost</a></td>
+<td><br/> An actual, specific post, an instance of a Post &quot;type&quot; - e.g., &quot;President of the United States of America.&quot; where the Post would be president.<br/><br/><br/> An actual, specific post, an instance of a Post &quot;type&quot; - e.g., &quot;President of the United States of America.&quot; where the Post would be president.<br/><br/><br/> An actual, specific post, an instance of a Post &quot;type&quot; - e.g., &quot;President of the United States of America.&quot; where the Post would be president.</td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMK48D4D5FC63B69B34"/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ActualProjectMileStone">OMG - UAF - ActualProjectMileStone</a></td>
+<td><br/> An event with a start date in a ActualProject from which progress is measured.<br/><br/><br/> An event with a start date in a ActualProject from which progress is measured.</td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMK889F8DD862C23043"/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ActualResponsibleResource">OMG - UAF - ActualResponsibleResource</a></td>
+<td><br/> An abstract type grouping responsible OrganizationalResources.<br/><br/><br/> An abstract type grouping responsible OrganizationalResources.<br/><br/><br/> An abstract type grouping responsible OrganizationalResources.<br/><br/><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="c7dad03f5ae92ae9.htm" target="_top">Responsible Human Entity</a><br>   <img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="81f7b7d35a438bbf.htm" target="_top">Individual Responsible Human Agent</a><br/> <div align="left" style="min-height: 12pt; ">A Person or Organisation.</div><div align="left" style="min-height: 12pt; ">These can be held responsible for their actions, hence are&#160;<b> Responsible Human Entity</b>ies.</div></td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMK370D619361C2BC04"/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Capability">OMG - UAF - Capability</a></td>
+<td><br/> A particular ability that a business may possess or exchange to achieve a specific purpose.<br/><br/><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="9810abf3551135c4.htm" target="_top">Business Capability</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="da99dae349820097.htm" target="_top">Business Capability</a><br/> <div align="left" style="min-height: 12pt; ">A&#160;<b> Business Capability</b> is a <a href="b181b98c54891882.htm" target="_top"><b><u>Capability</u></b></a> that benefits to Customers (internal or external) of the enterprise. It expresses an ability to deliver <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Business Capability</b> is defined by its intended <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s and the conditions (<a href="63f8870255ae1ba2.htm" target="_top"><b><u>Constraining Property</u></b></a>) under which the delivery of the <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s shall be proceeded.<br />The actual <a href="7c40a5b455272bb4.htm" target="_top"><b><u>Constraint Value</u></b></a>s for a given&#160;<b> Business Capability</b> at the different <a href="036a3de3548f229e.htm" target="_top"><b><u>Enterprise Stage</u></b></a>s is given by their exhibition (<b> Exhibited Capability</b>).</div><br/><br/><br/> An enterprise&#39;s ability to Achieve a desired effect realized through a combination of ways and means (e.g. CapabilityConfigurations) along with specified measures.<br/><br/><br/> An enterprise&#39;s ability to Achieve a desired effect realized through a combination of ways and means (e.g. CapabilityConfigurations) along with specified measures.<br/><br/><br/> An enterprise&#39;s ability to Achieve a desired effect realized through a combination of ways and means (e.g. CapabilityConfigurations) along with specified measures.<br/><br/><br/> An enterprise&#39;s ability to Achieve a desired effect realized through a combination of ways and means (e.g. CapabilityConfigurations) along with specified measures.<br/><br/><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="b181b98c54891882.htm" target="_top">Capability</a><br>   <img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="77987c424f5f17c5.htm" target="_top">Capability</a><br/> <div align="left" style="min-height: 12pt; ">A&#160;<b> Capability</b>&#160; is an ability to produce an <a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>.</div><div align="left" style="min-height: 12pt; "><b>&#160;Capability</b>s are fulfilled by <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s performing <a href="d682ef5e56144e77.htm" target="_top"><b><u>Process</u></b></a>es and interacting with other <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s to produce the desired <a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>.</div></td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMK14CC2A5B63877D5F"/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#GeopoliticalExtentType">OMG - UAF - GeopoliticalExtentType</a></td>
+<td><br/> GeopoliticalExtentType is not implemented as a subtype of OperationalExchangeItem.<br />GeopoliticalExtentType was an initial requirement from DoDAF2 which hasn&#39;t been adopted by the final DoDAF specification. It is a legacy component of UAF.<br/><br/><br/> <div align="left" style="min-height: 12pt; ">GeopoliticalExtentType is not implemented as a subtype of OperationalExchangeItem.</div><div align="left" style="min-height: 12pt; ">GeopoliticalExtentType was an initial requirement from DoDAF2 which hasn&#39;t been adopted by the final DoDAF specification. It is a legacy component of UAF.</div><br/><br/><br/> <div align="left" style="min-height: 12pt; ">GeopoliticalExtentType is not implemented as a subtype of OperationalExchangeItem.</div><div align="left" style="min-height: 12pt; ">GeopoliticalExtentType was an initial requirement from DoDAF2 which hasn&#39;t been adopted by the final DoDAF specification. It is a legacy component of UAF.</div><br/><br/><br/> A type of geospatial extent whose boundaries are defined by declaration or agreement by political parties.</td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMK58EC5DB76331067B"/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#organizationalresource">OMG - UAF - OrganizationalResource</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="076d15425a5e158c.htm" target="_top">Human Resource</a><br>   <img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="f3b7f5bc58806f49.htm" target="_top">Class of Organizational Agent</a><br/> A&#160;<b> Human Resource</b> is a <a href="bcebd31f5491302c.htm" target="_top"><b><u>Resource Agent</u></b></a>&#160; used to describe both the <a href="076d151c5a5e1561.htm" target="_top"><b><u>Organizational Position</u></b></a>s of people who work for an organization and the type of department (<a href="7c408aa155270eea.htm" target="_top"><b><u>Org-Unit</u></b></a>) responsible for running business operations.<br/><br/><br/> <div align="left" style="min-height: 12pt; ">A group of OrganizationalResources (Persons, Posts, Organizations and Responsibilities) associated for a particular </div><div align="left" style="min-height: 12pt; ">purpose.</div><br/><br/><br/> An abstract type for Organization, Person, Post and Responsibility.<br/><br/><br/> An abstract type for Organization, Person, Post and Responsibility. <br/><br/><br/> An abstract type for Organization, Person, Post and Responsibility. <br/><br/><br/> A group of OrganizationalResources (Persons, Posts, Organizations and Responsibilities) associated for a particular purpose.<br/><br/><br/> A group of OrganizationalResources (Persons, Posts, Organizations and Responsibilities) associated for a particular purpose.</td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMK826BB55361A849D7"/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Post">OMG - UAF - Post</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="076d151c5a5e1561.htm" target="_top">Organizational Position</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="fb5f6ff8587e40e3.htm" target="_top">Position Type</a><br/> <div align="left" style="min-height: 12pt; ">An&#160;<b> Organizational Position</b> is a type of position held by people when part of an <a href="7c408aa155270eea.htm" target="_top"><b><u>Org-Unit</u></b></a>. </div><div align="left" style="min-height: 12pt; ">Examples: </div><div align="left" style="min-height: 13pt; ">- Sales representative</div><div align="left" style="min-height: 13pt; ">- Developer</div><div align="left" style="min-height: 13pt; ">- Storekeeper</div><div align="left" style="min-height: 13pt; ">- Architect</div><br/><br/><br/> A type of job title or position that a person can fill (e.g. Lawyer, Solution Architect, Machine Operator or Chief Executive Officer).<br/><br/><br/> A type of job title or position that a person can fill (e.g. Lawyer, Solution Architect, Machine Operator or Chief Executive Officer).<br/><br/><br/> A type of job title or position that a person can fill (e.g. Lawyer, Solution Architect, Machine Operator or Chief Executive Officer).<br/><br/><br/> A type of job title or position that a person can fill (e.g. Lawyer, Solution Architect, Machine Operator or Chief Executive Officer).</td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMK31254A7F61DCBA3E"/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Project">OMG - UAF - Project</a></td>
+<td><br/> <div align="left" style="min-height: 12pt; ">A time-limited planned endeavor executed by an ActualOrganization responsible for developing, deploying or</div><div align="left" style="min-height: 12pt; ">decommissioning ResourcePerformers in accordance with ActualProjectMilestones.</div><br/><br/><br/> <br/><br/><br/> A type that represents a planned endeavor executed by an ActualOrganization responsible for developing, deploying or decommissioning ResourcePerformers in accordance with ActualProjectMilestones.<br/><br/><br/> <br/><br/><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="24ac695354881cbe.htm" target="_top">Project Type</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="8a1f95a2585257a9.htm" target="_top">Project Category</a><br/> A category of project.</td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMKDDC7DEE163B61007"/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ProjectMilestoneRole">OMG - UAF - ProjectMilestoneRole</a></td>
+<td><br/> The role played by a ProjectMilestone in the context of a Project</td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMK4BAC9541624DF865"/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ResourceInformation">OMG - UAF - ResourceInformation</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="4619527e560d45eb.htm" target="_top">Logical Data Entity</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="7db8824033340504.htm" target="_top">Class</a><br/> <div align="left" style="min-height: 12pt; ">A&#160;<b> Logical Data Entity</b> is a logical structure of a <a href="325c32fc5eb02d02.htm" target="_top"><b><u>Data Entity</u></b></a>. As any <a href="325c32fc5eb02d02.htm" target="_top"><b><u>Data Entity</u></b></a>, it has an independent existence and can be uniquely identified.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Logical Data Entity</b> is characterized by <a href="f4be36b65ee1c923.htm" target="_top"><b><u>Logical Relationship</u></b></a>s it has with other&#160;<b> Logical Data Entity</b>(ies) and by its <a href="f4be36695ee1c7fa.htm" target="_top"><b><u>Attribute</u></b></a>s.</div><br/><br/><br/> A formalized representation of information that is managed by or exchanged between systems.<br/><br/><br/> A formalized representation of information that is managed by or exchanged between systems.<br/><br/><br/> A formalized representation of information that is managed by or exchanged between systems.<br/><br/><br/> A formalized representation of information that is managed by or exchanged between systems.<br/><br/><br/> A formalized logical representation of information that is managed by or exchanged between systems.<br/><br/><br/> A formalized physical representation of information that is managed by or exchanged between systems.</td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMK58EC5BC763310530"/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#resourceperformer">OMG - UAF - ResourcePerformer</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="bcebd31f5491302c.htm" target="_top">Resource Agent</a><br>   <img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="79a98236563c7174.htm" target="_top">Class of Enterprise Resource Agent Assembly</a><br/> <div align="left" style="min-height: 12pt; ">A&#160;<b> Resource Agent</b> is a <a href="e2ef091962147ad7.htm" target="_top"><b><u>Business Operating Agent</u></b></a> which represents physical resources that produce <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s of the enterprise.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Resource Agent</b> can be a <a href="076d15425a5e158c.htm" target="_top"><b><u>Human Resource</u></b></a> (<a href="076d151c5a5e1561.htm" target="_top"><b><u>Organizational Position</u></b></a> or <a href="7c408aa155270eea.htm" target="_top"><b><u>Org-Unit</u></b></a>), a <a href="278675d65b252f4d.htm" target="_top"><b><u>Business System</u></b></a> (<a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a> or <a href="c30bf4015a5da72b.htm" target="_top"><b><u>Hardware System</u></b></a>) or a <a href="d1600c7062e093eb.htm" target="_top"><b><u>Capability Configuration</u></b></a> (an assembly of <a href="076d15425a5e158c.htm" target="_top"><b><u>Human Resource</u></b></a>s and <a href="278675d65b252f4d.htm" target="_top"><b><u>Business System</u></b></a>s.)</div><br/><br/><br/> An abstract grouping of elements that can perform Functions. <br/><br/><br/> An abstract grouping of elements that can perform Functions. <br/><br/><br/> An abstract grouping of elements that can perform Functions. <br/><br/><br/> An abstract grouping of elements that can perform Functions.<br/><br/><br/> An abstract grouping of elements that can perform Functions. <br/><br/><br/> An abstract grouping of elements that can perform Functions. </td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMK14D0A9336387E601"/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ResourceRole">OMG - UAF - ResourceRole</a></td>
+<td><br/> Usage of a ResourcePerformer in the context of another ResourcePerformer. Creates a whole-part relationship.<br/><br/><br/> Usage of a ResourcePerformer in the context of another ResourcePerformer. Creates a whole-part relationship.<br/><br/><br/> An interaction point for a ResourcePerformer through which it can interact with the outside environment and which is defined by a ResourceInterface.<br/><br/><br/> An interaction point for a ResourcePerformer through which it can interact with the outside environment and which is defined by a ResourceInterface. </td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMKADFED34C6399258B"/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/UAFML/dtc-21-12-07.pdf#ResourceRole">OMG - UAF - ResourceRole (Profile Spec)</a></td>
+<td><br/> Usage of a ResourcePerformer in the context of another ResourcePerformer. Creates a whole-part relationship.<br/><br/><br/> Usage of a ResourcePerformer in the context of another ResourcePerformer. Creates a whole-part relationship.<br/><br/><br/> An interaction point for a ResourcePerformer through which it can interact with the outside environment and which is defined by a ResourceInterface.<br/><br/><br/> An interaction point for a ResourcePerformer through which it can interact with the outside environment and which is defined by a ResourceInterface. </td>
+</tr>
+</table>
+</section>
+</div></html>

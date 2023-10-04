@@ -1,0 +1,326 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="keywords" content="">
+<meta name="description" content="">    
+<LINK REL="icon" HREF="../standard/assets/img/favicon.ico">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/bootstrap.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nav.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/eaportal.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/font-awesome.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/animate.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/datatables.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/grid.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nae.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/custom.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/chosen.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/prism.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery.dataTables.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jsTreeStyle.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.theme.css" media="screen" />
+<script type="text/javascript" src="../standard/assets/js/jquery-3.2.1.min.js" ></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-ui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.columnFilter.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3-force.v2.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.gui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.search.js"></script> 
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.util.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-2.1.1.min.js"></script>
+<script src="../standard/assets/js/ws_zoomtemplate_firefox.js"></script>
+<script src="../standard/assets/js/bootstrap.min.js"></script>
+<script src="../standard/assets/js/datatables.min.js"></script>
+<script src="../standard/assets/js/moment.min.js"></script>
+<script src="../standard/assets/js/datetime-moment.js"></script>
+<script src="../standard/assets/js/chartjs.min.js"></script>
+<script src="../standard/assets/js/searchindexcontent.json"></script>
+<script src="../standard/assets/js/anls.js"></script>
+<script src="../../../cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script src="../standard/assets/js/gauge.js"></script> 
+<script src="../standard/assets/js/domesticApi.js"></script> 
+<script src="../standard/assets/js/piecelabel.js"></script>
+<script src="../standard/assets/js/popper.min.js"></script>
+<script src="../standard/assets/js/custom.js"></script>
+<script src="../standard/assets/js/chosen.jquery.js"></script>
+<script src="../standard/assets/js/prism.js"></script>
+<script src="../standard/assets/js/init-chosen.js"></script>
+<script src="../standard/assets/js/chart-data-flow.js"></script>
+<script src="../standard/assets/js/chart-data-gantt.js"></script>
+<script type="module" src="../standard/assets/js/Fuse.esm.min.js"></script>
+<script type="module">
+import Fuse from '../standard/assets/js/Fuse.esm.min.js';
+$(document).ready(function () {
+console.log('getjson');
+window.$.getJSON('../standard/assets/js/searchindexcontent.json', function (response) {
+console.log('getjson ok');
+var isIndex = "";
+var url = window.location.pathname;
+var filename = url.substring(url.lastIndexOf('/')+1);
+if( filename.includes("index") || filename === "" ){
+isIndex = "pages/";
+} else {
+isIndex = "";
+}
+const fuse = new Fuse(response, {
+keys: ['title','text'],
+shouldSort: true,
+includeMatches : true,
+findAllMatches : true
+});
+$('#search-fuse').on('keyup', function () {
+let result = fuse.search($(this).val());
+console.log(result);
+let resultdiv = $('div.searchresults-fuse');
+if (result.length === 0) {
+resultdiv.hide();
+} else {
+resultdiv.empty();
+resultdiv.append('<table class="table-search" width="100%" cellspacing="0"><thead ><tr><th>Name</th><th>Object Type</th><th>Modification date</th></tr></thead><tbody>');
+
+for (let obj in result.slice(0,10)) {
+
+let searchObj = '<tr><td><a href="./'+ isIndex + result[obj].item.url + '">' + result[obj].item.title +'</a></td><td>' + result[obj].item.ObjectType + '</td><td>' + result[obj].item.ModificationDate + '</td></tr>' ;
+
+
+resultdiv.find('tbody').append(searchObj);
+}
+resultdiv.append('</tbody></table>');
+resultdiv.show();
+}
+});
+});
+});
+</script>
+<title>HOPEX Metamodel Overview (Beta Version)</title>
+</head>
+<nav class="navbar navbar-expand-md navbar-dark  navbar-mega"><!-- Brand --><!--<a class="navbar-brand" href="#">Navbar</a>--><a class="" href="../index.htm"><img class="logo-mega" src="../standard/assets/img/logo.png"  alt="">(Beta Version)</a><!-- Toggler/collapsibe Button --><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><!-- Navbar links -->
+<div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsibleNavbar"><div class="col-sm-auto col-md-auto col-lg-5"></div>
+<div class="col-sm-auto">
+<ul class="navbar-nav">      
+<li><a class="dropdown-item" href="ad30ce115ebf7e90.htm">EA Grid</a></li> 
+<li><a class="dropdown-item" href="fdd5018459bc3c6a.htm">EA Domains</a></li> 
+<li><a class="dropdown-item" href="07e731775ecc93f4.htm">Solutions</a></li> 
+<li><a class="dropdown-item" href="c5dfc62c54810c2c.htm">Glossary</a></li> 
+<li class="nav-item dropdown mx-1">
+<a class="nav-link" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</a>
+<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<li><a class="dropdown-item" href="5446555d5f88c32e.htm">Outcome Driven Metamodel</a></li> 
+<li><a class="dropdown-item" href="e1ccfc295f8f7b90.htm">Playbooks</a></li> 
+<li><a class="dropdown-item" href="42bc992862d20ea7.htm">Framework Mappings</a></li> 
+<li><a class="dropdown-item" href="e93aebb35fa20550.htm">Metamodel Patterns</a></li> 
+<li><a class="dropdown-item" href="d599fe87602b2b85.htm">References</a></li> 
+<li><a class="dropdown-item" href="333f3a7f5dde11de.htm">Legend</a></li> 
+</ul>									                                            
+</li>
+</ul>
+</div>
+<div class="col-sm-auto"><a class="nav-link search" href="#" onclick=showHideSearch("search-section-fuse")><i class="fa fa-search mr-1 form-control-feedback"></i></a></div>
+</div>
+</nav>
+<div id="search-section-fuse" style="display:none">>
+<div class="search_header"><span class="closesearch">&times;</span>
+<nav class="breadcrumb">
+<a class="breadcrumb-item" href="../index.htm">Home </a> 
+<span class="breadcrumb-item active">Search</span> 
+</nav>
+</div>
+<input id="search-fuse" placeholder="Search..."  name="q" onfocus="this.value=''" type="search">
+<div class="searchresults-fuse"></div>
+</div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>function showHideSearch(elementId) {var contentDivs = document.getElementsByClassName('content');var footerDivs = document.getElementsByClassName('footer'); var containerDivs = document.getElementsByClassName('container');var containerfluidDivs = document.getElementsByClassName('container-fluid');var x = document.getElementById(elementId);if (x.style.display === "none") {x.style.display = "block";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "none";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "none";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "none";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "none";}} else {x.style.display = "none";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "block";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "block";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "block";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "block";}}} ;<!-- END WIDGET DRILL DOWN --></script><script>$(document).ready(function() {$(window).scroll(function() {if ($(this).scrollTop() > 100) {$('.scrollup').fadeIn();} else {$('.scrollup').fadeOut();}});$('.scrollup').click(function() {$("html, body").animate({scrollTop: 0}, 600);return false;});});</script><script>
+var modal = document.getElementById("search-section-fuse");
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = "none";
+}
+}
+$(document).on('click', '.closesearch', function() {
+showHideSearch("search-section-fuse");
+
+
+
+
+
+});</script><div class="container-fluid col-lg-11" id="top"><nav class="breadcrumb"><a class="breadcrumb-item" href="../index.htm">Home</a> <span class="breadcrumb-item active">
+<a  href="02af0a215a1823ee.htm" target="_top">Dictionary of HOPEX patterns</a>&nbsp;/&nbsp;Conceptual Level</span></nav></div>
+<div class="container-fluid col-lg-11 content">
+<section class="fadeInDown animated"><a href="#det"  class="btn btn-d">DEFINITION</a> <a href="#root" class="btn btn-d">CLASSIFIED CONCEPTS</a></section>
+<a class="object-section-anchor" id="det"></a>
+<section class="object-section">
+<h4>CATEGORY - Conceptual Level</h4>
+<hr class="sectionbreak" />
+<table class="table table-vertical-headers table-set-col-width">
+<tr><th>Description</th><td><div align="left" style="min-height: 12pt; ">The&#160;<b> Conceptual Level</b> classifies concepts describing the conceptual views of the enterprise. </div><div align="left" style="min-height: 12pt; ">The conceptual view is independant of any commitment to physical resources. For instance, </div></td></tr>		
+<tr><th>Parent Category</th><td><img src="../standard/category_data.ico.gif">&nbsp;
+<a  href="9d1da607642525f3.htm" target="_top">EA Concepts</a>           &nbsp;&nbsp;</td></tr>   
+</table>
+</section>
+<hr class="sectionbreak" />
+<h5>Classified Concepts</h5>
+<table class="table  table-set-col-width">
+<thead>
+<tr><th>Concept</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="9810b060551137d0.htm" target="_top">Activity Domain</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Activity Domain</b> is a <a href="5c43886f64103e09.htm" target="_top"><b><u>Macro</u></b></a> functional division of labor within an enterprise, acting as a <a href="7c40987055271d04.htm" target="_top"><b><u>Conceptual Agent</u></b></a>.</div><div align="left" style="min-height: 12pt; ">It embodies a collection of interrelated&#160; <a href="7c4094d2552717db.htm" target="_top"><b><u>Business Function</u></b></a>s which collaboratively provide one or more <a href="9810abf3551135c4.htm" target="_top"><b><u>Business Capability</u></b></a>(ies).<br /><b> Activity Domain</b>s serve as the highest hierarchical grouping of <a href="7c4094d2552717db.htm" target="_top"><b><u>Business Function</u></b></a>s within the enterprise&#39;s <a href="7c4097c855271c8e.htm" target="_top"><b><u>Conceptual Environment</u></b></a>.</div><i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#OperationalPerformer"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - OperationalPerformer</a></li> <li><a href="../resources/Ackoff-Towards-a-system-of-systems-concepts.pdf#FunctionalDivisionOfLabor"><img src="../standard/extr.ico.gif">&nbsp;Russell Ackoff - System of concepts - FunctionalDivisionOfLabor</a></li></ul></i>        </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="d2a7dc875ee8740b.htm" target="_top">Business Dictionary</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Business Dictionary</b> is a cluster of <a href="30efab2361f36b46.htm" target="_top"><b><u>Business Dictionary Asset</u></b></a>s whose existence and meaning are defined by the&#160;<b> Business Dictionary</b>.</div><div align="left" style="min-height: 12pt; ">It comprises the <a href="362fc4365b3c39b8.htm" target="_top"><b><u>Concept</u></b></a>s,&#160; <a href="362ff4b55b3c45e6.htm" target="_top"><b><u>Event Concept</u></b></a>s along with the terminology (<a href="362fc8aa5b3c3eeb.htm" target="_top"><b><u>Term</u></b></a>s) used to describe this branch of knowledge or discipline.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Business Dictionary</b> is both:</div><div align="left" style="min-height: 12pt; ">1. A lexical scope: the meaning of a <a href="362fc8045b3c3e65.htm" target="_top"><b><u>Conceptual Object</u></b></a> can only be determined by the&#160;<b> Business Dictionary</b> where it was created.</div><div align="left" style="min-height: 12pt; ">2. A universe of discourse: the complete range of <a href="362fc8045b3c3e65.htm" target="_top"><b><u>Conceptual Object</u></b></a>s that are expressed, assumed, or implied in a branch of knowledge, a discipline or a field of study.</div><div align="left" style="min-height: 12pt; ">Example: the Harward Medical Dictionary of Health Terms is a&#160;<b> Business Dictionary</b>.</div>       </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="30efab2361f36b46.htm" target="_top">Business Dictionary Asset</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Business Dictionary Asset</b> is an <a href="30efa75761f367fe.htm" target="_top"><b><u>Information Asset</u></b></a> involved in informative descriptions of the enterprise.</div><div align="left" style="min-height: 12pt; "><b>&#160;Business Dictionary Asset</b>s range from <a href="362fc8045b3c3e65.htm" target="_top"><b><u>Conceptual Object</u></b></a>s, <a href="203b8ff05a5f43fe.htm" target="_top"><b><u>Concept Domain</u></b></a>s to terminologies (<a href="362fc8aa5b3c3eeb.htm" target="_top"><b><u>Term</u></b></a>s).</div><div align="left" style="min-height: 12pt; "><a href="362fc8045b3c3e65.htm" target="_top"><b><u>Conceptual Object</u></b></a>s are managed in <a href="9152d8875ed741ef.htm" target="_top"><b><u>Data Catalog</u></b></a>s.</div>       </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="fe2201105c4f0df3.htm" target="_top">Business Directive</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Business Directive</b> is <a href="278678e95b2533d6.htm" target="_top"><b><u>Directive</u></b></a> an intended to assert business structure or to control or influence the behavior of the enterprise.</div><div align="left" style="min-height: 12pt; "><b>&#160;Business Directive</b>s are categorized as&#160;<b> Business Regulation</b>s and <a href="59fe5fce54880c44.htm" target="_top"><b><u>Conceptual Business Rule</u></b></a>s .</div>       </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="7c4094d2552717db.htm" target="_top">Business Function</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Business Function</b> is a unit of the enterprise functional division of labor. It is used to shape the enterprise management structure in regard to how it produces, consumes or processes <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s: information, energy, materiel.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Business Function</b> specifies <a href="7c409e95552724ab.htm" target="_top"><b><u>Skill</u></b></a>s and <a href="598272e954c622f4.htm" target="_top"><b><u>Functionality</u></b></a>(ies) required to perform their activities.</div><i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#OperationalPerformer"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - OperationalPerformer</a></li> <li><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_29"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Definition - Business Function</a></li> <li><a href="https://pubs.opengroup.org/architecture/togaf9-doc/m/chap03.html#tag_03_26"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF 9 - Definition - Business Function</a></li> <li><a href="../resources/Ackoff-Towards-a-system-of-systems-concepts.pdf#FunctionalDivisionOfLabor"><img src="../standard/extr.ico.gif">&nbsp;Russell Ackoff - System of concepts - FunctionalDivisionOfLabor</a></li></ul></i>        </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="362fc4365b3c39b8.htm" target="_top">Concept</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Concept</b> is the representation of any tangible or intanglible entity that is of interest to understand the enterprises, its data, resources and activities.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Concept</b> is defined through its essential characteristics which can be:</div><div align="left" style="min-height: 12pt; ">1) A <a href="362fc5a85b3c3c03.htm" target="_top"><b><u>Concept Property</u></b></a> that represents some an immutable factual characteristic such as &quot;name&quot;, &quot;amount&quot;.</div><div align="left" style="min-height: 12pt; ">2) A <a href="f654f7e85ebb76fa.htm" target="_top"><b><u>Concept Relationship</u></b></a> that represents relationships to other&#160;<b> Concept</b>s.</div><i><ul>References:<li><a href="https://www.google.com/search?q=site%3Ahttps%3A%2F%2Fwww.dddcommunity.org%2Fresources%2Fddd_terms%2F+Entity"><img src="../standard/extr.ico.gif">&nbsp;DDD - Glossary - Entity</a></li> <li><a href="../../../www.omg.org/spec/SBVR/1.5/formal-19-10-02.pdf#page=38"><img src="../standard/extr.ico.gif">&nbsp;OMG - SBVR - Concept</a></li> <li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#OperationalInformation"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - OperationalInformation</a></li></ul></i>        </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="203b8ff05a5f43fe.htm" target="_top">Concept Domain</a></td>
+<td class="description-text"><div align="left" style="min-height: 10pt; ">A&#160;<b> Concept Domain</b> is a subset of the <a href="362fc4365b3c39b8.htm" target="_top"><b><u>Concept</u></b></a>s of a <a href="d2a7dc875ee8740b.htm" target="_top"><b><u>Business Dictionary</u></b></a> that are relevant to an <a href="9810b060551137d0.htm" target="_top"><b><u>Activity Domain</u></b></a>.</div><div align="left" style="min-height: 10pt; ">For instance, a &quot;Sales Concept Domain&quot; comprises at least the <a href="362fc4365b3c39b8.htm" target="_top"><b><u>Concept</u></b></a>s of &quot;Customer&quot; and &quot;Order&quot; while a standard &quot;Marketing Concept Domain&quot; comprises at least the <a href="362fc4365b3c39b8.htm" target="_top"><b><u>Concept</u></b></a>s of &quot;Market Segment&quot;, &quot;Product&quot; and &quot;Value Proposition&quot;.</div>       </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="203B8FDB5A5F43DD.htm" target="_top">Concept Domain Map</a></td>
+<td class="description-text">A&#160;<b> Concept Domain Map</b> is a top level assembly of <a href="203b8ff05a5f43fe.htm" target="_top"><b><u>Concept Domain</u></b></a>s that defines the scope of information that <a href="29df3f4060084c07.htm" target="_top"><b><u>Management System</u></b></a> is responsible of.       </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="362fc5a85b3c3c03.htm" target="_top">Concept Property</a></td>
+<td class="description-text">A&#160;<b> Concept Property</b> is an immutable factual characteristic of a <a href="229b34eb5b3f79d2.htm" target="_top"><b><u>Conceptual Entity</u></b></a>.<br />Example: names, amounts, etc.<i><ul>References:<li><a href="https://www.google.com/search?q=site%3Ahttps%3A%2F%2Fwww.dddcommunity.org%2Fresources%2Fddd_terms%2F+Value+Object"><img src="../standard/extr.ico.gif">&nbsp;DDD - Glossary - Value Object</a></li> <li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#OperationalInformation"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - OperationalInformation</a></li></ul></i>        </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="c39701c75747a173.htm" target="_top">Concept Type</a></td>
+<td class="description-text">A&#160;<b> Concept Type</b> is a class of concepts which have <a href="362fc4365b3c39b8.htm" target="_top"><b><u>Concept</u></b></a>s as instances:&#160;<b> Concept Type</b>s classify <a href="362fc4365b3c39b8.htm" target="_top"><b><u>Concept</u></b></a>s.       </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="229b33d95b3f7993.htm" target="_top">Concept View</a></td>
+<td class="description-text">A&#160;<b> Concept View</b> specifies an aspect of a <a href="229b34eb5b3f79d2.htm" target="_top"><b><u>Conceptual Entity</u></b></a> based on the selection of characteristics and relationship of this <a href="229b34eb5b3f79d2.htm" target="_top"><b><u>Conceptual Entity</u></b></a> that matter for a particular processing.       </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="7c40987055271d04.htm" target="_top">Conceptual Agent</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Conceptual Agent</b> is a type of <a href="e2ef091962147ad7.htm" target="_top"><b><u>Business Operating Agent</u></b></a> that depicts a functional division of labor within an enterprise, influencing the formation of its business operating model.</div><div align="left" style="min-height: 12pt; ">The concrete realizations of&#160;<b> Conceptual Agent</b> come in the form of <a href="9810b060551137d0.htm" target="_top"><b><u>Activity Domain</u></b></a> (a macro&#160;<b> Conceptual Agent</b>) and <a href="7c4094d2552717db.htm" target="_top"><b><u>Business Function</u></b></a> (a mezzo&#160;<b> Conceptual Agent</b>).</div><i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#OperationalAgent"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - OperationalAgent</a></li> <li><a href="../resources/Ackoff-Towards-a-system-of-systems-concepts.pdf#FunctionalDivisionOfLabor"><img src="../standard/extr.ico.gif">&nbsp;Russell Ackoff - System of concepts - FunctionalDivisionOfLabor</a></li></ul></i>        </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="f97e3119632b25f8.htm" target="_top">Conceptual Behavior</a></td>
+<td class="description-text">A&#160;<b> Conceptual Behavior</b> is a <a href="c8b2238961e5385a.htm" target="_top"><b><u>Conceptual Operating Asset</u></b></a> that describes any action or reaction of a <a href="7c40987055271d04.htm" target="_top"><b><u>Conceptual Agent</u></b></a> to external or internal circumstances. This includes <a href="57dfc5f555093444.htm" target="_top"><b><u>Value Stream</u></b></a>s (actions), <a href="f97e3146632b266e.htm" target="_top"><b><u>Conceptual Interaction Scenario</u></b></a>s (stories) or <a href="9dcea2655ec768ee.htm" target="_top"><b><u>Business Service Interface</u></b></a>s (Service Interfaces).       </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="59fe5fce54880c44.htm" target="_top">Conceptual Business Rule</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Conceptual Business Rule</b> is a rule that is under business jurisdiction. </div><div align="left" style="min-height: 12pt; ">A rule&rsquo;s being &#39;under business jurisdiction&#39; means that it is under the jurisdiction of the semantic community that it governs or guides - that the semantic community can opt to change or discard the rule. Laws of physics may be relevant to a company (or other semantic community); legislation and regulations may be imposed on it; external standards and best Semantics of Business Vocabulary and Business Rules, v1.0 161 practices may be adopted. These things are not business rules from the company&rsquo;s perspective, since it does not have the authority to change them. The company will decide how to react to laws and regulations, and will create business rules to ensure compliance with them. Similarly, it will create business rules to ensure that standards or best practices are implemented as intended. </div><i><ul>References:<li><a href="../../../www.omg.org/spec/BMM/1.3/formal-15-05-19.pdf#page=46"><img src="../standard/extr.ico.gif">&nbsp;OMG - BMM - Business Rule</a></li> <li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#OperationalConstraint"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - Operational Constraint</a></li></ul></i>        </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="f97e3e30632b31c1.htm" target="_top">Conceptual Ecosystem</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Conceptual Ecosystem</b> is an operating context in which a <a href="7c40987055271d04.htm" target="_top"><b><u>Conceptual Agent</u></b></a> exists or lives for a specific purpose.</div><div align="left" style="min-height: 12pt; ">For instance, the operating context of a&#160;<b> Conceptual Ecosystem</b> includes its <a href="bcebd65854913935.htm" target="_top"><b><u>Business Partner</u></b></a>s (customers and suppliers).</div>       </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="229b34eb5b3f79d2.htm" target="_top">Conceptual Entity</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Conceptual Entity</b> is the representation of any tangible or intanglible resource or state of such resource that is of interest to understand the enterprises, its data, resources and activities.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Conceptual Entity</b> is either a <a href="362fc4365b3c39b8.htm" target="_top"><b><u>Concept</u></b></a> or a <a href="362fc7105b3c3e31.htm" target="_top"><b><u>State Concept</u></b></a>.</div><div align="left" style="min-height: 12pt; ">Example:</div><div align="left" style="min-height: 12pt; ">- &quot;Person&quot; is a&#160;<b> Conceptual Entity</b> of type <a href="362fc4365b3c39b8.htm" target="_top"><b><u>Concept</u></b></a>, Its temporal boundaries are is birth and its death (see <a href="362ff4b55b3c45e6.htm" target="_top"><b><u>Event Concept</u></b></a>).</div><div align="left" style="min-height: 12pt; ">- &quot;Employee&quot; is a&#160;<b> Conceptual Entity</b> of type <a href="362fc7105b3c3e31.htm" target="_top"><b><u>State Concept</u></b></a>): it is a state of a &quot;person&quot;. Its temporal boundaries are its hiring and its departure.</div><i><ul>References:<li><a href="https://www.google.com/search?q=site%3Ahttps%3A%2F%2Fwww.dddcommunity.org%2Fresources%2Fddd_terms%2F+Entity"><img src="../standard/extr.ico.gif">&nbsp;DDD - Glossary - Entity</a></li> <li><a href="../../../www.omg.org/spec/SBVR/1.5/formal-19-10-02.pdf#page=38"><img src="../standard/extr.ico.gif">&nbsp;OMG - SBVR - Concept</a></li></ul></i>        </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="7c4097c855271c8e.htm" target="_top">Conceptual Environment</a></td>
+<td class="description-text">A&#160;<b> Conceptual Environment</b>&#160; is an operating context which defines the interactions (<b> Business Interaction</b>) of an <a href="9810b060551137d0.htm" target="_top"><b><u>Activity Domain</u></b></a> with its partners (<a href="e8bfec5b5ebb80db.htm" target="_top"><b><u>Customer</u></b></a>s).<i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#OperationalArchitecture"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - OperationalArchitecture</a></li></ul></i>        </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="f97e4315632b38d5.htm" target="_top">Conceptual Environment Scenario</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Conceptual Environment Scenario</b> is a story that describes how an <a href="9810b060551137d0.htm" target="_top"><b><u>Activity Domain</u></b></a> interacts with its partners (<a href="f97e4689632b3cad.htm" target="_top"><b><u>Business Partner</u></b></a>) to achieve <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s in a specific <a href="7c4097c855271c8e.htm" target="_top"><b><u>Conceptual Environment</u></b></a>..</div><div align="left" style="min-height: 12pt; ">This includes:</div><div align="left" style="min-height: 12pt; ">1) A course of events represented by&#160;<b> Business Object Flow</b>s depicting the story towards the delivery of expected <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">2) Interacting partners who participate to the story in the considered <a href="7c4097c855271c8e.htm" target="_top"><b><u>Conceptual Environment</u></b></a>.</div>       </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="f97e3146632b266e.htm" target="_top">Conceptual Interaction Scenario</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Conceptual Interaction Scenario</b> is a story that describes how the components of an Enterprise Agent interacts to achieve Business Outcomes.</div><div align="left" style="min-height: 12pt; ">This includes:</div><div align="left" style="min-height: 12pt; ">1) A course of events represented by Business Object Flows depicting the steps towards the delivery of expected Business Outcomes.</div><div align="left" style="min-height: 12pt; ">2) Interacting Enterprise Agents who participate to the story.</div>       </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="362fc8045b3c3e65.htm" target="_top">Conceptual Object</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Conceptual Object</b> is the representation of any tangible or intanglible resource, or its respective state, that is critical for comprehending an enterprise, including its data, resources, and activities.</div><div align="left" style="min-height: 12pt; ">Similar to any <a href="e6f250185f772ee1.htm" target="_top"><b><u>Information Object</u></b></a>, a&#160;<b> Conceptual Object</b> can be classified into three categories:</div><div align="left" style="min-height: 12pt; ">1)&#160; <a href="229b34eb5b3f79d2.htm" target="_top"><b><u>Conceptual Entity</u></b></a>s denote entities that can change over time.</div><div align="left" style="min-height: 12pt; ">2) <a href="362ff4b55b3c45e6.htm" target="_top"><b><u>Event Concept</u></b></a>s embody the temporal boundaries associated with <a href="229b34eb5b3f79d2.htm" target="_top"><b><u>Conceptual Entity</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">3) <a href="362fc5a85b3c3c03.htm" target="_top"><b><u>Concept Property</u></b></a>s represent immutable characteristics of <a href="229b34eb5b3f79d2.htm" target="_top"><b><u>Conceptual Entity</u></b></a>s.</div><i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#OperationalInformation"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - OperationalInformation</a></li></ul></i>        </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="c8b2238961e5385a.htm" target="_top">Conceptual Operating Asset</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Conceptual Operating Asset</b> is an <a href="a371a43b5b865817.htm" target="_top"><b><u>Operating Asset</u></b></a>&#160; used to describe the <a href="19dc1a30555649d9.htm" target="_top"><b><u>Conceptual Operating Model</u></b></a> of the enterprise.</div><div align="left" style="min-height: 12pt; ">It includes <a href="57dfc5f555093444.htm" target="_top"><b><u>Value Stream</u></b></a>s, <a href="9810b060551137d0.htm" target="_top"><b><u>Activity Domain</u></b></a>s and <a href="7c4094d2552717db.htm" target="_top"><b><u>Business Function</u></b></a>s and the way they contribute to the delivery of <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s.</div><i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#operationalasset"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - OperationalAsset</a></li></ul></i>        </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="362ff4b55b3c45e6.htm" target="_top">Event Concept</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">&#160;An&#160;<b> Event Concept</b> is a <a href="362fc8045b3c3e65.htm" target="_top"><b><u>Conceptual Object</u></b></a> that represents a type of change used to draw the temporal boundaries of <a href="229b34eb5b3f79d2.htm" target="_top"><b><u>Conceptual Entity</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">Examples:</div><div align="left" style="min-height: 12pt; ">- order placing</div><div align="left" style="min-height: 12pt; ">- order delivery</div><div align="left" style="min-height: 12pt; ">- birth</div><div align="left" style="min-height: 12pt; ">- death</div>       </td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="362ff6c05b3c47a3.htm" target="_top">Individual Concept</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Individual Concept</b> is an instance of a <a href="362fc4365b3c39b8.htm" target="_top"><b><u>Concept</u></b></a>.</div><div align="left" style="min-height: 12pt; ">For example, &quot;John Doe&quot; is an instance of the &quot;Person&quot; <a href="362fc4365b3c39b8.htm" target="_top"><b><u>Concept</u></b></a>.</div>       </td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="362ff7145b3c481a.htm" target="_top">Individual State Concept</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Individual State Concept</b> is an instance of a <a href="362fc7105b3c3e31.htm" target="_top"><b><u>State Concept</u></b></a>.</div><div align="left" style="min-height: 12pt; ">Example:</div><div align="left" style="min-height: 12pt; ">- &quot;John Doe employe at Concoso Corporation in 2010&quot; is a state of the &quot;John Doe&quot; <a href="362ff6c05b3c47a3.htm" target="_top"><b><u>Individual Concept</u></b></a>.</div>       </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="362fcf945b3c4030.htm" target="_top">Language</a></td>
+<td class="description-text">        </td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="362ff8615b3c48df.htm" target="_top">Period</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Period</b> that is an arbitrary period of time.</div><div align="left" style="min-height: 12pt; ">Examples:</div><div align="left" style="min-height: 12pt; ">- 20 Minutes - the set of all 20 minute periods</div><div align="left" style="min-height: 12pt; ">- 3.345 Nanoseconds- the set of all 3.345 Nanosecond periods.</div><div align="left" style="min-height: 12pt; ">- Quater - the set all all quaters : 1 quater of 1492, 3rd quater of 2056, ....</div><div align="left" style="min-height: 12pt; ">- 7000 Years- the set of all 7000 Year period.</div><i><ul>References:<li><a href="http://wordnetweb.princeton.edu/perl/webwn?o2=&amp;o0=1&amp;o8=1&amp;o1=1&amp;o7=&amp;o5=&amp;o9=&amp;o6=&amp;o3=&amp;o4=&amp;r=1&amp;s=period&amp;i=3&amp;h=1000000000#c"><img src="../standard/extr.ico.gif">&nbsp;WordNet - Period</a></li></ul></i>        </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="362ff9085b3c4933.htm" target="_top">Period Type</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Period Type</b> that is an arbitrary period of time.</div><div align="left" style="min-height: 12pt; "><b>&#160;Period Type</b> is used to define the period on which&#160; <a href="362ff4b55b3c45e6.htm" target="_top"><b><u>Event Concept</u></b></a>s can occur.</div><div align="left" style="min-height: 12pt; ">Examples:</div><div align="left" style="min-height: 12pt; ">- Year - the set of all years (50, 901, </div><div align="left" style="min-height: 12pt; ">- 3.345 Nanoseconds- the set of all 3.345 Nanosecond periods.</div><div align="left" style="min-height: 12pt; ">- Quater - the set all all quaters : 1 quater of 1492, 3rd quater of 2056, ....</div><div align="left" style="min-height: 12pt; ">- 7000 Years- the set of all 7000 Year period.</div>       </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="362fc7105b3c3e31.htm" target="_top">State Concept</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> State Concept</b> is <a href="229b34eb5b3f79d2.htm" target="_top"><b><u>Conceptual Entity</u></b></a> which is a state of another <a href="229b34eb5b3f79d2.htm" target="_top"><b><u>Conceptual Entity</u></b></a>.<br />Example:</div><div align="left" style="min-height: 12pt; ">- Employee is a state of Person. Its temporal boundaries are &quot;hiring&quot; and &quot;departure&quot; (see <a href="362ff4b55b3c45e6.htm" target="_top"><b><u>Event Concept</u></b></a>).</div>       </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="362fc8aa5b3c3eeb.htm" target="_top">Term</a></td>
+<td class="description-text">A&#160;<b> Term</b> is word or sentence used to name a <a href="362fc8045b3c3e65.htm" target="_top"><b><u>Conceptual Object</u></b></a>.<i><ul>References:<li><a href="https://compliancedictionary.com/term/8088"><img src="../standard/extr.ico.gif">&nbsp;UCF Glossary - Term</a></li></ul></i>        </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="57dfc5f555093444.htm" target="_top">Value Stream</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; "><b>&#160;Value Stream</b>s are used to frame the <a href="19dc1a30555649d9.htm" target="_top"><b><u>Conceptual Operating Model</u></b></a> of the enterprise: they describe how the enterprise operates at the conceptual level and helps chunking responsibilities between <a href="7c40987055271d04.htm" target="_top"><b><u>Conceptual Agent</u></b></a>s (<a href="9810b060551137d0.htm" target="_top"><b><u>Activity Domain</u></b></a> or <a href="7c4094d2552717db.htm" target="_top"><b><u>Business Function</u></b></a>) .</div><div align="left" style="min-height: 12pt; "></div><div align="left" style="min-height: 12pt; ">A&#160;<b> Value Stream</b> is a conceptual <a href="d682ef5e56144e77.htm" target="_top"><b><u>Process</u></b></a>&#160; performed by <a href="7c40987055271d04.htm" target="_top"><b><u>Conceptual Agent</u></b></a>s to produce a <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>. It is depicted as a sequence of <a href="3b4b40da5ebc2bce.htm" target="_top"><b><u>Value Stream Activity</u></b></a>s, controlled by events and conditions.</div><div align="left" style="min-height: 12pt; "><a href="3b4b40da5ebc2bce.htm" target="_top"><b><u>Value Stream Activity</u></b></a>s are carried out by the involvment of <a href="7c40987055271d04.htm" target="_top"><b><u>Conceptual Agent</u></b></a>s as participants in the&#160;<b> Value Stream</b>.</div><div align="left" style="min-height: 12pt; ">During its course of action, a&#160;<b> Value Stream</b> consumes, produces or stores <a href="43ee3c7963725899.htm" target="_top"><b><u>Business Object</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">1) It may read or write <a href="43ee3c7963725899.htm" target="_top"><b><u>Business Object</u></b></a>s in its <a href="48d14ae75ebc11bc.htm" target="_top"><b><u>Business Object Store</u></b></a>.</div><div align="left" style="min-height: 12pt; ">2) It may receive <a href="43ee3c7963725899.htm" target="_top"><b><u>Business Object</u></b></a>s at its boundary:&#160; Consumed <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">3) It may produce <a href="43ee3c7963725899.htm" target="_top"><b><u>Business Object</u></b></a>s at its boundary:&#160; Delivered <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">The course of actions of a&#160;<b> Value Stream</b> is constrained by the application of rules (<a href="3b4b44685ebc333e.htm" target="_top"><b><u>Conceptual Rule Enforcement</u></b></a>) that define what is allowed and not allowed to do.</div><div align="left" style="min-height: 12pt; "><br />There are traditionnaly two kinds of&#160;<b> Value Stream</b>s:</div><div align="left" style="min-height: 12pt; ">1) Development development&#160;<b> Value Stream</b>s define all of the actions, both value-creating and nonvalue-creating, required to bring a <a href="215cceda606c35c6.htm" target="_top"><b><u>Product</u></b></a> from concept to launch.<br />2)&#160; Operational&#160;<b> Value Stream</b>s define define all of the actions, both value-creating and nonvalue-creating, required from order to delivery. These include actions to process information from the <a href="d6cdfdbc5ab86331.htm" target="_top"><b><u>Customer</u></b></a> and actions to transform the product on its way to the <a href="d6cdfdbc5ab86331.htm" target="_top"><b><u>Customer</u></b></a>.</div><i><ul>References:<li><a href="https://www.lean.org/lexicon-terms/value-stream/"><img src="../standard/extr.ico.gif">&nbsp;Lean.org - Value Stream</a></li> <li><a href="../../../www.omg.org/spec/BPMN/2.0.2/formal-13-12-09.pdf#page=173"><img src="../standard/extr.ico.gif">&nbsp;OMG - BPMN - Process</a></li> <li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#OperationalActivity"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - Operational Activity</a></li> <li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#OperationalActivity"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - OperationalActivity</a></li> <li><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_84"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Definition - Value Stream</a></li> <li><a href="https://www.scaledagileframework.com/value-streams/"><img src="../standard/extr.ico.gif">&nbsp;SAFe&copy; - Value Stream</a></li> <li><a href="https://en.wikipedia.org/wiki/Value_stream"><img src="../standard/extr.ico.gif">&nbsp;Wikipedia - Value Stream</a></li></ul></i>        </td>
+</tr>
+</tbody>
+</table></html>

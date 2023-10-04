@@ -1,0 +1,305 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="keywords" content="">
+<meta name="description" content="">    
+<LINK REL="icon" HREF="../standard/assets/img/favicon.ico">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/bootstrap.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nav.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/eaportal.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/font-awesome.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/animate.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/datatables.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/grid.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nae.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/custom.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/chosen.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/prism.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery.dataTables.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jsTreeStyle.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.theme.css" media="screen" />
+<script type="text/javascript" src="../standard/assets/js/jquery-3.2.1.min.js" ></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-ui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.columnFilter.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3-force.v2.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.gui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.search.js"></script> 
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.util.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-2.1.1.min.js"></script>
+<script src="../standard/assets/js/ws_zoomtemplate_firefox.js"></script>
+<script src="../standard/assets/js/bootstrap.min.js"></script>
+<script src="../standard/assets/js/datatables.min.js"></script>
+<script src="../standard/assets/js/moment.min.js"></script>
+<script src="../standard/assets/js/datetime-moment.js"></script>
+<script src="../standard/assets/js/chartjs.min.js"></script>
+<script src="../standard/assets/js/searchindexcontent.json"></script>
+<script src="../standard/assets/js/anls.js"></script>
+<script src="../../../cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script src="../standard/assets/js/gauge.js"></script> 
+<script src="../standard/assets/js/domesticApi.js"></script> 
+<script src="../standard/assets/js/piecelabel.js"></script>
+<script src="../standard/assets/js/popper.min.js"></script>
+<script src="../standard/assets/js/custom.js"></script>
+<script src="../standard/assets/js/chosen.jquery.js"></script>
+<script src="../standard/assets/js/prism.js"></script>
+<script src="../standard/assets/js/init-chosen.js"></script>
+<script src="../standard/assets/js/chart-data-flow.js"></script>
+<script src="../standard/assets/js/chart-data-gantt.js"></script>
+<script type="module" src="../standard/assets/js/Fuse.esm.min.js"></script>
+<script type="module">
+import Fuse from '../standard/assets/js/Fuse.esm.min.js';
+$(document).ready(function () {
+console.log('getjson');
+window.$.getJSON('../standard/assets/js/searchindexcontent.json', function (response) {
+console.log('getjson ok');
+var isIndex = "";
+var url = window.location.pathname;
+var filename = url.substring(url.lastIndexOf('/')+1);
+if( filename.includes("index") || filename === "" ){
+isIndex = "pages/";
+} else {
+isIndex = "";
+}
+const fuse = new Fuse(response, {
+keys: ['title','text'],
+shouldSort: true,
+includeMatches : true,
+findAllMatches : true
+});
+$('#search-fuse').on('keyup', function () {
+let result = fuse.search($(this).val());
+console.log(result);
+let resultdiv = $('div.searchresults-fuse');
+if (result.length === 0) {
+resultdiv.hide();
+} else {
+resultdiv.empty();
+resultdiv.append('<table class="table-search" width="100%" cellspacing="0"><thead ><tr><th>Name</th><th>Object Type</th><th>Modification date</th></tr></thead><tbody>');
+
+for (let obj in result.slice(0,10)) {
+
+let searchObj = '<tr><td><a href="./'+ isIndex + result[obj].item.url + '">' + result[obj].item.title +'</a></td><td>' + result[obj].item.ObjectType + '</td><td>' + result[obj].item.ModificationDate + '</td></tr>' ;
+
+
+resultdiv.find('tbody').append(searchObj);
+}
+resultdiv.append('</tbody></table>');
+resultdiv.show();
+}
+});
+});
+});
+</script>
+<title>HOPEX Metamodel Overview (Beta Version)</title>
+</head>
+<nav class="navbar navbar-expand-md navbar-dark  navbar-mega"><!-- Brand --><!--<a class="navbar-brand" href="#">Navbar</a>--><a class="" href="../index.htm"><img class="logo-mega" src="../standard/assets/img/logo.png"  alt="">(Beta Version)</a><!-- Toggler/collapsibe Button --><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><!-- Navbar links -->
+<div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsibleNavbar"><div class="col-sm-auto col-md-auto col-lg-5"></div>
+<div class="col-sm-auto">
+<ul class="navbar-nav">      
+<li><a class="dropdown-item" href="ad30ce115ebf7e90.htm">EA Grid</a></li> 
+<li><a class="dropdown-item" href="fdd5018459bc3c6a.htm">EA Domains</a></li> 
+<li><a class="dropdown-item" href="07e731775ecc93f4.htm">Solutions</a></li> 
+<li><a class="dropdown-item" href="c5dfc62c54810c2c.htm">Glossary</a></li> 
+<li class="nav-item dropdown mx-1">
+<a class="nav-link" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</a>
+<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<li><a class="dropdown-item" href="5446555d5f88c32e.htm">Outcome Driven Metamodel</a></li> 
+<li><a class="dropdown-item" href="e1ccfc295f8f7b90.htm">Playbooks</a></li> 
+<li><a class="dropdown-item" href="42bc992862d20ea7.htm">Framework Mappings</a></li> 
+<li><a class="dropdown-item" href="e93aebb35fa20550.htm">Metamodel Patterns</a></li> 
+<li><a class="dropdown-item" href="d599fe87602b2b85.htm">References</a></li> 
+<li><a class="dropdown-item" href="333f3a7f5dde11de.htm">Legend</a></li> 
+</ul>									                                            
+</li>
+</ul>
+</div>
+<div class="col-sm-auto"><a class="nav-link search" href="#" onclick=showHideSearch("search-section-fuse")><i class="fa fa-search mr-1 form-control-feedback"></i></a></div>
+</div>
+</nav>
+<div id="search-section-fuse" style="display:none">>
+<div class="search_header"><span class="closesearch">&times;</span>
+<nav class="breadcrumb">
+<a class="breadcrumb-item" href="../index.htm">Home </a> 
+<span class="breadcrumb-item active">Search</span> 
+</nav>
+</div>
+<input id="search-fuse" placeholder="Search..."  name="q" onfocus="this.value=''" type="search">
+<div class="searchresults-fuse"></div>
+</div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>function showHideSearch(elementId) {var contentDivs = document.getElementsByClassName('content');var footerDivs = document.getElementsByClassName('footer'); var containerDivs = document.getElementsByClassName('container');var containerfluidDivs = document.getElementsByClassName('container-fluid');var x = document.getElementById(elementId);if (x.style.display === "none") {x.style.display = "block";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "none";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "none";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "none";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "none";}} else {x.style.display = "none";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "block";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "block";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "block";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "block";}}} ;<!-- END WIDGET DRILL DOWN --></script><script>$(document).ready(function() {$(window).scroll(function() {if ($(this).scrollTop() > 100) {$('.scrollup').fadeIn();} else {$('.scrollup').fadeOut();}});$('.scrollup').click(function() {$("html, body").animate({scrollTop: 0}, 600);return false;});});</script><script>
+var modal = document.getElementById("search-section-fuse");
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = "none";
+}
+}
+$(document).on('click', '.closesearch', function() {
+showHideSearch("search-section-fuse");
+
+
+
+
+
+});</script><div class="container-fluid col-lg-11"><nav class="breadcrumb"><a class="breadcrumb-item" href="../index.htm">Home</a> <span class="breadcrumb-item active">
+<a  href="533b53775c916e32.htm" target="_top">HOPEX - DoDAF 2</a>&nbsp;/&nbsp;DODAF2 - OV-2 - Operational Resource Flow Description</span></nav></div>
+<div class="container-fluid col-lg-11 content">
+<section class="fadeInDown animated"><a href="#idt" class="btn btn-d">DEFINITION</a> <a href="#grf" class="btn btn-d">CONCEPT GRAPH</a> <a href="#des" class="btn btn-d">CONCEPT DESCRIPTIONS</a> 
+</section>
+<a class="object-section-anchor" id="idt"></a>
+<section class="object-section">
+<h4>CONCEPT DOMAIN - DODAF2 - OV-2 - Operational Resource Flow Description</h4><hr class="sectionbreak" /><table class="table table-vertical-headers table-set-col-width"><tr><th>Description</th><td class="description-text">The OV-2 DoDAF-described Model applies the context of the operational capability to a community of anticipated users. The primary purpose of the OV-2 is to define capability requirements within an operational context. The OV-2 may also be used to express a capability boundary.<div><br/><i>References:</i><br/><a href="https://dodcio.defense.gov/Library/DoD-Architecture-Framework/dodaf20_ov2/" target="_blank">DoDAF2 - OV-2</a></div></td></tr><tr><th>Dictionary</th><td><img src="../standard/dicsubjectarea.ico.gif"/>&nbsp;
+<a  href="533b53775c916e32.htm" target="_top">HOPEX - DoDAF 2</a></td></tr><tr><th>Parent Domain</th><td><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="89e38a4d5c917ba9.htm" target="_top">DODAF2 - Operational Viewpoint</a>&nbsp;</td></tr></table></section>
+<a class="object-section-anchor" id="grf"></a>
+<section class="object-section">
+<h4>DOMAIN CONCEPT GRAPH</h4>
+<hr class="sectionbreak" />
+<a href="#" class="btn btn-d" value="Relationship1" onclick="showDiagOnClick(this)">Diagram</a>
+<a href="#" class="btn btn-d" value="Relationship2" onclick="showDiagOnClick(this)">Graph</a>
+<div class="Relationship" id="Relationship1">
+
+<map  name="89E393C15C918910">
+  <area  href=#OBMK520E546C5EB86CF8 shape="polygon" coords="549, 399, 550, 415, 539, 416, 539, 399"    title="-">
+  
+  <area  href=520e546c5eb86cf4.htm shape="polygon" coords="549, 366, 550, 415, 539, 416, 539, 366"   target="_top"  title="An Organizational Position that is part of an Org-Unit.">
+  
+  <area  href=#OBMK520E546C5EB86D17 shape="polygon" coords="550, 366, 550, 383, 539, 383, 539, 366"    title="-">
+  
+  <area  href=#OBMK520E542B5EB86C3E shape="polygon" coords="456, 311, 456, 341, 475, 341, 475, 352, 446, 352, 446, 311"    title="-">
+  
+  <area  href=520e542b5eb86c3a.htm shape="polygon" coords="539, 302, 539, 299, 456, 299, 456, 341, 475, 341, 475, 352, 446, 352, 446, 288, 550, 288, 550, 302"   target="_top"  title="Hiearchical composition of Org-Units.">
+  
+  <area  href=#OBMK520E542B5EB86C5F shape="polygon" coords="539, 302, 539, 299, 493, 299, 493, 288, 550, 288, 550, 302"    title="-">
+  
+  <area  href=fb5f6ff8587e40e3.htm#OBMKFB5F6FF8587E40E3 shape="polygon" coords="513, 451, 513, 437, 577, 437, 577, 451, 513, 451"   target="_top"  title="Type of status assigned to an individual of group of individuals which defines a job&#160; in an organization or hierarchy.">
+  
+  <area  href="076d151c5a5e1561.htm" shape="rect" coords="473, 416, 617, 465"   target="_top"  title="An&#160; Organizational Position is a type of position held by people when part of an Org-Unit. ">
+  
+  <area  href=b1edb2562c140173.htm#OBMKB1EDB2562C140173 shape="polygon" coords="522, 337, 522, 324, 567, 324, 567, 337, 522, 337"   target="_top"  title="An org-unit represents a person or a group of persons that intervenes in the enterprise business processes or information system. An org-unit can be internal or external to the enterprise.">
+  
+  <area  href="7c408aa155270eea.htm" shape="rect" coords="472, 302, 616, 366"   target="_top"  title="An&#160; Org-Unit is a type of administrative unit in government or business that is a template of Organization .">
+  
+  <area  href="f1f1fd855f224541.htm" shape="rect" coords="360, 100, 479, 188"   target="_top"  title="-">
+  
+  <area  href=d9fdded9582953e7.htm#OBMKD9FDDED9582953E7 shape="polygon" coords="366, 71, 366, 58, 471, 58, 471, 71, 366, 71"   target="_top"  title="-">
+  
+  <area  href=0185cc626221bb37.htm#OBMK0185CC626221BB37 shape="polygon" coords="384, 34, 384, 23, 453, 23, 453, 34, 384, 34"   target="_top"  title="A&#160; Business Event is a type of business change that is used to coordinate Business Behaviors.">
+  
+  <area  href=30223b5c5ec90c01.htm#OBMK30223B5C5EC90C01 shape="polygon" coords="396, 45, 396, 34, 441, 34, 441, 45, 396, 45"   target="_top"  title="An&#160; Outcome is an Event that indicates the availability of an expected change in the state of a Value Added Object brought about by a specific Behavior,">
+  
+  <area  href="9dcea4535ec76e6c.htm" shape="rect" coords="360, 0, 479, 94"   target="_top"  title="A&#160; Business Outcome is a Business Event that indicates the availability of an expected change in the state of a Business Object, produced by a Business Operating Agent, for the benefits of an internal or external consumer (especially Customers).">
+  
+  <area  href=bcebd31f5491302c.htm#OBMKBCEBD31F5491302C shape="polygon" coords="467, 248, 467, 237, 540, 237, 540, 248, 467, 248"   target="_top"  title="A&#160; Resource Agent is a Business Operating Agent which represents physical resources that produce Business Outcomes of the enterprise.">
+  
+  <area  href=f3b7f5bc58806f49.htm#OBMKF3B7F5BC58806F49 shape="polygon" coords="446, 274, 446, 261, 561, 261, 561, 274, 446, 274"   target="_top"  title="-">
+  
+  <area  href="076d15425a5e158c.htm" shape="rect" coords="359, 235, 649, 491"   target="_top"  title="A&#160; Human Resource is a Resource Agent&#160; used to describe both the Organizational Positions of people who work for an organization and the type of department (Org-Unit) responsible for running business operations.">
+  
+  <area  href=2b705f2661ba04de.htm#OBMK2B705F2661BA04DE shape="polygon" coords="26, 97, 26, 86, 144, 86, 144, 97, 26, 97"   target="_top"  title="An&#160; Business-Entity Ecosystem is a Resource Ecosystem used to describe the operating context in which a Business-Entity (Org-Unit) exists or lives for a specific purpose. ">
+  
+  <area  href=2b6f337e61bae6d6.htm#OBMK2B6F337E61BAE6D6 shape="polygon" coords="17, 108, 17, 97, 153, 97, 153, 108, 17, 108"   target="_top"  title="A&#160; Resource Environment Scenario is a story that describes how a Resource Agent interacts with its partners (Partner Resource Agents) to achieve Business Outcomes in a specific Eco-System (Resource Agent Environment).">
+  
+  <area  href=b695c7a158cb6265.htm#OBMKB695C7A158CB6265 shape="polygon" coords="12, 140, 12, 127, 158, 127, 158, 140, 96, 140, 96, 150, 74, 150, 74, 140, 12, 140"   target="_top"  title="-">
+  
+  <area  href="c334dfca5ecb83dd.htm" shape="rect" coords="0, 84, 170, 159"   target="_top"  title="A&#160; Business Scenario is a story describing how Business-Entity (Org-Unit) interact wtiht its partners (Partner Org-Unit) to achieve Business Outcomes in a specific Eco-System (Business Environment).">
+  
+</map>
+<img  src="../images/89e393ab5c9188e6_89e393c15c918910_i.png" alt="../images/89e393ab5c9188e6_89e393c15c918910_i.png" usemap="#89E393C15C918910" height="491" width="649" border=0>
+
+</div>
+<div class="Relationship" id="Relationship2">
+<div id="klmm" style="width: 100vw; height: 100vh;" ></div>
+<!-- <script src="../standard/assets/js/keylines_domain.js"></script> -->
+<script >
+const data = {
+ type: 'LinkChart',
+  items: [
+  //nodes
+    {type: 'node', id:'89E393AB5C9188E6', t:"DODAF2 - OV-2 - Operational Resource Flow Description", sh:'box', d:"The OV-2 DoDAF-described Model applies the context of the operational capability to a community of anticipated users. The primary purpose of the OV-2 is to define capability requirements within an operational context. The OV-2 may also be used to express a capability boundary."},
+  //edges
+
+  ]
+}
+</script>
+<script src="../standard/assets/js/keylines_domain.js" type="module"></script>
+</div>
+</section>
+<a class="object-section-anchor" id="des"></a>
+<section class="object-section">
+<h4>CONCEPT DESCRIPTIONS</h4> 
+<hr class="sectionbreak" />
+<h5>Concrete Concepts</h5>
+<table class="table  table-set-col-width">
+<thead>
+<tr><th>Concept</th><th>Description</th><th>HOPEX Metaclass</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="../standard/relationship-concepttype.ico.gif"/>&nbsp;
+<a  href="9dcea4535ec76e6c.htm" target="_top">Business Outcome</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Business Outcome</b> is a <a href="0185cc626221bb37.htm" target="_top"><b><u>Business Event</u></b></a> that indicates the availability of an expected change in the state of a <a href="43ee3c7963725899.htm" target="_top"><b><u>Business Object</u></b></a>, produced by a <a href="e2ef091962147ad7.htm" target="_top"><b><u>Business Operating Agent</u></b></a>, for the benefits of an internal or external consumer (especially <a href="d6cdfdbc5ab86331.htm" target="_top"><b><u>Customer</u></b></a>s).</div><div align="left" style="min-height: 12pt; "><a href="43ee3c7963725899.htm" target="_top"><b><u>Business Object</u></b></a>s range from <a href="e6f250185f772ee1.htm" target="_top"><b><u>Information Object</u></b></a>s to any organizational constructs (<a href="1ce356355c48c0e2.htm" target="_top"><b><u>People &amp; Accountability</u></b></a>) or <a href="62466ea661b80d09.htm" target="_top"><b><u>Resource Operating Asset</u></b></a>s offered, produced and delivered by an <a href="b181b82a54891668.htm" target="_top"><b><u>Enterprise</u></b></a>.</div><i><ul>References:<li><a href="../../../www.omg.org/spec/BACM/1.0/Beta1/dtc-22-06-01.pdf#page=28"><img src="../standard/extr.ico.gif">&nbsp;OMG - BACM - Outcome</a></li> <li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Effect"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - Effect</a></li> <li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#operationalsignal"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - OperationalSignal</a></li> <li><a href="https://publications.opengroup.org/w161"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - IT4IT - Defining Service Reference Architecture</a></li> <li><a href="https://pubs.opengroup.org/architecture/o-aa-standard/definitions.html#Outcome"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - OAA - Definition - Outcome</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="d9fdded9582953e7.htm" target="_top">Class of Work Product</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="c334dfca5ecb83dd.htm" target="_top">Business Scenario</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Business Scenario</b> is a story describing how Business-Entity (<a href="7c408aa155270eea.htm" target="_top"><b><u>Org-Unit</u></b></a>) interact wtiht its partners (<a href="2b7065f361ba0eda.htm" target="_top"><b><u>Partner Org-Unit</u></b></a>) to achieve <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s in a specific Eco-System (<a href="6f4b92d65fd3b49b.htm" target="_top"><b><u>Business Environment</u></b></a>).</div><div align="left" style="min-height: 12pt; ">This includes:</div><div align="left" style="min-height: 12pt; ">1) A course of events represented by&#160;<b> Business Object Flow</b>s depicting the story towards the delivery of expected <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">2) Interacting&#160; Business Entities (<a href="7c408aa155270eea.htm" target="_top"><b><u>Org-Unit</u></b></a>s)&#160; who participate to the story in the considered Eco-System.</div>       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="b695c7a158cb6265.htm" target="_top">Scenario of Operational Environment Flows</a></td>
+</tr>
+<tr>
+<td><img src="../standard/relationship-concepttype.ico.gif"/>&nbsp;
+<a  href="f1f1fd855f224541.htm" target="_top">NeedLine Requirement</a></td>
+<td class="description-text">        </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="7c408aa155270eea.htm" target="_top">Org-Unit</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Org-Unit</b> is a type of administrative unit in government or business that is a template of <a href="910196ca550a2ec2.htm" target="_top"><b><u>Organization</u></b></a> .</div><div align="left" style="min-height: 12pt; ">Example : Sales Department, Finance Department, Logistics Deparment.</div><i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Organization"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - Organization</a></li> <li><a href="https://method.demomega.com/MM-OVERVIEW/pages/architecture-content/chap02.html#tag_02_04"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Content Metamodel - Organization Unit</a></li> <li><a href="../resources/Ackoff-Towards-a-system-of-systems-concepts.pdf#FunctionalDivisionOfLabor"><img src="../standard/extr.ico.gif">&nbsp;Russell Ackoff - System of concepts - FunctionalDivisionOfLabor</a></li> <li><a href="../resources/Ackoff-Towards-a-system-of-systems-concepts.pdf#Organizations"><img src="../standard/extr.ico.gif">&nbsp;Russell Ackoff - System of Concepts - Organizations</a></li> <li><a href="https://compliancedictionary.com/term/1463"><img src="../standard/extr.ico.gif">&nbsp;UCF Glossary - Department</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="b1edb2562c140173.htm" target="_top">Org-Unit</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="076d151c5a5e1561.htm" target="_top">Organizational Position</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Organizational Position</b> is a type of position held by people when part of an <a href="7c408aa155270eea.htm" target="_top"><b><u>Org-Unit</u></b></a>. </div><div align="left" style="min-height: 12pt; ">Examples: </div><div align="left" style="min-height: 13pt; ">- Sales representative</div><div align="left" style="min-height: 13pt; ">- Developer</div><div align="left" style="min-height: 13pt; ">- Storekeeper</div><div align="left" style="min-height: 13pt; ">- Architect</div><i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Post"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - Post</a></li> <li><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_66"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Definition - Role</a></li> <li><a href="https://compliancedictionary.com/term/252897"><img src="../standard/extr.ico.gif">&nbsp;UCF Glossary - Position Description</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="fb5f6ff8587e40e3.htm" target="_top">Position Type</a></td>
+</tr>  
+</tbody>
+</table>
+<hr class="sectionbreak" />
+<h5>Abstract Concepts</h5>
+<table class="table  table-set-col-width">
+<thead >
+<tr><th>Concept</th><th>Description</th><th>HOPEX Metaclass</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="076d15425a5e158c.htm" target="_top">Human Resource</a></td>
+<td class="description-text">A&#160;<b> Human Resource</b> is a <a href="bcebd31f5491302c.htm" target="_top"><b><u>Resource Agent</u></b></a>&#160; used to describe both the <a href="076d151c5a5e1561.htm" target="_top"><b><u>Organizational Position</u></b></a>s of people who work for an organization and the type of department (<a href="7c408aa155270eea.htm" target="_top"><b><u>Org-Unit</u></b></a>) responsible for running business operations.<i><ul>References:<li><a href="https://www.humanresourcesedu.org/what-is-human-resources/"><img src="../standard/extr.ico.gif">&nbsp;Humanresourcesedu.org - Human Resource</a></li> <li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#organizationalresource"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - OrganizationalResource</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="f3b7f5bc58806f49.htm" target="_top">Class of Organizational Agent</a></td>
+</tr>  
+</tbody>
+</table>
+<section>
+
+</div>
+<button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button>
+<script>window.onscroll = function() {scrollFunction()};$(document).on('click', 'a[href^="#"]', function (event) {event.preventDefault();$('html, body').animate({scrollTop: $($.attr(this, 'href')).offset().top}, 500);});function showDiagOnClick(elem){ var x = document.getElementsByClassName('Relationship');var e = elem.getAttribute("value"); for (var i=0; i < x.length ;i++){x[i].style.display="none"; if (x[i].id == e){x[i].style.display="block";x[i].style.textAlign="left";}}}
+</script></html>

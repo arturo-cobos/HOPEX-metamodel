@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:ns2="http://www.google.com/schemas/sitemap-news/0.9">
+    <url>
+        <loc>https://www.techtarget.com/searchdatamanagement/news/366554135/New-Boomi-AI-tool-enables-natural-language-data-integration</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-10-03</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>New Boomi AI tool enables natural language data integration</ns2:title>
+        </ns2:news>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchdatamanagement/news/366553305/Acceldata-makes-acquisition-to-improve-AI-LLM-observability</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-26</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>Acceldata makes acquisition to improve AI, LLM observability</ns2:title>
+        </ns2:news>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchdatamanagement/news/366553301/MongoDB-reveals-new-generative-AI-vector-search-tools</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-26</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>MongoDB reveals new generative AI, vector search tools</ns2:title>
+        </ns2:news>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchdatamanagement/opinion/GenAI-Vector-AI-Search-multi-cloud-top-Oracle-CloudWorld</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-20</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>GenAI, Vector AI Search, multi-cloud top Oracle CloudWorld</ns2:title>
+        </ns2:news>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchdatamanagement/news/366552061/Databricks-lands-500M-in-new-funding-now-valued-at-43B</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-14</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>Databricks lands $500M in new funding, now valued at $43B</ns2:title>
+        </ns2:news>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchdatamanagement/news/366552023/Dremio-launches-updated-SQL-query-acceleration-capabilities</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-14</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>Dremio launches updated SQL query acceleration capabilities</ns2:title>
+        </ns2:news>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchdatamanagement/news/366551998/Denodo-secures-336M-equity-investment-to-fuel-growth</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-13</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>Denodo secures $336M equity investment to fuel growth</ns2:title>
+        </ns2:news>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchdatamanagement/opinion/Security-a-top-challenge-in-building-a-modern-data-platform</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-12</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>Security a top challenge in building a modern data platform</ns2:title>
+        </ns2:news>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchdatamanagement/news/366551835/Einstein-1-Data-Cloud-fuel-for-Salesforces-AI-analytics</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-12</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>Einstein 1 Data Cloud fuels Salesforce's AI, analytics</ns2:title>
+        </ns2:news>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchdatamanagement/news/366551077/InfluxData-launches-new-database-for-self-managed-users</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-06</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>InfluxData launches new database for self-managed users</ns2:title>
+        </ns2:news>
+    </url>
+</urlset>

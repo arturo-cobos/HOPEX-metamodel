@@ -1,0 +1,300 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="keywords" content="">
+<meta name="description" content="">    
+<LINK REL="icon" HREF="../standard/assets/img/favicon.ico">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/bootstrap.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nav.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/eaportal.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/font-awesome.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/animate.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/datatables.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/grid.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nae.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/custom.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/chosen.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/prism.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery.dataTables.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jsTreeStyle.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.theme.css" media="screen" />
+<script type="text/javascript" src="../standard/assets/js/jquery-3.2.1.min.js" ></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-ui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.columnFilter.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3-force.v2.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.gui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.search.js"></script> 
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.util.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-2.1.1.min.js"></script>
+<script src="../standard/assets/js/ws_zoomtemplate_firefox.js"></script>
+<script src="../standard/assets/js/bootstrap.min.js"></script>
+<script src="../standard/assets/js/datatables.min.js"></script>
+<script src="../standard/assets/js/moment.min.js"></script>
+<script src="../standard/assets/js/datetime-moment.js"></script>
+<script src="../standard/assets/js/chartjs.min.js"></script>
+<script src="../standard/assets/js/searchindexcontent.json"></script>
+<script src="../standard/assets/js/anls.js"></script>
+<script src="../../../cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script src="../standard/assets/js/gauge.js"></script> 
+<script src="../standard/assets/js/domesticApi.js"></script> 
+<script src="../standard/assets/js/piecelabel.js"></script>
+<script src="../standard/assets/js/popper.min.js"></script>
+<script src="../standard/assets/js/custom.js"></script>
+<script src="../standard/assets/js/chosen.jquery.js"></script>
+<script src="../standard/assets/js/prism.js"></script>
+<script src="../standard/assets/js/init-chosen.js"></script>
+<script src="../standard/assets/js/chart-data-flow.js"></script>
+<script src="../standard/assets/js/chart-data-gantt.js"></script>
+<script type="module" src="../standard/assets/js/Fuse.esm.min.js"></script>
+<script type="module">
+import Fuse from '../standard/assets/js/Fuse.esm.min.js';
+$(document).ready(function () {
+console.log('getjson');
+window.$.getJSON('../standard/assets/js/searchindexcontent.json', function (response) {
+console.log('getjson ok');
+var isIndex = "";
+var url = window.location.pathname;
+var filename = url.substring(url.lastIndexOf('/')+1);
+if( filename.includes("index") || filename === "" ){
+isIndex = "pages/";
+} else {
+isIndex = "";
+}
+const fuse = new Fuse(response, {
+keys: ['title','text'],
+shouldSort: true,
+includeMatches : true,
+findAllMatches : true
+});
+$('#search-fuse').on('keyup', function () {
+let result = fuse.search($(this).val());
+console.log(result);
+let resultdiv = $('div.searchresults-fuse');
+if (result.length === 0) {
+resultdiv.hide();
+} else {
+resultdiv.empty();
+resultdiv.append('<table class="table-search" width="100%" cellspacing="0"><thead ><tr><th>Name</th><th>Object Type</th><th>Modification date</th></tr></thead><tbody>');
+
+for (let obj in result.slice(0,10)) {
+
+let searchObj = '<tr><td><a href="./'+ isIndex + result[obj].item.url + '">' + result[obj].item.title +'</a></td><td>' + result[obj].item.ObjectType + '</td><td>' + result[obj].item.ModificationDate + '</td></tr>' ;
+
+
+resultdiv.find('tbody').append(searchObj);
+}
+resultdiv.append('</tbody></table>');
+resultdiv.show();
+}
+});
+});
+});
+</script>
+<title>HOPEX Metamodel Overview (Beta Version)</title>
+</head>
+<nav class="navbar navbar-expand-md navbar-dark  navbar-mega"><!-- Brand --><!--<a class="navbar-brand" href="#">Navbar</a>--><a class="" href="../index.htm"><img class="logo-mega" src="../standard/assets/img/logo.png"  alt="">(Beta Version)</a><!-- Toggler/collapsibe Button --><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><!-- Navbar links -->
+<div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsibleNavbar"><div class="col-sm-auto col-md-auto col-lg-5"></div>
+<div class="col-sm-auto">
+<ul class="navbar-nav">      
+<li><a class="dropdown-item" href="ad30ce115ebf7e90.htm">EA Grid</a></li> 
+<li><a class="dropdown-item" href="fdd5018459bc3c6a.htm">EA Domains</a></li> 
+<li><a class="dropdown-item" href="07e731775ecc93f4.htm">Solutions</a></li> 
+<li><a class="dropdown-item" href="c5dfc62c54810c2c.htm">Glossary</a></li> 
+<li class="nav-item dropdown mx-1">
+<a class="nav-link" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</a>
+<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<li><a class="dropdown-item" href="5446555d5f88c32e.htm">Outcome Driven Metamodel</a></li> 
+<li><a class="dropdown-item" href="e1ccfc295f8f7b90.htm">Playbooks</a></li> 
+<li><a class="dropdown-item" href="42bc992862d20ea7.htm">Framework Mappings</a></li> 
+<li><a class="dropdown-item" href="e93aebb35fa20550.htm">Metamodel Patterns</a></li> 
+<li><a class="dropdown-item" href="d599fe87602b2b85.htm">References</a></li> 
+<li><a class="dropdown-item" href="333f3a7f5dde11de.htm">Legend</a></li> 
+</ul>									                                            
+</li>
+</ul>
+</div>
+<div class="col-sm-auto"><a class="nav-link search" href="#" onclick=showHideSearch("search-section-fuse")><i class="fa fa-search mr-1 form-control-feedback"></i></a></div>
+</div>
+</nav>
+<div id="search-section-fuse" style="display:none">>
+<div class="search_header"><span class="closesearch">&times;</span>
+<nav class="breadcrumb">
+<a class="breadcrumb-item" href="../index.htm">Home </a> 
+<span class="breadcrumb-item active">Search</span> 
+</nav>
+</div>
+<input id="search-fuse" placeholder="Search..."  name="q" onfocus="this.value=''" type="search">
+<div class="searchresults-fuse"></div>
+</div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>function showHideSearch(elementId) {var contentDivs = document.getElementsByClassName('content');var footerDivs = document.getElementsByClassName('footer'); var containerDivs = document.getElementsByClassName('container');var containerfluidDivs = document.getElementsByClassName('container-fluid');var x = document.getElementById(elementId);if (x.style.display === "none") {x.style.display = "block";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "none";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "none";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "none";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "none";}} else {x.style.display = "none";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "block";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "block";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "block";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "block";}}} ;<!-- END WIDGET DRILL DOWN --></script><script>$(document).ready(function() {$(window).scroll(function() {if ($(this).scrollTop() > 100) {$('.scrollup').fadeIn();} else {$('.scrollup').fadeOut();}});$('.scrollup').click(function() {$("html, body").animate({scrollTop: 0}, 600);return false;});});</script><script>
+var modal = document.getElementById("search-section-fuse");
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = "none";
+}
+}
+$(document).on('click', '.closesearch', function() {
+showHideSearch("search-section-fuse");
+
+
+
+
+
+});</script><div class="container-fluid col-lg-11"><nav class="breadcrumb"><a class="breadcrumb-item" href="../index.htm">Home</a> <span class="breadcrumb-item active">
+<a  href="02af0a215a1823ee.htm" target="_top">Dictionary of HOPEX patterns</a>&nbsp;/&nbsp;Governance Pattern</span></nav></div>
+<div class="container-fluid col-lg-11 content">
+<section class="fadeInDown animated"><a href="#idt" class="btn btn-d">DEFINITION</a> <a href="#grf" class="btn btn-d">CONCEPT GRAPH</a> <a href="#sub" class="btn btn-d">SUB-DOMAINS</a> <a href="#des" class="btn btn-d">CONCEPT DESCRIPTIONS</a> 
+</section>
+<a class="object-section-anchor" id="idt"></a>
+<section class="object-section">
+<h4>CONCEPT DOMAIN - Governance Pattern</h4><hr class="sectionbreak" /><table class="table table-vertical-headers table-set-col-width"><tr><th>Description</th><td class="description-text"><i>Pattern Domain</i><br/>The&#160;<b> Governance Pattern</b> domain defines organizations and instrurments required to govern <a href="d321c226601262ae.htm" target="_top"><b><u>Enduring Initiative</u></b></a>s.<div></div></td></tr><tr><th>Dictionary</th><td><img src="../standard/dicsubjectarea.ico.gif"/>&nbsp;
+<a  href="02af0a215a1823ee.htm" target="_top">Dictionary of HOPEX patterns</a></td></tr><tr><th>Parent Domain</th><td><img src="../standard/business%20information%20environment.ico.gif"/>&nbsp;
+<a  href="e93aebb35fa20550.htm" target="_top">HOPEX Foundation Pattern Map</a>&nbsp;</td></tr>
+<tr><th>Domain dependencies</th><td><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="44254cce6182c076.htm" target="_top">Data Governance Core</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="69346af86005efa9.htm" target="_top">Initiative and Transformation Pattern</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="02af0a4b5a182417.htm" target="_top">Operating Semantic</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="02F70FDC600F4179.htm" target="_top">Policy Pattern</a>&nbsp;</td></tr></table></section>
+<a class="object-section-anchor" id="grf"></a>
+<section class="object-section">
+<h4>DOMAIN CONCEPT GRAPH</h4>
+<hr class="sectionbreak" />
+<a href="#" class="btn btn-d" value="Relationship1" onclick="showDiagOnClick(this)">Diagram</a>
+<a href="#" class="btn btn-d" value="Relationship2" onclick="showDiagOnClick(this)">Graph</a>
+<div class="Relationship" id="Relationship1">
+
+<map  name="83BB9D3B61923492">
+  <area  href=#OBMKE073FCB761D217FD shape="polygon" coords="422, 396, 422, 383, 618, 383, 618, 396, 422, 396"   target="_top"  title="-">
+  
+  <area  href=#OBMKE073FC6A61D216A2 shape="polygon" coords="422, 410, 422, 396, 618, 396, 618, 410, 422, 410"   target="_top"  title="-">
+  
+  <area  href=#OBMKE073FC6D61D216D9 shape="polygon" coords="422, 423, 422, 410, 618, 410, 618, 423, 422, 423"   target="_top"  title="-">
+  
+  <area  href=#OBMKE073FC7061D21710 shape="polygon" coords="422, 436, 422, 423, 618, 423, 618, 436, 422, 436"   target="_top"  title="-">
+  
+  <area  href=#OBMK73279A7B6436454C shape="polygon" coords="422, 449, 422, 436, 618, 436, 618, 449, 422, 449"   target="_top"  title="-">
+  
+  <area  href=#OBMKE073FC6661D2166A shape="polygon" coords="422, 462, 422, 449, 618, 449, 618, 462, 422, 462"   target="_top"  title="-">
+  
+  <area  href=#OBMKE073FECF61D21A4C shape="polygon" coords="422, 475, 422, 462, 618, 462, 618, 475, 422, 475"   target="_top"  title="-">
+  
+  <area  href=#OBMKE073019461D31C3F shape="polygon" coords="422, 488, 422, 475, 618, 475, 618, 488, 422, 488"   target="_top"  title="-">
+  
+  <area  href=#OBMKE0731F5561D323F6 shape="polygon" coords="422, 501, 422, 488, 618, 488, 618, 501, 422, 501"   target="_top"  title="-">
+  
+  <area  href=#OBMK34BD443761F10578 shape="polygon" coords="422, 514, 422, 501, 618, 501, 618, 514, 422, 514"   target="_top"  title="-">
+  
+  <area  href="e073fb4761d2123a.htm" shape="rect" coords="411, 354, 629, 530"   target="_top"  title="-">
+  
+  <area  href=#OBMK8F46F23C64B7765F shape="polygon" coords="42, 430, 42, 416, 191, 416, 191, 430, 42, 430"   target="_top"  title="-">
+  
+  <area  href=#OBMK9D3B135261CFBAC2 shape="polygon" coords="42, 443, 42, 430, 191, 430, 191, 443, 42, 443"   target="_top"  title="-">
+  
+  <area  href="9d3b121561cfb705.htm" shape="rect" coords="31, 388, 201, 485"   target="_top"  title="-">
+  
+  <area  href=#OBMK83BB9E6F61923970 shape="polygon" coords="426, 96, 426, 83, 622, 83, 622, 96, 426, 96"   target="_top"  title="-">
+  
+  <area  href=#OBMK83BB9F6F61923B40 shape="polygon" coords="426, 109, 426, 96, 622, 96, 622, 109, 426, 109"   target="_top"  title="-">
+  
+  <area  href=#OBMK83BB9E6C61923939 shape="polygon" coords="426, 122, 426, 109, 622, 109, 622, 122, 426, 122"   target="_top"  title="-">
+  
+  <area  href=#OBMK83BB9F7561923B77 shape="polygon" coords="426, 135, 426, 122, 622, 122, 622, 135, 426, 135"   target="_top"  title="-">
+  
+  <area  href=#OBMK83BBA15F619243BB shape="polygon" coords="426, 148, 426, 135, 622, 135, 622, 148, 426, 148"   target="_top"  title="-">
+  
+  <area  href=#OBMK83BBA15C61924384 shape="polygon" coords="426, 161, 426, 148, 622, 148, 622, 161, 426, 161"   target="_top"  title="-">
+  
+  <area  href="83bb9d7261923612.htm" shape="rect" coords="415, 54, 633, 260"   target="_top"  title="-">
+  
+  <area  href=#OBMKFF0517B65B254DCE shape="polygon" coords="37, 92, 37, 79, 230, 79, 230, 92, 37, 92"   target="_top"  title="-">
+  
+  <area  href=#OBMKFF05196C5B255005 shape="polygon" coords="37, 105, 37, 92, 230, 92, 230, 105, 37, 105"   target="_top"  title="-">
+  
+  <area  href=#OBMK1737B9285FE286B1 shape="polygon" coords="37, 118, 37, 105, 230, 105, 230, 118, 37, 118"   target="_top"  title="-">
+  
+  <area  href=#OBMK26B88DB15EEA97B3 shape="polygon" coords="37, 131, 37, 118, 230, 118, 230, 131, 37, 131"   target="_top"  title="-">
+  
+  <area  href=#OBMK1737B92B5FE286F8 shape="polygon" coords="37, 144, 37, 131, 230, 131, 230, 144, 37, 144"   target="_top"  title="-">
+  
+  <area  href=#OBMK26B88DB65EEA97F5 shape="polygon" coords="37, 158, 37, 144, 230, 144, 230, 158, 37, 158"   target="_top"  title="-">
+  
+  <area  href=#OBMK426A42C75AEB363A shape="polygon" coords="37, 171, 37, 158, 230, 158, 230, 171, 37, 171"   target="_top"  title="-">
+  
+  <area  href=#OBMK426A43225AEB36F8 shape="polygon" coords="37, 184, 37, 171, 230, 171, 230, 184, 37, 184"   target="_top"  title="-">
+  
+  <area  href=#OBMK26B88DB95EEA9837 shape="polygon" coords="37, 197, 37, 184, 230, 184, 230, 197, 37, 197"   target="_top"  title="-">
+  
+  <area  href=#OBMKD8CF2FFE61AAA92B shape="polygon" coords="37, 210, 37, 197, 230, 197, 230, 210, 37, 210"   target="_top"  title="-">
+  
+  <area  href=#OBMK58E5929B619F9863 shape="polygon" coords="37, 223, 37, 210, 230, 210, 230, 223, 37, 223"   target="_top"  title="-">
+  
+  <area  href=#OBMK4993659B63907DD7 shape="polygon" coords="37, 236, 37, 223, 230, 223, 230, 236, 37, 236"   target="_top"  title="-">
+  
+  <area  href=#OBMKBCDBC5F9617A5F0B shape="polygon" coords="37, 249, 37, 236, 230, 236, 230, 249, 37, 249"   target="_top"  title="-">
+  
+  <area  href="83bb9d616192352f.htm" shape="rect" coords="27, 50, 241, 279"   target="_top"  title="-">
+  
+  <area  href="83bb9d30619233b2.htm" shape="rect" coords="1, 0, 688, 546"   target="_top"  title="The&#160; Governance Pattern domain defines organizations and instrurments required to govern Enduring Initiatives.">
+  
+</map>
+<img  src="../images/83bb9d30619233b2_83bb9d3b61923492_i.png" alt="../images/83bb9d30619233b2_83bb9d3b61923492_i.png" usemap="#83BB9D3B61923492" height="546" width="687" border=0>
+
+</div>
+<hr class="sectionbreak" />
+<table class="table  table-set-col-width">
+<tr><th>Name</th> <th>Description</th> </tr>
+<tr>
+<td><img src="../standard/dic_graph.ico.gif"> 
+<a  href="dc0bed9d5ae95bc0.htm" target="_top">Teams Pattern</a></td>
+<td><i>Pattern Domain</i><br/><div align="left" style="min-height: 12pt; ">The&#160;<b> Teams Pattern</b> domain defines organization structure and behavior as well as instrurments required to govern <a href="d321c226601262ae.htm" target="_top"><b><u>Enduring Initiative</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">Any <a href="0ffeec41600be08a.htm" target="_top"><b><u>Initiative</u></b></a>, (project, enterprise, asset portfolio, privacy insurance, etc.) shall be governed. This includes:</div><div align="left" style="min-height: 12pt; ">1. <a href="2cc9717155263b89.htm" target="_top"><b><u>Governance Committee</u></b></a>s in charge of governance. They comprise persons (person (system) in HOPEX) and the role of these individual in the team (architects, auditors, product owner, etc.).</div><div align="left" style="min-height: 12pt; ">2. <a href="1737b50b5fe27cba.htm" target="_top"><b><u>Governance Event</u></b></a>s describe <i>changes</i> that need to be recorded to monitor transformations (d&#233;cisions, incidents, etc.).</div><div align="left" style="min-height: 12pt; ">3. <a href="1737b76a5fe28204.htm" target="_top"><b><u>Governance Activity</u></b></a>(ies) describe all actions that come in response to change events and may results in other change events (workflow, audits, ...).<br />4. <a href="173706265fe3f332.htm" target="_top"><b><u>Measure</u></b></a>s provide KPIs (qualification and quantification) on the status of&#160;<b> Undertaking</b>s being governed.</div><i><ul>References:<li><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_48"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Definitions - Governance</a></li></ul></i> </td>
+</tr>  
+<tr>
+<td><img src="../standard/dic_graph.ico.gif"> 
+<a  href="83BB9D706192357B.htm" target="_top">Appraisal Pattern</a></td>
+<td><i>Pattern Domain</i><br/>The&#160;<b> Appraisal Pattern</b> domain defines constructs used by stakeholders to asses and qualify <a href="d342d88e5b121401.htm" target="_top"><b><u>Architecture Block</u></b></a>s.</td>
+</tr>  
+<tr>
+<td><img src="../standard/dic_graph.ico.gif"> 
+<a  href="9D3B121261CFB66B.htm" target="_top">Indicator Pattern</a></td>
+<td></td>
+</tr>  
+<tr>
+<td><img src="../standard/dic_graph.ico.gif"> 
+<a  href="E073FB4561D211A3.htm" target="_top">Resolution Pattern</a></td>
+<td><i>Pattern Domain</i><br/>The&#160;<b> Resolution Pattern</b> domain defines constructs used by stakeholders to assess and qualify <a href="07ca0f015dd84efa.htm" target="_top"><b><u>Functional Asset</u></b></a>s.</td>
+</tr>  
+</table>
+</section>
+<div class="Relationship" id="Relationship2">
+<div id="klmm" style="width: 100vw; height: 100vh;" ></div>
+<!-- <script src="../standard/assets/js/keylines_domain.js"></script> -->
+<script >
+const data = {
+ type: 'LinkChart',
+  items: [
+  //nodes
+    {type: 'node', id:'83BB9D30619233B2', t:"Governance Pattern", sh:'box', d:"The Governance Pattern domain defines organizations and instrurments required to govern Enduring Initiatives."},
+  //edges
+
+  ]
+}
+</script>
+<script src="../standard/assets/js/keylines_domain.js" type="module"></script>
+</div>
+</section>
+
+</div>
+<button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button>
+<script>window.onscroll = function() {scrollFunction()};$(document).on('click', 'a[href^="#"]', function (event) {event.preventDefault();$('html, body').animate({scrollTop: $($.attr(this, 'href')).offset().top}, 500);});function showDiagOnClick(elem){ var x = document.getElementsByClassName('Relationship');var e = elem.getAttribute("value"); for (var i=0; i < x.length ;i++){x[i].style.display="none"; if (x[i].id == e){x[i].style.display="block";x[i].style.textAlign="left";}}}
+</script></html>

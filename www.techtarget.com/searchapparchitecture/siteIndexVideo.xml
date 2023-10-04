@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
+    <url>
+        <loc>https://www.techtarget.com/searchapparchitecture/video/Create-a-Java-executable-JAR-with-the-Tomcat-plug-in-for-Maven</loc>
+        <video:video>
+            <video:title>Create a Java executable JAR with the Tomcat plug-in for Maven</video:title>
+            <video:publication_date>2018-06-05T16:23:00-04:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/746h0MYhUDE/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=746h0MYhUDE</video:player_loc>
+            <video:duration>547</video:duration>
+            <video:description>In this embedded Tomcat example tutorial, Cameron McKenzie uses the Tomcat plug-in for Maven to create a Java executable JAR file.</video:description>
+        </video:video>
+    </url>
+</urlset>

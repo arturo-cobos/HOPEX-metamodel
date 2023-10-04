@@ -1,0 +1,332 @@
+BODY
+{
+    SCROLLBAR-FACE-COLOR: #f5f4ee;
+    FONT-SIZE: 10px;
+    MARGIN: 0px 0px 0px 10px;
+    COLOR: black;
+    SCROLLBAR-3DLIGHT-COLOR: #dfdbc8;
+    SCROLLBAR-ARROW-COLOR: #d68800;
+    SCROLLBAR-TRACK-COLOR: #ffffff;
+    FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif;
+    SCROLLBAR-DARKSHADOW-COLOR: #dfdbc8;
+    BACKGROUND-COLOR: #ffffff
+}
+A
+{
+    FONT-WEIGHT: normal;
+    COLOR: #1B4C2C;
+    TEXT-DECORATION: underline
+    FONT-SIZE: 12px;
+}
+A:hover
+{
+    COLOR: #e6b55f;
+    TEXT-DECORATION: underline
+}
+H1
+{
+  width: 100%;
+  height: 30px;
+  display: table;
+  text-align: center;
+  vertical-align:middle;
+  background: #2eb771;
+  color: white;
+  font-size: 20px;
+}
+H1 A
+{
+  font-size: 20px;
+}
+H2
+{
+    FONT-WEIGHT: bold;
+    FONT-SIZE: 12px;
+    COLOR: #2eb771
+}
+H3
+{
+    FONT-WEIGHT: bold;
+    FONT-SIZE: 12px;
+    COLOR: #c00000;
+    FONT-VARIANT: normal
+    COLOR: #2256a4;
+}
+H4
+{
+    FONT-SIZE: 12px;
+    COLOR: #2256a4
+}
+TABLE.TableIndent
+{
+	BORDER:none ;
+    BORDER-COLLAPSE: collapse;
+    BORDER-SPACING: 0px
+}
+
+TD.TableIndent
+{
+    BORDER-RIGHT: 0pt;
+    BORDER-TOP: 0pt;
+    BORDER-LEFT: 0pt;
+    BORDER-BOTTOM: 0pt
+}
+
+TD
+{
+    BORDER-RIGHT: #dfdbc8 1pt solid;
+    PADDING-RIGHT: 3px;
+    BORDER-TOP: #dfdbc8 1pt solid;
+    PADDING-LEFT: 3px;
+    PADDING-BOTTOM: 3px;
+    BORDER-LEFT: #dfdbc8 1pt solid;
+    PADDING-TOP: 3px;
+    BORDER-BOTTOM: #dfdbc8 1pt solid
+}
+
+TD.Page 
+{
+    BORDER-RIGHT: 0pt;
+    BORDER-TOP: 0pt;
+    BORDER-LEFT: 0pt;
+    BORDER-BOTTOM: 0pt;
+}
+
+TABLE
+{
+    FONT-SIZE: 8pt;
+    BORDER-COLLAPSE: collapse;
+    BORDER-SPACING: 1px
+}
+TH
+{
+    BORDER-RIGHT: 1px solid;
+    PADDING-RIGHT: 3px;
+    BORDER-TOP: 1px solid;
+    PADDING-LEFT: 3px;
+    FONT-WEIGHT: bold;
+    COLOR: #8A908C;
+    PADDING-BOTTOM: 3px;
+    BORDER-LEFT: 1px solid;
+    PADDING-TOP: 3px;
+    BORDER-BOTTOM: 1px solid;
+    BACKGROUND-COLOR: #dfdbc8
+}
+
+TD A
+{
+    FONT-SIZE: 8pt
+}
+BODY.Home
+{
+    FONT-SIZE: 10px;
+    MARGIN: 0px
+}
+.Home TD
+{
+    BORDER-RIGHT: 0px;
+    PADDING-RIGHT: 0px;
+    BORDER-TOP: 0px;
+    PADDING-LEFT: 0px;
+    PADDING-BOTTOM: 0px;
+    BORDER-LEFT: 0px;
+    PADDING-TOP: 0px;
+    BORDER-BOTTOM: 0px
+}
+.MenuHome TD
+{
+    PADDING-RIGHT: 5px;
+    PADDING-LEFT: 3px;
+    PADDING-TOP: 5px;
+    BACKGROUND-COLOR: #f5f4ee
+}
+BODY.Menu
+{
+    MARGIN-TOP: 10px;
+    FONT-SIZE: 10px;
+    BACKGROUND-IMAGE: none;
+    MARGIN-LEFT: 5px;
+    BACKGROUND-COLOR: #f5f4ee
+}
+.Menu A
+{
+    FONT-SIZE: 10px
+}
+.Menu TABLE
+{
+    BACKGROUND-COLOR: #f5f4ee
+}
+.Menu TD
+{
+    BORDER-RIGHT: 0px;
+    BORDER-TOP: 0px;
+    BORDER-LEFT: 0px;
+    BORDER-BOTTOM: 0px
+}
+.ModelConstLayLinePropLine TD
+{
+    BORDER-RIGHT: 0pt;
+    BORDER-TOP: 0pt;
+    BORDER-LEFT: 0pt;
+    BORDER-BOTTOM: 0pt
+}
+.ModelConstLayLinePropLine
+{
+}
+.ModelConstLayLinePropTable
+{
+}
+.ModelConstLayLineText TD
+{
+    BORDER-RIGHT: 0pt;
+    BORDER-TOP: 0pt;
+    BORDER-LEFT: 0pt;
+    BORDER-BOTTOM: 0pt
+}
+.ModelConstLayLineText
+{
+}
+.ModelConstLayTabNameComment
+{
+}
+.ModelConstLayTabProp
+{
+}
+.ModelDescribedObj
+{
+}
+.ModelObjPropByLine TD
+{
+    BORDER-RIGHT: 0pt;
+    BORDER-TOP: 0pt;
+    BORDER-LEFT: 0pt;
+    BORDER-BOTTOM: 0pt
+}
+.ModelObjPropByLine
+{
+}
+.ModelObjPropByTable
+{
+}
+.ModelObjTableNameComment
+{
+}
+.ModelObjText TD
+{
+}
+.ModelObjText
+{
+}
+.ModelParentLayLinePropLine TD
+{
+    BORDER-RIGHT: 0pt;
+    BORDER-TOP: 0pt;
+    BORDER-LEFT: 0pt;
+    BORDER-BOTTOM: 0pt
+}
+.ModelParentLayLinePropLine
+{
+}
+.ModelParentLayLinePropTable
+{
+}
+.ModelParentLayLineText TD
+{
+    BORDER-RIGHT: 0pt;
+    BORDER-TOP: 0pt;
+    BORDER-LEFT: 0pt;
+    BORDER-BOTTOM: 0pt
+}
+.ModelParentLayLineText
+{
+}
+.ModelParentLayTabNameComment
+{
+}
+.ModelParentLayTabProp
+{
+}
+.ModelProperties
+{
+}
+.StdConstLayLinePropLine TD
+{
+    BORDER-RIGHT: 0pt;
+    BORDER-TOP: 0pt;
+    BORDER-LEFT: 0pt;
+    BORDER-BOTTOM: 0pt
+}
+.StdConstLayLinePropLine
+{
+}
+.StdConstLayLinePropTable
+{
+}
+.StdConstLayLineText TD
+{
+    BORDER-RIGHT: 0pt;
+    BORDER-TOP: 0pt;
+    BORDER-LEFT: 0pt;
+    BORDER-BOTTOM: 0pt
+}
+.StdConstLayLineText
+{
+}
+.StdConstLayTabNameComment
+{
+}
+.StdConstLayTabProp
+{
+}
+.StdParentLayLinePropLine TD
+{
+    BORDER-RIGHT: 0pt;
+    BORDER-TOP: 0pt;
+    BORDER-LEFT: 0pt;
+    BORDER-BOTTOM: 0pt
+}
+.StdParentLayLinePropLine
+{
+}
+.StdParentLayLinePropTable
+{
+}
+.StdParentLayLineText TD
+{
+    BORDER-RIGHT: 0pt;
+    BORDER-TOP: 0pt;
+    BORDER-LEFT: 0pt;
+    BORDER-BOTTOM: 0pt
+}
+.StdParentLayLineText
+{
+}
+.StdParentLayTabNameComment
+{
+}
+.StdParentLayTabProp
+{
+}
+.StdPropLine TD
+{
+    BORDER-RIGHT: 0pt;
+    BORDER-TOP: 0pt;
+    BORDER-LEFT: 0pt;
+    BORDER-BOTTOM: 0pt
+}
+.StdPropLine
+{
+}
+.StdPropTable
+{
+}
+.StdText TD
+{
+    BORDER-RIGHT: 0pt;
+    BORDER-TOP: 0pt;
+    BORDER-LEFT: 0pt;
+    BORDER-BOTTOM: 0pt
+}
+.StdText
+{
+}

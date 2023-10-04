@@ -1,0 +1,790 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="keywords" content="">
+<meta name="description" content="">    
+<LINK REL="icon" HREF="../standard/assets/img/favicon.ico">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/bootstrap.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nav.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/eaportal.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/font-awesome.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/animate.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/datatables.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/grid.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nae.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/custom.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/chosen.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/prism.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery.dataTables.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jsTreeStyle.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.theme.css" media="screen" />
+<script type="text/javascript" src="../standard/assets/js/jquery-3.2.1.min.js" ></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-ui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.columnFilter.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3-force.v2.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.gui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.search.js"></script> 
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.util.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-2.1.1.min.js"></script>
+<script src="../standard/assets/js/ws_zoomtemplate_firefox.js"></script>
+<script src="../standard/assets/js/bootstrap.min.js"></script>
+<script src="../standard/assets/js/datatables.min.js"></script>
+<script src="../standard/assets/js/moment.min.js"></script>
+<script src="../standard/assets/js/datetime-moment.js"></script>
+<script src="../standard/assets/js/chartjs.min.js"></script>
+<script src="../standard/assets/js/searchindexcontent.json"></script>
+<script src="../standard/assets/js/anls.js"></script>
+<script src="../../../cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script src="../standard/assets/js/gauge.js"></script> 
+<script src="../standard/assets/js/domesticApi.js"></script> 
+<script src="../standard/assets/js/piecelabel.js"></script>
+<script src="../standard/assets/js/popper.min.js"></script>
+<script src="../standard/assets/js/custom.js"></script>
+<script src="../standard/assets/js/chosen.jquery.js"></script>
+<script src="../standard/assets/js/prism.js"></script>
+<script src="../standard/assets/js/init-chosen.js"></script>
+<script src="../standard/assets/js/chart-data-flow.js"></script>
+<script src="../standard/assets/js/chart-data-gantt.js"></script>
+<script type="module" src="../standard/assets/js/Fuse.esm.min.js"></script>
+<script type="module">
+import Fuse from '../standard/assets/js/Fuse.esm.min.js';
+$(document).ready(function () {
+console.log('getjson');
+window.$.getJSON('../standard/assets/js/searchindexcontent.json', function (response) {
+console.log('getjson ok');
+var isIndex = "";
+var url = window.location.pathname;
+var filename = url.substring(url.lastIndexOf('/')+1);
+if( filename.includes("index") || filename === "" ){
+isIndex = "pages/";
+} else {
+isIndex = "";
+}
+const fuse = new Fuse(response, {
+keys: ['title','text'],
+shouldSort: true,
+includeMatches : true,
+findAllMatches : true
+});
+$('#search-fuse').on('keyup', function () {
+let result = fuse.search($(this).val());
+console.log(result);
+let resultdiv = $('div.searchresults-fuse');
+if (result.length === 0) {
+resultdiv.hide();
+} else {
+resultdiv.empty();
+resultdiv.append('<table class="table-search" width="100%" cellspacing="0"><thead ><tr><th>Name</th><th>Object Type</th><th>Modification date</th></tr></thead><tbody>');
+
+for (let obj in result.slice(0,10)) {
+
+let searchObj = '<tr><td><a href="./'+ isIndex + result[obj].item.url + '">' + result[obj].item.title +'</a></td><td>' + result[obj].item.ObjectType + '</td><td>' + result[obj].item.ModificationDate + '</td></tr>' ;
+
+
+resultdiv.find('tbody').append(searchObj);
+}
+resultdiv.append('</tbody></table>');
+resultdiv.show();
+}
+});
+});
+});
+</script>
+<title>HOPEX Metamodel Overview (Beta Version)</title>
+</head>
+<nav class="navbar navbar-expand-md navbar-dark  navbar-mega"><!-- Brand --><!--<a class="navbar-brand" href="#">Navbar</a>--><a class="" href="../index.htm"><img class="logo-mega" src="../standard/assets/img/logo.png"  alt="">(Beta Version)</a><!-- Toggler/collapsibe Button --><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><!-- Navbar links -->
+<div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsibleNavbar"><div class="col-sm-auto col-md-auto col-lg-5"></div>
+<div class="col-sm-auto">
+<ul class="navbar-nav">      
+<li><a class="dropdown-item" href="ad30ce115ebf7e90.htm">EA Grid</a></li> 
+<li><a class="dropdown-item" href="fdd5018459bc3c6a.htm">EA Domains</a></li> 
+<li><a class="dropdown-item" href="07e731775ecc93f4.htm">Solutions</a></li> 
+<li><a class="dropdown-item" href="c5dfc62c54810c2c.htm">Glossary</a></li> 
+<li class="nav-item dropdown mx-1">
+<a class="nav-link" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</a>
+<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<li><a class="dropdown-item" href="5446555d5f88c32e.htm">Outcome Driven Metamodel</a></li> 
+<li><a class="dropdown-item" href="e1ccfc295f8f7b90.htm">Playbooks</a></li> 
+<li><a class="dropdown-item" href="42bc992862d20ea7.htm">Framework Mappings</a></li> 
+<li><a class="dropdown-item" href="e93aebb35fa20550.htm">Metamodel Patterns</a></li> 
+<li><a class="dropdown-item" href="d599fe87602b2b85.htm">References</a></li> 
+<li><a class="dropdown-item" href="333f3a7f5dde11de.htm">Legend</a></li> 
+</ul>									                                            
+</li>
+</ul>
+</div>
+<div class="col-sm-auto"><a class="nav-link search" href="#" onclick=showHideSearch("search-section-fuse")><i class="fa fa-search mr-1 form-control-feedback"></i></a></div>
+</div>
+</nav>
+<div id="search-section-fuse" style="display:none">>
+<div class="search_header"><span class="closesearch">&times;</span>
+<nav class="breadcrumb">
+<a class="breadcrumb-item" href="../index.htm">Home </a> 
+<span class="breadcrumb-item active">Search</span> 
+</nav>
+</div>
+<input id="search-fuse" placeholder="Search..."  name="q" onfocus="this.value=''" type="search">
+<div class="searchresults-fuse"></div>
+</div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>function showHideSearch(elementId) {var contentDivs = document.getElementsByClassName('content');var footerDivs = document.getElementsByClassName('footer'); var containerDivs = document.getElementsByClassName('container');var containerfluidDivs = document.getElementsByClassName('container-fluid');var x = document.getElementById(elementId);if (x.style.display === "none") {x.style.display = "block";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "none";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "none";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "none";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "none";}} else {x.style.display = "none";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "block";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "block";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "block";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "block";}}} ;<!-- END WIDGET DRILL DOWN --></script><script>$(document).ready(function() {$(window).scroll(function() {if ($(this).scrollTop() > 100) {$('.scrollup').fadeIn();} else {$('.scrollup').fadeOut();}});$('.scrollup').click(function() {$("html, body").animate({scrollTop: 0}, 600);return false;});});</script><script>
+var modal = document.getElementById("search-section-fuse");
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = "none";
+}
+}
+$(document).on('click', '.closesearch', function() {
+showHideSearch("search-section-fuse");
+
+
+
+
+
+});</script><div class="container-fluid col-lg-11"><nav class="breadcrumb"><a class="breadcrumb-item" href="../index.htm">Home</a> <span class="breadcrumb-item active">
+<a  href="c5dfc62c54810c2c.htm" target="_top">Dictionary of HOPEX concepts</a>&nbsp;/&nbsp;Product &nbsp;&amp; Customer Experience</span></nav></div>
+<div class="container-fluid col-lg-11 content">
+<section class="fadeInDown animated"><a href="#idt" class="btn btn-d">DEFINITION</a> <a href="#grf" class="btn btn-d">CONCEPT GRAPH</a> <a href="#des" class="btn btn-d">CONCEPT DESCRIPTIONS</a> 
+</section>
+<a class="object-section-anchor" id="idt"></a>
+<section class="object-section">
+<h4>CONCEPT DOMAIN - Product &nbsp;&amp; Customer Experience</h4><hr class="sectionbreak" /><table class="table table-vertical-headers table-set-col-width"><tr><th>Description</th><td class="description-text"><b>&#160;Product&#160; &amp; Customer Experience</b> domain describes the overall impression <a href="d6cdfdbc5ab86331.htm" target="_top"><b><u>Customer</u></b></a>s have of the company based on their interactions across multiple <a href="fb868df95ecee4db.htm" target="_top"><b><u>Touch Point</u></b></a>s (CX: customer experience) as well as the perception <a href="d6cdfdbc5ab86331.htm" target="_top"><b><u>Customer</u></b></a>s have of the enterprise&#39;s <a href="215cceda606c35c6.htm" target="_top"><b><u>Product</u></b></a> based on their engagement with the <a href="215cceda606c35c6.htm" target="_top"><b><u>Product</u></b></a>s (PX: product experience).<div><br/><i>References:</i><br/><a href="https://cxuniversity.com/inside-out-vs-outside-in-thinking/" target="_blank">CX University - Inside Out vs. Outside In Thinking</a><br/><a href="https://hbr.org/2007/02/understanding-customer-experience" target="_blank">HBR - Understanding Customer Experience</a><br/><a href="https://pubs.opengroup.org/architecture/o-aa-standard/definitions.html#_customer_experience" target="_blank">OpenGroup - OAA - Customer Experience</a><br/><a href="https://pubs.opengroup.org/architecture/o-aa-standard/experience-design.html" target="_blank">OpenGroup - OAA - Experience Design</a><br/><a href="https://pubs.opengroup.org/architecture/o-aa-standard/journey-mapping.html" target="_blank">OpenGroup - OAA - Journey Mapping</a><br/><a href="https://pubs.opengroup.org/architecture/o-aa-standard/product-architecture.html" target="_blank">OpenGroup - OAA - Product Architecture</a><br/><a href="https://www.youtube.com/watch?v=ReM1uqmVfP0&amp;ab_channel=Strategyzer" target="_blank">Strategyzer - Value Proposition Canvas (YouTube)</a><br/><a href="https://compliancedictionary.com/term/6683" target="_blank">UCF Glossary - Business Model</a><br/><a href="https://en.wikipedia.org/wiki/Customer_experience" target="_blank">Wikipedia - Customer Experience</a></div></td></tr><tr><th>Dictionary</th><td><img src="../standard/dicsubjectarea.ico.gif"/>&nbsp;
+<a  href="c5dfc62c54810c2c.htm" target="_top">Dictionary of HOPEX concepts</a></td></tr><tr><th>Parent Domain</th><td><img src="../standard/business%20information%20environment.ico.gif"/>&nbsp;
+<a  href="fdd5018459bc3c6a.htm" target="_top">HOPEX Concept Map</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="624e62fb5ed95260.htm" target="_top">HOPEX - Business Architecture / ITBM</a>&nbsp;</td></tr>
+<tr><th>Imported Domains</th><td><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="c2dbd7985b02607c.htm" target="_top">EA Module - Enterprise Capabilites</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="e2ef086d62147802.htm" target="_top">EA Pattern - Business Operating Pattern</a>&nbsp;</td></tr>
+<tr><th>Domain dependencies</th><td><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="c30bd1505a5d97f9.htm" target="_top">Architecture Model Management</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="e2ef086d62147802.htm" target="_top">EA Pattern - Business Operating Pattern</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="255cd30862aa0da8.htm" target="_top">EA Pattern - Business System Operating Model</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="a951ee816194126b.htm" target="_top">Facility Asset Architecture</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="02af0a4b5a182417.htm" target="_top">Operating Semantic</a>&nbsp;</td></tr></table></section>
+<a class="object-section-anchor" id="grf"></a>
+<section class="object-section">
+<h4>DOMAIN CONCEPT GRAPH</h4>
+<hr class="sectionbreak" />
+<a href="#" class="btn btn-d" value="Relationship1" onclick="showDiagOnClick(this)">Diagram</a>
+<a href="#" class="btn btn-d" value="Relationship2" onclick="showDiagOnClick(this)">Graph</a>
+<div class="Relationship" id="Relationship1">
+
+<map  name="561C56515EC208F3">
+  <area  href=#OBMK9DCEA49D5EC76F24 shape="polygon" coords="928, 738, 928, 725, 1074, 725, 1074, 738, 928, 738"    title="-">
+  
+  <area  href=#OBMK9DCEA7D35EC770D3 shape="polygon" coords="999, 689, 999, 765, 989, 765, 989, 689"    title="-">
+  
+  <area  href=#OBMK8FC90943640B9FEE shape="polygon" coords="984, 655, 988, 643, 998, 646, 994, 658"    title="-">
+  
+  <area  href=b181b98c54891882.htm#OBMKB181B98C54891882 shape="polygon" coords="977, 638, 977, 627, 1025, 627, 1025, 638, 977, 638"   target="_top"  title="A&#160; Capability&#160; is an ability to produce an Outcome.">
+  
+  <area  href=8fc9091a640b9f4a.htm#OBMK8FC9091A640B9F4A shape="polygon" coords="960, 649, 960, 638, 1042, 638, 1042, 649, 960, 649"   target="_top"  title="A&#160; Product Capability is a Capability that benefits to Customers of the enterprise. It expresses an ability to deliver Business Outcomes as part of the Value Propositions of a Product.">
+  
+  <area  href=90759f5559472c5e.htm#OBMK90759F5559472C5E shape="polygon" coords="957, 681, 957, 668, 1045, 668, 1045, 681, 957, 681"   target="_top"  title="-">
+  
+  <area  href="aea4936060645978.htm" shape="rect" coords="924, 625, 1078, 689"   target="_top"  title="A&#160; Business Operating Capability is a Capability that benefits to Customers (internal or external) of the enterprise. It expresses an ability to deliver Business Outcomes.This includes Business Capability, Functionality, Hardware Capability and Skill.">
+  
+  <area  href=b181b98c54891882.htm#OBMKB181B98C54891882 shape="polygon" coords="969, 602, 969, 591, 1017, 591, 1017, 602, 969, 602"   target="_top"  title="A&#160; Capability&#160; is an ability to produce an Outcome.">
+  
+  <area  href="8fc9091a640b9f4a.htm" shape="rect" coords="907, 589, 1079, 700"   target="_top"  title="A&#160; Product Capability is a Capability that benefits to Customers of the enterprise. It expresses an ability to deliver Business Outcomes as part of the Value Propositions of a Product.">
+  
+  <area  href=26b8384f5eeae33c.htm#OBMK26B8384F5EEAE33C shape="polygon" coords="1266, 345, 1266, 334, 1358, 334, 1358, 345, 1266, 345"   target="_top"  title="&#160;Network connectivity is an aspect of Technology Operating Asset that provides networking capabilites through the use of Network Interfaces.">
+  
+  <area  href=bcebd31f5491302c.htm#OBMKBCEBD31F5491302C shape="polygon" coords="1276, 356, 1276, 345, 1349, 345, 1349, 356, 1276, 356"   target="_top"  title="A&#160; Resource Agent is a Business Operating Agent which represents physical resources that produce Business Outcomes of the enterprise.">
+  
+  <area  href=818285fd59ae040b.htm#OBMK818285FD59AE040B shape="polygon" coords="1234, 388, 1234, 375, 1390, 375, 1390, 388, 1343, 388, 1343, 398, 1281, 398, 1281, 388, 1234, 388"   target="_top"  title="-">
+  
+  <area  href="d1600c7062e093eb.htm" shape="rect" coords="1229, 332, 1396, 401"   target="_top"  title="A&#160; Capability Configuration is a Resource Agent which combines Human Resources and Business Systems along with networking capabilities in order to provide Business Capability(ies).">
+  
+  <area  href=6246927f61b81996.htm#OBMK6246927F61B81996 shape="polygon" coords="1259, 426, 1259, 415, 1363, 415, 1363, 426, 1259, 426"   target="_top"  title="A&#160; Business System Asset is man made resource that is a means to achieve Business Outcomes.">
+  
+  <area  href=bcebd31f5491302c.htm#OBMKBCEBD31F5491302C shape="polygon" coords="1275, 437, 1275, 426, 1348, 426, 1348, 437, 1275, 437"   target="_top"  title="A&#160; Resource Agent is a Business Operating Agent which represents physical resources that produce Business Outcomes of the enterprise.">
+  
+  <area  href=386846ca58937252.htm#OBMK386846CA58937252 shape="polygon" coords="1237, 469, 1237, 455, 1385, 455, 1385, 469, 1237, 469"   target="_top"  title="-">
+  
+  <area  href="278675d65b252f4d.htm" shape="rect" coords="1231, 412, 1392, 471"   target="_top"  title="A&#160; Business System is a man made artifact (Hardware System or Software System) which exposes Functionalityies and can produce Business Outcomes.">
+  
+  <area  href=dc9407806025fc1c.htm#OBMKDC9407806025FC1C shape="polygon" coords="1231, 565, 1239, 565, 1239, 579, 1096, 579, 1096, 565, 1231, 565"   target="_top"  title="Set of Constraint Values that constrain an Architecture Block (Type).">
+  
+  <area  href=dc94083a6025fcbd.htm shape="polygon" coords="1173, 536, 1173, 602, 1163, 602, 1163, 536"   target="_top"  title="The set of Constraint Values that expresse the non-functional characteristics of a Value Proposition.">
+  
+  <area  href=ca353b065fc5e146.htm#OBMKCA353B065FC5E146 shape="polygon" coords="1127, 616, 1127, 605, 1217, 605, 1217, 616, 1127, 616"   target="_top"  title="A&#160; Categorization Block is a Model Building Block used to provid classification and qualification of other Model Building Blocks.For instance, Tags are used for classification. Constraint Value are used for qualification or quantification.">
+  
+  <area  href=4d035344569f43cd.htm#OBMK4D035344569F43CD shape="polygon" coords="1132, 648, 1132, 634, 1212, 634, 1212, 648, 1132, 648"   target="_top"  title="A KPI can be elementary or composite.">
+  
+  <area  href="7c40a5b455272bb4.htm" shape="rect" coords="1098, 602, 1246, 659"   target="_top"  title="A&#160; Constraint Value is a possible value of a Constraining Property such as a delivery time of 30 minutes, a weight of 20 kg, a high level of confidentiality, stormy conditions.">
+  
+  <area  href=abba952862a943d7.htm shape="polygon" coords="994, 536, 996, 588, 986, 589, 984, 536"   target="_top"  title="The Business Operating Capability that expresses the functional value of a Value Proposition.">
+  
+  <area  href=c559c100616f7de3.htm#OBMKC559C100616F7DE3 shape="polygon" coords="1005, 506, 1005, 495, 1086, 495, 1086, 506, 1005, 506"   target="_top"  title="An&#160; Operating Context is a perimeter of Architecture Block (Type) that forms the scope of an Enduring Initiative. It can be a set of Capability(ies) that define the purpose of operating Agents or the Operating Eco-System in which these Agents deliver these Capability(ies).">
+  
+  <area  href="abba950e62a94390.htm" shape="rect" coords="903, 492, 1189, 536"   target="_top"  title="A&#160; Value Proposition is a statement that explains the benefits that a Product (goods or services) provides to its Customers. It is essentially a promise made by the enterprise to its target Customers that its Product will fit their need when performing their Job-to-be-done.">
+  
+  <area  href=29df685860086c52.htm#OBMK29DF685860086C52 shape="polygon" coords="1234, 228, 1195, 228, 1195, 242, 1140, 242, 1140, 228, 1234, 228"   target="_top"  title="-">
+  
+  <area  href=31257f8561dce177.htm shape="polygon" coords="1055, 223, 1258, 223, 1258, 234, 1055, 234"   target="_top"  title="-">
+  
+  <area  href=43ee3c7963725899.htm#OBMK43EE3C7963725899 shape="polygon" coords="1293, 218, 1293, 207, 1367, 207, 1367, 218, 1293, 218"   target="_top"  title="A&#160; Business Object is an aspect of any tangible or intanglible resource or state of such resource, that can be the subject of a business transaction.">
+  
+  <area  href=a371a43b5b865817.htm#OBMKA371A43B5B865817 shape="polygon" coords="1293, 229, 1293, 218, 1367, 218, 1367, 229, 1293, 229"   target="_top"  title="An&#160; Operating Asset is a Functional Asset used to describes the way Outcomes are produced and consumed: how&#160; (Behaviors) and by whom (Agents).">
+  
+  <area  href="31257f5261dcdfca.htm" shape="rect" coords="1258, 204, 1403, 262"   target="_top"  title="-">
+  
+  <area  href=#OBMK5754805751545CA3 shape="polygon" coords="45, 294, 45, 280, 130, 280, 130, 294, 45, 294"    title="-">
+  
+  <area  href=#OBMK236C34B560070C35 shape="polygon" coords="198, 217, 93, 217, 93, 399, 82, 399, 82, 206, 198, 206"    title="-">
+  
+  <area  href=#OBMKC581DA8660233349 shape="polygon" coords="339, 522, 339, 494, 350, 494, 350, 522"    title="-">
+  
+  <area  href=c581da866023333b.htm shape="polygon" coords="339, 578, 339, 494, 350, 494, 350, 578"   target="_top"  title="A client journey step is the basic elementary advancement unit of a client via a client journey phase.">
+  
+  <area  href=#OBMKC581DA866023338B shape="polygon" coords="339, 578, 339, 550, 350, 550, 350, 578"    title="-">
+  
+  <area  href=#OBMK07E73D5E5ECCEF4F shape="polygon" coords="447, 443, 447, 442, 413, 442, 413, 431, 458, 431, 458, 443"    title="-">
+  
+  <area  href=07e73d5e5eccef4a.htm shape="polygon" coords="401, 476, 447, 476, 447, 442, 413, 442, 413, 431, 458, 431, 458, 486, 401, 486"   target="_top"  title="-">
+  
+  <area  href=#OBMK07E73D5F5ECCEF90 shape="polygon" coords="401, 476, 446, 476, 446, 486, 401, 486"    title="-">
+  
+  <area  href=d170d24a5be72d09.htm#OBMKD170D24A5BE72D09 shape="polygon" coords="309, 460, 309, 450, 379, 450, 379, 460, 309, 460"   target="_top"  title="Activity done by a Customer in context of its duty and for which he/she expresses his/her needs and painpoints.">
+  
+  <area  href="d17034875be85304.htm" shape="rect" coords="284, 448, 404, 495"   target="_top"  title="Set of Customer Tasks that contribute to the achievement of the Customer duty(ies).The granulatity of&#160; Job-to-be-done is determined by outcomes exchanged at Touch Points.">
+  
+  <area  href=8a5c926e5c0d632c.htm#OBMK8A5C926E5C0D632C shape="polygon" coords="304, 422, 304, 411, 384, 411, 384, 422, 304, 422"   target="_top"  title="A&#160; Customer Activity represents specific behavior done by Customers in the context of their work.">
+  
+  <area  href="d170d24a5be72d09.htm" shape="rect" coords="275, 409, 413, 515"   target="_top"  title="Activity done by a Customer in context of its duty and for which he/she expresses his/her needs and painpoints.">
+  
+  <area  href=#OBMK45DF7704618E0777 shape="polygon" coords="989, 327, 989, 362, 978, 362, 978, 327"    title="-">
+  
+  <area  href=#OBMK45DF7704618E075E shape="polygon" coords="989, 258, 989, 362, 978, 362, 978, 258"    title="-">
+  
+  <area  href=#OBMK45DF7706618E07D4 shape="polygon" coords="989, 258, 989, 293, 978, 293, 978, 258"    title="-">
+  
+  <area  href=#OBMKFD3BEFAD60941FDC shape="polygon" coords="832, 644, 832, 397, 890, 397, 890, 408, 843, 408, 843, 644"    title="-">
+  
+  <area  href=#OBMK215C69DC606D58A4 shape="polygon" coords="972, 220, 980, 209, 989, 215, 981, 226"    title="-">
+  
+  <area  href=#OBMK215CD221606C3EE3 shape="polygon" coords="1164, 355, 1229, 355, 1229, 365, 1164, 365"    title="-">
+  
+  <area  href=215cd221606c3ed3.htm shape="polygon" coords="1076, 397, 1092, 397, 1092, 355, 1229, 355, 1229, 365, 1102, 365, 1102, 408, 1076, 408"   target="_top"  title="Enterprise capabilities of an enterprise agent offered as product capabilites in the context of an enterprise offering (product).">
+  
+  <area  href=#OBMK215CD222606C3F23 shape="polygon" coords="1076, 397, 1092, 397, 1092, 355, 1098, 355, 1098, 365, 1102, 365, 1102, 408, 1076, 408"    title="-">
+  
+  <area  href=#OBMK215CCF1B606C373B shape="polygon" coords="993, 476, 993, 492, 983, 492, 983, 476"    title="-">
+  
+  <area  href=215ccf1b606c372e.htm shape="polygon" coords="993, 443, 993, 492, 983, 492, 983, 443"   target="_top"  title="A&#160; Product Characteristic is a expressed by a Value Proposition which defines the Functional Value (Product Capability) of a Product and its Non Functional Value (Constraint Value).">
+  
+  <area  href=#OBMK215CCF1B606C377B shape="polygon" coords="993, 443, 993, 459, 983, 459, 983, 443"    title="-">
+  
+  <area  href=29df3f4060084c07.htm#OBMK29DF3F4060084C07 shape="polygon" coords="929, 215, 929, 204, 1024, 204, 1024, 215, 929, 215"   target="_top"  title="A&#160; Management System is an Enduring Initiative within an Enterprise, aimed at creating, maintaining, evaluating, evolving, and operating a collection of essential Functional Assets of the Enterprise.">
+  
+  <area  href="215ccfab606c3a18.htm" shape="rect" coords="899, 202, 1056, 259"   target="_top"  title="A&#160; Product Portfolio is a Management System within an enterprise which purpose is to develop, maintain, transform and deliver a set of&#160; Products of the Enterprise.">
+  
+  <area  href=#OBMK215CCF6A606C38DB shape="polygon" coords="1167, 433, 1231, 433, 1231, 444, 1167, 444"    title="-">
+  
+  <area  href=215ccf6a606c38cc.htm shape="polygon" coords="1076, 397, 1102, 397, 1102, 433, 1231, 433, 1231, 444, 1092, 444, 1092, 408, 1076, 408"   target="_top"  title="&#160;Goods Offerings are&#160; Business Artifacts productized as goods in the context of an enterprise offering (Products).">
+  
+  <area  href=#OBMK215CCF6B606C3919 shape="polygon" coords="1076, 397, 1102, 397, 1102, 433, 1103, 433, 1103, 444, 1092, 444, 1092, 408, 1076, 408"    title="-">
+  
+  <area  href=43ee3c7963725899.htm#OBMK43EE3C7963725899 shape="polygon" coords="946, 375, 946, 364, 1020, 364, 1020, 375, 946, 375"   target="_top"  title="A&#160; Business Object is an aspect of any tangible or intanglible resource or state of such resource, that can be the subject of a business transaction.">
+  
+  <area  href=6f7c7418494b0138.htm#OBMK6F7C7418494B0138 shape="polygon" coords="960, 407, 960, 394, 1005, 394, 1005, 407, 960, 407"   target="_top"  title="A product represents commodities offered for sale, either some goods or merchandise that are produced as the result of manufacturing, or a service, i.e. some work done by one person or group that benefits another.">
+  
+  <area  href="215cceda606c35c6.htm" shape="rect" coords="889, 362, 1075, 443"   target="_top"  title="A&#160; Product is a Business Object that represents merchandises offered for sale, either goods (produced as the result of manufacturing) or services (some work done by a Resource Agent&#160; which produces Business Outcomes that benefits another Resource Agent).">
+  
+  <area  href=d9fdded9582953e7.htm#OBMKD9FDDED9582953E7 shape="polygon" coords="940, 838, 940, 825, 1045, 825, 1045, 838, 940, 838"   target="_top"  title="-">
+  
+  <area  href=0185cc626221bb37.htm#OBMK0185CC626221BB37 shape="polygon" coords="958, 801, 958, 790, 1028, 790, 1028, 801, 958, 801"   target="_top"  title="A&#160; Business Event is a type of business change that is used to coordinate Business Behaviors.">
+  
+  <area  href=30223b5c5ec90c01.htm#OBMK30223B5C5EC90C01 shape="polygon" coords="970, 812, 970, 801, 1016, 801, 1016, 812, 970, 812"   target="_top"  title="An&#160; Outcome is an Event that indicates the availability of an expected change in the state of a Value Added Object brought about by a specific Behavior,">
+  
+  <area  href="9dcea4535ec76e6c.htm" shape="rect" coords="928, 765, 1058, 863"   target="_top"  title="A&#160; Business Outcome is a Business Event that indicates the availability of an expected change in the state of a Business Object, produced by a Business Operating Agent, for the benefits of an internal or external consumer (especially Customers).">
+  
+  <area  href=d8260a155f037e30.htm#OBMKD8260A155F037E30 shape="polygon" coords="775, 600, 756, 600, 756, 614, 643, 614, 643, 600, 775, 600"   target="_top"  title="-">
+  
+  <area  href=dc9409916025fe45.htm shape="polygon" coords="671, 555, 671, 577, 729, 577, 729, 555, 740, 555, 740, 588, 661, 588, 661, 555"   target="_top"  title="-">
+  
+  <area  href=d170d9e55be73bc6.htm shape="polygon" coords="275, 431, 156, 431, 156, 421, 275, 421"   target="_top"  title="-">
+  
+  <area  href=d170d3115be72ecf.htm shape="polygon" coords="275, 501, 152, 501, 152, 491, 275, 491"   target="_top"  title="-">
+  
+  <area  href=63f8870255ae1ba2.htm#OBMK63F8870255AE1BA2 shape="polygon" coords="36, 485, 36, 474, 132, 474, 132, 485, 36, 485"   target="_top"  title="A&#160; Constraining Property expresses a type of constraint that can be applied to Architecture Blocks.">
+  
+  <area  href=88958df156960593.htm#OBMK88958DF156960593 shape="polygon" coords="36, 517, 36, 504, 131, 504, 131, 517, 36, 517"   target="_top"  title="A customer expectation is an enterprise result expected by the persona at the end of the journey.">
+  
+  <area  href="d170d3075be72e6b.htm" shape="rect" coords="16, 471, 153, 521"   target="_top"  title="A customer&rsquo;s pain point is the emotion they feel when they think of a specific need, problem, weakness, struggle, or an unfulfilled desire they didn&rsquo;t find a solution for yet.">
+  
+  <area  href=#OBMKFB86A6415ECEEB8D shape="polygon" coords="337, 690, 324, 641, 334, 638, 347, 687"    title="-">
+  
+  <area  href=#OBMKAE7CA16360235AAE shape="polygon" coords="264, 240, 264, 348, 253, 348, 253, 240"    title="-">
+  
+  <area  href=#OBMKAE7CA13F60235A5B shape="polygon" coords="425, 241, 425, 348, 415, 348, 415, 241"    title="-">
+  
+  <area  href=ff0500605b253f1b.htm#OBMKFF0500605B253F1B shape="polygon" coords="529, 81, 538, 81, 538, 95, 402, 95, 402, 81, 529, 81"   target="_top"  title="-">
+  
+  <area  href=3d9074d55ffcf128.htm shape="polygon" coords="597, 83, 329, 83, 329, 151, 318, 151, 318, 73, 597, 73"   target="_top"  title="-">
+  
+  <area  href=#OBMK236C3400600709CC shape="polygon" coords="353, 217, 344, 213, 348, 203, 358, 207"    title="-">
+  
+  <area  href=#OBMK236C347860070AF6 shape="polygon" coords="321, 227, 341, 227, 341, 208, 352, 208, 352, 237, 321, 237"    title="-">
+  
+  <area  href=18a81ed15eeb5d60.htm#OBMK18A81ED15EEB5D60 shape="polygon" coords="943, 80, 905, 80, 905, 94, 805, 94, 805, 80, 943, 80"   target="_top"  title="-">
+  
+  <area  href=ae7c9c45602351bc.htm shape="polygon" coords="728, 71, 989, 71, 989, 151, 978, 151, 978, 81, 728, 81"   target="_top"  title="-">
+  
+  <area  href=ff0501b65b253fdd.htm#OBMKFF0501B65B253FDD shape="polygon" coords="626, 63, 626, 52, 700, 52, 700, 63, 626, 63"   target="_top"  title="A&#160; Governing Team consists of a collection of individuals and resources, including personnel and committees, assembled to effectively manage and sustain an Enduring Initiative.">
+  
+  <area  href=7cae244a5a739f96.htm#OBMK7CAE244A5A739F96 shape="polygon" coords="627, 90, 627, 76, 698, 76, 698, 90, 627, 90"   target="_top"  title="-">
+  
+  <area  href="05b091f46006f913.htm" shape="rect" coords="597, 49, 728, 107"   target="_top"  title="A&#160; Solution Team is a Governing Team&#160; responsible for overseeing the administration of a Management System.">
+  
+  <area  href=d321c226601262ae.htm#OBMKD321C226601262AE shape="polygon" coords="945, 164, 945, 154, 1024, 154, 1024, 164, 945, 164"   target="_top"  title="An&#160; Enduring Initiative is a long term Initiative which involves roadmapping and governance. Enterprises and their Management Systems are typical&#160; Enduring Initiatives.">
+  
+  <area  href=fa47fbab5e695547.htm#OBMKFA47FBAB5E695547 shape="polygon" coords="941, 191, 941, 178, 1028, 178, 1028, 191, 941, 191"   target="_top"  title="-">
+  
+  <area  href="29df3f4060084c07.htm" shape="rect" coords="884, 151, 1087, 274"   target="_top"  title="A&#160; Management System is an Enduring Initiative within an Enterprise, aimed at creating, maintaining, evaluating, evolving, and operating a collection of essential Functional Assets of the Enterprise.">
+  
+  <area  href=0dc20f885e9b5e29.htm#OBMK0DC20F885E9B5E29 shape="polygon" coords="577, 838, 578, 838, 578, 852, 420, 852, 420, 838, 577, 838"   target="_top"  title="-">
+  
+  <area  href=ae7c9a2b60234de6.htm shape="polygon" coords="410, 853, 585, 853, 585, 864, 410, 864"   target="_top"  title="-">
+  
+  <area  href=0dc20f4d5e9b5ca9.htm#OBMK0DC20F4D5E9B5CA9 shape="polygon" coords="625, 848, 625, 838, 722, 838, 722, 848, 625, 848"   target="_top"  title="An&#160; Architecture Category is a Categorization Block used to classify Architecture Blocks. Examples are Data Category, Business Line.">
+  
+  <area  href=97449bb050654ced.htm#OBMK97449BB050654CED shape="polygon" coords="643, 880, 643, 867, 705, 867, 705, 880, 643, 880"   target="_top"  title="Business Line is a high level classification of the main activities of the enterprise. It corresponds for example to major product segments or to distribution channels. ">
+  
+  <area  href="ae7c99be60234bcf.htm" shape="rect" coords="585, 836, 763, 883"   target="_top"  title="A&#160; Business Line is a high level classification of the main activities of the enterprise. It corresponds for example to major product segments or to distribution channels.">
+  
+  <area  href=0dc20f885e9b5e29.htm#OBMK0DC20F885E9B5E29 shape="polygon" coords="526, 764, 570, 764, 570, 778, 413, 778, 413, 764, 526, 764"   target="_top"  title="-">
+  
+  <area  href=ae7c9809602349c3.htm shape="polygon" coords="410, 778, 585, 778, 585, 789, 410, 789"   target="_top"  title="-">
+  
+  <area  href=0dc20f4d5e9b5ca9.htm#OBMK0DC20F4D5E9B5CA9 shape="polygon" coords="626, 769, 626, 758, 723, 758, 723, 769, 626, 769"   target="_top"  title="An&#160; Architecture Category is a Categorization Block used to classify Architecture Blocks. Examples are Data Category, Business Line.">
+  
+  <area  href=889595f356960b95.htm#OBMK889595F356960B95 shape="polygon" coords="622, 801, 622, 788, 726, 788, 726, 801, 622, 801"   target="_top"  title="A customer journey group consolidates the journeys that comply with similar criteria.">
+  
+  <area  href="ae7c9767602348be.htm" shape="rect" coords="585, 755, 763, 809"   target="_top"  title="A client journey group consolidates the journeys that comply with similar criteria.">
+  
+  <area  href=#OBMK5754805751545CA3 shape="polygon" coords="508, 205, 508, 191, 593, 191, 593, 205, 508, 205"    title="-">
+  
+  <area  href=#OBMK236C34A960070BD3 shape="polygon" coords="486, 202, 627, 202, 627, 213, 486, 213"    title="-">
+  
+  <area  href=173706265fe3f332.htm#OBMK173706265FE3F332 shape="polygon" coords="242, 196, 242, 186, 287, 186, 287, 196, 242, 196"   target="_top"  title="A&#160; Measure is a quantified aspect of the assets of the enterprise (Agents,&#160; Behaviors, Information Objects) used by organizations to guide its transformation and assurance Initiatives.">
+  
+  <area  href=9500e0484e37c835.htm#OBMK9500E0484E37C835 shape="polygon" coords="224, 223, 224, 210, 304, 210, 304, 223, 224, 223"   target="_top"  title="Objects of this type are created either at assessment session deployment or at aggregation. Objects created at deployment are owned by the session and enable determination of the object that will be evaluated, by whom and where. It is also associated with values calculated from answers given in the assessor questionnaire for each of the assessed characteristics. ">
+  
+  <area  href="236c347260070a8c.htm" shape="rect" coords="198, 183, 330, 240"   target="_top"  title="A painpoint describes the difficulties encountered by a persona when carrying out a step in the client journey.">
+  
+  <area  href=173706265fe3f332.htm#OBMK173706265FE3F332 shape="polygon" coords="398, 198, 398, 187, 444, 187, 444, 198, 398, 198"   target="_top"  title="A&#160; Measure is a quantified aspect of the assets of the enterprise (Agents,&#160; Behaviors, Information Objects) used by organizations to guide its transformation and assurance Initiatives.">
+  
+  <area  href=9500e0484e37c835.htm#OBMK9500E0484E37C835 shape="polygon" coords="381, 224, 381, 211, 461, 211, 461, 224, 381, 224"   target="_top"  title="Objects of this type are created either at assessment session deployment or at aggregation. Objects created at deployment are owned by the session and enable determination of the object that will be evaluated, by whom and where. It is also associated with values calculated from answers given in the assessor questionnaire for each of the assessed characteristics. ">
+  
+  <area  href="236c33fb60070962.htm" shape="rect" coords="356, 184, 486, 241"   target="_top"  title="-">
+  
+  <area  href=#OBMK1A5FCED95FD783CE shape="polygon" coords="527, 693, 585, 693, 585, 704, 527, 704"    title="-">
+  
+  <area  href=1a5fced95fd783c5.htm shape="polygon" coords="410, 693, 585, 693, 585, 704, 410, 704"   target="_top"  title="A phase context defines the context for carrying out the action plan. It is used to schedule the phases for a single client journey.">
+  
+  <area  href=#OBMK1A5FCED95FD783EF shape="polygon" coords="410, 693, 469, 693, 469, 704, 410, 704"    title="-">
+  
+  <area  href=88958cdb56960445.htm#OBMK88958CDB56960445 shape="polygon" coords="622, 709, 622, 696, 726, 696, 726, 709, 622, 709"   target="_top"  title="A group of customer journey steps that are used to reach a specific global objective.">
+  
+  <area  href="1a5fcc995fd7834d.htm" shape="rect" coords="585, 674, 763, 726"   target="_top"  title="A&#160; Customer Journey Phase is a group of client journey steps that are used to reach a specific global objective.">
+  
+  <area  href=1a5fcba75fd7821f.htm shape="polygon" coords="463, 400, 638, 400, 638, 410, 463, 410"   target="_top"  title="-">
+  
+  <area  href=63f8870255ae1ba2.htm#OBMK63F8870255AE1BA2 shape="polygon" coords="642, 190, 642, 179, 738, 179, 738, 190, 642, 190"   target="_top"  title="A&#160; Constraining Property expresses a type of constraint that can be applied to Architecture Blocks.">
+  
+  <area  href=84898f2f4b33047d.htm#OBMK84898F2F4B33047D shape="polygon" coords="670, 222, 670, 208, 710, 208, 710, 222, 670, 222"   target="_top"  title="-">
+  
+  <area  href="d1701e155be84834.htm" shape="rect" coords="626, 176, 754, 226"   target="_top"  title="-">
+  
+  <area  href=#OBMK561C57FD5EC20EA6 shape="polygon" coords="220, 791, 220, 787, 273, 787, 273, 798, 209, 798, 209, 791"    title="-">
+  
+  <area  href=561c57fd5ec20ea2.htm shape="polygon" coords="273, 735, 220, 735, 220, 787, 273, 787, 273, 798, 209, 798, 209, 724, 273, 724"   target="_top"  title="A client sub-journey is a client journey resulting from another client journey. It is used to describe the hierarchy of journeys. Like any client journey, it describes interactions between the enterprise and a persona for a given result.">
+  
+  <area  href=#OBMK561C57FD5EC20ECB shape="polygon" coords="273, 735, 220, 735, 220, 731, 209, 731, 209, 724, 273, 724"    title="-">
+  
+  <area  href=#OBMKFB868DFA5ECEE4DF shape="polygon" coords="741, 638, 907, 639, 906, 650, 741, 649"    title="-">
+  
+  <area  href=fb868df95ecee4db.htm shape="polygon" coords="410, 637, 907, 639, 906, 650, 410, 647"   target="_top"  title="A&#160; Touch Point describes an interaction point between a persona and an enterprise where a Product Capability is exposed to the persona as a means to achieve its Job-to-be-done.">
+  
+  <area  href=#OBMKFB868DFA5ECEE50D shape="polygon" coords="410, 637, 576, 638, 576, 648, 410, 648"    title="-">
+  
+  <area  href=fb86ba285ece7692.htm shape="polygon" coords="712, 438, 712, 496, 702, 496, 702, 438"   target="_top"  title="-">
+  
+  <area  href=0dc20f4d5e9b5ca9.htm#OBMK0DC20F4D5E9B5CA9 shape="polygon" coords="654, 510, 654, 499, 751, 499, 751, 510, 654, 510"   target="_top"  title="An&#160; Architecture Category is a Categorization Block used to classify Architecture Blocks. Examples are Data Category, Business Line.">
+  
+  <area  href=889593ee56960a92.htm#OBMK889593EE56960A92 shape="polygon" coords="646, 542, 646, 529, 758, 529, 758, 542, 713, 542, 713, 552, 692, 552, 692, 542, 646, 542"   target="_top"  title="Grouping of personas according to similar criteria">
+  
+  <area  href="fb86b9955ece7524.htm" shape="rect" coords="633, 497, 771, 556"   target="_top"  title="Group of customers that are related from a marketing or demographic perspective. For example, a business that practices customer segmentation might group its current or potential customers according to their gender, buying tendencies, age group, and special interests.">
+  
+  <area  href=63f8870255ae1ba2.htm#OBMK63F8870255AE1BA2 shape="polygon" coords="40, 413, 40, 402, 136, 402, 136, 413, 40, 413"   target="_top"  title="A&#160; Constraining Property expresses a type of constraint that can be applied to Architecture Blocks.">
+  
+  <area  href=88958de356960565.htm#OBMK88958DE356960565 shape="polygon" coords="63, 445, 63, 432, 112, 432, 112, 445, 63, 445"   target="_top"  title="A painpoint describes the difficulties encountered by a persona when carrying out a step in the client journey.">
+  
+  <area  href="d170d9925be73b35.htm" shape="rect" coords="20, 399, 157, 449"   target="_top"  title="A customer&rsquo;s pain point is the emotion they feel when they think of a specific need, problem, weakness, struggle, or an unfulfilled desire they didn&rsquo;t find a solution for yet.">
+  
+  <area  href=bcebd65854913935.htm#OBMKBCEBD65854913935 shape="polygon" coords="668, 392, 668, 381, 746, 381, 746, 392, 668, 392"   target="_top"  title="A&#160; Business Partner is a party who interacts with the enterprise in the context its operating eco-system (the Business Operating Ecosystem).">
+  
+  <area  href=99c2b8f455b05cbf.htm#OBMK99C2B8F455B05CBF shape="polygon" coords="669, 424, 669, 411, 744, 411, 744, 424, 669, 424"   target="_top"  title="A conceptual stakeholder type that interacts with the enterprise in the context of the enterprise business architecture environment. Examples : &#39;Private Sector Customer&#39;, &#39;Regulation Authority&#39;, &#39;Supplier&#39;.">
+  
+  <area  href="d6cdfdbc5ab86331.htm" shape="rect" coords="638, 378, 776, 438"   target="_top"  title="A&#160; Customer is a Business Partner who orders and/or uses Products (goods or services) provides by the enterprise.">
+  
+  <area  href=8a5c926e5c0d632c.htm#OBMK8A5C926E5C0D632C shape="polygon" coords="302, 591, 302, 580, 382, 580, 382, 591, 302, 591"   target="_top"  title="A&#160; Customer Activity represents specific behavior done by Customers in the context of their work.">
+  
+  <area  href=88958c5356960393.htm#OBMK88958C5356960393 shape="polygon" coords="301, 620, 301, 607, 382, 607, 382, 620, 301, 620"   target="_top"  title="A customer journey is used to describe and organize all interactions between the enterprise and a persona for a given result.">
+  
+  <area  href="d170d6a25be734ed.htm" shape="rect" coords="274, 578, 411, 901"   target="_top"  title="A&#160; Customer Journey is the complete sum of experiences that Customers go through when interacting with the company (Touch Point). Instead of looking at just a part of a transaction or experience, a&#160; Customer Journey documents the full experience of being a Customer.">
+  
+  <area  href=8a228c0e550a3122.htm#OBMK8A228C0E550A3122 shape="polygon" coords="298, 164, 298, 154, 395, 154, 395, 164, 298, 164"   target="_top"  title="&#160;Governance Resources include Governing Teams, Governance Activitys, Governance Events and Measures used to guide and steer Initiatives.">
+  
+  <area  href="173706265fe3f332.htm" shape="rect" coords="190, 151, 502, 265"   target="_top"  title="A&#160; Measure is a quantified aspect of the assets of the enterprise (Agents,&#160; Behaviors, Information Objects) used by organizations to guide its transformation and assurance Initiatives.">
+  
+  <area  href=ec20eca5630d35c8.htm#OBMKEC20ECA5630D35C8 shape="polygon" coords="269, 360, 269, 350, 389, 350, 389, 360, 269, 360"   target="_top"  title="An&#160; Business Operating Context is a perimeter of Architecture Block (Type) that forms the functional scope of an Enterprise. It can be a set of Business Operating Capability(ies) that define the purpose of Business Operating Agents or the Business Operating Ecosystem in which these Business Operating Agents deliver these Business Operating Capability(ies).">
+  
+  <area  href="8a5c926e5c0d632c.htm" shape="rect" coords="195, 348, 463, 931"   target="_top"  title="A&#160; Customer Activity represents specific behavior done by Customers in the context of their work.">
+  
+  <area  href=43ee3c7963725899.htm#OBMK43EE3C7963725899 shape="polygon" coords="1273, 287, 1273, 276, 1347, 276, 1347, 287, 1273, 287"   target="_top"  title="A&#160; Business Object is an aspect of any tangible or intanglible resource or state of such resource, that can be the subject of a business transaction.">
+  
+  <area  href=f8e61da0621db6fa.htm#OBMKF8E61DA0621DB6FA shape="polygon" coords="1253, 298, 1253, 287, 1366, 287, 1366, 298, 1253, 298"   target="_top"  title="&#160;Business Operating Assets comprise all resources which contributes to the delivery of Business Outcomes of the enterprise.">
+  
+  <area  href=6dfa892056b416f4.htm#OBMK6DFA892056B416F4 shape="polygon" coords="1253, 325, 1253, 311, 1367, 311, 1367, 325, 1253, 325"   target="_top"  title="-">
+  
+  <area  href="62466ea661b80d09.htm" shape="rect" coords="1214, 275, 1407, 496"   target="_top"  title="&#160;Resource Operating Assets comprise physical assets which contribute to the delivery of Business Outcomes of the enterprise. This includes Resource Agents, their behaviors (Resource Behavior:&#160; Resource Process, Resource Interaction Scenario), and Natural Resources.">
+  
+  <area  href=e2ef091962147ad7.htm#OBMKE2EF091962147AD7 shape="polygon" coords="647, 342, 647, 331, 760, 331, 760, 342, 647, 342"   target="_top"  title="&#160;Business Operating Agent is the supertype of all types of Agents that produce Business Outcomes which benefit to internal or external parties (especially Customers) of the enterprise.">
+  
+  <area  href=99c2b8f455b05cbf.htm#OBMK99C2B8F455B05CBF shape="polygon" coords="666, 369, 666, 355, 740, 355, 740, 369, 666, 369"   target="_top"  title="A conceptual stakeholder type that interacts with the enterprise in the context of the enterprise business architecture environment. Examples : &#39;Private Sector Customer&#39;, &#39;Regulation Authority&#39;, &#39;Supplier&#39;.">
+  
+  <area  href="bcebd65854913935.htm" shape="rect" coords="625, 330, 782, 455"   target="_top"  title="A&#160; Business Partner is a party who interacts with the enterprise in the context its operating eco-system (the Business Operating Ecosystem).">
+  
+  <area  href="d17029ff5be84c49.htm" shape="rect" coords="0, 0, 1441, 954"   target="_top"  title="&#160;Product&#160; &amp; Customer Experience domain describes the overall impression Customers have of the company based on their interactions across multiple Touch Points (CX: customer experience) as well as the perception Customers have of the enterprise&#39;s Product based on their engagement with the Products (PX: product experience).">
+  
+</map>
+<img  src="../images/d17029ff5be84c49_561c56515ec208f3_i.png" alt="../images/d17029ff5be84c49_561c56515ec208f3_i.png" usemap="#561C56515EC208F3" height="954" width="1441" border=0>
+
+</div>
+<div class="Relationship" id="Relationship2">
+<div id="klmm" style="width: 100vw; height: 100vh;" ></div>
+<!-- <script src="../standard/assets/js/keylines_domain.js"></script> -->
+<script >
+const data = {
+ type: 'LinkChart',
+  items: [
+  //nodes
+    {type: 'node', id:'D17029FF5BE84C49', t:"Product  & Customer Experience", sh:'box', d:"Product  & Customer Experience domain describes the overall impression Customers have of the company based on their interactions across multiple Touch Points (CX: customer experience) as well as the perception Customers have of the enterprises Product based on their engagement with the Products (PX: product experience)."},
+    {type: 'node', id:'31257F5261DCDFCA', t:"Product Portfolio Stage", parentId:'D17029FF5BE84C49', sh:'circle', d:""},
+    {type: 'node', id:'215CCFAB606C3A18', t:"Product Portfolio", parentId:'29DF3F4060084C07', sh:'circle', d:"A Product Portfolio is a Management System within an enterprise which purpose is to develop, maintain, transform and deliver a set of  Products of the Enterprise."},
+    {type: 'node', id:'215CCEDA606C35C6', t:"Product", parentId:'D17029FF5BE84C49', sh:'circle', d:"A Product is a Business Object that represents merchandises offered for sale, either goods (produced as the result of manufacturing) or services (some work done by a Resource Agent  which produces Business Outcomes that benefits another Resource Agent)."},
+    {type: 'node', id:'E2EF086D62147802', t:"EA Pattern - Business Operating Pattern", sh:'box', d:"The EA Pattern - Business Operating Pattern domain defines concepts and relationships used to model how a Business Operating Agent operates/functions in its Operating Eco-System to produce Business Outcomes."},
+    {type: 'node', id:'43EE3C7963725899', t:"Business Object", parentId:'E2EF086D62147802', sh:'circle', d:"A Business Object is an aspect of any tangible or intanglible resource or state of such resource, that can be the subject of a business transaction."},
+    {type: 'node', id:'A951EE816194126B', t:"Facility Asset Architecture", sh:'box', d:""},
+    {type: 'node', id:'D1600C7062E093EB', t:"Capability Configuration", parentId:'A951EE816194126B', sh:'circle', d:"A Capability Configuration is a Resource Agent which combines Human Resources and Business Systems along with networking capabilities in order to provide Business Capability(ies)."},
+    {type: 'node', id:'8A5C926E5C0D632C', t:"Customer Activity", parentId:'D17029FF5BE84C49', sh:'circle', d:"A Customer Activity represents specific behavior done by Customers in the context of their work."},
+    {type: 'node', id:'1A5FCC995FD7834D', t:"Customer Journey Phase", parentId:'D17029FF5BE84C49', sh:'circle', d:"A Customer Journey Phase is a group of client journey steps that are used to reach a specific global objective."},
+    {type: 'node', id:'236C347260070A8C', t:"Pain point", parentId:'D17029FF5BE84C49', sh:'circle', d:"A painpoint describes the difficulties encountered by a persona when carrying out a step in the client journey."},
+    {type: 'node', id:'236C33FB60070962', t:"Benefit", parentId:'D17029FF5BE84C49', sh:'circle', d:""},
+    {type: 'node', id:'D170D3075BE72E6B', t:"Customer Need", parentId:'D17029FF5BE84C49', sh:'circle', d:"A customers pain point is the emotion they feel when they think of a specific need, problem, weakness, struggle, or an unfulfilled desire they didnt find a solution for yet."},
+    {type: 'node', id:'D1701E155BE84834', t:"Benefit (Type)", parentId:'D17029FF5BE84C49', sh:'circle', d:""},
+    {type: 'node', id:'D170D24A5BE72D09', t:"Customer Task", parentId:'8A5C926E5C0D632C', sh:'circle', d:"Activity done by a Customer in context of its duty and for which he/she expresses his/her needs and painpoints."},
+    {type: 'node', id:'D17034875BE85304', t:"Job-to-be-done", parentId:'D170D24A5BE72D09', sh:'circle', d:"Set of Customer Tasks that contribute to the achievement of the Customer duty(ies)."},
+    {type: 'node', id:'D170D9925BE73B35', t:"Paint Point (Type)", parentId:'D17029FF5BE84C49', sh:'circle', d:"A customers pain point is the emotion they feel when they think of a specific need, problem, weakness, struggle, or an unfulfilled desire they didnt find a solution for yet."},
+    {type: 'node', id:'D170D6A25BE734ED', t:"Customer Journey", parentId:'8A5C926E5C0D632C', sh:'circle', d:"A Customer Journey is the complete sum of experiences that Customers go through when interacting with the company (Touch Point). Instead of looking at just a part of a transaction or experience, a Customer Journey documents the full experience of being a Customer."},
+    {type: 'node', id:'AE7C9767602348BE', t:"Customer Journey Category", parentId:'0DC20F4D5E9B5CA9', sh:'circle', d:"A client journey group consolidates the journeys that comply with similar criteria."},
+    {type: 'node', id:'AE7C99BE60234BCF', t:"Business Line", parentId:'0DC20F4D5E9B5CA9', sh:'circle', d:"A Business Line is a high level classification of the main activities of the enterprise. It corresponds for example to major product segments or to distribution channels."},
+    {type: 'node', id:'FB86B9955ECE7524', t:"Customer Segment", parentId:'0DC20F4D5E9B5CA9', sh:'circle', d:"Group of customers that are related from a marketing or demographic perspective. For example, a business that practices customer segmentation might group its current or potential customers according to their gender, buying tendencies, age group, and special interests."},
+    {type: 'node', id:'ABBA950E62A94390', t:"Value Proposition", parentId:'D17029FF5BE84C49', sh:'circle', d:"A Value Proposition is a statement that explains the benefits that a Product (goods or services) provides to its Customers. It is essentially a promise made by the enterprise to its target Customers that its Product will fit their need when performing their Job-to-be-done."},
+    {type: 'node', id:'C30BD1505A5D97F9', t:"Architecture Model Management", sh:'box', d:"The Architecture Model Management domain defines top level constructs used in enterprise architecting: Architecture Blocks, Architecture Namespaces, Architecture Category(ies), Constraint Value, Location."},
+    {type: 'node', id:'7C40A5B455272BB4', t:"Constraint Value", parentId:'C30BD1505A5D97F9', sh:'circle', d:"A Constraint Value is a possible value of a Constraining Property such as a delivery time of 30 minutes, a weight of 20 kg, a high level of confidentiality, stormy conditions."},
+    {type: 'node', id:'8FC9091A640B9F4A', t:"Product Capability", parentId:'B181B98C54891882', sh:'circle', d:"A Product Capability is a Capability that benefits to Customers of the enterprise. It expresses an ability to deliver Business Outcomes as part of the Value Propositions of a Product."},
+    {type: 'node', id:'D6CDFDBC5AB86331', t:"Customer", parentId:'BCEBD65854913935', sh:'circle', d:"A Customer is a Business Partner who orders and/or uses Products (goods or services) provides by the enterprise."},
+    {type: 'node', id:'B181B98C54891882', t:"Capability", parentId:'D17029FF5BE84C49', sh:'circle', d:"A Capability  is an ability to produce an Outcome."},
+    {type: 'node', id:'63F8870255AE1BA2', t:"Constraining Property", parentId:'C30BD1505A5D97F9', sh:'circle', d:"A Constraining Property expresses a type of constraint that can be applied to Architecture Blocks."},
+    {type: 'node', id:'D6CD2C8B5AB98DA5', t:"Information Pattern", sh:'box', d:"The Information Pattern domain describes top level concepts used to describe information."},
+    {type: 'node', id:'E6F250185F772EE1', t:"Information Object", parentId:'D6CD2C8B5AB98DA5', sh:'circle', d:"An Information Object  represents anything that can be communicated or memorized by an Agent in order to produce its Outcomes."},
+    {type: 'node', id:'0DC20F4D5E9B5CA9', t:"Architecture Category", parentId:'D17029FF5BE84C49', sh:'circle', d:"An Architecture Category is a Categorization Block used to classify Architecture Blocks. Examples are Data Category, Business Line."},
+    {type: 'node', id:'16B049676435728E', t:"Category of Category", parentId:'C30BD1505A5D97F9', sh:'circle', d:"A is Category of Category a means to classify Architecture Categorys."},
+    {type: 'node', id:'29DF3F4060084C07', t:"Management System", parentId:'D17029FF5BE84C49', sh:'circle', d:"A Management System is an Enduring Initiative within an Enterprise, aimed at creating, maintaining, evaluating, evolving, and operating a collection of essential Functional Assets of the Enterprise."},
+    {type: 'node', id:'1CE356355C48C0E2', t:"People & Accountability", sh:'box', d:"The People & Accountability domain defines the roles that organizational members perform, so that everyone understands their responsibilities to the group."},
+    {type: 'node', id:'910196CA550A2EC2', t:"Organization", parentId:'1CE356355C48C0E2', sh:'circle', d:"An Organization is a group of people who share a common purpose and establish a functional division of labor in pursuit of their common purpose."},
+    {type: 'node', id:'76147FEB6182230A', t:"Enterprise Architecting & Management Systems", sh:'box', d:"Domain describing Agile@Scale transformation Initiatives and associated Management Systems and governing bodies (Governing Team)."},
+    {type: 'node', id:'6123633261DD757A', t:"Enterprise Porfolio Stage", parentId:'76147FEB6182230A', sh:'circle', d:"An Enterprise Porfolio Stage is a past, current or future state of Management System. "},
+    {type: 'node', id:'D670B6155FFE8BB1', t:"EA Pattern - Business Resource Operating Pattern", sh:'box', d:"The EA Pattern - Business Resource Operating Pattern domain defines concepts and relationships used to model how physical resources (Resource Operating Assets) operates/functions in Resource Ecosystems to deliver Business Outcomes."},
+    {type: 'node', id:'62466EA661B80D09', t:"Resource Operating Asset", parentId:'D670B6155FFE8BB1', sh:'circle', d:"Resource Operating Assets comprise physical assets which contribute to the delivery of Business Outcomes of the enterprise. This includes Resource Agents, their behaviors (Resource Behavior:  Resource Process, Resource Interaction Scenario), and Natural Resources."},
+    {type: 'node', id:'BCEBD65854913935', t:"Business Partner", parentId:'D17029FF5BE84C49', sh:'circle', d:"A Business Partner is a party who interacts with the enterprise in the context its operating eco-system (the Business Operating Ecosystem)."},
+  //edges
+    { type: 'link', id:'215CCFAB606C3A18-31257F8561DCE177', id1:'215CCFAB606C3A18', id2:'31257F5261DCDFCA', t:"Owned Portfolio Stage"},
+    { type: 'link', id:'215CCFAB606C3A18-45DF7704618E075E', id1:'215CCFAB606C3A18', id2:'215CCEDA606C35C6', t:"Managed Product"},
+    { type: 'link', id:'215CCEDA606C35C6-4BA64CE0609235D4', id1:'215CCEDA606C35C6', id2:'43EE3C7963725899', t:"Product Solution"},
+    { type: 'link', id:'215CCEDA606C35C6-215CCF1B606C372E', id1:'215CCEDA606C35C6', id2:'ABBA950E62A94390', t:"Product Characteristic"},
+    { type: 'link', id:'215CCEDA606C35C6-215CD221606C3ED3', id1:'215CCEDA606C35C6', id2:'D1600C7062E093EB', t:"Service Offering"},
+    { type: 'link', id:'8A5C926E5C0D632C-1A5FCBA75FD7821F', id1:'8A5C926E5C0D632C', id2:'D6CDFDBC5AB86331', t:"Portrayed Customer"},
+    { type: 'link', id:'8A5C926E5C0D632C-EC200F5B630F47C5', id1:'8A5C926E5C0D632C', id2:'8A5C926E5C0D632C', t:"Customer Activity Component"},
+    { type: 'link', id:'236C347260070A8C-236C34B560070C35', id1:'236C347260070A8C', id2:'D170D9925BE73B35', t:"Paint Point (Type)"},
+    { type: 'link', id:'236C347260070A8C-AE7CA16360235AAE', id1:'236C347260070A8C', id2:'8A5C926E5C0D632C', t:"Evaluated Touch Point"},
+    { type: 'link', id:'236C33FB60070962-236C34A960070BD3', id1:'236C33FB60070962', id2:'D1701E155BE84834', t:"Benefit (Type)"},
+    { type: 'link', id:'236C33FB60070962-AE7CA13F60235A5B', id1:'236C33FB60070962', id2:'8A5C926E5C0D632C', t:"Evaluated Touch Point"},
+    { type: 'link', id:'D170D24A5BE72D09-D170D3115BE72ECF', id1:'D170D24A5BE72D09', id2:'D170D3075BE72E6B', t:"Expressed Need"},
+    { type: 'link', id:'D170D24A5BE72D09-D170D9E55BE73BC6', id1:'D170D24A5BE72D09', id2:'D170D9925BE73B35', t:"felt paint point"},
+    { type: 'link', id:'D17034875BE85304-07E73D5E5ECCEF4A', id1:'D17034875BE85304', id2:'D170D24A5BE72D09', t:"Included Job to be done"},
+    { type: 'link', id:'D170D6A25BE734ED-AE7C9809602349C3', id1:'D170D6A25BE734ED', id2:'AE7C9767602348BE', t:"Category"},
+    { type: 'link', id:'D170D6A25BE734ED-AE7C9A2B60234DE6', id1:'D170D6A25BE734ED', id2:'AE7C99BE60234BCF', t:"Categorizing Business Line"},
+    { type: 'link', id:'D170D6A25BE734ED-561C57FD5EC20EA2', id1:'D170D6A25BE734ED', id2:'D170D6A25BE734ED', t:"Sub Customer Journey"},
+    { type: 'link', id:'D170D6A25BE734ED-FB868DF95ECEE4DB', id1:'D170D6A25BE734ED', id2:'8FC9091A640B9F4A', t:"Touch Point"},
+    { type: 'link', id:'D170D6A25BE734ED-1A5FCED95FD783C5', id1:'D170D6A25BE734ED', id2:'1A5FCC995FD7834D', t:"Phase Status"},
+    { type: 'link', id:'D170D6A25BE734ED-C581DA866023333B', id1:'D170D6A25BE734ED', id2:'D17034875BE85304', t:"Customer Journey Step"},
+    { type: 'link', id:'FB86B9955ECE7524-DC9409916025FE45', id1:'FB86B9955ECE7524', id2:'FB86B9955ECE7524', t:"Parent Customer Segment"},
+    { type: 'link', id:'ABBA950E62A94390-DC94083A6025FCBD', id1:'ABBA950E62A94390', id2:'7C40A5B455272BB4', t:"Non Functional Value"},
+    { type: 'link', id:'ABBA950E62A94390-ABBA952862A943D7', id1:'ABBA950E62A94390', id2:'8FC9091A640B9F4A', t:"Functional Value"},
+    { type: 'link', id:'D6CDFDBC5AB86331-FE60426960006071', id1:'D6CDFDBC5AB86331', id2:'D6CDFDBC5AB86331', t:"Specialized Customer"},
+    { type: 'link', id:'D6CDFDBC5AB86331-FB86BA285ECE7692', id1:'D6CDFDBC5AB86331', id2:'FB86B9955ECE7524', t:"Customer Segmentation"},
+    { type: 'link', id:'B181B98C54891882-D5C9EF915ECF206A', id1:'B181B98C54891882', id2:'63F8870255AE1BA2', t:"Capability Measure Kind"},
+    { type: 'link', id:'B181B98C54891882-D5C9F0ED5ECF2499', id1:'B181B98C54891882', id2:'B181B98C54891882', t:"Specialized Capability"},
+    { type: 'link', id:'B181B98C54891882-D05933365EF2B8C5', id1:'B181B98C54891882', id2:'E6F250185F772EE1', t:"Involved Information"},
+    { type: 'link', id:'B181B98C54891882-30223AEA5EC90B04', id1:'B181B98C54891882', id2:'B181B98C54891882', t:"Capability Component"},
+    { type: 'link', id:'0DC20F4D5E9B5CA9-D8260A155F037E30', id1:'0DC20F4D5E9B5CA9', id2:'0DC20F4D5E9B5CA9', t:"Specialized Category"},
+    { type: 'link', id:'0DC20F4D5E9B5CA9-0DC210465E9B6156', id1:'0DC20F4D5E9B5CA9', id2:'16B049676435728E', t:"Category Classification"},
+    { type: 'link', id:'29DF3F4060084C07-391204785F4EED0A', id1:'29DF3F4060084C07', id2:'910196CA550A2EC2', t:"Concerned Organization"},
+    { type: 'link', id:'29DF3F4060084C07-5B7A0E2661F56423', id1:'29DF3F4060084C07', id2:'29DF3F4060084C07', t:"Dependent Portfolio"},
+    { type: 'link', id:'29DF3F4060084C07-5B7A0F9561F565C4', id1:'29DF3F4060084C07', id2:'29DF3F4060084C07', t:"Sub-Portfolio"},
+    { type: 'link', id:'29DF3F4060084C07-612367E761DD7A42', id1:'29DF3F4060084C07', id2:'6123633261DD757A', t:"Portfolio Roadmap"},
+    { type: 'link', id:'29DF3F4060084C07-CABFEF0661835A62', id1:'29DF3F4060084C07', id2:'62466EA661B80D09', t:"Management System Purpose"},
+    { type: 'link', id:'BCEBD65854913935-C9A4DE83601A1091', id1:'BCEBD65854913935', id2:'BCEBD65854913935', t:"Specialized Persona"}
+  ]
+}
+</script>
+<script src="../standard/assets/js/keylines_domain.js" type="module"></script>
+</div>
+</section>
+<a class="object-section-anchor" id="des"></a>
+<section class="object-section">
+<h4>CONCEPT DESCRIPTIONS</h4> 
+<hr class="sectionbreak" />
+<h5>Concrete Concepts</h5>
+<table class="table  table-set-col-width">
+<thead>
+<tr><th>Concept</th><th>Description</th><th>HOPEX Metaclass</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="236c33fb60070962.htm" target="_top">Benefit</a></td>
+<td class="description-text">        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="9500e0484e37c835.htm" target="_top">Assessment Node</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="d1701e155be84834.htm" target="_top">Benefit (Type)</a></td>
+<td class="description-text">        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="84898f2f4b33047d.htm" target="_top">Benefit</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="ae7c99be60234bcf.htm" target="_top">Business Line</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Business Line</b> is a high level classification of the main activities of the enterprise. It corresponds for example to major product segments or to distribution channels.</div><div align="left" style="min-height: 12pt; ">It can be used to classify Business Processes, Organizational Units or Applications that serve a specific product and/or a specific market.</div><div align="left" style="min-height: 12pt; "><a href="744b8d735fbfcfa9.htm" target="_top"><b><u>Regulatory Framework</u></b></a>s in some industries impose their own list of&#160;<b> Business Line</b>s.</div>       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="97449bb050654ced.htm" target="_top">Business Line</a></td>
+</tr>
+<tr>
+<td><img src="../standard/relationship-concepttype.ico.gif"/>&nbsp;
+<a  href="9dcea4535ec76e6c.htm" target="_top">Business Outcome</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Business Outcome</b> is a <a href="0185cc626221bb37.htm" target="_top"><b><u>Business Event</u></b></a> that indicates the availability of an expected change in the state of a <a href="43ee3c7963725899.htm" target="_top"><b><u>Business Object</u></b></a>, produced by a <a href="e2ef091962147ad7.htm" target="_top"><b><u>Business Operating Agent</u></b></a>, for the benefits of an internal or external consumer (especially <a href="d6cdfdbc5ab86331.htm" target="_top"><b><u>Customer</u></b></a>s).</div><div align="left" style="min-height: 12pt; "><a href="43ee3c7963725899.htm" target="_top"><b><u>Business Object</u></b></a>s range from <a href="e6f250185f772ee1.htm" target="_top"><b><u>Information Object</u></b></a>s to any organizational constructs (<a href="1ce356355c48c0e2.htm" target="_top"><b><u>People &amp; Accountability</u></b></a>) or <a href="62466ea661b80d09.htm" target="_top"><b><u>Resource Operating Asset</u></b></a>s offered, produced and delivered by an <a href="b181b82a54891668.htm" target="_top"><b><u>Enterprise</u></b></a>.</div><i><ul>References:<li><a href="../../../www.omg.org/spec/BACM/1.0/Beta1/dtc-22-06-01.pdf#page=28"><img src="../standard/extr.ico.gif">&nbsp;OMG - BACM - Outcome</a></li> <li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Effect"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - Effect</a></li> <li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#operationalsignal"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - OperationalSignal</a></li> <li><a href="https://publications.opengroup.org/w161"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - IT4IT - Defining Service Reference Architecture</a></li> <li><a href="https://pubs.opengroup.org/architecture/o-aa-standard/definitions.html#Outcome"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - OAA - Definition - Outcome</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="d9fdded9582953e7.htm" target="_top">Class of Work Product</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="d6cdfdbc5ab86331.htm" target="_top">Customer</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Customer</b> is a <a href="bcebd65854913935.htm" target="_top"><b><u>Business Partner</u></b></a> who orders and/or uses <a href="215cceda606c35c6.htm" target="_top"><b><u>Product</u></b></a>s (goods or services) provides by the enterprise.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Customer</b> is part of an ecosystem and has the ability to choose between different <a href="215cceda606c35c6.htm" target="_top"><b><u>Product</u></b></a>s.</div><i><ul>References:<li><a href="https://marketbusinessnews.com/financial-glossary/customer-definition-meaning/#:~:text=A%20customer%20is%20a%20person,what%20they%20have%20on%20sale."><img src="../standard/extr.ico.gif">&nbsp;MBN - Customer</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="99c2b8f455b05cbf.htm" target="_top">Business Partner</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="d170d6a25be734ed.htm" target="_top">Customer Journey</a></td>
+<td class="description-text">A&#160;<b> Customer Journey</b> is the complete sum of experiences that <a href="d6cdfdbc5ab86331.htm" target="_top"><b><u>Customer</u></b></a>s go through when interacting with the company (<a href="fb868df95ecee4db.htm" target="_top"><b><u>Touch Point</u></b></a>). Instead of looking at just a part of a transaction or experience, a&#160;<b> Customer Journey</b> documents the full experience of being a <a href="d6cdfdbc5ab86331.htm" target="_top"><b><u>Customer</u></b></a>.<i><ul>References:<li><a href="https://pubs.opengroup.org/architecture/o-aa-standard/definitions.html#_customer_journey"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - OAA - Definition - Customer Journey</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="88958c5356960393.htm" target="_top">Customer Journey</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="ae7c9767602348be.htm" target="_top">Customer Journey Category</a></td>
+<td class="description-text">A client journey group consolidates the journeys that comply with similar criteria.       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="889595f356960b95.htm" target="_top">Customer Journey Group</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="1a5fcc995fd7834d.htm" target="_top">Customer Journey Phase</a></td>
+<td class="description-text">A&#160;<b> Customer Journey Phase</b> is a group of client journey steps that are used to reach a specific global objective.       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="88958cdb56960445.htm" target="_top">Customer Journey Phase</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="d170d3075be72e6b.htm" target="_top">Customer Need</a></td>
+<td class="description-text">A customer&rsquo;s pain point is the emotion they feel when they think of a specific need, problem, weakness, struggle, or an unfulfilled desire they didn&rsquo;t find a solution for yet.       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="88958df156960593.htm" target="_top">Customer Expectation</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="fb86b9955ece7524.htm" target="_top">Customer Segment</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">Group of customers that are related from a marketing or demographic perspective. For example, a business that practices customer segmentation might group its current or potential customers according to their gender, buying tendencies, age group, and special interests.</div><div align="left" style="min-height: 12pt; ">Read more: http://www.businessdictionary.com/definition/customer-segmentation.html</div>       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="889593ee56960a92.htm" target="_top">Customer Journey Persona Group</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="d170d24a5be72d09.htm" target="_top">Customer Task</a></td>
+<td class="description-text">Activity done by a <a href="d6cdfdbc5ab86331.htm" target="_top"><b><u>Customer</u></b></a> in context of its duty and for which he/she expresses his/her needs and painpoints.       </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="d17034875be85304.htm" target="_top">Job-to-be-done</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">Set of <a href="d170d24a5be72d09.htm" target="_top"><b><u>Customer Task</u></b></a>s that contribute to the achievement of the <a href="d6cdfdbc5ab86331.htm" target="_top"><b><u>Customer</u></b></a> duty(ies).<br />The granulatity of&#160;<b> Job-to-be-done</b> is determined by outcomes exchanged at <a href="fb868df95ecee4db.htm" target="_top"><b><u>Touch Point</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">The&#160;<b> Job-to-be-done</b> concept was forged by Clayton Christensen who provided the following definitions in an article written for the Harward Business Review (see references).<br />1. &ldquo;Job&rdquo; is shorthand for what an individual really seeks to accomplish in a given circumstance.</div><div align="left" style="min-height: 12pt; ">2.. The circumstances are more important than customer characteristics, product attributes, new technologies, or trends.</div><div align="left" style="min-height: 12pt; ">3. Jobs are never simply about function&mdash;they have powerful social and emotional dimensions.</div><i><ul>References:<li><a href="https://hbr.org/2016/09/know-your-customers-jobs-to-be-done"><img src="../standard/extr.ico.gif">&nbsp;HBR - Know your customers- jobs-to-be-done</a></li> <li><a href="https://hbswk.hbs.edu/item/clay-christensen-the-theory-of-jobs-to-be-done"><img src="../standard/extr.ico.gif">&nbsp;HBS - Clayton Christensen - The theory of jobs-to-be-done</a></li> <li><a href="https://pubs.opengroup.org/architecture/o-aa-standard/definitions.html#_job_to_be_done"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - OAA - Job-to-be-done</a></li> <li><a href="https://jobs-to-be-done.com/what-is-jobs-to-be-done-fea59c8e39eb"><img src="../standard/extr.ico.gif">&nbsp;Tony Ulwick - What is jobs-to-be-done &amp; outcome</a></li> <li><a href="https://en.wikipedia.org/wiki/Clayton_Christensen"><img src="../standard/extr.ico.gif">&nbsp;Wikipedia - Clayton Christensen</a></li></ul></i>        </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="236c347260070a8c.htm" target="_top">Pain point</a></td>
+<td class="description-text">A painpoint describes the difficulties encountered by a persona when carrying out a step in the client journey.       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="9500e0484e37c835.htm" target="_top">Assessment Node</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="d170d9925be73b35.htm" target="_top">Paint Point (Type)</a></td>
+<td class="description-text">A customer&rsquo;s pain point is the emotion they feel when they think of a specific need, problem, weakness, struggle, or an unfulfilled desire they didn&rsquo;t find a solution for yet.       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="88958de356960565.htm" target="_top">Painpoint</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="215cceda606c35c6.htm" target="_top">Product</a></td>
+<td class="description-text">A&#160;<b> Product</b> is a <a href="43ee3c7963725899.htm" target="_top"><b><u>Business Object</u></b></a> that represents merchandises offered for sale, either goods (produced as the result of manufacturing) or services (some work done by a <a href="bcebd31f5491302c.htm" target="_top"><b><u>Resource Agent</u></b></a>&#160; which produces <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s that benefits another <a href="bcebd31f5491302c.htm" target="_top"><b><u>Resource Agent</u></b></a>).<i><ul>References:<li><a href="https://martinfowler.com/articles/products-over-projects.html"><img src="../standard/extr_htm.ico.gif">&nbsp;Martin Fowler - Products over Projects</a></li> <li><a href="https://pubs.opengroup.org/architecture/o-aa-standard/definitions.html#Product"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - OAA - Definition - Product</a></li> <li><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_62"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Definition - Product</a></li> <li><a href="http://wordnetweb.princeton.edu/perl/webwn?o2=&amp;o0=1&amp;o8=1&amp;o1=1&amp;o7=&amp;o5=&amp;o9=&amp;o6=&amp;o3=&amp;o4=&amp;r=1&amp;s=product&amp;i=2&amp;h=1000000000#c"><img src="../standard/extr.ico.gif">&nbsp;WordNet - Product</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="6f7c7418494b0138.htm" target="_top">Product</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="215ccfab606c3a18.htm" target="_top">Product Portfolio</a></td>
+<td class="description-text">A&#160;<b> Product Portfolio</b> is a <a href="29df3f4060084c07.htm" target="_top"><b><u>Management System</u></b></a> within an enterprise which purpose is to develop, maintain, transform and deliver a set of&#160; <a href="215cceda606c35c6.htm" target="_top"><b><u>Product</u></b></a>s of the Enterprise.       </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="31257f5261dcdfca.htm" target="_top">Product Portfolio Stage</a></td>
+<td class="description-text">        </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="05b091f46006f913.htm" target="_top">Solution Team</a></td>
+<td class="description-text">A&#160;<b> Solution Team</b> is a <a href="ff0501b65b253fdd.htm" target="_top"><b><u>Governing Team</u></b></a>&#160; responsible for overseeing the administration of a <a href="29df3f4060084c07.htm" target="_top"><b><u>Management System</u></b></a>.       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="7cae244a5a739f96.htm" target="_top">Portfolio Team</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="abba950e62a94390.htm" target="_top">Value Proposition</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Value Proposition</b> is a statement that explains the benefits that a <a href="215cceda606c35c6.htm" target="_top"><b><u>Product</u></b></a> (goods or services) provides to its <a href="d6cdfdbc5ab86331.htm" target="_top"><b><u>Customer</u></b></a>s. It is essentially a promise made by the enterprise to its target <a href="d6cdfdbc5ab86331.htm" target="_top"><b><u>Customer</u></b></a>s that its <a href="215cceda606c35c6.htm" target="_top"><b><u>Product</u></b></a> will fit their need when performing their <a href="d17034875be85304.htm" target="_top"><b><u>Job-to-be-done</u></b></a>.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Value Proposition</b> is a characteristic of a <a href="215cceda606c35c6.htm" target="_top"><b><u>Product</u></b></a>s (a <a href="215ccf1b606c372e.htm" target="_top"><b><u>Product Characteristic</u></b></a>) and is defined by:</div><div align="left" style="min-height: 12pt; ">1) its <a href="abba952862a943d7.htm" target="_top"><b><u>Functional Value</u></b></a> expressed as qualified and quantified <a href="8fc9091a640b9f4a.htm" target="_top"><b><u>Product Capability</u></b></a>s and their <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s,</div><div align="left" style="min-height: 12pt; ">2) its <a href="dc94083a6025fcbd.htm" target="_top"><b><u>Non Functional Value</u></b></a> expressed by <a href="7c40a5b455272bb4.htm" target="_top"><b><u>Constraint Value</u></b></a>s.</div><i><ul>References:<li><a href="https://www.investopedia.com/terms/v/valueproposition.asp"><img src="../standard/extr.ico.gif">&nbsp;Investopedia - Value Proposition</a></li> <li><a href="../../../www.omg.org/spec/BACM/1.0/Beta1/dtc-22-06-01.pdf#page=56"><img src="../standard/extr.ico.gif">&nbsp;OMG - BACM - Value Proposition</a></li> <li><a href="https://www.youtube.com/watch?v=ReM1uqmVfP0&amp;ab_channel=Strategyzer"><img src="../standard/extr.ico.gif">&nbsp;Strategyzer - Value Proposition Canvas (YouTube)</a></li></ul></i>        </td>
+<td></td>
+</tr>  
+</tbody>
+</table>
+<hr class="sectionbreak" />
+<h5>Abstract Concepts</h5>
+<table class="table  table-set-col-width">
+<thead >
+<tr><th>Concept</th><th>Description</th><th>HOPEX Metaclass</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="aea4936060645978.htm" target="_top">Business Operating Capability</a></td>
+<td class="description-text">A&#160;<b> Business Operating Capability</b> is a <a href="b181b98c54891882.htm" target="_top"><b><u>Capability</u></b></a> that benefits to <a href="d6cdfdbc5ab86331.htm" target="_top"><b><u>Customer</u></b></a>s (internal or external) of the enterprise. It expresses an ability to deliver <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s.<br />This includes <a href="9810abf3551135c4.htm" target="_top"><b><u>Business Capability</u></b></a>, <a href="598272e954c622f4.htm" target="_top"><b><u>Functionality</u></b></a>, <a href="0b3016c05a1876d2.htm" target="_top"><b><u>Hardware Capability</u></b></a> and <a href="7c409e95552724ab.htm" target="_top"><b><u>Skill</u></b></a>.       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="90759f5559472c5e.htm" target="_top">Enterprise Capability</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="bcebd65854913935.htm" target="_top">Business Partner</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Business Partner</b> is a party who interacts with the enterprise in the context its operating eco-system (the <a href="f8e64b51621dd3f3.htm" target="_top"><b><u>Business Operating Ecosystem</u></b></a>).</div><div align="left" style="min-height: 12pt; ">Example : Private Sector Customer, Regulation Authority,&#160;<b> Public health Authority</b>.</div>       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="99c2b8f455b05cbf.htm" target="_top">Business Partner</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="278675d65b252f4d.htm" target="_top">Business System</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Business System</b> is a man made artifact (<a href="c30bf4015a5da72b.htm" target="_top"><b><u>Hardware System</u></b></a> or <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a>) which exposes <a href="598272e954c622f4.htm" target="_top"><b><u>Functionality</u></b></a>ies and can produce <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Business System</b> performs <a href="46194939560d374f.htm" target="_top"><b><u>System Process</u></b></a>es and participates to <a href="46194939560d374f.htm" target="_top"><b><u>System Process</u></b></a>es or to <a href="57dfc52d550932ef.htm" target="_top"><b><u>Business Process</u></b></a>es.</div><div align="left" style="min-height: 12pt; ">In <a href="46194939560d374f.htm" target="_top"><b><u>System Process</u></b></a>es, a&#160;<b> Business System</b> is always an active participant (<a href="0c9b0d1b5ebd8260.htm" target="_top"><b><u>System Process Participant</u></b></a>).</div><div align="left" style="min-height: 12pt; ">In <a href="57dfc52d550932ef.htm" target="_top"><b><u>Business Process</u></b></a>es, a&#160;<b> Business System</b> is either an active participant (<a href="0f92123f5ebc184e.htm" target="_top"><b><u>Automated Participant</u></b></a>) or an <a href="0f9213345ebc1a67.htm" target="_top"><b><u>Instrument</u></b></a> used by <a href="076d15425a5e158c.htm" target="_top"><b><u>Human Resource</u></b></a>s.</div><i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ResourceArtifact"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - ResourceArtifact</a></li> <li><a href="https://compliancedictionary.com/term/580"><img src="../standard/extr.ico.gif">&nbsp;UCF Glossary - Business System</a></li> <li><a href="http://wordnetweb.princeton.edu/perl/webwn?o2=&amp;o0=1&amp;o8=1&amp;o1=1&amp;o7=&amp;o5=&amp;o9=&amp;o6=&amp;o3=&amp;o4=&amp;s=artifact&amp;i=0&amp;h=0#c"><img src="../standard/extr.ico.gif">&nbsp;WordNet - Artifact</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="386846ca58937252.htm" target="_top">Class of Enterprise Artifact Assembly</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="d1600c7062e093eb.htm" target="_top">Capability Configuration</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Capability Configuration</b> is a <a href="bcebd31f5491302c.htm" target="_top"><b><u>Resource Agent</u></b></a> which combines <a href="076d15425a5e158c.htm" target="_top"><b><u>Human Resource</u></b></a>s and <a href="278675d65b252f4d.htm" target="_top"><b><u>Business System</u></b></a>s along with networking capabilities in order to provide <a href="9810abf3551135c4.htm" target="_top"><b><u>Business Capability</u></b></a>(ies).</div><div align="left" style="min-height: 12pt; ">There are two levels of granularity of&#160;<b> Capability Configuration</b>s: <a href="46195775560d4ec0.htm" target="_top"><b><u>System of Systems</u></b></a> and <a href="f4be11b15ee1e0fa.htm" target="_top"><b><u>System of Resources</u></b></a>.</div><i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#CapabilityConfiguration"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - CapabilityConfiguration</a></li> <li><a href="https://pubs.opengroup.org/togaf-standard/introduction/apdxb.html#tag_06_03"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Definition - Business System</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="818285fd59ae040b.htm" target="_top">Class of Enterprise System of Resource Internal Structure</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="7c40a5b455272bb4.htm" target="_top">Constraint Value</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Constraint Value</b> is a possible value of a <a href="63f8870255ae1ba2.htm" target="_top"><b><u>Constraining Property</u></b></a> such as a delivery time of 30 minutes, a weight of 20 kg, a high level of confidentiality, stormy conditions.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Constraint Value</b> is either a single measure (<a href="48d2c3a263b56f27.htm" target="_top"><b><u>Qualifying Value (Abstract)</u></b></a>: a weight of 20 kg), an <a href="f68d3c3063b9e8f3.htm" target="_top"><b><u>Environmental Value</u></b></a> (stormy conditions.) or a <a href="48d2be5c63b56abf.htm" target="_top"><b><u>Set of Constraint Values</u></b></a>.</div><div align="left" style="min-height: 12pt; "><b>&#160;Constraint Value</b>s are used to constrain <a href="d342d88e5b121401.htm" target="_top"><b><u>Architecture Block</u></b></a>s in the context of non-functional requirement analysis and <a href="abba950e62a94390.htm" target="_top"><b><u>Value Proposition</u></b></a> analysis.</div><i><ul>References:<li><a href="https://www.britannica.com/topic/measurement-scale"><img src="../standard/extr.ico.gif">&nbsp;Britannica - Measurement scale</a></li> <li><a href="https://15926.blog/topics/data-model/index.htm#Property"><img src="../standard/extr.ico.gif">&nbsp;ISO 15926 - Property</a></li> <li><a href="https://en.wikipedia.org/wiki/List_of_system_quality_attributes"><img src="../standard/extr.ico.gif">&nbsp;Wikipeddia - List of quality attributes</a></li> <li><a href="https://en.wikipedia.org/wiki/Level_of_measurement"><img src="../standard/extr.ico.gif">&nbsp;Wikipedia - Level of measurement</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="4d035344569f43cd.htm" target="_top">KPI Building Block</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="8a5c926e5c0d632c.htm" target="_top">Customer Activity</a></td>
+<td class="description-text">A&#160;<b> Customer Activity</b> represents specific behavior done by <a href="d6cdfdbc5ab86331.htm" target="_top"><b><u>Customer</u></b></a>s in the context of their work.       </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="29df3f4060084c07.htm" target="_top">Management System</a></td>
+<td class="description-text">A&#160;<b> Management System</b> is an <a href="d321c226601262ae.htm" target="_top"><b><u>Enduring Initiative</u></b></a> within an <a href="b181b82a54891668.htm" target="_top"><b><u>Enterprise</u></b></a>, aimed at creating, maintaining, evaluating, evolving, and operating a collection of essential <a href="07ca0f015dd84efa.htm" target="_top"><b><u>Functional Asset</u></b></a>s of the <a href="b181b82a54891668.htm" target="_top"><b><u>Enterprise</u></b></a>.<i><ul>References:<li><a href="https://www.iso.org/obp/ui/#iso:std:iso:22301:ed-2:v1:en"><img src="../standard/extr.ico.gif">&nbsp;ISO 22301 - Management System</a></li> <li><a href="https://pubs.opengroup.org/togaf-standard/introduction/apdxb.html#tag_06_30"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Definition - Portfolio</a></li> <li><a href="https://www.scaledagileframework.com/large-solution-safe/"><img src="../standard/extr.ico.gif">&nbsp;SAFe&copy; - Large Solution SAFe</a></li> <li><a href="https://www.scaledagileframework.com/enterprise-solution-delivery/"><img src="../standard/extr.ico.gif">&nbsp;SAFe&copy; -Enterprise Solution Delivery</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="fa47fbab5e695547.htm" target="_top">Enterprise Portfolio</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="173706265fe3f332.htm" target="_top">Measure</a></td>
+<td class="description-text">A&#160;<b> Measure</b> is a quantified aspect of the assets of the enterprise (<a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s,&#160; <a href="986cd4ec5ffca3ac.htm" target="_top"><b><u>Behavior</u></b></a>s, <a href="e6f250185f772ee1.htm" target="_top"><b><u>Information Object</u></b></a>s) used by organizations to guide its transformation and assurance <a href="0ffeec41600be08a.htm" target="_top"><b><u>Initiative</u></b></a>s.<i><ul>References:<li><a href="http://wordnetweb.princeton.edu/perl/webwn?o2=&amp;o0=1&amp;o8=1&amp;o1=1&amp;o7=&amp;o5=&amp;o9=&amp;o6=&amp;o3=&amp;o4=&amp;s=measure&amp;i=1&amp;h=0000000000000#c"><img src="../standard/extr.ico.gif">&nbsp;WordNet - Measure</a></li></ul></i>        </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="8fc9091a640b9f4a.htm" target="_top">Product Capability</a></td>
+<td class="description-text">A&#160;<b> Product Capability</b> is a <a href="b181b98c54891882.htm" target="_top"><b><u>Capability</u></b></a> that benefits to <a href="d6cdfdbc5ab86331.htm" target="_top"><b><u>Customer</u></b></a>s of the enterprise. It expresses an ability to deliver <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s as part of the <a href="abba950e62a94390.htm" target="_top"><b><u>Value Proposition</u></b></a>s of a <a href="215cceda606c35c6.htm" target="_top"><b><u>Product</u></b></a>.<i><ul>References:<li><a href="https://pubs.opengroup.org/architecture/o-aa-standard/definitions.html#_feature"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - OAA - Feature</a></li></ul></i>        </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="62466ea661b80d09.htm" target="_top">Resource Operating Asset</a></td>
+<td class="description-text"><b>&#160;Resource Operating Asset</b>s comprise physical assets which contribute to the delivery of <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s of the enterprise. This includes <a href="bcebd31f5491302c.htm" target="_top"><b><u>Resource Agent</u></b></a>s, their behaviors (<a href="b4ebbf3e5ffdccdf.htm" target="_top"><b><u>Resource Behavior</u></b></a>:&#160; <a href="7c40c3c85527466b.htm" target="_top"><b><u>Resource Process</u></b></a>, <a href="230b35b461d8884d.htm" target="_top"><b><u>Resource Interaction Scenario</u></b></a>), and <a href="861987db6372446e.htm" target="_top"><b><u>Natural Resource</u></b></a>s.<i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#CapableElement"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - CapableElement</a></li> <li><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_73"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Definition - Solution Building Block</a></li> <li><a href="https://pubs.opengroup.org/togaf-standard/architecture-content/chap05.html#tag_05_02_04"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Guide - Solution Building Blocks</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="6dfa892056b416f4.htm" target="_top">Class of Operating Resource</a></td>
+</tr>  
+</tbody>
+</table>
+<section>
+
+</div>
+<button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button>
+<script>window.onscroll = function() {scrollFunction()};$(document).on('click', 'a[href^="#"]', function (event) {event.preventDefault();$('html, body').animate({scrollTop: $($.attr(this, 'href')).offset().top}, 500);});function showDiagOnClick(elem){ var x = document.getElementsByClassName('Relationship');var e = elem.getAttribute("value"); for (var i=0; i < x.length ;i++){x[i].style.display="none"; if (x[i].id == e){x[i].style.display="block";x[i].style.textAlign="left";}}}
+</script></html>

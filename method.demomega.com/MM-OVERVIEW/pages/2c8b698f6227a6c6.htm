@@ -1,0 +1,244 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="keywords" content="">
+<meta name="description" content="">    
+<LINK REL="icon" HREF="../standard/assets/img/favicon.ico">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/bootstrap.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nav.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/eaportal.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/font-awesome.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/animate.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/datatables.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/grid.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nae.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/custom.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/chosen.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/prism.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery.dataTables.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jsTreeStyle.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.theme.css" media="screen" />
+<script type="text/javascript" src="../standard/assets/js/jquery-3.2.1.min.js" ></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-ui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.columnFilter.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3-force.v2.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.gui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.search.js"></script> 
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.util.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-2.1.1.min.js"></script>
+<script src="../standard/assets/js/ws_zoomtemplate_firefox.js"></script>
+<script src="../standard/assets/js/bootstrap.min.js"></script>
+<script src="../standard/assets/js/datatables.min.js"></script>
+<script src="../standard/assets/js/moment.min.js"></script>
+<script src="../standard/assets/js/datetime-moment.js"></script>
+<script src="../standard/assets/js/chartjs.min.js"></script>
+<script src="../standard/assets/js/searchindexcontent.json"></script>
+<script src="../standard/assets/js/anls.js"></script>
+<script src="../../../cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script src="../standard/assets/js/gauge.js"></script> 
+<script src="../standard/assets/js/domesticApi.js"></script> 
+<script src="../standard/assets/js/piecelabel.js"></script>
+<script src="../standard/assets/js/popper.min.js"></script>
+<script src="../standard/assets/js/custom.js"></script>
+<script src="../standard/assets/js/chosen.jquery.js"></script>
+<script src="../standard/assets/js/prism.js"></script>
+<script src="../standard/assets/js/init-chosen.js"></script>
+<script src="../standard/assets/js/chart-data-flow.js"></script>
+<script src="../standard/assets/js/chart-data-gantt.js"></script>
+<script type="module" src="../standard/assets/js/Fuse.esm.min.js"></script>
+<script type="module">
+import Fuse from '../standard/assets/js/Fuse.esm.min.js';
+$(document).ready(function () {
+console.log('getjson');
+window.$.getJSON('../standard/assets/js/searchindexcontent.json', function (response) {
+console.log('getjson ok');
+var isIndex = "";
+var url = window.location.pathname;
+var filename = url.substring(url.lastIndexOf('/')+1);
+if( filename.includes("index") || filename === "" ){
+isIndex = "pages/";
+} else {
+isIndex = "";
+}
+const fuse = new Fuse(response, {
+keys: ['title','text'],
+shouldSort: true,
+includeMatches : true,
+findAllMatches : true
+});
+$('#search-fuse').on('keyup', function () {
+let result = fuse.search($(this).val());
+console.log(result);
+let resultdiv = $('div.searchresults-fuse');
+if (result.length === 0) {
+resultdiv.hide();
+} else {
+resultdiv.empty();
+resultdiv.append('<table class="table-search" width="100%" cellspacing="0"><thead ><tr><th>Name</th><th>Object Type</th><th>Modification date</th></tr></thead><tbody>');
+
+for (let obj in result.slice(0,10)) {
+
+let searchObj = '<tr><td><a href="./'+ isIndex + result[obj].item.url + '">' + result[obj].item.title +'</a></td><td>' + result[obj].item.ObjectType + '</td><td>' + result[obj].item.ModificationDate + '</td></tr>' ;
+
+
+resultdiv.find('tbody').append(searchObj);
+}
+resultdiv.append('</tbody></table>');
+resultdiv.show();
+}
+});
+});
+});
+</script>
+<title>HOPEX Metamodel Overview (Beta Version)</title>
+</head>
+<nav class="navbar navbar-expand-md navbar-dark  navbar-mega"><!-- Brand --><!--<a class="navbar-brand" href="#">Navbar</a>--><a class="" href="../index.htm"><img class="logo-mega" src="../standard/assets/img/logo.png"  alt="">(Beta Version)</a><!-- Toggler/collapsibe Button --><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><!-- Navbar links -->
+<div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsibleNavbar"><div class="col-sm-auto col-md-auto col-lg-5"></div>
+<div class="col-sm-auto">
+<ul class="navbar-nav">      
+<li><a class="dropdown-item" href="ad30ce115ebf7e90.htm">EA Grid</a></li> 
+<li><a class="dropdown-item" href="fdd5018459bc3c6a.htm">EA Domains</a></li> 
+<li><a class="dropdown-item" href="07e731775ecc93f4.htm">Solutions</a></li> 
+<li><a class="dropdown-item" href="c5dfc62c54810c2c.htm">Glossary</a></li> 
+<li class="nav-item dropdown mx-1">
+<a class="nav-link" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</a>
+<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<li><a class="dropdown-item" href="5446555d5f88c32e.htm">Outcome Driven Metamodel</a></li> 
+<li><a class="dropdown-item" href="e1ccfc295f8f7b90.htm">Playbooks</a></li> 
+<li><a class="dropdown-item" href="42bc992862d20ea7.htm">Framework Mappings</a></li> 
+<li><a class="dropdown-item" href="e93aebb35fa20550.htm">Metamodel Patterns</a></li> 
+<li><a class="dropdown-item" href="d599fe87602b2b85.htm">References</a></li> 
+<li><a class="dropdown-item" href="333f3a7f5dde11de.htm">Legend</a></li> 
+</ul>									                                            
+</li>
+</ul>
+</div>
+<div class="col-sm-auto"><a class="nav-link search" href="#" onclick=showHideSearch("search-section-fuse")><i class="fa fa-search mr-1 form-control-feedback"></i></a></div>
+</div>
+</nav>
+<div id="search-section-fuse" style="display:none">>
+<div class="search_header"><span class="closesearch">&times;</span>
+<nav class="breadcrumb">
+<a class="breadcrumb-item" href="../index.htm">Home </a> 
+<span class="breadcrumb-item active">Search</span> 
+</nav>
+</div>
+<input id="search-fuse" placeholder="Search..."  name="q" onfocus="this.value=''" type="search">
+<div class="searchresults-fuse"></div>
+</div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>function showHideSearch(elementId) {var contentDivs = document.getElementsByClassName('content');var footerDivs = document.getElementsByClassName('footer'); var containerDivs = document.getElementsByClassName('container');var containerfluidDivs = document.getElementsByClassName('container-fluid');var x = document.getElementById(elementId);if (x.style.display === "none") {x.style.display = "block";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "none";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "none";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "none";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "none";}} else {x.style.display = "none";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "block";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "block";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "block";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "block";}}} ;<!-- END WIDGET DRILL DOWN --></script><script>$(document).ready(function() {$(window).scroll(function() {if ($(this).scrollTop() > 100) {$('.scrollup').fadeIn();} else {$('.scrollup').fadeOut();}});$('.scrollup').click(function() {$("html, body").animate({scrollTop: 0}, 600);return false;});});</script><script>
+var modal = document.getElementById("search-section-fuse");
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = "none";
+}
+}
+$(document).on('click', '.closesearch', function() {
+showHideSearch("search-section-fuse");
+
+
+
+
+
+});</script><div class="container-fluid col-lg-11" id="top"><nav class="breadcrumb"><a class="breadcrumb-item" href="../index.htm">Home </a> <span class="breadcrumb-item active"> Concept Trait / Aggregate Member</span> </nav></div>
+<div class="container-fluid col-lg-11 content">
+<section class="fadeInDown animated"><a href="#det" class="btn btn-d">DEFINITION</a> <a href="#rel" class="btn btn-d">RELATIONSHIPS</a><a href="#shi" class="btn btn-d">SUPER-SUB TYPE HIERARCHY</a></section>
+<a class="object-section-anchor" id="det"></a>
+<section class="object-section">
+<h4>CONCEPT TRAIT - Aggregate Member</h4>
+<hr class="sectionbreak" />
+<table class="table table-vertical-headers table-set-col-width">
+<tr><th>Description</th><td><i>Abstract Concept</i><br/><div align="left" style="min-height: 12pt; ">A&#160;<b> Aggregate Member</b> is an internal characteristic of an <a href="514e5f6c620f1ec6.htm" target="_top"><b><u>Aggregate Block</u></b></a>. Its existence depends on its nesting <a href="514e5f6c620f1ec6.htm" target="_top"><b><u>Aggregate Block</u></b></a>.</div><div align="left" style="min-height: 12pt; ">An&#160;<b> Aggregate Member</b> is either an <a href="278c3f9f648708b5.htm" target="_top"><b><u>Internal Object</u></b></a> or a&#160; <a href="4d9461c65ec9eca3.htm" target="_top"><b><u>Contextual Object</u></b></a>.</div></td></tr>		
+<tr><th>Nesting Concept</th><td><img src="../standard/dic_concept_syntax.ico.gif">&nbsp;
+<a  href="514e5f6c620f1ec6.htm" target="_top">Aggregate Block</a></td></tr>
+<tr><th>Version</th><td class="description-text"></td></tr>		
+<tr><th>Super Types</th><td><img src="../standard/concept-trait.ico.gif">&nbsp;
+<a  href="f277cfce601bd9af.htm" target="_top">Aggregate Entity Member</a>&nbsp;&nbsp;</td></tr>   
+</table>
+</section>
+<section class="object-section">
+<h4>RELATIONSHIPS</h4> 
+<hr class="sectionbreak" />
+<a href="#" class="btn btn-d" value="Relationship1" onclick="showDiagOnClick(this)">Simple Graph</a>
+<a href="#" class="btn btn-d" value="Relationship2" onclick="showDiagOnClick(this)">Graph & Hierarchy</a>
+<a class="object-section-anchor" id="rel"></a>
+<div class="Relationship" id="Relationship1">
+<h3>Simple Graph</h3>
+<svg id="2C8B698F6227A6C6" height="301" width="1600" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" overflow="hidden">
+  <defs>
+    <marker id="Simple-2C8B698F6227A6C6__RelCircle" refX="3" refY="3" markerWidth="6" markerHeight="6">
+      <circle cx="3" cy="3" r="3" fill="#A52A00"></circle>
+    </marker>
+    <marker id="Simple-2C8B698F6227A6C6__RelArrowTip" refX="3" refY="3" markerWidth="8" markerHeight="6" orient="0">
+      <path d="M0,0 L6,2 L0,4" fill="#A52A00"></path>
+    </marker>
+  </defs>
+<g   transform="translate(585,150)">
+  <rect height="30"  width="150"  id="core-2C8B698F6227A6C6-0"  rx="3"  ry="3"  x="0"  y="-10"  stroke="#F4DB6F"/>
+<foreignObject x="0" y="-10" width="150" height="30" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:12; text-align:center"><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-2C8B698F6227A6C6').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-2C8B698F6227A6C6').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="#Relationship1">Aggregate Member</a>
+  <span id="Desc-2C8B698F6227A6C6" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">A Aggregate Member is an internal characteristic of an Aggregate Block. Its existence depends on its nesting Aggregate Block.  </span>
+</div></div></foreignObject>
+</g>
+</svg>
+
+</div>
+<div class="Relationship" id="Relationship2" style="display:none">
+<h3>Graph & Hierarchy</h3>
+<svg id="2C8B698F6227A6C6" height="301" width="1600" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" overflow="hidden">
+  <defs>
+    <marker id="Full-2C8B698F6227A6C6__RelCircle" refX="3" refY="3" markerWidth="6" markerHeight="6">
+      <circle cx="3" cy="3" r="3" fill="#A52A00"></circle>
+    </marker>
+    <marker id="Full-2C8B698F6227A6C6__RelArrowTip" refX="3" refY="3" markerWidth="8" markerHeight="6" orient="0">
+      <path d="M0,0 L6,2 L0,4" fill="#A52A00"></path>
+    </marker>
+  </defs>
+<g   transform="translate(585,160)">
+  <rect height="30"  width="150"  id="core-2C8B698F6227A6C6-0"  rx="3"  ry="3"  x="0"  y="-10"  stroke="#F4DB6F"/>
+<foreignObject x="0" y="-10" width="150" height="30" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:12; text-align:center"><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-2C8B698F6227A6C6').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-2C8B698F6227A6C6').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="#Relationship1">Aggregate Member</a>
+  <span id="Desc-2C8B698F6227A6C6" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">A Aggregate Member is an internal characteristic of an Aggregate Block. Its existence depends on its nesting Aggregate Block.  </span>
+</div></div></foreignObject>
+</g>
+</svg>
+
+</div>
+<a class="object-section-anchor" id="shi"></a>
+<section class="object-section">
+<h4>SUPER TYPES HIERARCHY</h4> 
+<hr class="sectionbreak" />
+<span>Left click on a node to toggle it. Right click to navigate through its page
+</section>
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<div id="categoryHierarchy"></div>
+<script>
+var hierarchy = JSON.parse('{"name":"Aggregate Member","comment":"A Aggregate Member is an internal characteristic of an Aggregate Block. Its existence depends on its nesting Aggregate Block.","url":"2C8B698F6227A6C6.htm","parents":[{"name":"Aggregate Entity Member","comment":"An Aggregate Entity Member is an internal characteristic of an Aggregate Entity. Its existence depends on its nesting Aggregate Entity.","url":"F277CFCE601BD9AF.htm", "isparent":true,"parents":[]}],"children":[{"name":"Aggregate Member (Individual)","comment":"","url":"278C7B4A648D1028.htm", "isparent":false,"children":[]},{"name":"Aggregate Member (Type)","comment":"An Aggregate Member (Type) is an internal characteristic of an Aggregate Block (Type). Its existence depends on its nesting Aggregate Block (Type).","url":"278C322564870647.htm", "isparent":false,"children":[{"name":"Contextual Object (Type)","comment":"","url":"FA4FFCDE5EC86654.htm", "isparent":false,"children":[{"name":"Policy Conformance","comment":"A Policy Conformance is a statement that a Functional Asset is designed to comply with a Policy.","url":"8E1393E85EBE476F.htm", "isparent":false,"children":[]},{"name":"Context Component","comment":"","url":"F21DF5D0617B6707.htm", "isparent":false,"children":[{"name":"Enterprise Context Component","comment":"","url":"EC200ACD630F40F3.htm", "isparent":false,"children":[{"name":"Enterprise Ecosystem Component","comment":"","url":"F8E6B83C621FFFE6.htm", "isparent":false,"children":[{"name":"Logical Ecosystem Component","comment":"","url":"F97E3FDE632B3462.htm", "isparent":false,"children":[{"name":"Subject Activity Domain","comment":"","url":"F97E4605632B3B80.htm", "isparent":false,"children":[]}]},{"name":"Participant Enterprise Agent","comment":"","url":"2B6F3BF061BAF60A.htm", "isparent":false,"children":[{"name":"Partner Org-Unit","comment":"","url":"2B7065F361BA0EDA.htm", "isparent":false,"children":[]},{"name":"Subject-Org-Unit","comment":"","url":"2B7065B261BA0E06.htm", "isparent":false,"children":[]},{"name":"Partner Resource Agent","comment":"","url":"2B6F35BC61BAECC4.htm", "isparent":false,"children":[{"name":"Partner Org-Unit","comment":"","url":"2B7065F361BA0EDA.htm", "isparent":false},{"name":"Partner System","comment":"","url":"4EDF5F445FC591D8.htm", "isparent":false,"children":[{"name":"Partner Software System","comment":"","url":"25C1A53F61E20355.htm", "isparent":false,"children":[{"name":"Partner Application","comment":"An application partner in an application environment represents the appearance of an application in the environment of another application.","url":"C334DC6B5ECB6EEC.htm", "isparent":false,"children":[]},{"name":"Participant Application System","comment":"","url":"48D4F34363B6A573.htm", "isparent":false,"children":[]}]}]}]},{"name":"Partner Operating Agent","comment":"","url":"F8E6B685621FFB8A.htm", "isparent":false,"children":[{"name":"Business Partner","comment":"","url":"F97E4689632B3CAD.htm", "isparent":false,"children":[]},{"name":"Partner Resource Agent","comment":"","url":"2B6F35BC61BAECC4.htm", "isparent":false}]},{"name":"Business Partner","comment":"","url":"F97E4689632B3CAD.htm", "isparent":false},{"name":"Subject Activity Domain","comment":"","url":"F97E4605632B3B80.htm", "isparent":false},{"name":"Served customer","comment":"","url":"466653E96408818A.htm", "isparent":false,"children":[]},{"name":"Subject Resource Agent","comment":"","url":"2B6F5C4161BAFDFD.htm", "isparent":false,"children":[{"name":"Subject-Org-Unit","comment":"","url":"2B7065B261BA0E06.htm", "isparent":false},{"name":"Subject System","comment":"","url":"4EDF5F1F5FC590F0.htm", "isparent":false,"children":[{"name":"Subject Software System","comment":"","url":"25C1A55461E20430.htm", "isparent":false,"children":[{"name":"Subject Application","comment":"An application flow environment subject represents the application whose environment is illustrated by the application flow environment.","url":"C334DC6E5ECB6F61.htm", "isparent":false,"children":[]},{"name":"Subject Application System","comment":"","url":"48D4F27B63B6A466.htm", "isparent":false,"children":[]}]}]}]},{"name":"Participant System","comment":"","url":"4EDF5FA95FC593F0.htm", "isparent":false,"children":[{"name":"Partner System","comment":"","url":"4EDF5F445FC591D8.htm", "isparent":false},{"name":"Contributing Application","comment":"A contributing application represents the appearance of an application in a global application flow map.","url":"C334D73C5ECB5D6A.htm", "isparent":false,"children":[]},{"name":"Partner Software System","comment":"","url":"25C1A53F61E20355.htm", "isparent":false}]},{"name":"Subject Operating Agent","comment":"","url":"F8E6B637621FFA9B.htm", "isparent":false,"children":[{"name":"Subject Activity Domain","comment":"","url":"F97E4605632B3B80.htm", "isparent":false},{"name":"Subject Resource Agent","comment":"","url":"2B6F5C4161BAFDFD.htm", "isparent":false}]}]},{"name":"Partner Supplier","comment":"","url":"46664F3464087702.htm", "isparent":false,"children":[]},{"name":"Participant Enterprise Agent","comment":"","url":"2B6F42FC61BAF9B7.htm", "isparent":false,"children":[{"name":"Partner Operating Agent","comment":"","url":"F8E63939621FDEFD.htm", "isparent":false,"children":[{"name":"Partner Resource Agent","comment":"","url":"2B6F34C861BAE941.htm", "isparent":false,"children":[{"name":"Partner Org-Unit","comment":"","url":"0A2620C6601DF71A.htm", "isparent":false,"children":[]},{"name":"Partner System","comment":"","url":"C450D5B361DE622E.htm", "isparent":false,"children":[{"name":"Partner Software System","comment":"","url":"25C1A6BC61E20826.htm", "isparent":false,"children":[{"name":"Partner System","comment":"","url":"173F4AD15EB8C1F5.htm", "isparent":false,"children":[]},{"name":"Partner Application","comment":"","url":"C450D8C761DE6C03.htm", "isparent":false,"children":[]}]}]},{"name":"Partner Resource Architecture","comment":"","url":"26B8376C5EEAE057.htm", "isparent":false,"children":[]}]}]},{"name":"Subject Operating Agent","comment":"","url":"F8E6390C621FDDF1.htm", "isparent":false,"children":[{"name":"Subject Resource Agent","comment":"","url":"2B6F350061BAEA62.htm", "isparent":false,"children":[{"name":"Subject-Org-Unit","comment":"","url":"6F4B98595FD3C2BE.htm", "isparent":false,"children":[]},{"name":"Subject System","comment":"","url":"C450D59061DE6127.htm", "isparent":false,"children":[{"name":"Subject Software System","comment":"","url":"25C1A65861E2077A.htm", "isparent":false,"children":[{"name":"Subject System","comment":"","url":"173F4A805EB8C14E.htm", "isparent":false,"children":[]},{"name":"Subject Application","comment":"","url":"C450D88061DE6AFE.htm", "isparent":false,"children":[]}]}]},{"name":"Subject Resource Architecture","comment":"","url":"26B837865EEAE115.htm", "isparent":false,"children":[]}]}]},{"name":"Participant Org-Unit","comment":"","url":"6F4B989C5FD3C371.htm", "isparent":false,"children":[{"name":"Partner Org-Unit","comment":"","url":"0A2620C6601DF71A.htm", "isparent":false},{"name":"Served customer","comment":"","url":"4666536C64088070.htm", "isparent":false,"children":[]},{"name":"Subject-Org-Unit","comment":"","url":"6F4B98595FD3C2BE.htm", "isparent":false}]},{"name":"Participant Software System","comment":"","url":"25C1A63D61E206D7.htm", "isparent":false,"children":[{"name":"Subject System","comment":"","url":"173F4A805EB8C14E.htm", "isparent":false},{"name":"Partner System","comment":"","url":"173F4AD15EB8C1F5.htm", "isparent":false},{"name":"Subject Application","comment":"","url":"C450D88061DE6AFE.htm", "isparent":false},{"name":"Partner Application","comment":"","url":"C450D8C761DE6C03.htm", "isparent":false},{"name":"Subject Software System","comment":"","url":"25C1A65861E2077A.htm", "isparent":false},{"name":"Partner Software System","comment":"","url":"25C1A6BC61E20826.htm", "isparent":false},{"name":"End User","comment":"An End User is a Human Resource who actually uses a particular Software System.","url":"2DCEA8705FC4827C.htm", "isparent":false,"children":[]}]},{"name":"Subject Resource Agent","comment":"","url":"2B6F350061BAEA62.htm", "isparent":false},{"name":"Partner Resource Agent","comment":"","url":"2B6F34C861BAE941.htm", "isparent":false},{"name":"Subject Resource Architecture","comment":"","url":"26B837865EEAE115.htm", "isparent":false},{"name":"Partner Resource Architecture","comment":"","url":"26B8376C5EEAE057.htm", "isparent":false}]},{"name":"Participant Enterprise Agent","comment":"","url":"2B6F3BF061BAF60A.htm", "isparent":false},{"name":"Resource Ecosystem Component","comment":"","url":"95129626620B544C.htm", "isparent":false,"children":[{"name":"Participant Enterprise Agent","comment":"","url":"2B6F3BF061BAF60A.htm", "isparent":false},{"name":"Business Ecosystem Component","comment":"","url":"A813CB556356781F.htm", "isparent":false,"children":[{"name":"Participant Org-Unit","comment":"","url":"6F4B989C5FD3C371.htm", "isparent":false},{"name":"Participant Enterprise Agent","comment":"","url":"2B6F3BF061BAF60A.htm", "isparent":false}]},{"name":"Participant Enterprise Agent","comment":"","url":"2B6F42FC61BAF9B7.htm", "isparent":false}]}]},{"name":"Customer Activity Component","comment":"","url":"EC200F5B630F47C5.htm", "isparent":false,"children":[{"name":"Customer Journey Step","comment":"A client journey step is the basic elementary advancement unit of a client via a client journey phase.","url":"C581DA866023333B.htm", "isparent":false,"children":[]}]}]},{"name":"Scenario Participant","comment":"","url":"CA3518A45FC59E76.htm", "isparent":false,"children":[{"name":"Partner Agent","comment":"Agents which are partners of the subject agent in the scenario.","url":"CA35159E5FC5978D.htm", "isparent":false,"children":[{"name":"Partner Operating Agent","comment":"","url":"F8E6B685621FFB8A.htm", "isparent":false}]},{"name":"Participant Enterprise Agent","comment":"","url":"2B6F3BF061BAF60A.htm", "isparent":false},{"name":"Subject Agent","comment":"Agent that is the subject of the environment scenarios","url":"CA3514125FC59538.htm", "isparent":false,"children":[{"name":"Subject Operating Agent","comment":"","url":"F8E6B637621FFA9B.htm", "isparent":false}]}]},{"name":"Ecosystem Component","comment":"","url":"3D3F4AED6201346C.htm", "isparent":false,"children":[{"name":"Participant Agent","comment":"","url":"80BE28965FC2A6B8.htm", "isparent":false,"children":[{"name":"Subject Agent","comment":"","url":"FA4FFC205EC86201.htm", "isparent":false,"children":[{"name":"Subject Operating Agent","comment":"","url":"F8E6390C621FDDF1.htm", "isparent":false},{"name":"Subject Technical Artifact","comment":"","url":"108452DA5FCE55F9.htm", "isparent":false,"children":[]},{"name":"Subject System","comment":"","url":"C450D59061DE6127.htm", "isparent":false},{"name":"Subject Activity Domain","comment":"","url":"E8BFEC375EBB805A.htm", "isparent":false,"children":[]}]},{"name":"Operating Technical Artifact","comment":"","url":"108452655FCE54CE.htm", "isparent":false,"children":[{"name":"Partner Technical Artifact","comment":"","url":"1084535E5FCE5779.htm", "isparent":false,"children":[]}]},{"name":"Participant Enterprise Agent","comment":"","url":"2B6F42FC61BAF9B7.htm", "isparent":false},{"name":"Participant Business System","comment":"","url":"C450D63661DE652A.htm", "isparent":false,"children":[{"name":"Participant Software System","comment":"","url":"25C1A63D61E206D7.htm", "isparent":false},{"name":"Partner System","comment":"","url":"C450D5B361DE622E.htm", "isparent":false},{"name":"Subject System","comment":"","url":"C450D59061DE6127.htm", "isparent":false}]},{"name":"Business Operating Agent","comment":"","url":"1C3BF9F5601C673D.htm", "isparent":false,"children":[{"name":"Customer","comment":"","url":"E8BFEC5B5EBB80DB.htm", "isparent":false,"children":[]},{"name":"Subject Activity Domain","comment":"","url":"E8BFEC375EBB805A.htm", "isparent":false}]}]},{"name":"Scenario Participant","comment":"","url":"CA3518A45FC59E76.htm", "isparent":false}]},{"name":"capability map component","comment":"","url":"30223C345EC90F4F.htm", "isparent":false,"children":[{"name":"Technology Map Component","comment":"","url":"F594266A61F8406D.htm", "isparent":false,"children":[{"name":"Component Technology Capability","comment":"Composition of a sub- technical functionality in a Technical Functionality Map or a Technical  Functionality.","url":"26B84FA85EEAA5FE.htm", "isparent":false,"children":[]},{"name":"External Technology Capability","comment":"","url":"4F7E52CC5EBC6A10.htm", "isparent":false,"children":[]}]},{"name":"Enterprise Capability Map Component","comment":"","url":"30EF9C8261F35A60.htm", "isparent":false,"children":[{"name":"skill component (my)","comment":"","url":"520E53595EB86897.htm", "isparent":false,"children":[]},{"name":"external skill component","comment":"","url":"520E53755EB86930.htm", "isparent":false,"children":[]},{"name":"Business Capability Map Component","comment":"Business capabilities in scope of a capability map.","url":"0BCA12E25EB8260E.htm", "isparent":false,"children":[]},{"name":"functionality component","comment":"","url":"0BCA0DEF5EB82104.htm", "isparent":false,"children":[]},{"name":"hardware functionality map component","comment":"","url":"4CF14DEB5EBC2994.htm", "isparent":false,"children":[]}]}]},{"name":"component information area","comment":"","url":"DFA4E2865EBB4E38.htm", "isparent":false,"children":[{"name":"Sub Activity Domain","comment":"","url":"DD25DDB95EBB089B.htm", "isparent":false,"children":[]},{"name":"Physical Domain Component","comment":"Physical Data Domain that is a part of a Physical Data Map.","url":"F4BE4C025EE18D1E.htm", "isparent":false,"children":[{"name":"Sub-Relational Domain","comment":"","url":"137D232B5EE2CCEE.htm", "isparent":false,"children":[]}]},{"name":"Data Area Component","comment":"Data Domain that isa component of a Data Map.","url":"6D2B81965FBB71AD.htm", "isparent":false,"children":[{"name":"Physical Domain Component","comment":"Physical Data Domain that is a part of a Physical Data Map.","url":"F4BE4C025EE18D1E.htm", "isparent":false},{"name":"Logical Data Area Component","comment":"","url":"FD1BF4D65FBC69BE.htm", "isparent":false,"children":[]}]}]}]},{"name":"directive subject","comment":"Information Entity involved in the definition of a Directive.","url":"C334D5CA5ECB5A10.htm", "isparent":false,"children":[{"name":"Business Directive Subject","comment":"","url":"9152E9845ED773CF.htm", "isparent":false,"children":[{"name":"System Rule Subject","comment":"","url":"355A74CA627AE7EA.htm", "isparent":false,"children":[]}]},{"name":"Business Directive Subject","comment":"","url":"9152E9845ED773CF.htm", "isparent":false},{"name":"Business Directive Subject","comment":"","url":"9152E9845ED773CF.htm", "isparent":false}]},{"name":"Contextual Encapsulated Aggregate (Type)","comment":"","url":"5C2D67FA622B2391.htm", "isparent":false,"children":[{"name":"Process Activity","comment":"A Process Activity is a step of a Process, carried out by an Active Participant.","url":"E4C0FE7B5ED0EB4E.htm", "isparent":false,"children":[{"name":"Enterprise Process Activity","comment":"","url":"018517846222CD39.htm", "isparent":false,"children":[{"name":"Sub Enteprise Process","comment":"","url":"F8E62045621DBFFB.htm", "isparent":false,"children":[{"name":"Sub-Value Stream","comment":"Involvment of a Value Stream as a step of a parent Value Stream.","url":"3B4B43635EBC30A5.htm", "isparent":false,"children":[]},{"name":"Sub-Resource Process","comment":"","url":"B4EBBE6B5FFDCB19.htm", "isparent":false,"children":[{"name":"Sub System Process","comment":"A task is an elementary step that is included within a system process. A task is used when the work in the system process is not broken down to a finer level of the process. Generally, an end-user and/or an IT service are used to perform the task when it is executed.","url":"0C9B0D8C5EBD83F7.htm", "isparent":false,"children":[]},{"name":"Sub-Business-Process","comment":"A Sub-Business-Process is an Operation that invokes another Business Process.","url":"0F92150E5EBC1C50.htm", "isparent":false,"children":[]}]}]},{"name":"Value Stream Activity","comment":"Step of a value stream. A value stream stage can be either an elementary Value Stream Stage  or the involvement of another Value Stream  (Sub-Value Stream ).","url":"3B4B40DA5EBC2BCE.htm", "isparent":false,"children":[{"name":"Value Stream Stage","comment":"Elementary step of a Value Stream.","url":"3B4B40A35EBC2B3A.htm", "isparent":false,"children":[]},{"name":"Sub-Value Stream","comment":"Involvment of a Value Stream as a step of a parent Value Stream.","url":"3B4B43635EBC30A5.htm", "isparent":false}]},{"name":"Resource Activity","comment":"","url":"B4EBBF6E5FFDCDAC.htm", "isparent":false,"children":[{"name":"System Process Activity","comment":"","url":"0C9B0CF05EBD81B2.htm", "isparent":false,"children":[{"name":"Task","comment":"A task is an elementary step that is included within a system process. A task is used when the work in the system process is not broken down to a finer level of the process. Generally, an end-user and/or an IT service are used to perform the task when it is executed.","url":"0C9B0D925EBD8470.htm", "isparent":false,"children":[]},{"name":"Sub System Process","comment":"A task is an elementary step that is included within a system process. A task is used when the work in the system process is not broken down to a finer level of the process. Generally, an end-user and/or an IT service are used to perform the task when it is executed.","url":"0C9B0D8C5EBD83F7.htm", "isparent":false}]},{"name":"Sub-Resource Process","comment":"","url":"B4EBBE6B5FFDCB19.htm", "isparent":false},{"name":"Operation","comment":"An Operation is a step in an Business Process executed by a participant of the process.","url":"0F9213FD5EBC1B87.htm", "isparent":false,"children":[{"name":"Simple Operation","comment":"A Simple Operation is an elementary Operation of an Business Process executed by a Human Resource Participant or an Automated Participant.","url":"0F9212075EBC17D6.htm", "isparent":false,"children":[]},{"name":"Sub-Business-Process","comment":"A Sub-Business-Process is an Operation that invokes another Business Process.","url":"0F92150E5EBC1C50.htm", "isparent":false}]}]}]},{"name":"Sub-Process","comment":"A Sub-Process is a Process Activity  invoking another Process","url":"8E1390925EBE3DB7.htm", "isparent":false,"children":[{"name":"Sub Enteprise Process","comment":"","url":"F8E62045621DBFFB.htm", "isparent":false}]}]},{"name":"Scenario Participant","comment":"","url":"07E737495ECCD831.htm", "isparent":false,"children":[{"name":"Operating Scenario Participant","comment":"","url":"7D337DDF628136AA.htm", "isparent":false,"children":[{"name":"Business Function Participant","comment":"","url":"F97E4064632B354D.htm", "isparent":false,"children":[]},{"name":"Participant Resource Agent","comment":"","url":"230B35ED61D88944.htm", "isparent":false,"children":[{"name":"Participant Software System","comment":"","url":"25C1B19061E21ED1.htm", "isparent":false,"children":[{"name":"Application System Subject","comment":"","url":"E4C0E8515ED0678E.htm", "isparent":false,"children":[]},{"name":"Participant IT Service","comment":"","url":"6246173661BA2ED4.htm", "isparent":false,"children":[]}]},{"name":"Participant Org-Unit","comment":"","url":"6F4B94625FD3B99A.htm", "isparent":false,"children":[]}]}]}]},{"name":"Agent Component","comment":"A composition of Agent.","url":"1DA6216A5EBC65F7.htm", "isparent":false,"children":[{"name":"Operating Agent Component","comment":"","url":"E2EF09DE62147EB7.htm", "isparent":false,"children":[{"name":"Logical Agent Component","comment":"","url":"258C36965FD28288.htm", "isparent":false,"children":[{"name":"Sub Activity Domain","comment":"Usage of a Business Functional Area which is internal to the considered environment.","url":"E8BFED275EBB82AC.htm", "isparent":false,"children":[]},{"name":"sub-business function","comment":"A sub-business function represents the role of a Business Function within a parent Business Function. ","url":"4150B7705ECCC24E.htm", "isparent":false,"children":[]},{"name":"Sub Activity Domain","comment":"Usage of a Business Functional Area which is internal to the considered environment.","url":"E8BFED275EBB82AC.htm", "isparent":false},{"name":"sub-business function","comment":"A sub-business function represents the role of a business function as part of a parent Activity Domain.","url":"E8BFED085EBB8227.htm", "isparent":false,"children":[]}]},{"name":"Resource Agent Component","comment":"","url":"24034F6D5FC79C3F.htm", "isparent":false,"children":[{"name":"Human Resource","comment":"","url":"26B8578C5EEAE1C8.htm", "isparent":false,"children":[]},{"name":"Software System Component","comment":"A Software System Component represents the role that a Software System plays in the context of a parent Software System.  ","url":"173F4D015EB8C686.htm", "isparent":false,"children":[{"name":"Micro-Service Component","comment":"The embbding of MicroService a into an Application.","url":"45DE6D1E618EFB7F.htm", "isparent":false,"children":[]},{"name":"IT service component","comment":"Embbeding of an IT Service in an Application or in another IT Service.","url":"8109F9BE5EB8BD66.htm", "isparent":false,"children":[]}]},{"name":"System of System Component","comment":"","url":"F4BE19A45EE1F3C0.htm", "isparent":false,"children":[]},{"name":"IT Infrastructure Component","comment":"An IT Infrastrucure component helps to define that an IT Infrastructure or an IT Network is used within a System of Resources (Resource Architecture or Facility)","url":"F4BE18DF5EE1F18D.htm", "isparent":false,"children":[]},{"name":"Hardware Component","comment":"","url":"C334E3E75ECB964E.htm", "isparent":false,"children":[]},{"name":"Hardware Asset","comment":"An Hardware Asset helps to define which hardware artifact or IoT Device is used within a System of Resources","url":"F4BE14665EE1E9A0.htm", "isparent":false,"children":[]},{"name":"Organization Position","comment":"An Organizational Position that is part of an Org-Unit.","url":"520E546C5EB86CF4.htm", "isparent":false,"children":[]},{"name":"Org-Unit Component","comment":"Hiearchical composition of Org-Units.","url":"520E542B5EB86C3A.htm", "isparent":false,"children":[]}]}]},{"name":"Technology System Component","comment":"","url":"D1600A8F62E08FB2.htm", "isparent":false,"children":[{"name":"Networking Component","comment":"","url":"26B8386E5EEAE4A4.htm", "isparent":false,"children":[{"name":"Hardware Asset","comment":"An Hardware Asset helps to define which hardware artifact or IoT Device is used within a System of Resources","url":"F4BE14665EE1E9A0.htm", "isparent":false},{"name":"Hosted Data","comment":"Hosting a set of Physical Data Objects in a data store of a Computational Aspect.","url":"26B831345EEADDDC.htm", "isparent":false,"children":[]},{"name":"Software technology Host","comment":"","url":"26B847EE5EEA002D.htm", "isparent":false,"children":[]},{"name":"Hosted Application Package","comment":"Hosting of a Deployable Application Package in a Computational Aspect.","url":"F4BE10485EE1DBCC.htm", "isparent":false,"children":[]},{"name":"Network Component","comment":"","url":"3A0EC88263CE3A46.htm", "isparent":false,"children":[]},{"name":"Network Node","comment":"Role of a Network Device in a Computer Network.","url":"F4BE0FD85EE1DA9D.htm", "isparent":false,"children":[]},{"name":"Computing Node","comment":"Role of a Computational Aspect in an IT Infrastructure System.","url":"F4BE0F185EE1D804.htm", "isparent":false,"children":[]},{"name":"System of System Component","comment":"","url":"F4BE19A45EE1F3C0.htm", "isparent":false},{"name":"IT Infrastructure Component","comment":"An IT Infrastrucure component helps to define that an IT Infrastructure or an IT Network is used within a System of Resources (Resource Architecture or Facility)","url":"F4BE18DF5EE1F18D.htm", "isparent":false},{"name":"Hosted Micro-Service","comment":"Hosting of a MicroService in a Computational Aspect.","url":"26B830735EEADC36.htm", "isparent":false,"children":[]}]},{"name":"Software System Component","comment":"Kind of artifact that provides technical functionalities to other artifacts and that is not directly used by humans to achieve their duty.","url":"24035E705FC7AFB1.htm", "isparent":false,"children":[{"name":"Software Technology Component","comment":"","url":"F82BA64460420F69.htm", "isparent":false,"children":[]},{"name":"Deployable Software Component","comment":"","url":"624E6CAB5ED977A2.htm", "isparent":false,"children":[{"name":"System Architecture Component","comment":"","url":"10845E385FCE6CE2.htm", "isparent":false,"children":[]},{"name":"Application Deployment Component","comment":"","url":"37B77384602A0ACC.htm", "isparent":false,"children":[]},{"name":"Physical Domain Component","comment":"","url":"4C7884F65FCA4ED4.htm", "isparent":false,"children":[]},{"name":"Component Package","comment":"","url":"624E72A25ED98474.htm", "isparent":false,"children":[]},{"name":"Package Component","comment":"Role of a Deployable Package in an Application Deployment Architecture.","url":"C993CE46602B668A.htm", "isparent":false,"children":[{"name":"Data Component","comment":"","url":"4C7802355FCEB073.htm", "isparent":false,"children":[]},{"name":"Application Component","comment":"Role of a Deployable Application Package is an Application Deployment Architecture.","url":"624E6A1A5ED97133.htm", "isparent":false,"children":[]},{"name":"Micro Service Component","comment":"Role of a MicroService in an Application Deployment Architecture.","url":"CD7A3E5C5FF3D634.htm", "isparent":false,"children":[]}]}]}]}]}]}]},{"name":"Risk","comment":"A Risk is refers to the potential for loss resulting from inadequate structure or behavior of an Operating Asset.","url":"427C1E2B64B5D643.htm", "isparent":false,"children":[{"name":"Operational Risk","comment":"An Operational Risk is a kind of Risk that refers to the potential for loss resulting from inadequate structure or behavior of a Business Operating Asset.","url":"11FF628664EF4679.htm", "isparent":false,"children":[]},{"name":"Operational Risk","comment":"An Operational Risk is a kind of Risk that refers to the potential for loss resulting from inadequate structure or behavior of a Business Operating Asset.","url":"11FF628664EF4679.htm", "isparent":false},{"name":"Operational Risk","comment":"An Operational Risk is a kind of Risk that refers to the potential for loss resulting from inadequate structure or behavior of a Business Operating Asset.","url":"11FF628664EF4679.htm", "isparent":false}]}]}]},{"name":"Contextual Object","comment":"A Contextual Object is an Aggregate Member that represents the projection of an external Building Block in the internal structure of a nesting Aggregate Block.","url":"4D9461C65EC9ECA3.htm", "isparent":false,"children":[{"name":"Individual Component","comment":"","url":"4D9462AF5EC9F01F.htm", "isparent":false,"children":[{"name":"Department","comment":"","url":"C334E93B5ECBA369.htm", "isparent":false,"children":[]}]},{"name":"Contextual Encapsulated Aggregate","comment":"","url":"278C6EDF648F1D81.htm", "isparent":false,"children":[{"name":"Contextual Encapsulated Aggregate (Type)","comment":"","url":"5C2D67FA622B2391.htm", "isparent":false}]},{"name":"Contextual Object (Individual)","comment":"","url":"278C7CA2648D133E.htm", "isparent":false,"children":[{"name":"Initiative Purpose","comment":"","url":"CE1BFCDD62843DE5.htm", "isparent":false,"children":[{"name":"Project Deliverable","comment":"","url":"3C8B5D236283CB99.htm", "isparent":false,"children":[]},{"name":"Exhibited Product Capability","comment":"Business Capability that is exhibited by an Enterprise Stage with quantified measure (KPI) and potential geopolitical scope (Site) for a defined market segment (Business Partner).","url":"9DCE9E4A5EC75F74.htm", "isparent":false,"children":[]},{"name":"Management System Purpose","comment":"","url":"CABFEF0661835A62.htm", "isparent":false,"children":[{"name":"Managed Product","comment":"","url":"45DF7704618E075E.htm", "isparent":false,"children":[]},{"name":"Managed Software Technology","comment":"A Managed Software Technology represents the characterics of a Software Technology under the management of a Technology Portfolio.","url":"E9B802705F51200E.htm", "isparent":false,"children":[]},{"name":"Managed Asset","comment":"","url":"F57AF6CA62D21904.htm", "isparent":false,"children":[{"name":"Managed Application","comment":"A Managed Application represents the characterics of an Application under the management of an Application Portfolio.","url":"C334EC9B5ECBB0D4.htm", "isparent":false,"children":[]},{"name":"Managed Hardware","comment":"","url":"26B850DB5EEAAA33.htm", "isparent":false,"children":[]},{"name":"Managed Software Technology","comment":"A Managed Software Technology represents the characterics of a Software Technology under the management of a Technology Portfolio.","url":"E9B802705F51200E.htm", "isparent":false}]}]}]}]},{"name":"Sketch Item","comment":"","url":"6712697E5EC92663.htm", "isparent":false,"children":[]},{"name":"Individual Component","comment":"","url":"4D9462AF5EC9F01F.htm", "isparent":false},{"name":"Legal Entity","comment":"","url":"A7AC82B45FF545BA.htm", "isparent":false,"children":[]},{"name":"Sketch Item","comment":"","url":"6712697E5EC92663.htm", "isparent":false},{"name":"Contextual Object (Type)","comment":"","url":"FA4FFCDE5EC86654.htm", "isparent":false}]}]}');
+$(document).ready(function(event) {
+var tree = CollapsibleTree("#categoryHierarchy");
+tree.init(hierarchy);
+});
+</script>
+</div>
+<button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button>
+<script>window.onscroll = function() {scrollFunction()};$(document).on('click', 'a[href^="#"]', function (event) {event.preventDefault();$('html, body').animate({scrollTop: $($.attr(this, 'href')).offset().top}, 500);});
+function showDiagOnClick(elem){ var x = document.getElementsByClassName('Relationship');var e = elem.getAttribute("value"); for (var i=0; i < x.length ;i++){x[i].style.display="none"; if (x[i].id == e){x[i].style.display="block";x[i].style.textAlign="left";}}}
+</script></html>

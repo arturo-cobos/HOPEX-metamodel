@@ -1,0 +1,308 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="keywords" content="">
+<meta name="description" content="">    
+<LINK REL="icon" HREF="../standard/assets/img/favicon.ico">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/bootstrap.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nav.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/eaportal.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/font-awesome.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/animate.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/datatables.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/grid.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nae.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/custom.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/chosen.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/prism.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery.dataTables.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jsTreeStyle.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.theme.css" media="screen" />
+<script type="text/javascript" src="../standard/assets/js/jquery-3.2.1.min.js" ></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-ui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.columnFilter.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3-force.v2.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.gui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.search.js"></script> 
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.util.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-2.1.1.min.js"></script>
+<script src="../standard/assets/js/ws_zoomtemplate_firefox.js"></script>
+<script src="../standard/assets/js/bootstrap.min.js"></script>
+<script src="../standard/assets/js/datatables.min.js"></script>
+<script src="../standard/assets/js/moment.min.js"></script>
+<script src="../standard/assets/js/datetime-moment.js"></script>
+<script src="../standard/assets/js/chartjs.min.js"></script>
+<script src="../standard/assets/js/searchindexcontent.json"></script>
+<script src="../standard/assets/js/anls.js"></script>
+<script src="../../../cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script src="../standard/assets/js/gauge.js"></script> 
+<script src="../standard/assets/js/domesticApi.js"></script> 
+<script src="../standard/assets/js/piecelabel.js"></script>
+<script src="../standard/assets/js/popper.min.js"></script>
+<script src="../standard/assets/js/custom.js"></script>
+<script src="../standard/assets/js/chosen.jquery.js"></script>
+<script src="../standard/assets/js/prism.js"></script>
+<script src="../standard/assets/js/init-chosen.js"></script>
+<script src="../standard/assets/js/chart-data-flow.js"></script>
+<script src="../standard/assets/js/chart-data-gantt.js"></script>
+<script type="module" src="../standard/assets/js/Fuse.esm.min.js"></script>
+<script type="module">
+import Fuse from '../standard/assets/js/Fuse.esm.min.js';
+$(document).ready(function () {
+console.log('getjson');
+window.$.getJSON('../standard/assets/js/searchindexcontent.json', function (response) {
+console.log('getjson ok');
+var isIndex = "";
+var url = window.location.pathname;
+var filename = url.substring(url.lastIndexOf('/')+1);
+if( filename.includes("index") || filename === "" ){
+isIndex = "pages/";
+} else {
+isIndex = "";
+}
+const fuse = new Fuse(response, {
+keys: ['title','text'],
+shouldSort: true,
+includeMatches : true,
+findAllMatches : true
+});
+$('#search-fuse').on('keyup', function () {
+let result = fuse.search($(this).val());
+console.log(result);
+let resultdiv = $('div.searchresults-fuse');
+if (result.length === 0) {
+resultdiv.hide();
+} else {
+resultdiv.empty();
+resultdiv.append('<table class="table-search" width="100%" cellspacing="0"><thead ><tr><th>Name</th><th>Object Type</th><th>Modification date</th></tr></thead><tbody>');
+
+for (let obj in result.slice(0,10)) {
+
+let searchObj = '<tr><td><a href="./'+ isIndex + result[obj].item.url + '">' + result[obj].item.title +'</a></td><td>' + result[obj].item.ObjectType + '</td><td>' + result[obj].item.ModificationDate + '</td></tr>' ;
+
+
+resultdiv.find('tbody').append(searchObj);
+}
+resultdiv.append('</tbody></table>');
+resultdiv.show();
+}
+});
+});
+});
+</script>
+<title>HOPEX Metamodel Overview (Beta Version)</title>
+</head>
+<nav class="navbar navbar-expand-md navbar-dark  navbar-mega"><!-- Brand --><!--<a class="navbar-brand" href="#">Navbar</a>--><a class="" href="../index.htm"><img class="logo-mega" src="../standard/assets/img/logo.png"  alt="">(Beta Version)</a><!-- Toggler/collapsibe Button --><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><!-- Navbar links -->
+<div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsibleNavbar"><div class="col-sm-auto col-md-auto col-lg-5"></div>
+<div class="col-sm-auto">
+<ul class="navbar-nav">      
+<li><a class="dropdown-item" href="ad30ce115ebf7e90.htm">EA Grid</a></li> 
+<li><a class="dropdown-item" href="fdd5018459bc3c6a.htm">EA Domains</a></li> 
+<li><a class="dropdown-item" href="07e731775ecc93f4.htm">Solutions</a></li> 
+<li><a class="dropdown-item" href="c5dfc62c54810c2c.htm">Glossary</a></li> 
+<li class="nav-item dropdown mx-1">
+<a class="nav-link" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</a>
+<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<li><a class="dropdown-item" href="5446555d5f88c32e.htm">Outcome Driven Metamodel</a></li> 
+<li><a class="dropdown-item" href="e1ccfc295f8f7b90.htm">Playbooks</a></li> 
+<li><a class="dropdown-item" href="42bc992862d20ea7.htm">Framework Mappings</a></li> 
+<li><a class="dropdown-item" href="e93aebb35fa20550.htm">Metamodel Patterns</a></li> 
+<li><a class="dropdown-item" href="d599fe87602b2b85.htm">References</a></li> 
+<li><a class="dropdown-item" href="333f3a7f5dde11de.htm">Legend</a></li> 
+</ul>									                                            
+</li>
+</ul>
+</div>
+<div class="col-sm-auto"><a class="nav-link search" href="#" onclick=showHideSearch("search-section-fuse")><i class="fa fa-search mr-1 form-control-feedback"></i></a></div>
+</div>
+</nav>
+<div id="search-section-fuse" style="display:none">>
+<div class="search_header"><span class="closesearch">&times;</span>
+<nav class="breadcrumb">
+<a class="breadcrumb-item" href="../index.htm">Home </a> 
+<span class="breadcrumb-item active">Search</span> 
+</nav>
+</div>
+<input id="search-fuse" placeholder="Search..."  name="q" onfocus="this.value=''" type="search">
+<div class="searchresults-fuse"></div>
+</div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>function showHideSearch(elementId) {var contentDivs = document.getElementsByClassName('content');var footerDivs = document.getElementsByClassName('footer'); var containerDivs = document.getElementsByClassName('container');var containerfluidDivs = document.getElementsByClassName('container-fluid');var x = document.getElementById(elementId);if (x.style.display === "none") {x.style.display = "block";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "none";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "none";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "none";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "none";}} else {x.style.display = "none";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "block";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "block";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "block";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "block";}}} ;<!-- END WIDGET DRILL DOWN --></script><script>$(document).ready(function() {$(window).scroll(function() {if ($(this).scrollTop() > 100) {$('.scrollup').fadeIn();} else {$('.scrollup').fadeOut();}});$('.scrollup').click(function() {$("html, body").animate({scrollTop: 0}, 600);return false;});});</script><script>
+var modal = document.getElementById("search-section-fuse");
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = "none";
+}
+}
+$(document).on('click', '.closesearch', function() {
+showHideSearch("search-section-fuse");
+
+
+
+
+
+});</script><div class="container-fluid col-lg-11"><nav class="breadcrumb"><a class="breadcrumb-item" href="../index.htm">Home</a> <span class="breadcrumb-item active">
+<a  href="02af0a215a1823ee.htm" target="_top">Dictionary of HOPEX patterns</a>&nbsp;/&nbsp;Architecture GRID Pattern</span></nav></div>
+<div class="container-fluid col-lg-11 content">
+<section class="fadeInDown animated"><a href="#idt" class="btn btn-d">DEFINITION</a> <a href="#grf" class="btn btn-d">CONCEPT GRAPH</a> <a href="#sub" class="btn btn-d">SUB-DOMAINS</a> <a href="#des" class="btn btn-d">CONCEPT DESCRIPTIONS</a> 
+</section>
+<a class="object-section-anchor" id="idt"></a>
+<section class="object-section">
+<h4>CONCEPT DOMAIN - Architecture GRID Pattern</h4><hr class="sectionbreak" /><table class="table table-vertical-headers table-set-col-width"><tr><th>Description</th><td class="description-text"><i>Pattern Domain</i><br/><div align="left" style="min-height: 12pt; ">The&#160;<b> Architecture GRID Pattern</b> domain bundles sub-domains used to model how a system, including an enterprise, operates/functions in its environment.</div><div align="left" style="min-height: 12pt; ">It includes <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s, <a href="d682ef5e56144e77.htm" target="_top"><b><u>Process</u></b></a>es, interactions, <a href="fe2203ca5c4f0fed.htm" target="_top"><b><u>Behavioral Rule</u></b></a>s, <a href="b181b98c54891882.htm" target="_top"><b><u>Capability</u></b></a>ies, <a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>s, <a href="e6f250185f772ee1.htm" target="_top"><b><u>Information Object</u></b></a>s and <a href="278678e95b2533d6.htm" target="_top"><b><u>Directive</u></b></a>s which constitute the columns of the EA GRID. </div><div></div></td></tr><tr><th>Dictionary</th><td><img src="../standard/dicsubjectarea.ico.gif"/>&nbsp;
+<a  href="02af0a215a1823ee.htm" target="_top">Dictionary of HOPEX patterns</a></td></tr><tr><th>Parent Domain</th><td><img src="../standard/business%20information%20environment.ico.gif"/>&nbsp;
+<a  href="e93aebb35fa20550.htm" target="_top">HOPEX Foundation Pattern Map</a>&nbsp;</td></tr>
+<tr><th>Domain dependencies</th><td><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="36166b8c6157b6b4.htm" target="_top">Aggregate Syntax</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="c30bd1505a5d97f9.htm" target="_top">Architecture Model Management</a>&nbsp;</td></tr></table></section>
+<a class="object-section-anchor" id="grf"></a>
+<section class="object-section">
+<h4>DOMAIN CONCEPT GRAPH</h4>
+<hr class="sectionbreak" />
+<a href="#" class="btn btn-d" value="Relationship1" onclick="showDiagOnClick(this)">Diagram</a>
+<a href="#" class="btn btn-d" value="Relationship2" onclick="showDiagOnClick(this)">Graph</a>
+<div class="Relationship" id="Relationship1">
+
+<map  name="36195A1261589159">
+  <area  href=#OBMK8C468EC7577252DF shape="polygon" coords="399, 66, 399, 53, 412, 53, 412, 66, 399, 66"   target="_top"  title="-">
+  
+  <area  href=#OBMK427C1DA464B5D5BC shape="polygon" coords="412, 66, 412, 53, 543, 53, 543, 66, 412, 66"   target="_top"  title="-">
+  
+  <area  href=#OBMK8C468EC7577252DF shape="polygon" coords="399, 80, 399, 66, 412, 66, 412, 80, 399, 80"   target="_top"  title="-">
+  
+  <area  href=#OBMK427C1D9F64B5D595 shape="polygon" coords="412, 80, 412, 66, 464, 66, 464, 80, 412, 80"   target="_top"  title="-">
+  
+  <area  href="427c1bdf64b5d235.htm" shape="rect" coords="388, 24, 559, 122"   target="_top"  title="-">
+  
+  <area  href=#OBMK24AE3D0F5ED1D469 shape="polygon" coords="49, 129, 49, 116, 198, 116, 198, 129, 49, 129"   target="_top"  title="-">
+  
+  <area  href=#OBMK4EDF72E95FC5BB1A shape="polygon" coords="49, 142, 49, 129, 198, 129, 198, 142, 49, 142"   target="_top"  title="-">
+  
+  <area  href=#OBMK986CD5CA5FFCA4D8 shape="polygon" coords="49, 155, 49, 142, 198, 142, 198, 155, 49, 155"   target="_top"  title="-">
+  
+  <area  href=#OBMK24AE3CF65ED1D426 shape="polygon" coords="49, 168, 49, 155, 198, 155, 198, 168, 49, 168"   target="_top"  title="-">
+  
+  <area  href=#OBMK24AE3D255ED1D5EF shape="polygon" coords="49, 181, 49, 168, 198, 168, 198, 181, 49, 181"   target="_top"  title="-">
+  
+  <area  href=#OBMK09D3B4AD621C735C shape="polygon" coords="49, 194, 49, 181, 198, 181, 198, 194, 49, 194"   target="_top"  title="-">
+  
+  <area  href=#OBMK71F594A460082E69 shape="polygon" coords="49, 207, 49, 194, 198, 194, 198, 207, 49, 207"   target="_top"  title="-">
+  
+  <area  href=#OBMK9E3939ED61920011 shape="polygon" coords="49, 220, 49, 207, 198, 207, 198, 220, 49, 220"   target="_top"  title="-">
+  
+  <area  href=#OBMK4EDF72E55FC5BADE shape="polygon" coords="49, 233, 49, 220, 198, 220, 198, 233, 49, 233"   target="_top"  title="-">
+  
+  <area  href=#OBMK24AE3D1E5ED1D56D shape="polygon" coords="49, 246, 49, 233, 198, 233, 198, 246, 49, 246"   target="_top"  title="-">
+  
+  <area  href=#OBMK24AE3D215ED1D5AE shape="polygon" coords="49, 259, 49, 246, 198, 246, 198, 259, 49, 259"   target="_top"  title="-">
+  
+  <area  href=#OBMK209C24DE5ED22B1E shape="polygon" coords="49, 272, 49, 259, 198, 259, 198, 272, 49, 272"   target="_top"  title="-">
+  
+  <area  href=#OBMK24AE3D185ED1D4EB shape="polygon" coords="49, 285, 49, 272, 198, 272, 198, 285, 49, 285"   target="_top"  title="-">
+  
+  <area  href=#OBMKF21DF5A2617B66B8 shape="polygon" coords="49, 298, 49, 285, 198, 285, 198, 298, 49, 298"   target="_top"  title="-">
+  
+  <area  href=#OBMK2B7063FE61BA0BAA shape="polygon" coords="49, 312, 49, 298, 198, 298, 198, 312, 49, 312"   target="_top"  title="-">
+  
+  <area  href=#OBMK24AE3D1B5ED1D52C shape="polygon" coords="49, 325, 49, 312, 198, 312, 198, 325, 49, 325"   target="_top"  title="-">
+  
+  <area  href=#OBMK24AE3D145ED1D4AA shape="polygon" coords="49, 338, 49, 325, 198, 325, 198, 338, 49, 338"   target="_top"  title="-">
+  
+  <area  href=#OBMKA2AF0CBC638E466E shape="polygon" coords="49, 351, 49, 338, 198, 338, 198, 351, 49, 351"   target="_top"  title="-">
+  
+  <area  href="36195bd5615892df.htm" shape="rect" coords="38, 86, 208, 367"   target="_top"  title="-">
+  
+  <area  href=#OBMK02F711DA600F4796 shape="polygon" coords="401, 191, 401, 178, 550, 178, 550, 191, 401, 191"   target="_top"  title="-">
+  
+  <area  href=#OBMK02F7102F600F4516 shape="polygon" coords="401, 204, 401, 191, 550, 191, 550, 204, 401, 204"   target="_top"  title="-">
+  
+  <area  href=#OBMK02F71024600F448E shape="polygon" coords="401, 217, 401, 204, 550, 204, 550, 217, 401, 217"   target="_top"  title="-">
+  
+  <area  href=#OBMK02F7101B600F444A shape="polygon" coords="401, 230, 401, 217, 550, 217, 550, 230, 401, 230"   target="_top"  title="-">
+  
+  <area  href=#OBMK02F71029600F44D2 shape="polygon" coords="401, 243, 401, 230, 550, 230, 550, 243, 401, 243"   target="_top"  title="-">
+  
+  <area  href=#OBMK02F71355600F4926 shape="polygon" coords="401, 256, 401, 243, 550, 243, 550, 256, 401, 256"   target="_top"  title="-">
+  
+  <area  href="36195a4261589246.htm" shape="rect" coords="390, 149, 560, 274"   target="_top"  title="-">
+  
+  <area  href=#OBMK05B02259600708EE shape="polygon" coords="249, 428, 249, 414, 398, 414, 398, 428, 249, 428"   target="_top"  title="-">
+  
+  <area  href=#OBMK30EFABC861F36D13 shape="polygon" coords="249, 441, 249, 428, 398, 428, 398, 441, 249, 441"   target="_top"  title="-">
+  
+  <area  href=#OBMK02F73447600F3FEE shape="polygon" coords="249, 454, 249, 441, 398, 441, 398, 454, 249, 454"   target="_top"  title="-">
+  
+  <area  href=#OBMKD6CD2ECD5AB98FCE shape="polygon" coords="249, 467, 249, 454, 398, 454, 398, 467, 249, 467"   target="_top"  title="-">
+  
+  <area  href=#OBMKD6CD2ED75AB98FDD shape="polygon" coords="249, 480, 249, 467, 398, 467, 398, 480, 249, 480"   target="_top"  title="-">
+  
+  <area  href=#OBMKD6CD2EC95AB98FBB shape="polygon" coords="249, 493, 249, 480, 398, 480, 398, 493, 249, 493"   target="_top"  title="-">
+  
+  <area  href=#OBMK5FA166085FDC2DB0 shape="polygon" coords="249, 506, 249, 493, 398, 493, 398, 506, 249, 506"   target="_top"  title="-">
+  
+  <area  href=#OBMK02F73464600F4078 shape="polygon" coords="249, 519, 249, 506, 398, 506, 398, 519, 249, 519"   target="_top"  title="-">
+  
+  <area  href="36195a3d6158921b.htm" shape="rect" coords="239, 385, 409, 535"   target="_top"  title="-">
+  
+  <area  href="36195a0461589079.htm" shape="rect" coords="0, 0, 602, 560"   target="_top"  title="The&#160; Architecture GRID Pattern domain bundles sub-domains used to model how a system, including an enterprise, operates/functions in its environment.">
+  
+</map>
+<img  src="../images/36195a0461589079_36195a1261589159_i.png" alt="../images/36195a0461589079_36195a1261589159_i.png" usemap="#36195A1261589159" height="560" width="602" border=0>
+
+</div>
+<hr class="sectionbreak" />
+<table class="table  table-set-col-width">
+<tr><th>Name</th> <th>Description</th> </tr>
+<tr>
+<td><img src="../standard/dic_graph.ico.gif"> 
+<a  href="02af0a4b5a182417.htm" target="_top">Operating Semantic</a></td>
+<td><i>Pattern Domain</i><br/>The&#160;<b> Operating Semantic</b> domain is used to model how a system (<a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>) operates/functions (<a href="986cd4ec5ffca3ac.htm" target="_top"><b><u>Behavior</u></b></a>) in its <a href="ca35f48a5fc48686.htm" target="_top"><b><u>Operating Eco-System</u></b></a> to produce <a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>s that benefit (value) to other <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s or affect (have an effect upon) these <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s.<br />It includes <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s, <a href="d682ef5e56144e77.htm" target="_top"><b><u>Process</u></b></a>es, <a href="333f35ee5dde0c8c.htm" target="_top"><b><u>Interaction Scenario</u></b></a>s, <a href="959320325ee7fe24.htm" target="_top"><b><u>Policy</u></b></a>(ies), <a href="b181b98c54891882.htm" target="_top"><b><u>Capability</u></b></a>(ies), <a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>s.<i><ul>References:<li><a href="../../../complexsystems.mst.edu/media/conference/complexsystems/documents/de_Weck_CAS_Keynote_Nov_2015_updated.pdf#page=40"><img src="../standard/extr.ico.gif">&nbsp;de Weck - The three dimensions of complexity</a></li> <li><a href="../resources/eagrid/eagrid-animation.gif"><img src="../standard/extr_bmp.ico.gif">&nbsp;Method Resources - Operating Model Animation</a></li></ul></i> </td>
+</tr>  
+<tr>
+<td><img src="../standard/dic_graph.ico.gif"> 
+<a  href="D6CD2C8B5AB98DA5.htm" target="_top">Information Pattern</a></td>
+<td><i>Pattern Domain</i><br/>The&#160;<b> Information Pattern</b> domain describes top level concepts used to describe information.</td>
+</tr>  
+<tr>
+<td><img src="../standard/dic_graph.ico.gif"> 
+<a  href="02F70FDC600F4179.htm" target="_top">Policy Pattern</a></td>
+<td><i>Pattern Domain</i><br/>The&#160;<b> Policy Pattern</b> domain defines <a href="278678e95b2533d6.htm" target="_top"><b><u>Directive</u></b></a>s and rules that constrain enterprise structures and behaviors.<i><ul>References:<li><a href="../../../www.omg.org/spec/BMM/1.3/formal-15-05-19.pdf#page=41"><img src="../standard/extr.ico.gif">&nbsp;OMG - BMM - Directive</a></li></ul></i> </td>
+</tr>  
+<tr>
+<td><img src="../standard/dic_graph.ico.gif"> 
+<a  href="427C1BDB64B5D1C7.htm" target="_top">Risk &amp; Threat</a></td>
+<td></td>
+</tr>  
+</table>
+</section>
+<div class="Relationship" id="Relationship2">
+<div id="klmm" style="width: 100vw; height: 100vh;" ></div>
+<!-- <script src="../standard/assets/js/keylines_domain.js"></script> -->
+<script >
+const data = {
+ type: 'LinkChart',
+  items: [
+  //nodes
+    {type: 'node', id:'36195A0461589079', t:"Architecture GRID Pattern", sh:'box', d:"The Architecture GRID Pattern domain bundles sub-domains used to model how a system, including an enterprise, operates/functions in its environment."},
+  //edges
+
+  ]
+}
+</script>
+<script src="../standard/assets/js/keylines_domain.js" type="module"></script>
+</div>
+</section>
+
+</div>
+<button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button>
+<script>window.onscroll = function() {scrollFunction()};$(document).on('click', 'a[href^="#"]', function (event) {event.preventDefault();$('html, body').animate({scrollTop: $($.attr(this, 'href')).offset().top}, 500);});function showDiagOnClick(elem){ var x = document.getElementsByClassName('Relationship');var e = elem.getAttribute("value"); for (var i=0; i < x.length ;i++){x[i].style.display="none"; if (x[i].id == e){x[i].style.display="block";x[i].style.textAlign="left";}}}
+</script></html>

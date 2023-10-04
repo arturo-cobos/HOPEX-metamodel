@@ -1,0 +1,259 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="keywords" content="">
+<meta name="description" content="">    
+<LINK REL="icon" HREF="../standard/assets/img/favicon.ico">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/bootstrap.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nav.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/eaportal.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/font-awesome.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/animate.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/datatables.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/grid.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nae.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/custom.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/chosen.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/prism.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery.dataTables.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jsTreeStyle.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.theme.css" media="screen" />
+<script type="text/javascript" src="../standard/assets/js/jquery-3.2.1.min.js" ></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-ui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.columnFilter.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3-force.v2.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.gui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.search.js"></script> 
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.util.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-2.1.1.min.js"></script>
+<script src="../standard/assets/js/ws_zoomtemplate_firefox.js"></script>
+<script src="../standard/assets/js/bootstrap.min.js"></script>
+<script src="../standard/assets/js/datatables.min.js"></script>
+<script src="../standard/assets/js/moment.min.js"></script>
+<script src="../standard/assets/js/datetime-moment.js"></script>
+<script src="../standard/assets/js/chartjs.min.js"></script>
+<script src="../standard/assets/js/searchindexcontent.json"></script>
+<script src="../standard/assets/js/anls.js"></script>
+<script src="../../../cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script src="../standard/assets/js/gauge.js"></script> 
+<script src="../standard/assets/js/domesticApi.js"></script> 
+<script src="../standard/assets/js/piecelabel.js"></script>
+<script src="../standard/assets/js/popper.min.js"></script>
+<script src="../standard/assets/js/custom.js"></script>
+<script src="../standard/assets/js/chosen.jquery.js"></script>
+<script src="../standard/assets/js/prism.js"></script>
+<script src="../standard/assets/js/init-chosen.js"></script>
+<script src="../standard/assets/js/chart-data-flow.js"></script>
+<script src="../standard/assets/js/chart-data-gantt.js"></script>
+<script type="module" src="../standard/assets/js/Fuse.esm.min.js"></script>
+<script type="module">
+import Fuse from '../standard/assets/js/Fuse.esm.min.js';
+$(document).ready(function () {
+console.log('getjson');
+window.$.getJSON('../standard/assets/js/searchindexcontent.json', function (response) {
+console.log('getjson ok');
+var isIndex = "";
+var url = window.location.pathname;
+var filename = url.substring(url.lastIndexOf('/')+1);
+if( filename.includes("index") || filename === "" ){
+isIndex = "pages/";
+} else {
+isIndex = "";
+}
+const fuse = new Fuse(response, {
+keys: ['title','text'],
+shouldSort: true,
+includeMatches : true,
+findAllMatches : true
+});
+$('#search-fuse').on('keyup', function () {
+let result = fuse.search($(this).val());
+console.log(result);
+let resultdiv = $('div.searchresults-fuse');
+if (result.length === 0) {
+resultdiv.hide();
+} else {
+resultdiv.empty();
+resultdiv.append('<table class="table-search" width="100%" cellspacing="0"><thead ><tr><th>Name</th><th>Object Type</th><th>Modification date</th></tr></thead><tbody>');
+
+for (let obj in result.slice(0,10)) {
+
+let searchObj = '<tr><td><a href="./'+ isIndex + result[obj].item.url + '">' + result[obj].item.title +'</a></td><td>' + result[obj].item.ObjectType + '</td><td>' + result[obj].item.ModificationDate + '</td></tr>' ;
+
+
+resultdiv.find('tbody').append(searchObj);
+}
+resultdiv.append('</tbody></table>');
+resultdiv.show();
+}
+});
+});
+});
+</script>
+<title>HOPEX Metamodel Overview (Beta Version)</title>
+</head>
+<nav class="navbar navbar-expand-md navbar-dark  navbar-mega"><!-- Brand --><!--<a class="navbar-brand" href="#">Navbar</a>--><a class="" href="../index.htm"><img class="logo-mega" src="../standard/assets/img/logo.png"  alt="">(Beta Version)</a><!-- Toggler/collapsibe Button --><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><!-- Navbar links -->
+<div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsibleNavbar"><div class="col-sm-auto col-md-auto col-lg-5"></div>
+<div class="col-sm-auto">
+<ul class="navbar-nav">      
+<li><a class="dropdown-item" href="ad30ce115ebf7e90.htm">EA Grid</a></li> 
+<li><a class="dropdown-item" href="fdd5018459bc3c6a.htm">EA Domains</a></li> 
+<li><a class="dropdown-item" href="07e731775ecc93f4.htm">Solutions</a></li> 
+<li><a class="dropdown-item" href="c5dfc62c54810c2c.htm">Glossary</a></li> 
+<li class="nav-item dropdown mx-1">
+<a class="nav-link" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</a>
+<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<li><a class="dropdown-item" href="5446555d5f88c32e.htm">Outcome Driven Metamodel</a></li> 
+<li><a class="dropdown-item" href="e1ccfc295f8f7b90.htm">Playbooks</a></li> 
+<li><a class="dropdown-item" href="42bc992862d20ea7.htm">Framework Mappings</a></li> 
+<li><a class="dropdown-item" href="e93aebb35fa20550.htm">Metamodel Patterns</a></li> 
+<li><a class="dropdown-item" href="d599fe87602b2b85.htm">References</a></li> 
+<li><a class="dropdown-item" href="333f3a7f5dde11de.htm">Legend</a></li> 
+</ul>									                                            
+</li>
+</ul>
+</div>
+<div class="col-sm-auto"><a class="nav-link search" href="#" onclick=showHideSearch("search-section-fuse")><i class="fa fa-search mr-1 form-control-feedback"></i></a></div>
+</div>
+</nav>
+<div id="search-section-fuse" style="display:none">>
+<div class="search_header"><span class="closesearch">&times;</span>
+<nav class="breadcrumb">
+<a class="breadcrumb-item" href="../index.htm">Home </a> 
+<span class="breadcrumb-item active">Search</span> 
+</nav>
+</div>
+<input id="search-fuse" placeholder="Search..."  name="q" onfocus="this.value=''" type="search">
+<div class="searchresults-fuse"></div>
+</div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>function showHideSearch(elementId) {var contentDivs = document.getElementsByClassName('content');var footerDivs = document.getElementsByClassName('footer'); var containerDivs = document.getElementsByClassName('container');var containerfluidDivs = document.getElementsByClassName('container-fluid');var x = document.getElementById(elementId);if (x.style.display === "none") {x.style.display = "block";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "none";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "none";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "none";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "none";}} else {x.style.display = "none";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "block";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "block";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "block";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "block";}}} ;<!-- END WIDGET DRILL DOWN --></script><script>$(document).ready(function() {$(window).scroll(function() {if ($(this).scrollTop() > 100) {$('.scrollup').fadeIn();} else {$('.scrollup').fadeOut();}});$('.scrollup').click(function() {$("html, body").animate({scrollTop: 0}, 600);return false;});});</script><script>
+var modal = document.getElementById("search-section-fuse");
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = "none";
+}
+}
+$(document).on('click', '.closesearch', function() {
+showHideSearch("search-section-fuse");
+
+
+
+
+
+});</script><div class="container-fluid col-lg-11" id="top"><nav class="breadcrumb"><a class="breadcrumb-item" href="../index.htm">Home </a> <span class="breadcrumb-item active"> Contextual Concept Type / Data Area Component</span> </nav></div>
+<div class="container-fluid col-lg-11 content">
+<section class="fadeInDown animated"><a href="#det" class="btn btn-d">IDENTITY</a> <a href="#ctx" class="btn btn-d">CONTEXT</a> <a href="#rel" class="btn btn-d">RELATIONSHIPS</a> <a href="#shi" class="btn btn-d">SUPER-SUB TYPE HIERARCHY</a></section>
+<a class="object-section-anchor" id="det"></a>
+<section class="object-section">
+<h4>CONTEXTUAL ENTITY - Data Area Component</h4>
+<hr class="sectionbreak" />
+<table class="table table-vertical-headers table-set-col-width">
+<tr><th>Description</th><td class="description-text"><i>Abstract Contextual Concept</i><br/><a href="325C32165EB02A4A.htm" target="_top"><b><u>Data Domain</u></b></a> that isa component of a <a href="6d2b80db5fbb700b.htm" target="_top"><b><u>Data Map</u></b></a>.</td></tr>		   
+</table>
+</section>
+</div>
+<div>
+<svg width="1280" height="320" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" overflow="hidden">
+<defs>
+<clipPath id="clip0"><rect x="0" y="0" width="1280" height="320"/></clipPath></defs>
+<g clip-path="url(#clip0)">
+<rect x="214" y="123" width="308" height="202" style="fill:#2FB772;"/>
+<a xlink:href="./6D2B80DB5FBB700B.htm">
+<text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="24" transform="translate(223.151 150)">Data Map</text>
+</a>
+<rect x="610" y="158" width="296" height="163" style="fill:#2FB772;"/>
+<a xlink:href="./325C32165EB02A4A.htm">
+<foreignObject x="615" y="158" width="290" height="160" font-weight="400" font-size="24" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <p xmlns="http://www.w3.org/1999/xhtml" style="text-align:center; vertical-align:middle;">Data Domain</p></foreignObject>
+</a>
+<path id="part"d="M271 201.5C271 191.283 279.283 183 289.5 183L445.5 183C455.717 183 464 191.283 464 201.5L464 275.5C464 285.717 455.717 294 445.5 294L289.5 294C279.283 294 271 285.717 271 275.5Z" stroke="#000000" stroke-width="4" stroke-miterlimit="8" style="fill:#FFFFFF;" fill-rule="evenodd"/>
+<foreignObject x="270" y="180" width="200" height="200" font-weight="400" font-size="24" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <p xmlns="http://www.w3.org/1999/xhtml" style="text-align:center">Data Area Component</p></foreignObject>
+<path d="M464.51 238 607.336 238.956 607.316 241.956 464.49 241ZM599.126 233.856 610.303 240.476 599.038 246.947C598.32 247.359 597.403 247.111 596.991 246.393 596.578 245.675 596.826 244.758 597.544 244.345L606.579 239.156 606.562 241.747 597.597 236.437C596.884 236.015 596.649 235.094 597.071 234.382 597.493 233.669 598.413 233.433 599.126 233.856Z"/>
+</g>
+</svg>
+</div>
+<section class="object-section">
+<h4>RELATIONSHIPS</h4> 
+<hr class="sectionbreak" />
+<a href="#" class="btn btn-d" value="Relationship1" onclick="showDiagOnClick(this)">Simple Graph</a>
+<a href="#" class="btn btn-d" value="Relationship2" onclick="showDiagOnClick(this)">Graph & Hierarchy</a>
+<a class="object-section-anchor" id="rel"></a>
+<div class="Relationship" id="Relationship1">
+<h3>Simple Graph</h3>
+<svg id="6D2B81965FBB71AD" height="301" width="1600" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" overflow="hidden">
+  <defs>
+    <marker id="Simple-6D2B81965FBB71AD__RelCircle" refX="3" refY="3" markerWidth="6" markerHeight="6">
+      <circle cx="3" cy="3" r="3" fill="#A52A00"></circle>
+    </marker>
+    <marker id="Simple-6D2B81965FBB71AD__RelArrowTip" refX="3" refY="3" markerWidth="8" markerHeight="6" orient="0">
+      <path d="M0,0 L6,2 L0,4" fill="#A52A00"></path>
+    </marker>
+  </defs>
+<g   transform="translate(585,150)">
+  <rect height="30"  width="150"  id="core-6D2B81965FBB71AD-0"  rx="3"  ry="3"  x="0"  y="-10"  stroke="#F4DB6F"/>
+<foreignObject x="0" y="-10" width="150" height="30" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:12; text-align:center"><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-6D2B81965FBB71AD').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-6D2B81965FBB71AD').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="#Relationship1">Data Area Component</a>
+  <span id="Desc-6D2B81965FBB71AD" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">Data Domain that isa component of a Data Map.  </span>
+</div></div></foreignObject>
+</g>
+</svg>
+
+</div>
+<div class="Relationship" id="Relationship2" style="display:none">
+<h3>Graph & Hierarchy</h3>
+<svg id="6D2B81965FBB71AD" height="301" width="1600" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" overflow="hidden">
+  <defs>
+    <marker id="Full-6D2B81965FBB71AD__RelCircle" refX="3" refY="3" markerWidth="6" markerHeight="6">
+      <circle cx="3" cy="3" r="3" fill="#A52A00"></circle>
+    </marker>
+    <marker id="Full-6D2B81965FBB71AD__RelArrowTip" refX="3" refY="3" markerWidth="8" markerHeight="6" orient="0">
+      <path d="M0,0 L6,2 L0,4" fill="#A52A00"></path>
+    </marker>
+  </defs>
+<g   transform="translate(585,160)">
+  <rect height="30"  width="150"  id="core-6D2B81965FBB71AD-0"  rx="3"  ry="3"  x="0"  y="-10"  stroke="#F4DB6F"/>
+<foreignObject x="0" y="-10" width="150" height="30" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:12; text-align:center"><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-6D2B81965FBB71AD').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-6D2B81965FBB71AD').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="#Relationship1">Data Area Component</a>
+  <span id="Desc-6D2B81965FBB71AD" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">Data Domain that isa component of a Data Map.  </span>
+</div></div></foreignObject>
+</g>
+</svg>
+
+</div>
+<a class="object-section-anchor" id="shi"></a>
+<section class="object-section">
+<h4>SUPER-SUB TYPES HIERARCHY</h4> 
+<hr class="sectionbreak" />
+<span>Left click on a node to toggle it. Right click to navigate through its page
+</section>
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<div id="categoryHierarchy"></div>
+ <script>
+var hierarchy = JSON.parse('{"name":"Data Area Component","comment":"Data Domain that isa component of a Data Map.","url":"6D2B81965FBB71AD.htm","parents":[],"children":[{"name":"Physical Domain Component","comment":"Physical Data Domain that is a part of a Physical Data Map.","url":"F4BE4C025EE18D1E.htm", "isparent":false,"children":[{"name":"Sub-Relational Domain","comment":"","url":"137D232B5EE2CCEE.htm", "isparent":false,"children":[]}]},{"name":"Logical Data Area Component","comment":"","url":"FD1BF4D65FBC69BE.htm", "isparent":false,"children":[]}]}');
+$(document).ready(function(event) {
+var tree = CollapsibleTree("#categoryHierarchy");
+tree.init(hierarchy);
+});
+</script>
+</div>
+<button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button>
+<script>window.onscroll = function() {scrollFunction()};$(document).on('click', 'a[href^="#"]', function (event) {event.preventDefault();$('html, body').animate({scrollTop: $($.attr(this, 'href')).offset().top}, 500);});
+function showDiagOnClick(elem){ var x = document.getElementsByClassName('Relationship');var e = elem.getAttribute("value"); for (var i=0; i < x.length ;i++){x[i].style.display="none"; if (x[i].id == e){x[i].style.display="block";x[i].style.textAlign="left";}}}
+</script></html>

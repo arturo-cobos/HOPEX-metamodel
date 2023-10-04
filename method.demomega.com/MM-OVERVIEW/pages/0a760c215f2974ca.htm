@@ -1,0 +1,342 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="keywords" content="">
+<meta name="description" content="">    
+<LINK REL="icon" HREF="../standard/assets/img/favicon.ico">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/bootstrap.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nav.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/eaportal.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/font-awesome.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/animate.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/datatables.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/grid.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nae.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/custom.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/chosen.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/prism.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery.dataTables.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jsTreeStyle.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.theme.css" media="screen" />
+<script type="text/javascript" src="../standard/assets/js/jquery-3.2.1.min.js" ></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-ui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.columnFilter.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3-force.v2.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.gui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.search.js"></script> 
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.util.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-2.1.1.min.js"></script>
+<script src="../standard/assets/js/ws_zoomtemplate_firefox.js"></script>
+<script src="../standard/assets/js/bootstrap.min.js"></script>
+<script src="../standard/assets/js/datatables.min.js"></script>
+<script src="../standard/assets/js/moment.min.js"></script>
+<script src="../standard/assets/js/datetime-moment.js"></script>
+<script src="../standard/assets/js/chartjs.min.js"></script>
+<script src="../standard/assets/js/searchindexcontent.json"></script>
+<script src="../standard/assets/js/anls.js"></script>
+<script src="../../../cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script src="../standard/assets/js/gauge.js"></script> 
+<script src="../standard/assets/js/domesticApi.js"></script> 
+<script src="../standard/assets/js/piecelabel.js"></script>
+<script src="../standard/assets/js/popper.min.js"></script>
+<script src="../standard/assets/js/custom.js"></script>
+<script src="../standard/assets/js/chosen.jquery.js"></script>
+<script src="../standard/assets/js/prism.js"></script>
+<script src="../standard/assets/js/init-chosen.js"></script>
+<script src="../standard/assets/js/chart-data-flow.js"></script>
+<script src="../standard/assets/js/chart-data-gantt.js"></script>
+<script type="module" src="../standard/assets/js/Fuse.esm.min.js"></script>
+<script type="module">
+import Fuse from '../standard/assets/js/Fuse.esm.min.js';
+$(document).ready(function () {
+console.log('getjson');
+window.$.getJSON('../standard/assets/js/searchindexcontent.json', function (response) {
+console.log('getjson ok');
+var isIndex = "";
+var url = window.location.pathname;
+var filename = url.substring(url.lastIndexOf('/')+1);
+if( filename.includes("index") || filename === "" ){
+isIndex = "pages/";
+} else {
+isIndex = "";
+}
+const fuse = new Fuse(response, {
+keys: ['title','text'],
+shouldSort: true,
+includeMatches : true,
+findAllMatches : true
+});
+$('#search-fuse').on('keyup', function () {
+let result = fuse.search($(this).val());
+console.log(result);
+let resultdiv = $('div.searchresults-fuse');
+if (result.length === 0) {
+resultdiv.hide();
+} else {
+resultdiv.empty();
+resultdiv.append('<table class="table-search" width="100%" cellspacing="0"><thead ><tr><th>Name</th><th>Object Type</th><th>Modification date</th></tr></thead><tbody>');
+
+for (let obj in result.slice(0,10)) {
+
+let searchObj = '<tr><td><a href="./'+ isIndex + result[obj].item.url + '">' + result[obj].item.title +'</a></td><td>' + result[obj].item.ObjectType + '</td><td>' + result[obj].item.ModificationDate + '</td></tr>' ;
+
+
+resultdiv.find('tbody').append(searchObj);
+}
+resultdiv.append('</tbody></table>');
+resultdiv.show();
+}
+});
+});
+});
+</script>
+<title>HOPEX Metamodel Overview (Beta Version)</title>
+</head>
+<nav class="navbar navbar-expand-md navbar-dark  navbar-mega"><!-- Brand --><!--<a class="navbar-brand" href="#">Navbar</a>--><a class="" href="../index.htm"><img class="logo-mega" src="../standard/assets/img/logo.png"  alt="">(Beta Version)</a><!-- Toggler/collapsibe Button --><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><!-- Navbar links -->
+<div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsibleNavbar"><div class="col-sm-auto col-md-auto col-lg-5"></div>
+<div class="col-sm-auto">
+<ul class="navbar-nav">      
+<li><a class="dropdown-item" href="ad30ce115ebf7e90.htm">EA Grid</a></li> 
+<li><a class="dropdown-item" href="fdd5018459bc3c6a.htm">EA Domains</a></li> 
+<li><a class="dropdown-item" href="07e731775ecc93f4.htm">Solutions</a></li> 
+<li><a class="dropdown-item" href="c5dfc62c54810c2c.htm">Glossary</a></li> 
+<li class="nav-item dropdown mx-1">
+<a class="nav-link" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</a>
+<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<li><a class="dropdown-item" href="5446555d5f88c32e.htm">Outcome Driven Metamodel</a></li> 
+<li><a class="dropdown-item" href="e1ccfc295f8f7b90.htm">Playbooks</a></li> 
+<li><a class="dropdown-item" href="42bc992862d20ea7.htm">Framework Mappings</a></li> 
+<li><a class="dropdown-item" href="e93aebb35fa20550.htm">Metamodel Patterns</a></li> 
+<li><a class="dropdown-item" href="d599fe87602b2b85.htm">References</a></li> 
+<li><a class="dropdown-item" href="333f3a7f5dde11de.htm">Legend</a></li> 
+</ul>									                                            
+</li>
+</ul>
+</div>
+<div class="col-sm-auto"><a class="nav-link search" href="#" onclick=showHideSearch("search-section-fuse")><i class="fa fa-search mr-1 form-control-feedback"></i></a></div>
+</div>
+</nav>
+<div id="search-section-fuse" style="display:none">>
+<div class="search_header"><span class="closesearch">&times;</span>
+<nav class="breadcrumb">
+<a class="breadcrumb-item" href="../index.htm">Home </a> 
+<span class="breadcrumb-item active">Search</span> 
+</nav>
+</div>
+<input id="search-fuse" placeholder="Search..."  name="q" onfocus="this.value=''" type="search">
+<div class="searchresults-fuse"></div>
+</div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>function showHideSearch(elementId) {var contentDivs = document.getElementsByClassName('content');var footerDivs = document.getElementsByClassName('footer'); var containerDivs = document.getElementsByClassName('container');var containerfluidDivs = document.getElementsByClassName('container-fluid');var x = document.getElementById(elementId);if (x.style.display === "none") {x.style.display = "block";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "none";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "none";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "none";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "none";}} else {x.style.display = "none";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "block";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "block";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "block";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "block";}}} ;<!-- END WIDGET DRILL DOWN --></script><script>$(document).ready(function() {$(window).scroll(function() {if ($(this).scrollTop() > 100) {$('.scrollup').fadeIn();} else {$('.scrollup').fadeOut();}});$('.scrollup').click(function() {$("html, body").animate({scrollTop: 0}, 600);return false;});});</script><script>
+var modal = document.getElementById("search-section-fuse");
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = "none";
+}
+}
+$(document).on('click', '.closesearch', function() {
+showHideSearch("search-section-fuse");
+
+
+
+
+
+});</script><div class="container-fluid col-lg-11"><nav class="breadcrumb"><a class="breadcrumb-item" href="../index.htm">Home</a> <span class="breadcrumb-item active">
+<a  href="533b53775c916e32.htm" target="_top">HOPEX - DoDAF 2</a>&nbsp;/&nbsp;HOPEX - DoDAF 2</span></nav></div>
+<div class="container-fluid col-lg-11 content">
+<section class="fadeInDown animated"><a href="#idt" class="btn btn-d">DEFINITION</a> <a href="#grf" class="btn btn-d">CONCEPT GRAPH</a> <a href="#sub" class="btn btn-d">SUB-DOMAINS</a> <a href="#des" class="btn btn-d">CONCEPT DESCRIPTIONS</a> 
+</section>
+<a class="object-section-anchor" id="idt"></a>
+<section class="object-section">
+<h4>CONCEPT DOMAIN - HOPEX - DoDAF 2</h4><hr class="sectionbreak" /><table class="table table-vertical-headers table-set-col-width"><tr><th>Description</th><td class="description-text">The Department of Defense Architecture Framework (DoDAF), Version 2.0 is the overarching, comprehensive framework and conceptual model enabling the development of architectures to facilitate the ability of Department of Defense (DoD) managers at all levels to make key decisions more effectively through organized information sharing across the Department, Joint Capability Areas (JCAs), Mission, Component, and Program boundaries. <div><br/><i>References:</i><br/><a href="https://dodcio.defense.gov/Library/DoD-Architecture-Framework/" target="_blank">DoDAF2 - The DoDAF Architecture Framework Version 2.02</a></div></td></tr><tr><th>Dictionary</th><td><img src="../standard/dicsubjectarea.ico.gif"/>&nbsp;
+<a  href="533b53775c916e32.htm" target="_top">HOPEX - DoDAF 2</a></td></tr><tr><th>Parent Domain</th><td><img src="../standard/business%20information%20environment.ico.gif"/>&nbsp;
+<a  href="07e731775ecc93f4.htm" target="_top">HOPEX Solutions</a>&nbsp;</td></tr><tr><th>Framework Mapping</th><td>
+<a  href="082e27b55f514b37.htm" target="_top">DoDAF Mapping</a></td></tr>
+<tr><th>Imported Domains</th><td><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="19dc1a30555649d9.htm" target="_top">Conceptual Operating Model</a>&nbsp;</td></tr></table></section>
+<a class="object-section-anchor" id="grf"></a>
+<section class="object-section">
+<h4>DOMAIN CONCEPT GRAPH</h4>
+<hr class="sectionbreak" />
+<a href="#" class="btn btn-d" value="Relationship1" onclick="showDiagOnClick(this)">Diagram</a>
+<a href="#" class="btn btn-d" value="Relationship2" onclick="showDiagOnClick(this)">Graph</a>
+<div class="Relationship" id="Relationship1">
+
+<map  name="81B882005F432D29">
+  <area  href=#OBMKC10CC7D85E941DE3 shape="polygon" coords="989, 388, 989, 375, 1002, 375, 1002, 388, 989, 388"   target="_top"  title="-">
+  
+  <area  href=477049f15f24103c.htm#OBMK477049F15F24103C shape="polygon" coords="1002, 388, 1002, 375, 1240, 375, 1240, 388, 1002, 388"   target="_top"  title="-">
+  
+  <area  href=#OBMKC10CC7D85E941DE3 shape="polygon" coords="989, 401, 989, 388, 1002, 388, 1002, 401, 989, 401"   target="_top"  title="-">
+  
+  <area  href=47704a005f24111e.htm#OBMK47704A005F24111E shape="polygon" coords="1002, 401, 1002, 388, 1176, 388, 1176, 401, 1002, 401"   target="_top"  title="-">
+  
+  <area  href=#OBMKC10CC7D85E941DE3 shape="polygon" coords="989, 415, 989, 401, 1002, 401, 1002, 415, 989, 415"   target="_top"  title="-">
+  
+  <area  href=477049d75f240e13.htm#OBMK477049D75F240E13 shape="polygon" coords="1002, 415, 1002, 401, 1234, 401, 1234, 415, 1002, 415"   target="_top"  title="-">
+  
+  <area  href="82b5835a5f431745.htm" shape="rect" coords="979, 345, 1266, 575"   target="_top"  title="-">
+  
+  <area  href=#OBMKC10CC7D85E941DE3 shape="polygon" coords="465, 647, 465, 634, 479, 634, 479, 647, 465, 647"   target="_top"  title="-">
+  
+  <area  href=9bba9c3c5f4310e5.htm#OBMK9BBA9C3C5F4310E5 shape="polygon" coords="479, 647, 479, 634, 709, 634, 709, 647, 479, 647"   target="_top"  title="-">
+  
+  <area  href=#OBMKC10CC7D85E941DE3 shape="polygon" coords="465, 660, 465, 647, 479, 647, 479, 660, 465, 660"   target="_top"  title="-">
+  
+  <area  href=9bba9cc45f431310.htm#OBMK9BBA9CC45F431310 shape="polygon" coords="479, 660, 479, 647, 737, 647, 737, 660, 479, 660"   target="_top"  title="-">
+  
+  <area  href=#OBMKC10CC7D85E941DE3 shape="polygon" coords="465, 674, 465, 660, 479, 660, 479, 674, 465, 674"   target="_top"  title="-">
+  
+  <area  href=9bba9d055f4313fc.htm#OBMK9BBA9D055F4313FC shape="polygon" coords="479, 674, 479, 660, 684, 660, 684, 674, 479, 674"   target="_top"  title="-">
+  
+  <area  href=#OBMKC10CC7D85E941DE3 shape="polygon" coords="465, 687, 465, 674, 479, 674, 479, 687, 465, 687"   target="_top"  title="-">
+  
+  <area  href=9bba9d2b5f4314e4.htm#OBMK9BBA9D2B5F4314E4 shape="polygon" coords="479, 687, 479, 674, 728, 674, 728, 687, 479, 687"   target="_top"  title="-">
+  
+  <area  href=#OBMKC10CC7D85E941DE3 shape="polygon" coords="465, 700, 465, 687, 479, 687, 479, 700, 465, 700"   target="_top"  title="-">
+  
+  <area  href=9bba9d545f4315d0.htm#OBMK9BBA9D545F4315D0 shape="polygon" coords="479, 700, 479, 687, 864, 687, 864, 700, 479, 700"   target="_top"  title="-">
+  
+  <area  href=#OBMKC10CC7D85E941DE3 shape="polygon" coords="465, 714, 465, 700, 479, 700, 479, 714, 465, 714"   target="_top"  title="-">
+  
+  <area  href=9bba9d905f4316bd.htm#OBMK9BBA9D905F4316BD shape="polygon" coords="479, 714, 479, 700, 819, 700, 819, 714, 479, 714"   target="_top"  title="-">
+  
+  <area  href="82b583535f431717.htm" shape="rect" coords="455, 605, 875, 783"   target="_top"  title="-">
+  
+  <area  href=#OBMKC10CC7D85E941DE3 shape="polygon" coords="31, 394, 31, 381, 44, 381, 44, 394, 31, 394"   target="_top"  title="-">
+  
+  <area  href=4a774b2a5f246e08.htm#OBMK4A774B2A5F246E08 shape="polygon" coords="44, 394, 44, 381, 248, 381, 248, 394, 44, 394"   target="_top"  title="-">
+  
+  <area  href=#OBMKC10CC7D85E941DE3 shape="polygon" coords="31, 408, 31, 394, 44, 394, 44, 408, 31, 408"   target="_top"  title="-">
+  
+  <area  href=4a774b465f246efa.htm#OBMK4A774B465F246EFA shape="polygon" coords="44, 408, 44, 394, 225, 394, 225, 408, 44, 408"   target="_top"  title="-">
+  
+  <area  href=#OBMKC10CC7D85E941DE3 shape="polygon" coords="31, 421, 31, 408, 44, 408, 44, 421, 31, 421"   target="_top"  title="-">
+  
+  <area  href=4a774b605f246fdc.htm#OBMK4A774B605F246FDC shape="polygon" coords="44, 421, 44, 408, 231, 408, 231, 421, 44, 421"   target="_top"  title="-">
+  
+  <area  href="82b583455f4316ec.htm" shape="rect" coords="20, 352, 282, 581"   target="_top"  title="-">
+  
+  <area  href=#OBMKC10CC7D85E941DE3 shape="polygon" coords="465, 436, 465, 423, 479, 423, 479, 436, 465, 436"   target="_top"  title="-">
+  
+  <area  href=1a5fbd595fd8045b.htm#OBMK1A5FBD595FD8045B shape="polygon" coords="479, 436, 479, 423, 705, 423, 705, 436, 479, 436"   target="_top"  title="-">
+  
+  <area  href=#OBMKC10CC7D85E941DE3 shape="polygon" coords="465, 449, 465, 436, 479, 436, 479, 449, 465, 449"   target="_top"  title="-">
+  
+  <area  href=89e392e85c918754.htm#OBMK89E392E85C918754 shape="polygon" coords="479, 449, 479, 436, 764, 436, 764, 449, 479, 449"   target="_top"  title="-">
+  
+  <area  href=#OBMKC10CC7D85E941DE3 shape="polygon" coords="465, 463, 465, 449, 479, 449, 479, 463, 465, 463"   target="_top"  title="-">
+  
+  <area  href=89e393ad5c918900.htm#OBMK89E393AD5C918900 shape="polygon" coords="479, 463, 479, 449, 759, 449, 759, 463, 479, 463"   target="_top"  title="-">
+  
+  <area  href=#OBMKC10CC7D85E941DE3 shape="polygon" coords="465, 476, 465, 463, 479, 463, 479, 476, 465, 476"   target="_top"  title="-">
+  
+  <area  href=f1f118af5f24515d.htm#OBMKF1F118AF5F24515D shape="polygon" coords="479, 476, 479, 463, 736, 463, 736, 476, 479, 476"   target="_top"  title="-">
+  
+  <area  href=#OBMKC10CC7D85E941DE3 shape="polygon" coords="465, 489, 465, 476, 479, 476, 479, 489, 465, 489"   target="_top"  title="-">
+  
+  <area  href=f1f1192c5f24533b.htm#OBMKF1F1192C5F24533B shape="polygon" coords="479, 489, 479, 476, 737, 476, 737, 489, 479, 489"   target="_top"  title="-">
+  
+  <area  href=#OBMKC10CC7D85E941DE3 shape="polygon" coords="465, 503, 465, 489, 479, 489, 479, 503, 465, 503"   target="_top"  title="-">
+  
+  <area  href=89e394025c9189e4.htm#OBMK89E394025C9189E4 shape="polygon" coords="479, 503, 479, 489, 772, 489, 772, 503, 479, 503"   target="_top"  title="-">
+  
+  <area  href=#OBMKC10CC7D85E941DE3 shape="polygon" coords="465, 516, 465, 503, 479, 503, 479, 516, 465, 516"   target="_top"  title="-">
+  
+  <area  href=cbbed3595f432ffa.htm#OBMKCBBED3595F432FFA shape="polygon" coords="479, 516, 479, 503, 691, 503, 691, 516, 479, 516"   target="_top"  title="-">
+  
+  <area  href="82b5833f5f4316c1.htm" shape="rect" coords="455, 394, 875, 546"   target="_top"  title="-">
+  
+  <area  href="82b583055f431693.htm" shape="rect" coords="455, 46, 875, 165"   target="_top"  title="-">
+  
+  <area  href=#OBMKC10CC7D85E941DE3 shape="polygon" coords="465, 255, 465, 242, 479, 242, 479, 255, 465, 255"   target="_top"  title="-">
+  
+  <area  href=0e0cf6085f1f2a08.htm#OBMK0E0CF6085F1F2A08 shape="polygon" coords="479, 255, 479, 242, 644, 242, 644, 255, 479, 255"   target="_top"  title="-">
+  
+  <area  href=#OBMKC10CC7D85E941DE3 shape="polygon" coords="465, 269, 465, 255, 479, 255, 479, 269, 465, 269"   target="_top"  title="-">
+  
+  <area  href=0e0cf66d5f1f2c32.htm#OBMK0E0CF66D5F1F2C32 shape="polygon" coords="479, 269, 479, 255, 667, 255, 667, 269, 479, 269"   target="_top"  title="-">
+  
+  <area  href=#OBMKC10CC7D85E941DE3 shape="polygon" coords="465, 282, 465, 269, 479, 269, 479, 282, 465, 282"   target="_top"  title="-">
+  
+  <area  href=4bcf7bff5f4f11a2.htm#OBMK4BCF7BFF5F4F11A2 shape="polygon" coords="479, 282, 479, 269, 683, 269, 683, 282, 479, 282"   target="_top"  title="-">
+  
+  <area  href=#OBMKC10CC7D85E941DE3 shape="polygon" coords="465, 295, 465, 282, 479, 282, 479, 295, 465, 295"   target="_top"  title="-">
+  
+  <area  href=4bcf7cfd5f4f16f7.htm#OBMK4BCF7CFD5F4F16F7 shape="polygon" coords="479, 295, 479, 282, 780, 282, 780, 295, 479, 295"   target="_top"  title="-">
+  
+  <area  href="82b582fe5f431663.htm" shape="rect" coords="455, 213, 875, 351"   target="_top"  title="-">
+  
+  <area  href="0a760c215f2974ca.htm" shape="rect" coords="1, 0, 1306, 804"   target="_top"  title="The Department of Defense Architecture Framework (DoDAF), Version 2.0 is the overarching, comprehensive framework and conceptual model enabling the development of architectures to facilitate the ability of Department of Defense (DoD) managers at all levels to make key decisions more effectively through organized information sharing across the Department, Joint Capability Areas (JCAs), Mission, Component, and Program boundaries. ">
+  
+</map>
+<img  src="../images/0a760c215f2974ca_81b882005f432d29_i.png" alt="../images/0a760c215f2974ca_81b882005f432d29_i.png" usemap="#81B882005F432D29" height="804" width="1305" border=0>
+
+</div>
+<hr class="sectionbreak" />
+<table class="table  table-set-col-width">
+<tr><th>Name</th> <th>Description</th> </tr>
+<tr>
+<td><img src="../standard/dic_graph.ico.gif"> 
+<a  href="89e38a4d5c917ba9.htm" target="_top">DODAF2 - Operational Viewpoint</a></td>
+<td>DoDAF-described Models in the Operational Viewpoint describe the tasks and activities, operational elements, and resource flow exchanges required to conduct operations. A pure operational model is materiel independent. However, operations and their relationships may be influenced by new technologies, such as collaboration technology, where process improvements are in practice before policy can reflect the new procedures. There may be some cases, as well, in which it is necessary to document the way activities are performed, given the restrictions of current systems, to examine ways in which new systems could facilitate streamlining the activities. In such cases, operational models may have materiel constraints and requirements that need to be addressed. For this reason, it may be necessary to include some high-level system architectural data to augment information onto the operational models.</td>
+</tr>  
+<tr>
+<td><img src="../standard/dic_graph.ico.gif"> 
+<a  href="89e392c05c9186d8.htm" target="_top">DODAF2 - All Viewpoint</a></td>
+<td>The AV DoDAF-described Models provide information pertinent to the entire Architectural Description rather than representing a distinct viewpoint. AV DoDAF-described Models provide an overview of the architecturectural effort including such things as the scope, context, rules, constraints, assumptions, and the derived vocabulary that pertains to the Architectural Description. It captures the intent of the Architectural Description to help ensure its continuity in the face of leadership, organizational, and other changes that can occur over a long development effort.</td>
+</tr>  
+<tr>
+<td><img src="../standard/dic_graph.ico.gif"> 
+<a  href="0e0cf5cf5f1f27fd.htm" target="_top">DODAF2 - Capability Viewpoint</a></td>
+<td>The Capability Viewpoint and the DoDAF-described Models within the viewpoint are introduced into DoDAF V2.0 to address the concerns of Capability Portfolio Managers. In particular, the Capability Models describe capability taxonomy and capability evolution.<i><ul>References:<li><a href="https://dodcio.defense.gov/Library/DoD-Architecture-Framework/dodaf20_capability/"><img src="../standard/extr.ico.gif">&nbsp;DoDAF2 - Capability Viewpoint</a></li></ul></i> </td>
+</tr>  
+<tr>
+<td><img src="../standard/dic_graph.ico.gif"> 
+<a  href="de29ed115f2266d4.htm" target="_top">DODAF2 - System Viewpoint</a></td>
+<td>he DoDAF-described Models within the Systems Viewpoint describes systems and interconnections providing for, or supporting, DoD functions. DoD functions include both warfighting and business functions. The Systems Models associate systems resources to the operational and capability requirements. These systems resources support the operational activities and facilitate the exchange of information. The Systems DoDAF-described Models are available for support of legacy systems. </td>
+</tr>  
+<tr>
+<td><img src="../standard/dic_graph.ico.gif"> 
+<a  href="f1f118335f244fc5.htm" target="_top">DODAF2 - Data and Information Viewpoint</a></td>
+<td>DoDAF-described Models within the Data and Information Viewpoint provide a means of portraying the operational and business information requirements and rules that are managed within and used as constraints on the organizations business activities.<i><ul>References:<li><a href="https://dodcio.defense.gov/Library/DoD-Architecture-Framework/dodaf20_data/"><img src="../standard/extr.ico.gif">&nbsp;DoDAF2 - Data and Information Viewpoint</a></li></ul></i> </td>
+</tr>  
+<tr>
+<td><img src="../standard/dic_graph.ico.gif"> 
+<a  href="477049c15f240c19.htm" target="_top">DODAF2 - Project Viewpoint</a></td>
+<td>The DoDAF-described Models within the Project Viewpoint describe how programs, projects, portfolios, or initiatives deliver capabilities, the organizations contributing to them, and dependencies between them. Previous versions of DoDAF took a traditional model of architecture in which descriptions of programs and projects were considered outside scope. To compensate for this, various DoDAF models represented the evolution of systems, technologies and standards (e.g., Systems and Services Evolution Description, Systems Technology Forecast, and Technical Standards Forecast).<i><ul>References:<li><a href="https://dodcio.defense.gov/Library/DoD-Architecture-Framework/dodaf20_project/"><img src="../standard/extr.ico.gif">&nbsp;DoDAF2 - Project Viewpoint</a></li></ul></i> </td>
+</tr>  
+</table>
+</section>
+<div class="Relationship" id="Relationship2">
+<div id="klmm" style="width: 100vw; height: 100vh;" ></div>
+<!-- <script src="../standard/assets/js/keylines_domain.js"></script> -->
+<script >
+const data = {
+ type: 'LinkChart',
+  items: [
+  //nodes
+    {type: 'node', id:'0A760C215F2974CA', t:"HOPEX - DoDAF 2", sh:'box', d:"The Department of Defense Architecture Framework (DoDAF), Version 2.0 is the overarching, comprehensive framework and conceptual model enabling the development of architectures to facilitate the ability of Department of Defense (DoD) managers at all levels to make key decisions more effectively through organized information sharing across the Department, Joint Capability Areas (JCAs), Mission, Component, and Program boundaries. "},
+  //edges
+
+  ]
+}
+</script>
+<script src="../standard/assets/js/keylines_domain.js" type="module"></script>
+</div>
+</section>
+
+</div>
+<button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button>
+<script>window.onscroll = function() {scrollFunction()};$(document).on('click', 'a[href^="#"]', function (event) {event.preventDefault();$('html, body').animate({scrollTop: $($.attr(this, 'href')).offset().top}, 500);});function showDiagOnClick(elem){ var x = document.getElementsByClassName('Relationship');var e = elem.getAttribute("value"); for (var i=0; i < x.length ;i++){x[i].style.display="none"; if (x[i].id == e){x[i].style.display="block";x[i].style.textAlign="left";}}}
+</script></html>

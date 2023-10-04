@@ -1,0 +1,522 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="keywords" content="">
+<meta name="description" content="">    
+<LINK REL="icon" HREF="../standard/assets/img/favicon.ico">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/bootstrap.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nav.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/eaportal.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/font-awesome.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/animate.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/datatables.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/grid.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nae.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/custom.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/chosen.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/prism.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery.dataTables.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jsTreeStyle.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.theme.css" media="screen" />
+<script type="text/javascript" src="../standard/assets/js/jquery-3.2.1.min.js" ></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-ui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.columnFilter.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3-force.v2.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.gui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.search.js"></script> 
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.util.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-2.1.1.min.js"></script>
+<script src="../standard/assets/js/ws_zoomtemplate_firefox.js"></script>
+<script src="../standard/assets/js/bootstrap.min.js"></script>
+<script src="../standard/assets/js/datatables.min.js"></script>
+<script src="../standard/assets/js/moment.min.js"></script>
+<script src="../standard/assets/js/datetime-moment.js"></script>
+<script src="../standard/assets/js/chartjs.min.js"></script>
+<script src="../standard/assets/js/searchindexcontent.json"></script>
+<script src="../standard/assets/js/anls.js"></script>
+<script src="../../../cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script src="../standard/assets/js/gauge.js"></script> 
+<script src="../standard/assets/js/domesticApi.js"></script> 
+<script src="../standard/assets/js/piecelabel.js"></script>
+<script src="../standard/assets/js/popper.min.js"></script>
+<script src="../standard/assets/js/custom.js"></script>
+<script src="../standard/assets/js/chosen.jquery.js"></script>
+<script src="../standard/assets/js/prism.js"></script>
+<script src="../standard/assets/js/init-chosen.js"></script>
+<script src="../standard/assets/js/chart-data-flow.js"></script>
+<script src="../standard/assets/js/chart-data-gantt.js"></script>
+<script type="module" src="../standard/assets/js/Fuse.esm.min.js"></script>
+<script type="module">
+import Fuse from '../standard/assets/js/Fuse.esm.min.js';
+$(document).ready(function () {
+console.log('getjson');
+window.$.getJSON('../standard/assets/js/searchindexcontent.json', function (response) {
+console.log('getjson ok');
+var isIndex = "";
+var url = window.location.pathname;
+var filename = url.substring(url.lastIndexOf('/')+1);
+if( filename.includes("index") || filename === "" ){
+isIndex = "pages/";
+} else {
+isIndex = "";
+}
+const fuse = new Fuse(response, {
+keys: ['title','text'],
+shouldSort: true,
+includeMatches : true,
+findAllMatches : true
+});
+$('#search-fuse').on('keyup', function () {
+let result = fuse.search($(this).val());
+console.log(result);
+let resultdiv = $('div.searchresults-fuse');
+if (result.length === 0) {
+resultdiv.hide();
+} else {
+resultdiv.empty();
+resultdiv.append('<table class="table-search" width="100%" cellspacing="0"><thead ><tr><th>Name</th><th>Object Type</th><th>Modification date</th></tr></thead><tbody>');
+
+for (let obj in result.slice(0,10)) {
+
+let searchObj = '<tr><td><a href="./'+ isIndex + result[obj].item.url + '">' + result[obj].item.title +'</a></td><td>' + result[obj].item.ObjectType + '</td><td>' + result[obj].item.ModificationDate + '</td></tr>' ;
+
+
+resultdiv.find('tbody').append(searchObj);
+}
+resultdiv.append('</tbody></table>');
+resultdiv.show();
+}
+});
+});
+});
+</script>
+<title>HOPEX Metamodel Overview (Beta Version)</title>
+</head>
+<nav class="navbar navbar-expand-md navbar-dark  navbar-mega"><!-- Brand --><!--<a class="navbar-brand" href="#">Navbar</a>--><a class="" href="../index.htm"><img class="logo-mega" src="../standard/assets/img/logo.png"  alt="">(Beta Version)</a><!-- Toggler/collapsibe Button --><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><!-- Navbar links -->
+<div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsibleNavbar"><div class="col-sm-auto col-md-auto col-lg-5"></div>
+<div class="col-sm-auto">
+<ul class="navbar-nav">      
+<li><a class="dropdown-item" href="ad30ce115ebf7e90.htm">EA Grid</a></li> 
+<li><a class="dropdown-item" href="fdd5018459bc3c6a.htm">EA Domains</a></li> 
+<li><a class="dropdown-item" href="07e731775ecc93f4.htm">Solutions</a></li> 
+<li><a class="dropdown-item" href="c5dfc62c54810c2c.htm">Glossary</a></li> 
+<li class="nav-item dropdown mx-1">
+<a class="nav-link" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</a>
+<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<li><a class="dropdown-item" href="5446555d5f88c32e.htm">Outcome Driven Metamodel</a></li> 
+<li><a class="dropdown-item" href="e1ccfc295f8f7b90.htm">Playbooks</a></li> 
+<li><a class="dropdown-item" href="42bc992862d20ea7.htm">Framework Mappings</a></li> 
+<li><a class="dropdown-item" href="e93aebb35fa20550.htm">Metamodel Patterns</a></li> 
+<li><a class="dropdown-item" href="d599fe87602b2b85.htm">References</a></li> 
+<li><a class="dropdown-item" href="333f3a7f5dde11de.htm">Legend</a></li> 
+</ul>									                                            
+</li>
+</ul>
+</div>
+<div class="col-sm-auto"><a class="nav-link search" href="#" onclick=showHideSearch("search-section-fuse")><i class="fa fa-search mr-1 form-control-feedback"></i></a></div>
+</div>
+</nav>
+<div id="search-section-fuse" style="display:none">>
+<div class="search_header"><span class="closesearch">&times;</span>
+<nav class="breadcrumb">
+<a class="breadcrumb-item" href="../index.htm">Home </a> 
+<span class="breadcrumb-item active">Search</span> 
+</nav>
+</div>
+<input id="search-fuse" placeholder="Search..."  name="q" onfocus="this.value=''" type="search">
+<div class="searchresults-fuse"></div>
+</div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>function showHideSearch(elementId) {var contentDivs = document.getElementsByClassName('content');var footerDivs = document.getElementsByClassName('footer'); var containerDivs = document.getElementsByClassName('container');var containerfluidDivs = document.getElementsByClassName('container-fluid');var x = document.getElementById(elementId);if (x.style.display === "none") {x.style.display = "block";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "none";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "none";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "none";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "none";}} else {x.style.display = "none";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "block";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "block";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "block";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "block";}}} ;<!-- END WIDGET DRILL DOWN --></script><script>$(document).ready(function() {$(window).scroll(function() {if ($(this).scrollTop() > 100) {$('.scrollup').fadeIn();} else {$('.scrollup').fadeOut();}});$('.scrollup').click(function() {$("html, body").animate({scrollTop: 0}, 600);return false;});});</script><script>
+var modal = document.getElementById("search-section-fuse");
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = "none";
+}
+}
+$(document).on('click', '.closesearch', function() {
+showHideSearch("search-section-fuse");
+
+
+
+
+
+});</script><div class="container-fluid col-lg-11"><nav class="breadcrumb"><a class="breadcrumb-item" href="../index.htm">Home</a> <span class="breadcrumb-item active">
+<a  href="c5dfc62c54810c2c.htm" target="_top">Dictionary of HOPEX concepts</a>&nbsp;/&nbsp;Enterprise Glossary</span></nav></div>
+<div class="container-fluid col-lg-11 content">
+<section class="fadeInDown animated"><a href="#idt" class="btn btn-d">DEFINITION</a> <a href="#grf" class="btn btn-d">CONCEPT GRAPH</a> <a href="#des" class="btn btn-d">CONCEPT DESCRIPTIONS</a> 
+</section>
+<a class="object-section-anchor" id="idt"></a>
+<section class="object-section">
+<h4>CONCEPT DOMAIN - Enterprise Glossary</h4><hr class="sectionbreak" /><table class="table table-vertical-headers table-set-col-width"><tr><th>Description</th><td class="description-text"><div align="left" style="min-height: 12pt; ">The&#160;<b> Enterprise Glossary</b> domain comprises the <a href="362fc4365b3c39b8.htm" target="_top"><b><u>Concept</u></b></a>s, relationships and <a href="362fc8aa5b3c3eeb.htm" target="_top"><b><u>Term</u></b></a>s used to build the glossary of an enterprise.</div><div align="left" style="min-height: 12pt; "><a href="d2a7dc875ee8740b.htm" target="_top"><b><u>Business Dictionary</u></b></a>(ies) aim at providing semantic context to <a href="30efab2361f36b46.htm" target="_top"><b><u>Business Dictionary Asset</u></b></a>s.</div><div></div></td></tr><tr><th>Dictionary</th><td><img src="../standard/dicsubjectarea.ico.gif"/>&nbsp;
+<a  href="c5dfc62c54810c2c.htm" target="_top">Dictionary of HOPEX concepts</a></td></tr><tr><th>Parent Domain</th><td><img src="../standard/business%20information%20environment.ico.gif"/>&nbsp;
+<a  href="fdd5018459bc3c6a.htm" target="_top">HOPEX Concept Map</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="624e632f5ed9542a.htm" target="_top">HOPEX - Information Architecture</a>&nbsp;</td></tr>
+<tr><th>Domain dependencies</th><td><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="07e72dd55ecc888a.htm" target="_top">Advanced Business Glossary</a>&nbsp;</td></tr>
+<tr><th>Consuming Method</th><td><img src="../standard/bpmn_subprocessfun.ico.gif"/>&nbsp;
+<a  href="cbd98c0b5fb6ad8d.htm" target="_top">Build the Enterprise Data Glossary</a>&nbsp;<br/><img src="../standard/bpmn_subprocessfun.ico.gif"/>&nbsp;
+<a  href="8dd48fd75fb64a57.htm" target="_top">Rationalize the use of data in projects</a>&nbsp;</td></tr></table></section>
+<a class="object-section-anchor" id="grf"></a>
+<section class="object-section">
+<h4>DOMAIN CONCEPT GRAPH</h4>
+<hr class="sectionbreak" />
+<a href="#" class="btn btn-d" value="Relationship1" onclick="showDiagOnClick(this)">Diagram</a>
+<a href="#" class="btn btn-d" value="Relationship2" onclick="showDiagOnClick(this)">Graph</a>
+<div class="Relationship" id="Relationship1">
+
+<map  name="02AF09005A1821FF">
+  <area  href=#OBMK7DB00D1361F99F3D shape="polygon" coords="773, 397, 737, 385, 739, 375, 776, 386"    title="-">
+  
+  <area  href=#OBMK7DB00D0C61F99EF7 shape="polygon" coords="520, 437, 737, 375, 739, 385, 523, 447"    title="-">
+  
+  <area  href=#OBMK7DB00D0561F99EB1 shape="polygon" coords="530, 323, 739, 375, 737, 385, 527, 333"    title="-">
+  
+  <area  href=30efa7f661f369c7.htm#OBMK30EFA7F661F369C7 shape="polygon" coords="313, 294, 326, 294, 326, 308, 195, 308, 195, 294, 313, 294"   target="_top"  title="-">
+  
+  <area  href=30efabd661f36d4d.htm shape="polygon" coords="177, 305, 326, 305, 326, 316, 177, 316"   target="_top"  title="-">
+  
+  <area  href=#OBMKE8BFF42D5EBB8A32 shape="polygon" coords="769, 383, 768, 360, 779, 360, 780, 382"    title="-">
+  
+  <area  href=229b34eb5b3f79d2.htm#OBMK229B34EB5B3F79D2 shape="polygon" coords="735, 373, 735, 362, 814, 362, 814, 373, 735, 373"   target="_top"  title="A&#160; Conceptual Entity is the representation of any tangible or intanglible resource or state of such resource that is of interest to understand the enterprises, its data, resources and activities.">
+  
+  <area  href=ec16ee36442800d3.htm#OBMKEC16EE36442800D3 shape="polygon" coords="753, 405, 753, 391, 797, 391, 797, 405, 753, 405"   target="_top"  title="A concept is a statement expressing the essential nature of a being, an object, a word through its essential properties and characteristics or its specific qualities.">
+  
+  <area  href="362fc4365b3c39b8.htm" shape="rect" coords="703, 360, 847, 407"   target="_top"  title="A&#160; Concept is the representation of any tangible or intanglible entity that is of interest to understand the enterprises, its data, resources and activities.">
+  
+  <area  href=#OBMK137D32935EE27ADC shape="polygon" coords="446, 95, 446, 274, 436, 274, 436, 95"    title="Top level concept map of the enterprise or of one its transformation stages.">
+  
+  <area  href=29df685860086c52.htm#OBMK29DF685860086C52 shape="polygon" coords="338, 65, 305, 65, 305, 78, 249, 78, 249, 65, 338, 65"   target="_top"  title="-">
+  
+  <area  href=d770dd345ef4c14f.htm shape="polygon" coords="187, 59, 362, 60, 361, 71, 186, 70"   target="_top"  title="-">
+  
+  <area  href=29df5ef660085f52.htm#OBMK29DF5EF660085F52 shape="polygon" coords="403, 50, 403, 39, 470, 39, 470, 50, 403, 50"   target="_top"  title="An&#160; Initiative Stage is a past, current or future state of an&#160; Unduring Initiative.">
+  
+  <area  href=daf320b15e597a39.htm#OBMKDAF320B15E597A39 shape="polygon" coords="391, 76, 391, 63, 482, 63, 482, 76, 391, 76"   target="_top"  title="-">
+  
+  <area  href="036a3de3548f229e.htm" shape="rect" coords="362, 37, 511, 96"   target="_top"  title="An&#160; Enterprise Stage is a past, current or future state of the enterprise. ">
+  
+  <area  href=81f182ab646c0dfa.htm#OBMK81F182AB646C0DFA shape="polygon" coords="203, 137, 174, 137, 174, 150, 60, 150, 60, 137, 203, 137"   target="_top"  title="-">
+  
+  <area  href=2b588c2b5ef08eef.htm shape="polygon" coords="104, 106, 104, 170, 93, 170, 93, 106"   target="_top"  title="-">
+  
+  <area  href=#OBMKD2A7DCC25EE87575 shape="polygon" coords="99, 283, 100, 274, 110, 275, 109, 284"    title="-">
+  
+  <area  href=#OBMKE3B8E4595EBB40DD shape="polygon" coords="621, 453, 666, 453, 666, 464, 621, 464"    title="-">
+  
+  <area  href=E3B8E4595EBB40DA.htm shape="polygon" coords="530, 453, 666, 453, 666, 464, 530, 464"   target="_top"  title="-">
+  
+  <area  href=#OBMKE3B8E4595EBB4111 shape="polygon" coords="530, 453, 575, 453, 575, 464, 530, 464"    title="-">
+  
+  <area  href=24ae4a185ed16aaa.htm#OBMK24AE4A185ED16AAA shape="polygon" coords="52, 298, 52, 287, 149, 287, 149, 298, 52, 298"   target="_top"  title="An&#160; Information Dictionary is a dictionary of&#160; Information Assets used to describe an information architecture. This includes:">
+  
+  <area  href=ec16ee2b442800c6.htm#OBMKEC16EE2B442800C6 shape="polygon" coords="53, 329, 53, 316, 148, 316, 148, 329, 53, 329"   target="_top"  title="A Business Dictionary is a branch of knowledge, a discipline or a field of study.">
+  
+  <area  href="d2a7dc875ee8740b.htm" shape="rect" coords="23, 284, 178, 347"   target="_top"  title="A&#160; Business Dictionary is a cluster of Business Dictionary Assets whose existence and meaning are defined by the&#160; Business Dictionary.">
+  
+  <area  href=d342d91a5b121454.htm#OBMKD342D91A5B121454 shape="polygon" coords="45, 50, 45, 39, 155, 39, 155, 50, 45, 50"   target="_top"  title="An&#160; Architecture Namespace is a Model Namespace&#160; that packages Architecture Blocks used to describe the architecture of the enterprise.">
+  
+  <area  href=d321c226601262ae.htm#OBMKD321C226601262AE shape="polygon" coords="61, 61, 61, 50, 140, 50, 140, 61, 61, 61"   target="_top"  title="An&#160; Enduring Initiative is a long term Initiative which involves roadmapping and governance. Enterprises and their Management Systems are typical&#160; Enduring Initiatives.">
+  
+  <area  href=50666200529c2b9a.htm#OBMK50666200529C2B9A shape="polygon" coords="75, 87, 75, 74, 126, 74, 126, 87, 75, 87"   target="_top"  title="An Enterprise is a purposeful undertaking, conducted by one or more organizations, aiming at delivering goods and services, in accordance with the enterprise mission in its changing environment.">
+  
+  <area  href="b181b82a54891668.htm" shape="rect" coords="13, 36, 187, 106"   target="_top"  title="An&#160; Enterprise is an Enduring Initiative that delivers added-value Products (goods &amp; services) to its target Customers.">
+  
+  <area  href=#OBMK0DD20F125EBC0B2A shape="polygon" coords="794, 549, 801, 549, 801, 527, 811, 527, 811, 560, 794, 560"    title="-">
+  
+  <area  href=0dd20f125ebc0b26.htm shape="polygon" coords="749, 527, 749, 549, 801, 549, 801, 527, 811, 527, 811, 560, 738, 560, 738, 527"   target="_top"  title="-">
+  
+  <area  href=#OBMK0DD20F135EBC0B4C shape="polygon" coords="749, 527, 749, 549, 755, 549, 755, 560, 738, 560, 738, 527"    title="-">
+  
+  <area  href=#OBMKF654F7E85EBB76FE shape="polygon" coords="797, 277, 827, 277, 827, 298, 817, 298, 817, 287, 797, 287"    title="-">
+  
+  <area  href=f654f7e85ebb76fa.htm shape="polygon" coords="727, 298, 727, 277, 827, 277, 827, 298, 817, 298, 817, 287, 738, 287, 738, 298"   target="_top"  title="Relationship between a source Conceptual Entity and a target Conceptual Entity.">
+  
+  <area  href=#OBMKF654F7E85EBB7719 shape="polygon" coords="727, 298, 727, 277, 757, 277, 757, 287, 738, 287, 738, 298"    title="-">
+  
+  <area  href=#OBMKF654F7225EBB757E shape="polygon" coords="779, 453, 779, 468, 769, 468, 768, 453"    title="-">
+  
+  <area  href=f654f7225ebb757a.htm shape="polygon" coords="779, 422, 779, 468, 769, 468, 768, 423"   target="_top"  title="Immutable characteristics of a Conceptual Entity.">
+  
+  <area  href=#OBMKF654F7225EBB75A3 shape="polygon" coords="779, 423, 779, 438, 768, 438, 768, 423"    title="-">
+  
+  <area  href=#OBMKDD25DDEE5EBB09A9 shape="polygon" coords="466, 528, 483, 528, 483, 501, 494, 501, 494, 539, 466, 539"    title="-">
+  
+  <area  href=DD25DDEE5EBB09A5.htm shape="polygon" coords="395, 501, 395, 528, 483, 528, 483, 501, 494, 501, 494, 539, 384, 539, 384, 501"   target="_top"  title="-">
+  
+  <area  href=#OBMKDD25DDEF5EBB09CA shape="polygon" coords="395, 501, 395, 528, 411, 528, 411, 539, 384, 539, 384, 501"    title="-">
+  
+  <area  href=#OBMKDD25DE465EBB0B49 shape="polygon" coords="391, 400, 391, 431, 380, 431, 380, 400"    title="-">
+  
+  <area  href=DD25DE465EBB0B45.htm shape="polygon" coords="391, 338, 391, 431, 380, 431, 380, 338"   target="_top"  title="-">
+  
+  <area  href=#OBMKDD25DE465EBB0B64 shape="polygon" coords="391, 338, 391, 369, 380, 369, 380, 338"    title="-">
+  
+  <area  href=#OBMKDD25DDB95EBB089F shape="polygon" coords="494, 400, 494, 431, 484, 431, 484, 400"    title="-">
+  
+  <area  href=DD25DDB95EBB089B.htm shape="polygon" coords="494, 338, 494, 431, 484, 431, 484, 338"   target="_top"  title="-">
+  
+  <area  href=#OBMKDD25DDB95EBB08C8 shape="polygon" coords="494, 338, 494, 369, 484, 369, 484, 338"    title="-">
+  
+  <area  href=362fc8045b3c3e65.htm#OBMK362FC8045B3C3E65 shape="polygon" coords="732, 310, 732, 299, 815, 299, 815, 310, 732, 310"   target="_top"  title="A&#160; Conceptual Object is the representation of any tangible or intanglible resource, or its respective state, that is critical for comprehending an enterprise, including its data, resources, and activities.">
+  
+  <area  href=d6cd2cea5ab98e5f.htm#OBMKD6CD2CEA5AB98E5F shape="polygon" coords="734, 321, 734, 310, 813, 310, 813, 321, 734, 321"   target="_top"  title="An&#160; Information Entity is an Information Object that is not fundamentally defined by its attributes, but rather by its continuity.">
+  
+  <area  href=fbfffe904cf4002e.htm#OBMKFBFFFE904CF4002E shape="polygon" coords="700, 348, 700, 334, 847, 334, 847, 348, 700, 348"   target="_top"  title="-">
+  
+  <area  href="229b34eb5b3f79d2.htm" shape="rect" coords="695, 298, 852, 423"   target="_top"  title="A&#160; Conceptual Entity is the representation of any tangible or intanglible resource or state of such resource that is of interest to understand the enterprises, its data, resources and activities.">
+  
+  <area  href=#OBMK4150CAA95ECC5340 shape="polygon" coords="740, 468, 740, 387, 775, 387, 775, 397, 750, 397, 750, 468"    title="-">
+  
+  <area  href=362fce9e5b3c3fe1.htm shape="polygon" coords="883, 437, 1001, 437, 1001, 447, 883, 447"   target="_top"  title="Term used to identify a Conceptual Object.">
+  
+  <area  href=362ff6155b3c473e.htm shape="polygon" coords="883, 486, 999, 486, 999, 497, 883, 497"   target="_top"  title="Term that is a synonym used as an alternate name for a Conceptual Object.">
+  
+  <area  href=362fcf9f5b3c4058.htm shape="polygon" coords="1074, 509, 1074, 613, 1063, 613, 1063, 509"   target="_top"  title="-">
+  
+  <area  href=0000000080000016.htm#OBMK0000000080000016 shape="polygon" coords="1048, 648, 1048, 635, 1095, 635, 1095, 648, 1048, 648"   target="_top"  title="Language available">
+  
+  <area  href="362fcf945b3c4030.htm" shape="rect" coords="1003, 613, 1139, 666"   target="_top"  title="-">
+  
+  <area  href=362fc8045b3c3e65.htm#OBMK362FC8045B3C3E65 shape="polygon" coords="733, 482, 733, 471, 815, 471, 815, 482, 733, 482"   target="_top"  title="A&#160; Conceptual Object is the representation of any tangible or intanglible resource, or its respective state, that is critical for comprehending an enterprise, including its data, resources, and activities.">
+  
+  <area  href=d7f90c675f737699.htm#OBMKD7F90C675F737699 shape="polygon" coords="729, 493, 729, 482, 819, 482, 819, 493, 729, 493"   target="_top"  title="An&#160; Information Property is an Information Object that represents a characteristic of an Information Entity.">
+  
+  <area  href=1072774154a17812.htm#OBMK1072774154A17812 shape="polygon" coords="735, 525, 735, 511, 813, 511, 813, 525, 735, 525"   target="_top"  title="A category of linguistic unit used to represent properties of a concept: name, description, etc.">
+  
+  <area  href="362fc5a85b3c3c03.htm" shape="rect" coords="702, 469, 846, 528"   target="_top"  title="A&#160; Concept Property is an immutable factual characteristic of a Conceptual Entity.Example: names, amounts, etc.">
+  
+  <area  href=30efab2361f36b46.htm#OBMK30EFAB2361F36B46 shape="polygon" coords="1007, 441, 1007, 430, 1121, 430, 1121, 441, 1007, 441"   target="_top"  title="An&#160; Business Dictionary Asset is an Information Asset involved in informative descriptions of the enterprise.">
+  
+  <area  href=ec16eede442800e3.htm#OBMKEC16EEDE442800E3 shape="polygon" coords="1047, 473, 1047, 460, 1081, 460, 1081, 473, 1047, 473"   target="_top"  title="A term is a word or group of words that is used for a specific meaning in a specific context.">
+  
+  <area  href="362fc8aa5b3c3eeb.htm" shape="rect" coords="992, 428, 1136, 509"   target="_top"  title="A&#160; Term is word or sentence used to name a Conceptual Object.">
+  
+  <area  href=30efab2361f36b46.htm#OBMK30EFAB2361F36B46 shape="polygon" coords="382, 445, 382, 434, 495, 434, 495, 445, 382, 445"   target="_top"  title="An&#160; Business Dictionary Asset is an Information Asset involved in informative descriptions of the enterprise.">
+  
+  <area  href=d6cd116d5ab97525.htm#OBMKD6CD116D5AB97525 shape="polygon" coords="394, 456, 394, 445, 483, 445, 483, 456, 394, 456"   target="_top"  title="An&#160; Information Domain is a group of Information Entity(ies) which constitutes a unit a knowlege required by an Agent to operate or required during a Process execution.">
+  
+  <area  href=e244e3164fc83552.htm#OBMKE244E3164FC83552 shape="polygon" coords="402, 488, 402, 474, 475, 474, 475, 488, 402, 488"   target="_top"  title="A business information area is a sub-set of elements of a subject area that reduces the scope of a field.">
+  
+  <area  href="203b8ff05a5f43fe.htm" shape="rect" coords="346, 431, 531, 501"   target="_top"  title="A&#160; Concept Domain is a subset of the Concepts of a Business Dictionary that are relevant to an Activity Domain.">
+  
+  <area  href=30efab2361f36b46.htm#OBMK30EFAB2361F36B46 shape="polygon" coords="382, 288, 382, 277, 495, 277, 495, 288, 382, 288"   target="_top"  title="An&#160; Business Dictionary Asset is an Information Asset involved in informative descriptions of the enterprise.">
+  
+  <area  href=d6cd2d8e5ab98edc.htm#OBMKD6CD2D8E5AB98EDC shape="polygon" coords="401, 299, 401, 288, 476, 288, 476, 299, 401, 299"   target="_top"  title="An&#160; Information Map is a top level grouping of Information Domains.">
+  
+  <area  href=0afb1de2588a1c15.htm#OBMK0AFB1DE2588A1C15 shape="polygon" coords="393, 331, 393, 317, 484, 317, 484, 331, 393, 331"   target="_top"  title="-">
+  
+  <area  href="203B8FDB5A5F43DD.htm" shape="rect" coords="346, 274, 531, 338"   target="_top"  title="A&#160; Concept Domain Map is a top level assembly of Concept Domains that defines the scope of information that Management System is responsible of.">
+  
+  <area  href=30efab2361f36b46.htm#OBMK30EFAB2361F36B46 shape="polygon" coords="718, 210, 718, 199, 832, 199, 832, 210, 718, 210"   target="_top"  title="An&#160; Business Dictionary Asset is an Information Asset involved in informative descriptions of the enterprise.">
+  
+  <area  href=43ee3c7963725899.htm#OBMK43EE3C7963725899 shape="polygon" coords="738, 221, 738, 210, 812, 210, 812, 221, 738, 221"   target="_top"  title="A&#160; Business Object is an aspect of any tangible or intanglible resource or state of such resource, that can be the subject of a business transaction.">
+  
+  <area  href=e6f250185f772ee1.htm#OBMKE6F250185F772EE1 shape="polygon" coords="734, 231, 734, 221, 817, 221, 817, 231, 734, 231"   target="_top"  title="An&#160; Information Object&#160; represents anything that can be communicated or memorized by an Agent in order to produce its Outcomes.">
+  
+  <area  href=aeacfb3c4eae21a3.htm#OBMKAEACFB3C4EAE21A3 shape="polygon" coords="706, 258, 706, 245, 844, 245, 844, 258, 706, 258"   target="_top"  title="-">
+  
+  <area  href="362fc8045b3c3e65.htm" shape="rect" coords="667, 197, 884, 586"   target="_top"  title="A&#160; Conceptual Object is the representation of any tangible or intanglible resource, or its respective state, that is critical for comprehending an enterprise, including its data, resources, and activities.">
+  
+  <area  href=eb5e1fbe578552e0.htm#OBMKEB5E1FBE578552E0 shape="polygon" coords="26, 199, 26, 186, 184, 186, 184, 199, 26, 199"   target="_top"  title="-">
+  
+  <area  href="24ae4a185ed16aaa.htm" shape="rect" coords="21, 170, 189, 378"   target="_top"  title="An&#160; Information Dictionary is a dictionary of&#160; Information Assets used to describe an information architecture. This includes:">
+  
+  <area  href=30efa75761f367fe.htm#OBMK30EFA75761F367FE shape="polygon" coords="698, 170, 698, 159, 779, 159, 779, 170, 698, 170"   target="_top"  title="An&#160; Information Asset is a Model Building Block involved in the description of information.">
+  
+  <area  href="30efab2361f36b46.htm" shape="rect" coords="326, 157, 1151, 604"   target="_top"  title="An&#160; Business Dictionary Asset is an Information Asset involved in informative descriptions of the enterprise.">
+  
+  <area  href="02af08f05a1821d3.htm" shape="rect" coords="0, 0, 1189, 695"   target="_top"  title="The&#160; Enterprise Glossary domain comprises the Concepts, relationships and Terms used to build the glossary of an enterprise.">
+  
+</map>
+<img  src="../images/02af08f05a1821d3_02af09005a1821ff_i.png" alt="../images/02af08f05a1821d3_02af09005a1821ff_i.png" usemap="#02AF09005A1821FF" height="695" width="1189" border=0>
+
+</div>
+<div class="Relationship" id="Relationship2">
+<div id="klmm" style="width: 100vw; height: 100vh;" ></div>
+<!-- <script src="../standard/assets/js/keylines_domain.js"></script> -->
+<script >
+const data = {
+ type: 'LinkChart',
+  items: [
+  //nodes
+    {type: 'node', id:'02AF08F05A1821D3', t:"Enterprise Glossary", sh:'box', d:"The Enterprise Glossary domain comprises the Concepts, relationships and Terms used to build the glossary of an enterprise."},
+    {type: 'node', id:'362FC8045B3C3E65', t:"Conceptual Object", parentId:'30EFAB2361F36B46', sh:'circle', d:"A Conceptual Object is the representation of any tangible or intanglible resource, or its respective state, that is critical for comprehending an enterprise, including its data, resources, and activities."},
+    {type: 'node', id:'362FC4365B3C39B8', t:"Concept", parentId:'229B34EB5B3F79D2', sh:'circle', d:"A Concept is the representation of any tangible or intanglible entity that is of interest to understand the enterprises, its data, resources and activities."},
+    {type: 'node', id:'07E72DD55ECC888A', t:"Advanced Business Glossary", sh:'box', d:"The Advanced Business Glossary domain complements the Enterprise Glossary domain by adding temporal descriptions to business concepts: Event Concept, State Concept."},
+    {type: 'node', id:'C39701C75747A173', t:"Concept Type", parentId:'07E72DD55ECC888A', sh:'circle', d:"A Concept Type is a class of concepts which have Concepts as instances: Concept Types classify Concepts."},
+    {type: 'node', id:'362FC5A85B3C3C03', t:"Concept Property", parentId:'362FC8045B3C3E65', sh:'circle', d:"A Concept Property is an immutable factual characteristic of a Conceptual Entity."},
+    {type: 'node', id:'362FC8AA5B3C3EEB', t:"Term", parentId:'30EFAB2361F36B46', sh:'circle', d:"A Term is word or sentence used to name a Conceptual Object."},
+    {type: 'node', id:'362FCF945B3C4030', t:"Language", parentId:'02AF08F05A1821D3', sh:'circle', d:""},
+    {type: 'node', id:'203B8FDB5A5F43DD', t:"Concept Domain Map", parentId:'30EFAB2361F36B46', sh:'circle', d:"A Concept Domain Map is a top level assembly of Concept Domains that defines the scope of information that Management System is responsible of."},
+    {type: 'node', id:'203B8FF05A5F43FE', t:"Concept Domain", parentId:'30EFAB2361F36B46', sh:'circle', d:"A Concept Domain is a subset of the Concepts of a Business Dictionary that are relevant to an Activity Domain."},
+    {type: 'node', id:'229B34EB5B3F79D2', t:"Conceptual Entity", parentId:'362FC8045B3C3E65', sh:'circle', d:"A Conceptual Entity is the representation of any tangible or intanglible resource or state of such resource that is of interest to understand the enterprises, its data, resources and activities."},
+    {type: 'node', id:'362FF4B55B3C45E6', t:"Event Concept", parentId:'07E72DD55ECC888A', sh:'circle', d:" An Event Concept is a Conceptual Object that represents a type of change used to draw the temporal boundaries of Conceptual Entitys."},
+    {type: 'node', id:'D2A7DC875EE8740B', t:"Business Dictionary", parentId:'02AF08F05A1821D3', sh:'circle', d:"A Business Dictionary is a cluster of Business Dictionary Assets whose existence and meaning are defined by the Business Dictionary."},
+    {type: 'node', id:'30EFAB2361F36B46', t:"Business Dictionary Asset", parentId:'02AF08F05A1821D3', sh:'circle', d:"An Business Dictionary Asset is an Information Asset involved in informative descriptions of the enterprise."},
+    {type: 'node', id:'D6CD116D5AB97525', t:"Information Domain", parentId:'02AF08F05A1821D3', sh:'circle', d:"An Information Domain is a group of Information Entity(ies) which constitutes a unit a knowlege required by an Agent to operate or required during a Process execution."},
+    {type: 'node', id:'E6F250185F772EE1', t:"Information Object", parentId:'02AF08F05A1821D3', sh:'circle', d:"An Information Object  represents anything that can be communicated or memorized by an Agent in order to produce its Outcomes."},
+    {type: 'node', id:'D6CD2C8B5AB98DA5', t:"Information Pattern", sh:'box', d:"The Information Pattern domain describes top level concepts used to describe information."},
+    {type: 'node', id:'6CCE7D6D5A2E4834', t:"Data Category", parentId:'D6CD2C8B5AB98DA5', sh:'circle', d:"A Data Category is a classification or division of Information Objects regarded as having particular shared characteristics."},
+  //edges
+    { type: 'link', id:'362FC8045B3C3E65-362FCE9E5B3C3FE1', id1:'362FC8045B3C3E65', id2:'362FC8AA5B3C3EEB', t:"Designation"},
+    { type: 'link', id:'362FC8045B3C3E65-362FF6155B3C473E', id1:'362FC8045B3C3E65', id2:'362FC8AA5B3C3EEB', t:"Synonym"},
+    { type: 'link', id:'362FC8045B3C3E65-FA41FCD65FD950F5', id1:'362FC8045B3C3E65', id2:'362FC8045B3C3E65', t:"Specialized Business Object"},
+    { type: 'link', id:'362FC8045B3C3E65-18EB202F5FDB706C', id1:'362FC8045B3C3E65', id2:'362FC8045B3C3E65', t:"Business Object Relationship"},
+    { type: 'link', id:'362FC4365B3C39B8-362FC4915B3C3A66', id1:'362FC4365B3C39B8', id2:'C39701C75747A173', t:"Power Type"},
+    { type: 'link', id:'362FC4365B3C39B8-362FC4A45B3C3A9A', id1:'362FC4365B3C39B8', id2:'C39701C75747A173', t:"Instance of"},
+    { type: 'link', id:'362FC4365B3C39B8-F406F4C85FD949DB', id1:'362FC4365B3C39B8', id2:'362FC4365B3C39B8', t:"Specialized Concept"},
+    { type: 'link', id:'362FC5A85B3C3C03-FD790B995FDA3B32', id1:'362FC5A85B3C3C03', id2:'362FC5A85B3C3C03', t:"Specialized Information Item"},
+    { type: 'link', id:'362FC5A85B3C3C03-0DD20F125EBC0B26', id1:'362FC5A85B3C3C03', id2:'362FC5A85B3C3C03', t:"Sub-Property"},
+    { type: 'link', id:'362FC8AA5B3C3EEB-362FCF9F5B3C4058', id1:'362FC8AA5B3C3EEB', id2:'362FCF945B3C4030', t:"Language"},
+    { type: 'link', id:'203B8FDB5A5F43DD-DD25DDB95EBB089B', id1:'203B8FDB5A5F43DD', id2:'203B8FF05A5F43FE', t:"Sub Activity Domain"},
+    { type: 'link', id:'203B8FDB5A5F43DD-DD25DE465EBB0B45', id1:'203B8FDB5A5F43DD', id2:'203B8FF05A5F43FE', t:"external business area Component"},
+    { type: 'link', id:'203B8FF05A5F43FE-DD25DDEE5EBB09A5', id1:'203B8FF05A5F43FE', id2:'203B8FF05A5F43FE', t:"Sub Activity Domain"},
+    { type: 'link', id:'203B8FF05A5F43FE-E3B8E4595EBB40DA', id1:'203B8FF05A5F43FE', id2:'362FC8045B3C3E65', t:"Domain Business Object"},
+    { type: 'link', id:'229B34EB5B3F79D2-FA41FAA75FD94C1A', id1:'229B34EB5B3F79D2', id2:'229B34EB5B3F79D2', t:"Specialized Business Concept"},
+    { type: 'link', id:'229B34EB5B3F79D2-E8BFF4E95EBB8BBF', id1:'229B34EB5B3F79D2', id2:'362FF4B55B3C45E6', t:"End Event"},
+    { type: 'link', id:'229B34EB5B3F79D2-E8BFF5115EBB8C48', id1:'229B34EB5B3F79D2', id2:'362FF4B55B3C45E6', t:"Intermediate Event"},
+    { type: 'link', id:'229B34EB5B3F79D2-E8BFF52E5EBB8CD1', id1:'229B34EB5B3F79D2', id2:'362FF4B55B3C45E6', t:"Start Event"},
+    { type: 'link', id:'229B34EB5B3F79D2-F654F7E85EBB76FA', id1:'229B34EB5B3F79D2', id2:'229B34EB5B3F79D2', t:"Concept Relationship"},
+    { type: 'link', id:'D2A7DC875EE8740B-30EFABD661F36D4D', id1:'D2A7DC875EE8740B', id2:'30EFAB2361F36B46', t:"Owned Business Dictionary Asset"},
+    { type: 'link', id:'D6CD116D5AB97525-6D2B7EA65FBB6800', id1:'D6CD116D5AB97525', id2:'D6CD116D5AB97525', t:"Realized Information Area"},
+    { type: 'link', id:'D6CD116D5AB97525-6D2B7F215FBB68AD', id1:'D6CD116D5AB97525', id2:'D6CD116D5AB97525', t:"Specialized Information Area"},
+    { type: 'link', id:'D6CD116D5AB97525-24AE4A405ED16BCF', id1:'D6CD116D5AB97525', id2:'E6F250185F772EE1', t:"Domain Object"},
+    { type: 'link', id:'D6CD116D5AB97525-24AE4A625ED16C60', id1:'D6CD116D5AB97525', id2:'D6CD116D5AB97525', t:"Sub-Information Area"},
+    { type: 'link', id:'E6F250185F772EE1-0378157D5B572280', id1:'E6F250185F772EE1', id2:'6CCE7D6D5A2E4834', t:"Information Classification"},
+    { type: 'link', id:'E6F250185F772EE1-F406F5FC5FD94B7F', id1:'E6F250185F772EE1', id2:'E6F250185F772EE1', t:"Realized Information Object"},
+    { type: 'link', id:'E6F250185F772EE1-F406F61F5FD94BF4', id1:'E6F250185F772EE1', id2:'E6F250185F772EE1', t:"Specialized Information Object"},
+    { type: 'link', id:'E6F250185F772EE1-18EB1F335FDB6E7F', id1:'E6F250185F772EE1', id2:'E6F250185F772EE1', t:"Information Object Component"}
+  ]
+}
+</script>
+<script src="../standard/assets/js/keylines_domain.js" type="module"></script>
+</div>
+</section>
+<a class="object-section-anchor" id="des"></a>
+<section class="object-section">
+<h4>CONCEPT DESCRIPTIONS</h4> 
+<hr class="sectionbreak" />
+<h5>Concrete Concepts</h5>
+<table class="table  table-set-col-width">
+<thead>
+<tr><th>Concept</th><th>Description</th><th>HOPEX Metaclass</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="d2a7dc875ee8740b.htm" target="_top">Business Dictionary</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Business Dictionary</b> is a cluster of <a href="30efab2361f36b46.htm" target="_top"><b><u>Business Dictionary Asset</u></b></a>s whose existence and meaning are defined by the&#160;<b> Business Dictionary</b>.</div><div align="left" style="min-height: 12pt; ">It comprises the <a href="362fc4365b3c39b8.htm" target="_top"><b><u>Concept</u></b></a>s,&#160; <a href="362ff4b55b3c45e6.htm" target="_top"><b><u>Event Concept</u></b></a>s along with the terminology (<a href="362fc8aa5b3c3eeb.htm" target="_top"><b><u>Term</u></b></a>s) used to describe this branch of knowledge or discipline.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Business Dictionary</b> is both:</div><div align="left" style="min-height: 12pt; ">1. A lexical scope: the meaning of a <a href="362fc8045b3c3e65.htm" target="_top"><b><u>Conceptual Object</u></b></a> can only be determined by the&#160;<b> Business Dictionary</b> where it was created.</div><div align="left" style="min-height: 12pt; ">2. A universe of discourse: the complete range of <a href="362fc8045b3c3e65.htm" target="_top"><b><u>Conceptual Object</u></b></a>s that are expressed, assumed, or implied in a branch of knowledge, a discipline or a field of study.</div><div align="left" style="min-height: 12pt; ">Example: the Harward Medical Dictionary of Health Terms is a&#160;<b> Business Dictionary</b>.</div>       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="ec16ee2b442800c6.htm" target="_top">Business Dictionary</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="30efab2361f36b46.htm" target="_top">Business Dictionary Asset</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Business Dictionary Asset</b> is an <a href="30efa75761f367fe.htm" target="_top"><b><u>Information Asset</u></b></a> involved in informative descriptions of the enterprise.</div><div align="left" style="min-height: 12pt; "><b>&#160;Business Dictionary Asset</b>s range from <a href="362fc8045b3c3e65.htm" target="_top"><b><u>Conceptual Object</u></b></a>s, <a href="203b8ff05a5f43fe.htm" target="_top"><b><u>Concept Domain</u></b></a>s to terminologies (<a href="362fc8aa5b3c3eeb.htm" target="_top"><b><u>Term</u></b></a>s).</div><div align="left" style="min-height: 12pt; "><a href="362fc8045b3c3e65.htm" target="_top"><b><u>Conceptual Object</u></b></a>s are managed in <a href="9152d8875ed741ef.htm" target="_top"><b><u>Data Catalog</u></b></a>s.</div>       </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="362fc4365b3c39b8.htm" target="_top">Concept</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Concept</b> is the representation of any tangible or intanglible entity that is of interest to understand the enterprises, its data, resources and activities.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Concept</b> is defined through its essential characteristics which can be:</div><div align="left" style="min-height: 12pt; ">1) A <a href="362fc5a85b3c3c03.htm" target="_top"><b><u>Concept Property</u></b></a> that represents some an immutable factual characteristic such as &quot;name&quot;, &quot;amount&quot;.</div><div align="left" style="min-height: 12pt; ">2) A <a href="f654f7e85ebb76fa.htm" target="_top"><b><u>Concept Relationship</u></b></a> that represents relationships to other&#160;<b> Concept</b>s.</div><i><ul>References:<li><a href="https://www.google.com/search?q=site%3Ahttps%3A%2F%2Fwww.dddcommunity.org%2Fresources%2Fddd_terms%2F+Entity"><img src="../standard/extr.ico.gif">&nbsp;DDD - Glossary - Entity</a></li> <li><a href="../../../www.omg.org/spec/SBVR/1.5/formal-19-10-02.pdf#page=38"><img src="../standard/extr.ico.gif">&nbsp;OMG - SBVR - Concept</a></li> <li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#OperationalInformation"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - OperationalInformation</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="ec16ee36442800d3.htm" target="_top">Concept</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="203b8ff05a5f43fe.htm" target="_top">Concept Domain</a></td>
+<td class="description-text"><div align="left" style="min-height: 10pt; ">A&#160;<b> Concept Domain</b> is a subset of the <a href="362fc4365b3c39b8.htm" target="_top"><b><u>Concept</u></b></a>s of a <a href="d2a7dc875ee8740b.htm" target="_top"><b><u>Business Dictionary</u></b></a> that are relevant to an <a href="9810b060551137d0.htm" target="_top"><b><u>Activity Domain</u></b></a>.</div><div align="left" style="min-height: 10pt; ">For instance, a &quot;Sales Concept Domain&quot; comprises at least the <a href="362fc4365b3c39b8.htm" target="_top"><b><u>Concept</u></b></a>s of &quot;Customer&quot; and &quot;Order&quot; while a standard &quot;Marketing Concept Domain&quot; comprises at least the <a href="362fc4365b3c39b8.htm" target="_top"><b><u>Concept</u></b></a>s of &quot;Market Segment&quot;, &quot;Product&quot; and &quot;Value Proposition&quot;.</div>       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="e244e3164fc83552.htm" target="_top">Concept Domain</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="362fc5a85b3c3c03.htm" target="_top">Concept Property</a></td>
+<td class="description-text">A&#160;<b> Concept Property</b> is an immutable factual characteristic of a <a href="229b34eb5b3f79d2.htm" target="_top"><b><u>Conceptual Entity</u></b></a>.<br />Example: names, amounts, etc.<i><ul>References:<li><a href="https://www.google.com/search?q=site%3Ahttps%3A%2F%2Fwww.dddcommunity.org%2Fresources%2Fddd_terms%2F+Value+Object"><img src="../standard/extr.ico.gif">&nbsp;DDD - Glossary - Value Object</a></li> <li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#OperationalInformation"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - OperationalInformation</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="1072774154a17812.htm" target="_top">Concept Property</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="229b34eb5b3f79d2.htm" target="_top">Conceptual Entity</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Conceptual Entity</b> is the representation of any tangible or intanglible resource or state of such resource that is of interest to understand the enterprises, its data, resources and activities.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Conceptual Entity</b> is either a <a href="362fc4365b3c39b8.htm" target="_top"><b><u>Concept</u></b></a> or a <a href="362fc7105b3c3e31.htm" target="_top"><b><u>State Concept</u></b></a>.</div><div align="left" style="min-height: 12pt; ">Example:</div><div align="left" style="min-height: 12pt; ">- &quot;Person&quot; is a&#160;<b> Conceptual Entity</b> of type <a href="362fc4365b3c39b8.htm" target="_top"><b><u>Concept</u></b></a>, Its temporal boundaries are is birth and its death (see <a href="362ff4b55b3c45e6.htm" target="_top"><b><u>Event Concept</u></b></a>).</div><div align="left" style="min-height: 12pt; ">- &quot;Employee&quot; is a&#160;<b> Conceptual Entity</b> of type <a href="362fc7105b3c3e31.htm" target="_top"><b><u>State Concept</u></b></a>): it is a state of a &quot;person&quot;. Its temporal boundaries are its hiring and its departure.</div><i><ul>References:<li><a href="https://www.google.com/search?q=site%3Ahttps%3A%2F%2Fwww.dddcommunity.org%2Fresources%2Fddd_terms%2F+Entity"><img src="../standard/extr.ico.gif">&nbsp;DDD - Glossary - Entity</a></li> <li><a href="../../../www.omg.org/spec/SBVR/1.5/formal-19-10-02.pdf#page=38"><img src="../standard/extr.ico.gif">&nbsp;OMG - SBVR - Concept</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="fbfffe904cf4002e.htm" target="_top">Class of Business Information Concept</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="b181b82a54891668.htm" target="_top">Enterprise</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Enterprise</b> is an <a href="d321c226601262ae.htm" target="_top"><b><u>Enduring Initiative</u></b></a> that delivers added-value <a href="215cceda606c35c6.htm" target="_top"><b><u>Product</u></b></a>s (goods &amp; services) to its target <a href="d6cdfdbc5ab86331.htm" target="_top"><b><u>Customer</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">It requires a formal organization of groups of people and resources to achieve its purposes.</div><i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#WholeLifeEnterprise"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - WholeLifeEnterprise</a></li> <li><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_42"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Definition - Enterprise</a></li> <li><a href="https://www.scaledagileframework.com/enterprise/"><img src="../standard/extr.ico.gif">&nbsp;SAFe&copy; - Enterprise</a></li> <li><a href="https://www.scaledagileframework.com/portfolio-safe/"><img src="../standard/extr.ico.gif">&nbsp;SAFe&copy; - Portfolio SAFe</a></li> <li><a href="http://wordnetweb.princeton.edu/perl/webwn?o2=&amp;o0=1&amp;o8=1&amp;o1=1&amp;o7=&amp;o5=&amp;o9=&amp;o6=&amp;o3=&amp;o4=&amp;r=1&amp;s=enterprise&amp;i=2&amp;h=100000#c"><img src="../standard/extr.ico.gif">&nbsp;WordNet - Enterprise</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="50666200529c2b9a.htm" target="_top">Enterprise</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="036a3de3548f229e.htm" target="_top">Enterprise Stage</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Enterprise Stage</b> is a past, current or future state of the enterprise. </div><div align="left" style="min-height: 12pt; ">Each stage represents an initiative comprising a purposeful set of activities whose primary purpose is focused on achieving a set of clearly defined objectives that may transcend organisational boundaries and consequently require integrated team working under the direction of an <a href="ff0512935b254723.htm" target="_top"><b><u>Architecture Governance Committee</u></b></a>.</div>       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="daf320b15e597a39.htm" target="_top">Business Undertaking</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="362fcf945b3c4030.htm" target="_top">Language</a></td>
+<td class="description-text">        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="0000000080000016.htm" target="_top">Language</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="362fc8aa5b3c3eeb.htm" target="_top">Term</a></td>
+<td class="description-text">A&#160;<b> Term</b> is word or sentence used to name a <a href="362fc8045b3c3e65.htm" target="_top"><b><u>Conceptual Object</u></b></a>.<i><ul>References:<li><a href="https://compliancedictionary.com/term/8088"><img src="../standard/extr.ico.gif">&nbsp;UCF Glossary - Term</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="ec16eede442800e3.htm" target="_top">Term</a></td>
+</tr>  
+</tbody>
+</table>
+<hr class="sectionbreak" />
+<h5>Abstract Concepts</h5>
+<table class="table  table-set-col-width">
+<thead >
+<tr><th>Concept</th><th>Description</th><th>HOPEX Metaclass</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="203B8FDB5A5F43DD.htm" target="_top">Concept Domain Map</a></td>
+<td class="description-text">A&#160;<b> Concept Domain Map</b> is a top level assembly of <a href="203b8ff05a5f43fe.htm" target="_top"><b><u>Concept Domain</u></b></a>s that defines the scope of information that <a href="29df3f4060084c07.htm" target="_top"><b><u>Management System</u></b></a> is responsible of.       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="0afb1de2588a1c15.htm" target="_top">Concept Domain Map</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="362fc8045b3c3e65.htm" target="_top">Conceptual Object</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Conceptual Object</b> is the representation of any tangible or intanglible resource, or its respective state, that is critical for comprehending an enterprise, including its data, resources, and activities.</div><div align="left" style="min-height: 12pt; ">Similar to any <a href="e6f250185f772ee1.htm" target="_top"><b><u>Information Object</u></b></a>, a&#160;<b> Conceptual Object</b> can be classified into three categories:</div><div align="left" style="min-height: 12pt; ">1)&#160; <a href="229b34eb5b3f79d2.htm" target="_top"><b><u>Conceptual Entity</u></b></a>s denote entities that can change over time.</div><div align="left" style="min-height: 12pt; ">2) <a href="362ff4b55b3c45e6.htm" target="_top"><b><u>Event Concept</u></b></a>s embody the temporal boundaries associated with <a href="229b34eb5b3f79d2.htm" target="_top"><b><u>Conceptual Entity</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">3) <a href="362fc5a85b3c3c03.htm" target="_top"><b><u>Concept Property</u></b></a>s represent immutable characteristics of <a href="229b34eb5b3f79d2.htm" target="_top"><b><u>Conceptual Entity</u></b></a>s.</div><i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#OperationalInformation"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - OperationalInformation</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="aeacfb3c4eae21a3.htm" target="_top">Class of Business Information Entity</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="24ae4a185ed16aaa.htm" target="_top">Information Dictionary</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Information Dictionary</b> is a dictionary of&#160;<b> Information Asset</b>s used to describe an information architecture. This includes:</div><div align="left" style="min-height: 12pt; ">1. <a href="d6cd116d5ab97525.htm" target="_top"><b><u>Information Domain</u></b></a> </div><div align="left" style="min-height: 12pt; ">2. <a href="d6cd2cea5ab98e5f.htm" target="_top"><b><u>Information Entity</u></b></a> </div><div align="left" style="min-height: 12pt; ">3. <a href="362fc5a85b3c3c03.htm" target="_top"><b><u>Concept Property</u></b></a> </div><div align="left" style="min-height: 12pt; ">Concrete implementations are <a href="d2a7dc875ee8740b.htm" target="_top"><b><u>Business Dictionary</u></b></a>, <a href="7eaa87e856121db2.htm" target="_top"><b><u>Logical Data Dictionary</u></b></a>, etc.</div>       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="eb5e1fbe578552e0.htm" target="_top">Architecture Information Container</a></td>
+</tr>  
+</tbody>
+</table>
+<section>
+
+</div>
+<button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button>
+<script>window.onscroll = function() {scrollFunction()};$(document).on('click', 'a[href^="#"]', function (event) {event.preventDefault();$('html, body').animate({scrollTop: $($.attr(this, 'href')).offset().top}, 500);});function showDiagOnClick(elem){ var x = document.getElementsByClassName('Relationship');var e = elem.getAttribute("value"); for (var i=0; i < x.length ;i++){x[i].style.display="none"; if (x[i].id == e){x[i].style.display="block";x[i].style.textAlign="left";}}}
+</script></html>

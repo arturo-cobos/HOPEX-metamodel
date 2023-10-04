@@ -1,0 +1,385 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="keywords" content="">
+<meta name="description" content="">    
+<LINK REL="icon" HREF="../standard/assets/img/favicon.ico">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/bootstrap.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nav.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/eaportal.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/font-awesome.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/animate.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/datatables.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/grid.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nae.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/custom.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/chosen.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/prism.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery.dataTables.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jsTreeStyle.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.theme.css" media="screen" />
+<script type="text/javascript" src="../standard/assets/js/jquery-3.2.1.min.js" ></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-ui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.columnFilter.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3-force.v2.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.gui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.search.js"></script> 
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.util.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-2.1.1.min.js"></script>
+<script src="../standard/assets/js/ws_zoomtemplate_firefox.js"></script>
+<script src="../standard/assets/js/bootstrap.min.js"></script>
+<script src="../standard/assets/js/datatables.min.js"></script>
+<script src="../standard/assets/js/moment.min.js"></script>
+<script src="../standard/assets/js/datetime-moment.js"></script>
+<script src="../standard/assets/js/chartjs.min.js"></script>
+<script src="../standard/assets/js/searchindexcontent.json"></script>
+<script src="../standard/assets/js/anls.js"></script>
+<script src="../../../cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script src="../standard/assets/js/gauge.js"></script> 
+<script src="../standard/assets/js/domesticApi.js"></script> 
+<script src="../standard/assets/js/piecelabel.js"></script>
+<script src="../standard/assets/js/popper.min.js"></script>
+<script src="../standard/assets/js/custom.js"></script>
+<script src="../standard/assets/js/chosen.jquery.js"></script>
+<script src="../standard/assets/js/prism.js"></script>
+<script src="../standard/assets/js/init-chosen.js"></script>
+<script src="../standard/assets/js/chart-data-flow.js"></script>
+<script src="../standard/assets/js/chart-data-gantt.js"></script>
+<script type="module" src="../standard/assets/js/Fuse.esm.min.js"></script>
+<script type="module">
+import Fuse from '../standard/assets/js/Fuse.esm.min.js';
+$(document).ready(function () {
+console.log('getjson');
+window.$.getJSON('../standard/assets/js/searchindexcontent.json', function (response) {
+console.log('getjson ok');
+var isIndex = "";
+var url = window.location.pathname;
+var filename = url.substring(url.lastIndexOf('/')+1);
+if( filename.includes("index") || filename === "" ){
+isIndex = "pages/";
+} else {
+isIndex = "";
+}
+const fuse = new Fuse(response, {
+keys: ['title','text'],
+shouldSort: true,
+includeMatches : true,
+findAllMatches : true
+});
+$('#search-fuse').on('keyup', function () {
+let result = fuse.search($(this).val());
+console.log(result);
+let resultdiv = $('div.searchresults-fuse');
+if (result.length === 0) {
+resultdiv.hide();
+} else {
+resultdiv.empty();
+resultdiv.append('<table class="table-search" width="100%" cellspacing="0"><thead ><tr><th>Name</th><th>Object Type</th><th>Modification date</th></tr></thead><tbody>');
+
+for (let obj in result.slice(0,10)) {
+
+let searchObj = '<tr><td><a href="./'+ isIndex + result[obj].item.url + '">' + result[obj].item.title +'</a></td><td>' + result[obj].item.ObjectType + '</td><td>' + result[obj].item.ModificationDate + '</td></tr>' ;
+
+
+resultdiv.find('tbody').append(searchObj);
+}
+resultdiv.append('</tbody></table>');
+resultdiv.show();
+}
+});
+});
+});
+</script>
+<title>HOPEX Metamodel Overview (Beta Version)</title>
+</head>
+<nav class="navbar navbar-expand-md navbar-dark  navbar-mega"><!-- Brand --><!--<a class="navbar-brand" href="#">Navbar</a>--><a class="" href="../index.htm"><img class="logo-mega" src="../standard/assets/img/logo.png"  alt="">(Beta Version)</a><!-- Toggler/collapsibe Button --><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><!-- Navbar links -->
+<div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsibleNavbar"><div class="col-sm-auto col-md-auto col-lg-5"></div>
+<div class="col-sm-auto">
+<ul class="navbar-nav">      
+<li><a class="dropdown-item" href="ad30ce115ebf7e90.htm">EA Grid</a></li> 
+<li><a class="dropdown-item" href="fdd5018459bc3c6a.htm">EA Domains</a></li> 
+<li><a class="dropdown-item" href="07e731775ecc93f4.htm">Solutions</a></li> 
+<li><a class="dropdown-item" href="c5dfc62c54810c2c.htm">Glossary</a></li> 
+<li class="nav-item dropdown mx-1">
+<a class="nav-link" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</a>
+<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<li><a class="dropdown-item" href="5446555d5f88c32e.htm">Outcome Driven Metamodel</a></li> 
+<li><a class="dropdown-item" href="e1ccfc295f8f7b90.htm">Playbooks</a></li> 
+<li><a class="dropdown-item" href="42bc992862d20ea7.htm">Framework Mappings</a></li> 
+<li><a class="dropdown-item" href="e93aebb35fa20550.htm">Metamodel Patterns</a></li> 
+<li><a class="dropdown-item" href="d599fe87602b2b85.htm">References</a></li> 
+<li><a class="dropdown-item" href="333f3a7f5dde11de.htm">Legend</a></li> 
+</ul>									                                            
+</li>
+</ul>
+</div>
+<div class="col-sm-auto"><a class="nav-link search" href="#" onclick=showHideSearch("search-section-fuse")><i class="fa fa-search mr-1 form-control-feedback"></i></a></div>
+</div>
+</nav>
+<div id="search-section-fuse" style="display:none">>
+<div class="search_header"><span class="closesearch">&times;</span>
+<nav class="breadcrumb">
+<a class="breadcrumb-item" href="../index.htm">Home </a> 
+<span class="breadcrumb-item active">Search</span> 
+</nav>
+</div>
+<input id="search-fuse" placeholder="Search..."  name="q" onfocus="this.value=''" type="search">
+<div class="searchresults-fuse"></div>
+</div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>function showHideSearch(elementId) {var contentDivs = document.getElementsByClassName('content');var footerDivs = document.getElementsByClassName('footer'); var containerDivs = document.getElementsByClassName('container');var containerfluidDivs = document.getElementsByClassName('container-fluid');var x = document.getElementById(elementId);if (x.style.display === "none") {x.style.display = "block";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "none";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "none";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "none";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "none";}} else {x.style.display = "none";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "block";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "block";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "block";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "block";}}} ;<!-- END WIDGET DRILL DOWN --></script><script>$(document).ready(function() {$(window).scroll(function() {if ($(this).scrollTop() > 100) {$('.scrollup').fadeIn();} else {$('.scrollup').fadeOut();}});$('.scrollup').click(function() {$("html, body").animate({scrollTop: 0}, 600);return false;});});</script><script>
+var modal = document.getElementById("search-section-fuse");
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = "none";
+}
+}
+$(document).on('click', '.closesearch', function() {
+showHideSearch("search-section-fuse");
+
+
+
+
+
+});</script><div class="container-fluid col-lg-11"><nav class="breadcrumb"><a class="breadcrumb-item" href="../index.htm">Home </a> <span class="breadcrumb-item active">Framework Mapping/UAF - Information</span> </nav></div>
+<div class="container-fluid col-lg-11 content">
+<section class="fadeInDown animated"><a href="#det" class="btn btn-d">IDENTITY</a><a href="#dia" class="btn btn-d">DIAGRAM</a> <a href="#map" class="btn btn-d">MAPPING</a> <a href="#ext" class="btn btn-d">EXTERNAL REFERENCES</a> 
+</section>
+<a class="object-section-anchor" id="det"></a>
+<section class="object-section">
+<h4>IDENTITY - UAF - Information</h4> 
+<hr class="sectionbreak" />
+<table class="table table-vertical-headers table-set-col-width">
+<tr><th>Description</th><td class="description-text"><div align="left" style="min-height: 12pt; ">Stakeholders: Data Modelers, Software Engineers, Systems Engineers</div><div align="left" style="min-height: 12pt; ">Concerns: address the information perspective on operational, service, and resource architectures.</div><div align="left" style="min-height: 12pt; ">Definition: allows analysis of an architecture&rsquo;s information and data definition aspect, without consideration of</div><div align="left" style="min-height: 12pt; ">implementation specific issues.</div><div align="left" style="min-height: 12pt; ">Recommended Implementation: SysML Block Definition Diagram.</div></td></tr>
+<tr><th>References</th><td>
+<a  href="14cc217a638777b1.htm" target="_top">OMG - UAF - View - Information</a></td></tr>
+<tr><th>Parent Mapping</th><td class="description-text">UAF Mappings</td></tr>            
+</table>
+</section>
+<a class="object-section-anchor" id="dia"></a>
+<section class="object-section">
+<hr class="sectionbreak" />
+<map  name="EF5D10266322A10B">
+  <area  href=362fc8045b3c3e65.htm#OBMK362FC8045B3C3E65 shape="polygon" coords="930, 113, 930, 97, 944, 97, 944, 113, 930, 113"   target="_self"  title="A&#160; Conceptual Object is the representation of any tangible or intanglible resource, or its respective state, that is critical for comprehending an enterprise, including its data, resources, and activities.">
+  
+  <area  href="#OBMK147A465F636A5DEB" shape="rect" coords="913, 75, 1093, 135"   target="_self"  title="An item of information that flows between OperationalPerformers and is produced and consumed by the OperationalActivities that the OperationalPerformers are capable to perform (see IsCapableToPerform).">
+  
+  <area  href="#OBMK147C533E636A939E" shape="rect" coords="913, 209, 1092, 268"   target="_self"  title="A tuple that defines how an element in the upper layer of abstraction is implemented by a semantically equivalent element (for example tracing the Functions to the OperationalActivities) in the lower level of abstraction. ">
+  
+  <area  href=7d37d08d5fd07aaa.htm#OBMK7D37D08D5FD07AAA shape="polygon" coords="935, 376, 935, 360, 949, 360, 949, 376, 935, 376"   target="_self"  title="A&#160; Physical Data Object&#160; represents the physical structure of any kind of data that can be memorized by a Software System.">
+  
+  <area  href="#OBMK147A45E9636A5DAB" shape="rect" coords="918, 357, 1087, 395"   target="_self"  title="A formalized physical representation of information that is managed by or exchanged between systems.">
+  
+  <area  href=2b5858b85eec51d9.htm#OBMK2B5858B85EEC51D9 shape="polygon" coords="935, 338, 935, 322, 949, 322, 949, 338, 935, 338"   target="_self"  title="A&#160; Logical Data Object represents the logical structure of any kind of data that can be memorized by a Software System.">
+  
+  <area  href="#OBMK147A457A636A5D48" shape="rect" coords="918, 322, 1087, 354"   target="_self"  title="A formalized logical representation of information that is managed by or exchanged between systems.">
+  
+  <area  href=6d2b7c935fbb6270.htm#OBMK6D2B7C935FBB6270 shape="polygon" coords="916, 412, 916, 399, 929, 399, 929, 412, 916, 412"   target="_self"  title="A&#160; Data Object&#160; represents the abstract structure of any kind of data that can be memorized by a Software System.">
+  
+  <area  href="#OBMK147A458C636A5D75" shape="rect" coords="905, 320, 1099, 412"   target="_self"  title="A formalized representation of information that is managed by or exchanged between systems.">
+  
+  <area  href=6ba771525f6b8ad4.htm#OBMK6BA771525F6B8AD4 shape="polygon" coords="1313, 201, 1313, 185, 1327, 185, 1327, 201, 1313, 201"   target="_self"  title="A&#160; Physical Data Dictionary is Data Dictionary that holds the definition of Physical Data Assets such as Physical Data Domain definitions, Table definitions, Column Type definitions.">
+  
+  <area  href="#OBMK147A4432636A5C92" shape="rect" coords="1296, 185, 1447, 218"   target="_self"  title="Physical - Indicates that the InformationModel associated with the InformationModelKind is a physical data model that is an implementable specification of a data structure. A physical data model realizes a logical data model, taking into account implementation restrictions and performance issues while still enforcing the constraints, relationships and typing of the logical data model.">
+  
+  <area  href=7eaa87e856121db2.htm#OBMK7EAA87E856121DB2 shape="polygon" coords="1315, 149, 1315, 133, 1329, 133, 1329, 149, 1315, 149"   target="_self"  title="Dictionary of Logical Data Entity.">
+  
+  <area  href="#OBMK147A43D9636A5C52" shape="rect" coords="1298, 133, 1449, 166"   target="_self"  title="&#160;Logical - Indicates that the InformationModel associated with the InformationModelKind is a logical data model that allows analysis of an architecture&rsquo;s data definition aspect, without consideration of implementation specific or product specific issues. It details the conceptual data model/">
+  
+  <area  href=d2a7dc875ee8740b.htm#OBMKD2A7DC875EE8740B shape="polygon" coords="1313, 98, 1313, 82, 1327, 82, 1327, 98, 1313, 98"   target="_self"  title="A&#160; Business Dictionary is a cluster of Business Dictionary Assets whose existence and meaning are defined by the&#160; Business Dictionary.">
+  
+  <area  href="#OBMK147A4304636A5C13" shape="rect" coords="1296, 82, 1447, 115"   target="_self"  title="Conceptual - Indicates that the InformationModel associated with the InformationModelKind is a conceptual InformationModel that defines the required high-level data concepts and their relationships.">
+  
+  <area  href=24ae4a185ed16aaa.htm#OBMK24AE4A185ED16AAA shape="polygon" coords="1293, 77, 1293, 64, 1306, 64, 1306, 77, 1293, 77"   target="_self"  title="An&#160; Information Dictionary is a dictionary of&#160; Information Assets used to describe an information architecture. This includes:">
+  
+  <area  href="#OBMK147A42F8636A5BE4" shape="rect" coords="1285, 64, 1462, 368"   target="_self"  title="A structural specification of data types, showing relationships between them.">
+  
+  <area  href=c8b2238961e5385a.htm#OBMKC8B2238961E5385A shape="polygon" coords="51, 302, 51, 289, 64, 289, 64, 302, 51, 302"   target="_self"  title="A&#160; Conceptual Operating Asset is an Operating Asset&#160; used to describe the Conceptual Operating Model of the enterprise.">
+  
+  <area  href="#OBMK147C553A636A9733" shape="rect" coords="19, 274, 183, 317"   target="_self"  title="An abstract element used to group the elements of OperationalAgent and OperationalInformation allowing them to own OperationalInformationRoles.">
+  
+  <area  href="#OBMK147C541C636A9553" shape="rect" coords="13, 173, 186, 217"   target="_self"  title="A usage of OperationalInformation that exists in the context of an OperationalAsset. It also allows the representation of the whole-part aggregation of OperationalInformation.">
+  
+  <area  href="#OBMK147C533E636A939E" shape="rect" coords="280, 172, 448, 218"   target="_self"  title="A tuple that defines how an element in the upper layer of abstraction is implemented by a semantically equivalent element (for example tracing the Functions to the OperationalActivities) in the lower level of abstraction. ">
+  
+  <area  href=d2a7dc875ee8740b.htm#OBMKD2A7DC875EE8740B shape="polygon" coords="662, 114, 662, 98, 675, 98, 675, 114, 662, 114"   target="_self"  title="A&#160; Business Dictionary is a cluster of Business Dictionary Assets whose existence and meaning are defined by the&#160; Business Dictionary.">
+  
+  <area  href="#OBMK147A4304636A5C13" shape="rect" coords="644, 98, 795, 131"   target="_self"  title="Conceptual - Indicates that the InformationModel associated with the InformationModelKind is a conceptual InformationModel that defines the required high-level data concepts and their relationships.">
+  
+  <area  href=6ba771525f6b8ad4.htm#OBMK6BA771525F6B8AD4 shape="polygon" coords="665, 227, 665, 211, 678, 211, 678, 227, 665, 227"   target="_self"  title="A&#160; Physical Data Dictionary is Data Dictionary that holds the definition of Physical Data Assets such as Physical Data Domain definitions, Table definitions, Column Type definitions.">
+  
+  <area  href="#OBMK147A4432636A5C92" shape="rect" coords="647, 211, 798, 244"   target="_self"  title="Physical - Indicates that the InformationModel associated with the InformationModelKind is a physical data model that is an implementable specification of a data structure. A physical data model realizes a logical data model, taking into account implementation restrictions and performance issues while still enforcing the constraints, relationships and typing of the logical data model.">
+  
+  <area  href=7eaa87e856121db2.htm#OBMK7EAA87E856121DB2 shape="polygon" coords="664, 170, 664, 154, 678, 154, 678, 170, 664, 170"   target="_self"  title="Dictionary of Logical Data Entity.">
+  
+  <area  href="#OBMK147A43D9636A5C52" shape="rect" coords="647, 153, 798, 187"   target="_self"  title="&#160;Logical - Indicates that the InformationModel associated with the InformationModelKind is a logical data model that allows analysis of an architecture&rsquo;s data definition aspect, without consideration of implementation specific or product specific issues. It details the conceptual data model/">
+  
+  <area  href=24ae4a185ed16aaa.htm#OBMK24AE4A185ED16AAA shape="polygon" coords="639, 61, 639, 48, 652, 48, 652, 61, 639, 61"   target="_self"  title="An&#160; Information Dictionary is a dictionary of&#160; Information Assets used to describe an information architecture. This includes:">
+  
+  <area  href="#OBMK147A42F8636A5BE4" shape="rect" coords="631, 48, 808, 294"   target="_self"  title="A structural specification of data types, showing relationships between them.">
+  
+  <area  href=7d37d08d5fd07aaa.htm#OBMK7D37D08D5FD07AAA shape="polygon" coords="300, 345, 300, 329, 313, 329, 313, 345, 300, 345"   target="_self"  title="A&#160; Physical Data Object&#160; represents the physical structure of any kind of data that can be memorized by a Software System.">
+  
+  <area  href="#OBMK147A45E9636A5DAB" shape="rect" coords="291, 326, 444, 365"   target="_self"  title="A formalized physical representation of information that is managed by or exchanged between systems.">
+  
+  <area  href=2b5858b85eec51d9.htm#OBMK2B5858B85EEC51D9 shape="polygon" coords="299, 292, 299, 276, 313, 276, 313, 292, 299, 292"   target="_self"  title="A&#160; Logical Data Object represents the logical structure of any kind of data that can be memorized by a Software System.">
+  
+  <area  href="#OBMK147A457A636A5D48" shape="rect" coords="289, 273, 443, 311"   target="_self"  title="A formalized logical representation of information that is managed by or exchanged between systems.">
+  
+  <area  href=6d2b7c935fbb6270.htm#OBMK6D2B7C935FBB6270 shape="polygon" coords="279, 393, 279, 380, 293, 380, 293, 393, 279, 393"   target="_self"  title="A&#160; Data Object&#160; represents the abstract structure of any kind of data that can be memorized by a Software System.">
+  
+  <area  href="#OBMK147A458C636A5D75" shape="rect" coords="269, 257, 462, 393"   target="_self"  title="A formalized representation of information that is managed by or exchanged between systems.">
+  
+  <area  href=362fc8045b3c3e65.htm#OBMK362FC8045B3C3E65 shape="polygon" coords="291, 101, 291, 85, 305, 85, 305, 101, 291, 101"   target="_self"  title="A&#160; Conceptual Object is the representation of any tangible or intanglible resource, or its respective state, that is critical for comprehending an enterprise, including its data, resources, and activities.">
+  
+  <area  href="#OBMK147A465F636A5DEB" shape="rect" coords="281, 71, 447, 116"   target="_self"  title="An item of information that flows between OperationalPerformers and is produced and consumed by the OperationalActivities that the OperationalPerformers are capable to perform (see IsCapableToPerform).">
+  
+</map>
+<img  src="../images/ef5d10196322a0ef_ef5d10266322a10b_i.png" alt="../images/ef5d10196322a0ef_ef5d10266322a10b_i.png" usemap="#EF5D10266322A10B" height="507" width="1481" border=0>
+
+</section>
+<a class="object-section-anchor" id="map"></a>
+<section class="object-section">
+<h4>MAPPED ENTITIES</h4> 
+<hr class="sectionbreak" />
+<table id="sortabletable" class="table table-sm  table-bordered table-cell-resizable table-index-set-col-width-4 table-custom-style table-scrollX" width="100%" cellspacing="0">
+<tr><th>Framework Concept</th><th>Framework Definition</th><th>HOPEX Concept</th><th>HOPEX Definition</th></tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK147C533E636A939E"/>Implements</td>
+<td>A tuple that defines how an element in the upper layer of abstraction is implemented by a semantically equivalent element (for example tracing the Functions to the OperationalActivities) in the lower level of abstraction. <i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Implements" target="_blank">OMG - UAF - Implements</a></i></td>
+<td><img src="../standard/dic_concepttype_component.ico.gif"/>&nbsp;
+<a  href="6D2B854D5FBB87CA.htm" target="_top">Realized Business Object</a></td>
+<td class="description-text"><a href="325C32165EB02A4A.htm" target="_top"><b><u>Data Domain</u></b></a>s that the <a href="6d2b7c935fbb6270.htm" target="_top"><b><u>Data Object</u></b></a> is an implementation of.</td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK147A42F8636A5BE4"/>Information Model (Abstract)</td>
+<td>A structural specification of data types, showing relationships between them.<i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#InformationModel" target="_blank">OMG - UAF - InformationModel</a></i></td>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="24ae4a185ed16aaa.htm" target="_top">Information Dictionary</a><br>   <img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="eb5e1fbe578552e0.htm" target="_top">Architecture Information Container</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Information Dictionary</b> is a dictionary of&#160;<b> Information Asset</b>s used to describe an information architecture. This includes:</div><div align="left" style="min-height: 12pt; ">1. <a href="d6cd116d5ab97525.htm" target="_top"><b><u>Information Domain</u></b></a> </div><div align="left" style="min-height: 12pt; ">2. <a href="d6cd2cea5ab98e5f.htm" target="_top"><b><u>Information Entity</u></b></a> </div><div align="left" style="min-height: 12pt; ">3. <a href="362fc5a85b3c3c03.htm" target="_top"><b><u>Concept Property</u></b></a> </div><div align="left" style="min-height: 12pt; ">Concrete implementations are <a href="d2a7dc875ee8740b.htm" target="_top"><b><u>Business Dictionary</u></b></a>, <a href="7eaa87e856121db2.htm" target="_top"><b><u>Logical Data Dictionary</u></b></a>, etc.</div><p style="color:red"><b>Information Model (Abstract)</b> is not directly implemented in HOPEX.</p>Rational:<br/>HOPEX provides three physical implementation of information"</td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK147A4304636A5C13"/>InformationModel (Conceptual)</td>
+<td>Conceptual - Indicates that the InformationModel associated with the InformationModelKind is a conceptual InformationModel that defines the required high-level data concepts and their relationships.<i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/UAFML/dtc-21-12-07.pdf#InformationModelKind" target="_blank">OMG - UAFML - InformationModelKind</a></i></td>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="d2a7dc875ee8740b.htm" target="_top">Business Dictionary</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="ec16ee2b442800c6.htm" target="_top">Business Dictionary</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Business Dictionary</b> is a cluster of <a href="30efab2361f36b46.htm" target="_top"><b><u>Business Dictionary Asset</u></b></a>s whose existence and meaning are defined by the&#160;<b> Business Dictionary</b>.</div><div align="left" style="min-height: 12pt; ">It comprises the <a href="362fc4365b3c39b8.htm" target="_top"><b><u>Concept</u></b></a>s,&#160; <a href="362ff4b55b3c45e6.htm" target="_top"><b><u>Event Concept</u></b></a>s along with the terminology (<a href="362fc8aa5b3c3eeb.htm" target="_top"><b><u>Term</u></b></a>s) used to describe this branch of knowledge or discipline.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Business Dictionary</b> is both:</div><div align="left" style="min-height: 12pt; ">1. A lexical scope: the meaning of a <a href="362fc8045b3c3e65.htm" target="_top"><b><u>Conceptual Object</u></b></a> can only be determined by the&#160;<b> Business Dictionary</b> where it was created.</div><div align="left" style="min-height: 12pt; ">2. A universe of discourse: the complete range of <a href="362fc8045b3c3e65.htm" target="_top"><b><u>Conceptual Object</u></b></a>s that are expressed, assumed, or implied in a branch of knowledge, a discipline or a field of study.</div><div align="left" style="min-height: 12pt; ">Example: the Harward Medical Dictionary of Health Terms is a&#160;<b> Business Dictionary</b>.</div></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK147A43D9636A5C52"/>InformationModel (Logical)</td>
+<td>&#160;Logical - Indicates that the InformationModel associated with the InformationModelKind is a logical data model that allows analysis of an architecture&rsquo;s data definition aspect, without consideration of implementation specific or product specific issues. It details the conceptual data model/<i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/UAFML/dtc-21-12-07.pdf#InformationModelKind" target="_blank">OMG - UAFML - InformationModelKind</a></i></td>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="7eaa87e856121db2.htm" target="_top">Logical Data Dictionary</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="3b523b6e32c20001.htm" target="_top">Package</a></td>
+<td class="description-text">Dictionary of <a href="4619527e560d45eb.htm" target="_top"><b><u>Logical Data Entity</u></b></a>.</td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK147A4432636A5C92"/>InformationModel (Physical)</td>
+<td>Physical - Indicates that the InformationModel associated with the InformationModelKind is a physical data model that is an implementable specification of a data structure. A physical data model realizes a logical data model, taking into account implementation restrictions and performance issues while still enforcing the constraints, relationships and typing of the logical data model.<i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/UAFML/dtc-21-12-07.pdf#InformationModelKind" target="_blank">OMG - UAFML - InformationModelKind</a></i></td>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="6ba771525f6b8ad4.htm" target="_top">Physical Data Dictionary</a></td>
+<td class="description-text">A&#160;<b> Physical Data Dictionary</b> is <a href="82c3b89c5fdcbd0f.htm" target="_top"><b><u>Data Dictionary</u></b></a> that holds the definition of <a href="75ef4ea8620fb39f.htm" target="_top"><b><u>Physical Data Asset</u></b></a>s such as <a href="028f03ff5b4f55ee.htm" target="_top"><b><u>Physical Data Domain</u></b></a> definitions, <a href="137d21b55ee2c717.htm" target="_top"><b><u>Table</u></b></a> definitions, <a href="137d21d35ee2c7f3.htm" target="_top"><b><u>Column Type</u></b></a> definitions.</td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK147C553A636A9733"/>OperationalAsset</td>
+<td>An abstract element used to group the elements of OperationalAgent and OperationalInformation allowing them to own OperationalInformationRoles.<i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#operationalasset" target="_blank">OMG - UAF - OperationalAsset</a></i></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="c8b2238961e5385a.htm" target="_top">Conceptual Operating Asset</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Conceptual Operating Asset</b> is an <a href="a371a43b5b865817.htm" target="_top"><b><u>Operating Asset</u></b></a>&#160; used to describe the <a href="19dc1a30555649d9.htm" target="_top"><b><u>Conceptual Operating Model</u></b></a> of the enterprise.</div><div align="left" style="min-height: 12pt; ">It includes <a href="57dfc5f555093444.htm" target="_top"><b><u>Value Stream</u></b></a>s, <a href="9810b060551137d0.htm" target="_top"><b><u>Activity Domain</u></b></a>s and <a href="7c4094d2552717db.htm" target="_top"><b><u>Business Function</u></b></a>s and the way they contribute to the delivery of <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s.</div><i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#operationalasset" target="_blank">OMG - UAF - OperationalAsset</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK147A465F636A5DEB"/>OperationalInformation</td>
+<td>An item of information that flows between OperationalPerformers and is produced and consumed by the OperationalActivities that the OperationalPerformers are capable to perform (see IsCapableToPerform).<i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#OperationalInformation" target="_blank">OMG - UAF - OperationalInformation</a></i></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="362fc8045b3c3e65.htm" target="_top">Conceptual Object</a><br>   <img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="aeacfb3c4eae21a3.htm" target="_top">Class of Business Information Entity</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Conceptual Object</b> is the representation of any tangible or intanglible resource, or its respective state, that is critical for comprehending an enterprise, including its data, resources, and activities.</div><div align="left" style="min-height: 12pt; ">Similar to any <a href="e6f250185f772ee1.htm" target="_top"><b><u>Information Object</u></b></a>, a&#160;<b> Conceptual Object</b> can be classified into three categories:</div><div align="left" style="min-height: 12pt; ">1)&#160; <a href="229b34eb5b3f79d2.htm" target="_top"><b><u>Conceptual Entity</u></b></a>s denote entities that can change over time.</div><div align="left" style="min-height: 12pt; ">2) <a href="362ff4b55b3c45e6.htm" target="_top"><b><u>Event Concept</u></b></a>s embody the temporal boundaries associated with <a href="229b34eb5b3f79d2.htm" target="_top"><b><u>Conceptual Entity</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">3) <a href="362fc5a85b3c3c03.htm" target="_top"><b><u>Concept Property</u></b></a>s represent immutable characteristics of <a href="229b34eb5b3f79d2.htm" target="_top"><b><u>Conceptual Entity</u></b></a>s.</div><i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#OperationalInformation" target="_blank">OMG - UAF - OperationalInformation</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK147C541C636A9553"/>OperationalInformationRole</td>
+<td>A usage of OperationalInformation that exists in the context of an OperationalAsset. It also allows the representation of the whole-part aggregation of OperationalInformation.</td>
+<td><img src="../standard/ctx-concepttype.ico.gif"/>&nbsp;
+<a  href="f4bee5925ee1be5b.htm" target="_top">Information Store</a><br>   <img src="../standard/metaclasspart_abstract.ico.gif"/>&nbsp;
+<a  href="7047754f56e967af.htm" target="_top">Information Store</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Information Store</b> is a storage of <a href="e6f250185f772ee1.htm" target="_top"><b><u>Information Object</u></b></a>s necessary for an <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a> to carry out its activities.</div><div align="left" style="min-height: 12pt; ">The scope of the necessary <a href="e6f250185f772ee1.htm" target="_top"><b><u>Information Object</u></b></a>s is given by the <a href="d6cd116d5ab97525.htm" target="_top"><b><u>Information Domain</u></b></a> associated with the&#160;<b> Information Store</b>.</div></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK147A458C636A5D75"/>ResourceInformation (Abstract)</td>
+<td>A formalized representation of information that is managed by or exchanged between systems.<i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ResourceInformation" target="_blank">OMG - UAF - ResourceInformation</a></i></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="6d2b7c935fbb6270.htm" target="_top">Data Object</a><br>   <img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="650bc5d9550fd138.htm" target="_top">Data Entity</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Data Object</b>&#160; represents the abstract structure of any kind of data that can be memorized by a <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a>.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Data Object</b> is either a <a href="325c32fc5eb02d02.htm" target="_top"><b><u>Data Entity</u></b></a> or a <a href="6d2b7fce5fbb69c7.htm" target="_top"><b><u>Data Property</u></b></a>.</div><div align="left" style="min-height: 12pt; ">Only <a href="325c32fc5eb02d02.htm" target="_top"><b><u>Data Entity</u></b></a>s can have identity and states. <a href="6d2b7fce5fbb69c7.htm" target="_top"><b><u>Data Property</u></b></a>s only handle raw data.</div><i><br/>References:<br/><a href="https://csrc.nist.gov/glossary/term/data_asset" target="_blank">NIST - Data Asset</a><br/><a href="https://compliancedictionary.com/term/270" target="_blank">UCF Glossary - Data</a><br/><a href="https://compliancedictionary.com/term/2969" target="_blank">UCF Glossary - Data Element</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK147A457A636A5D48"/>ResourceInformation (Logical)</td>
+<td>A formalized logical representation of information that is managed by or exchanged between systems.<i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ResourceInformation" target="_blank">OMG - UAF - ResourceInformation</a></i></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="2b5858b85eec51d9.htm" target="_top">Logical Data Object</a><br>   <img src="../standard/metaclasspart_concrete.ico.gif"/>&nbsp;
+<a  href="1731210a4b3b08cc.htm" target="_top">Enterprise Goal</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Logical Data Object</b> represents the logical structure of any kind of data that can be memorized by a <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a>.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Logical Data Object</b> is either a <a href="4619527e560d45eb.htm" target="_top"><b><u>Logical Data Entity</u></b></a> or a <a href="7d5286635eae7273.htm" target="_top"><b><u>Logical Data Property</u></b></a>.</div><div align="left" style="min-height: 12pt; ">Only <a href="4619527e560d45eb.htm" target="_top"><b><u>Logical Data Entity</u></b></a>s can have identity and can be referenced by <a href="f4be36b65ee1c923.htm" target="_top"><b><u>Logical Relationship</u></b></a>s. <a href="7d5286635eae7273.htm" target="_top"><b><u>Logical Data Property</u></b></a>s only handle raw data.</div></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK147A45E9636A5DAB"/>ResourceInformation (Physical)</td>
+<td>A formalized physical representation of information that is managed by or exchanged between systems.<i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ResourceInformation" target="_blank">OMG - UAF - ResourceInformation</a></i></td>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="7d37d08d5fd07aaa.htm" target="_top">Physical Data Object</a><br>   <img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="01dc041858b72109.htm" target="_top">Physical Data Entity</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Physical Data Object</b>&#160; represents the physical structure of any kind of data that can be memorized by a <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a>.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Physical Data Object</b> is either a <a href="762582bb5f6bd659.htm" target="_top"><b><u>Physical Data Entity</u></b></a> or a <a href="e6f220d45f771837.htm" target="_top"><b><u>Physical Data Property</u></b></a>.</div><div align="left" style="min-height: 12pt; ">Only <a href="762582bb5f6bd659.htm" target="_top"><b><u>Physical Data Entity</u></b></a>s can have an identity can by be referenced by <a href="b6e3df8e5fbb724d.htm" target="_top"><b><u>Physical Relationship</u></b></a>. <a href="e6f220d45f771837.htm" target="_top"><b><u>Physical Data Property</u></b></a> only handle raw data.</div></td>
+</tr>
+</table>
+</section>
+<a class="object-section-anchor" id="ext"></a>
+<section class="object-section">
+<h4>EXTERNAL REFERENCES</h4> 
+<hr class="sectionbreak" />
+<table id="sortabletable" class="table table-sm  table-bordered table-cell-resizable table-index-set-col-width-4 table-custom-style table-scrollX" width="100%" cellspacing="0">
+<tr><th>Framework reference</th><th>HOPEX Description</th></tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMKA2AF7FE6638F6320"/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Implements">OMG - UAF - Implements</a></td>
+<td><br/> A tuple that defines how an element in the upper layer of abstraction is implemented by a semantically equivalent element (for example tracing the Functions to the OperationalActivities) in the lower level of abstraction. <br/><br/><br/> A tuple that defines how an element in the upper layer of abstraction is implemented by a semantically equivalent element (for example tracing the Functions to the OperationalActivities) in the lower level of abstraction. <br/><br/><br/> A tuple that defines how an element in the upper layer of abstraction is implemented by a semantically equivalent element (for example tracing the Functions to the OperationalActivities) in the lower level of abstraction.<br/><br/><br/> A tuple that defines how an element in the upper layer of abstraction is implemented by a semantically equivalent element (for example tracing the Functions to the OperationalActivities) in the lower level of abstraction. <br/><br/><br/> A tuple that defines how an element in the upper layer of abstraction is implemented by a semantically equivalent element (for example tracing the Functions to the OperationalActivities) in the lower level of abstraction.<br/><br/><br/> A tuple that defines how an element in the upper layer of abstraction is implemented by a semantically equivalent element (for example tracing the Functions to the OperationalActivities) in the lower level of abstraction. </td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMKADFFEFAE6399540E"/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#InformationModel">OMG - UAF - InformationModel</a></td>
+<td><br/> A structural specification of data types, showing relationships between them.</td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMK58EC5D516331062D"/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#operationalasset">OMG - UAF - OperationalAsset</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="c8b2238961e5385a.htm" target="_top">Conceptual Operating Asset</a><br/> <div align="left" style="min-height: 12pt; ">A&#160;<b> Conceptual Operating Asset</b> is an <a href="a371a43b5b865817.htm" target="_top"><b><u>Operating Asset</u></b></a>&#160; used to describe the <a href="19dc1a30555649d9.htm" target="_top"><b><u>Conceptual Operating Model</u></b></a> of the enterprise.</div><div align="left" style="min-height: 12pt; ">It includes <a href="57dfc5f555093444.htm" target="_top"><b><u>Value Stream</u></b></a>s, <a href="9810b060551137d0.htm" target="_top"><b><u>Activity Domain</u></b></a>s and <a href="7c4094d2552717db.htm" target="_top"><b><u>Business Function</u></b></a>s and the way they contribute to the delivery of <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s.</div><br/><br/><br/> An abstract element used to group the elements of OperationalAgent and OperationalInformation allowing them to own OperationalInformationRoles.<br/><br/><br/> An abstract element used to group the elements of OperationalAgent and OperationalInformation allowing them to own OperationalInformationRoles. </td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMK147A4693636A5E2E"/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#OperationalInformation">OMG - UAF - OperationalInformation</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="362fc4365b3c39b8.htm" target="_top">Concept</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="ec16ee36442800d3.htm" target="_top">Concept</a><br/> <div align="left" style="min-height: 12pt; ">A&#160;<b> Concept</b> is the representation of any tangible or intanglible entity that is of interest to understand the enterprises, its data, resources and activities.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Concept</b> is defined through its essential characteristics which can be:</div><div align="left" style="min-height: 12pt; ">1) A <a href="362fc5a85b3c3c03.htm" target="_top"><b><u>Concept Property</u></b></a> that represents some an immutable factual characteristic such as &quot;name&quot;, &quot;amount&quot;.</div><div align="left" style="min-height: 12pt; ">2) A <a href="f654f7e85ebb76fa.htm" target="_top"><b><u>Concept Relationship</u></b></a> that represents relationships to other&#160;<b> Concept</b>s.</div><br/><br/><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="362fc5a85b3c3c03.htm" target="_top">Concept Property</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="1072774154a17812.htm" target="_top">Concept Property</a><br/> A&#160;<b> Concept Property</b> is an immutable factual characteristic of a <a href="229b34eb5b3f79d2.htm" target="_top"><b><u>Conceptual Entity</u></b></a>.<br />Example: names, amounts, etc.<br/><br/><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="362fc8045b3c3e65.htm" target="_top">Conceptual Object</a><br>   <img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="aeacfb3c4eae21a3.htm" target="_top">Class of Business Information Entity</a><br/> <div align="left" style="min-height: 12pt; ">A&#160;<b> Conceptual Object</b> is the representation of any tangible or intanglible resource, or its respective state, that is critical for comprehending an enterprise, including its data, resources, and activities.</div><div align="left" style="min-height: 12pt; ">Similar to any <a href="e6f250185f772ee1.htm" target="_top"><b><u>Information Object</u></b></a>, a&#160;<b> Conceptual Object</b> can be classified into three categories:</div><div align="left" style="min-height: 12pt; ">1)&#160; <a href="229b34eb5b3f79d2.htm" target="_top"><b><u>Conceptual Entity</u></b></a>s denote entities that can change over time.</div><div align="left" style="min-height: 12pt; ">2) <a href="362ff4b55b3c45e6.htm" target="_top"><b><u>Event Concept</u></b></a>s embody the temporal boundaries associated with <a href="229b34eb5b3f79d2.htm" target="_top"><b><u>Conceptual Entity</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">3) <a href="362fc5a85b3c3c03.htm" target="_top"><b><u>Concept Property</u></b></a>s represent immutable characteristics of <a href="229b34eb5b3f79d2.htm" target="_top"><b><u>Conceptual Entity</u></b></a>s.</div><br/><br/><br/> <br/><br/><br/> An item of information that flows between OperationalPerformers and is produced and consumed by the OperationalActivities that the OperationalPerformers are capable to perform (see IsCapableToPerform).<br/><br/><br/> An item of information that flows between OperationalPerformers and is produced and consumed by the OperationalActivities that the OperationalPerformers are capable to perform (see IsCapableToPerform).</td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMK4BAC9541624DF865"/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ResourceInformation">OMG - UAF - ResourceInformation</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="4619527e560d45eb.htm" target="_top">Logical Data Entity</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="7db8824033340504.htm" target="_top">Class</a><br/> <div align="left" style="min-height: 12pt; ">A&#160;<b> Logical Data Entity</b> is a logical structure of a <a href="325c32fc5eb02d02.htm" target="_top"><b><u>Data Entity</u></b></a>. As any <a href="325c32fc5eb02d02.htm" target="_top"><b><u>Data Entity</u></b></a>, it has an independent existence and can be uniquely identified.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Logical Data Entity</b> is characterized by <a href="f4be36b65ee1c923.htm" target="_top"><b><u>Logical Relationship</u></b></a>s it has with other&#160;<b> Logical Data Entity</b>(ies) and by its <a href="f4be36695ee1c7fa.htm" target="_top"><b><u>Attribute</u></b></a>s.</div><br/><br/><br/> A formalized representation of information that is managed by or exchanged between systems.<br/><br/><br/> A formalized representation of information that is managed by or exchanged between systems.<br/><br/><br/> A formalized representation of information that is managed by or exchanged between systems.<br/><br/><br/> A formalized representation of information that is managed by or exchanged between systems.<br/><br/><br/> A formalized logical representation of information that is managed by or exchanged between systems.<br/><br/><br/> A formalized physical representation of information that is managed by or exchanged between systems.</td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMK14D082B96387DBD1"/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/UAFML/dtc-21-12-07.pdf#InformationModelKind">OMG - UAFML - InformationModelKind</a></td>
+<td><br/> Logical - Indicates that the InformationModel associated with the InformationModelKind is a logical data model that allows analysis of an architecture&rsquo;s data definition aspect, without consideration of implementation specific or product specific issues. It details the conceptual data model.<br/><br/><br/> Conceptual - Indicates that the InformationModel associated with the InformationModelKind is a conceptual InformationModel that defines the required high-level data concepts and their relationships.<br/><br/><br/> Conceptual - Indicates that the InformationModel associated with the InformationModelKind is a conceptual InformationModel that defines the required high-level data concepts and their relationships.<br/><br/><br/> Conceptual - Indicates that the InformationModel associated with the InformationModelKind is a conceptual InformationModel that defines the required high-level data concepts and their relationships.<br/><br/><br/> &#160;Logical - Indicates that the InformationModel associated with the InformationModelKind is a logical data model that allows analysis of an architecture&rsquo;s data definition aspect, without consideration of implementation specific or product specific issues. It details the conceptual data model/<br/><br/><br/> Physical - Indicates that the InformationModel associated with the InformationModelKind is a physical data model that is an implementable specification of a data structure. A physical data model realizes a logical data model, taking into account implementation restrictions and performance issues while still enforcing the constraints, relationships and typing of the logical data model.<br/><br/><br/> Physical - Indicates that the InformationModel associated with the InformationModelKind is a physical data model that is an implementable specification of a data structure. A physical data model realizes a logical data model, taking into account implementation restrictions and performance issues while still enforcing the constraints, relationships and typing of the logical data model.</td>
+</tr>
+</table>
+</section>
+</div></html>

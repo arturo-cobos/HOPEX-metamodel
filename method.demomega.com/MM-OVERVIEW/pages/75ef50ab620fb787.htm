@@ -1,0 +1,405 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="keywords" content="">
+<meta name="description" content="">    
+<LINK REL="icon" HREF="../standard/assets/img/favicon.ico">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/bootstrap.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nav.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/eaportal.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/font-awesome.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/animate.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/datatables.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/grid.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nae.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/custom.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/chosen.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/prism.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery.dataTables.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jsTreeStyle.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.theme.css" media="screen" />
+<script type="text/javascript" src="../standard/assets/js/jquery-3.2.1.min.js" ></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-ui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.columnFilter.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3-force.v2.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.gui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.search.js"></script> 
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.util.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-2.1.1.min.js"></script>
+<script src="../standard/assets/js/ws_zoomtemplate_firefox.js"></script>
+<script src="../standard/assets/js/bootstrap.min.js"></script>
+<script src="../standard/assets/js/datatables.min.js"></script>
+<script src="../standard/assets/js/moment.min.js"></script>
+<script src="../standard/assets/js/datetime-moment.js"></script>
+<script src="../standard/assets/js/chartjs.min.js"></script>
+<script src="../standard/assets/js/searchindexcontent.json"></script>
+<script src="../standard/assets/js/anls.js"></script>
+<script src="../../../cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script src="../standard/assets/js/gauge.js"></script> 
+<script src="../standard/assets/js/domesticApi.js"></script> 
+<script src="../standard/assets/js/piecelabel.js"></script>
+<script src="../standard/assets/js/popper.min.js"></script>
+<script src="../standard/assets/js/custom.js"></script>
+<script src="../standard/assets/js/chosen.jquery.js"></script>
+<script src="../standard/assets/js/prism.js"></script>
+<script src="../standard/assets/js/init-chosen.js"></script>
+<script src="../standard/assets/js/chart-data-flow.js"></script>
+<script src="../standard/assets/js/chart-data-gantt.js"></script>
+<script type="module" src="../standard/assets/js/Fuse.esm.min.js"></script>
+<script type="module">
+import Fuse from '../standard/assets/js/Fuse.esm.min.js';
+$(document).ready(function () {
+console.log('getjson');
+window.$.getJSON('../standard/assets/js/searchindexcontent.json', function (response) {
+console.log('getjson ok');
+var isIndex = "";
+var url = window.location.pathname;
+var filename = url.substring(url.lastIndexOf('/')+1);
+if( filename.includes("index") || filename === "" ){
+isIndex = "pages/";
+} else {
+isIndex = "";
+}
+const fuse = new Fuse(response, {
+keys: ['title','text'],
+shouldSort: true,
+includeMatches : true,
+findAllMatches : true
+});
+$('#search-fuse').on('keyup', function () {
+let result = fuse.search($(this).val());
+console.log(result);
+let resultdiv = $('div.searchresults-fuse');
+if (result.length === 0) {
+resultdiv.hide();
+} else {
+resultdiv.empty();
+resultdiv.append('<table class="table-search" width="100%" cellspacing="0"><thead ><tr><th>Name</th><th>Object Type</th><th>Modification date</th></tr></thead><tbody>');
+
+for (let obj in result.slice(0,10)) {
+
+let searchObj = '<tr><td><a href="./'+ isIndex + result[obj].item.url + '">' + result[obj].item.title +'</a></td><td>' + result[obj].item.ObjectType + '</td><td>' + result[obj].item.ModificationDate + '</td></tr>' ;
+
+
+resultdiv.find('tbody').append(searchObj);
+}
+resultdiv.append('</tbody></table>');
+resultdiv.show();
+}
+});
+});
+});
+</script>
+<title>HOPEX Metamodel Overview (Beta Version)</title>
+</head>
+<nav class="navbar navbar-expand-md navbar-dark  navbar-mega"><!-- Brand --><!--<a class="navbar-brand" href="#">Navbar</a>--><a class="" href="../index.htm"><img class="logo-mega" src="../standard/assets/img/logo.png"  alt="">(Beta Version)</a><!-- Toggler/collapsibe Button --><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><!-- Navbar links -->
+<div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsibleNavbar"><div class="col-sm-auto col-md-auto col-lg-5"></div>
+<div class="col-sm-auto">
+<ul class="navbar-nav">      
+<li><a class="dropdown-item" href="ad30ce115ebf7e90.htm">EA Grid</a></li> 
+<li><a class="dropdown-item" href="fdd5018459bc3c6a.htm">EA Domains</a></li> 
+<li><a class="dropdown-item" href="07e731775ecc93f4.htm">Solutions</a></li> 
+<li><a class="dropdown-item" href="c5dfc62c54810c2c.htm">Glossary</a></li> 
+<li class="nav-item dropdown mx-1">
+<a class="nav-link" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</a>
+<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<li><a class="dropdown-item" href="5446555d5f88c32e.htm">Outcome Driven Metamodel</a></li> 
+<li><a class="dropdown-item" href="e1ccfc295f8f7b90.htm">Playbooks</a></li> 
+<li><a class="dropdown-item" href="42bc992862d20ea7.htm">Framework Mappings</a></li> 
+<li><a class="dropdown-item" href="e93aebb35fa20550.htm">Metamodel Patterns</a></li> 
+<li><a class="dropdown-item" href="d599fe87602b2b85.htm">References</a></li> 
+<li><a class="dropdown-item" href="333f3a7f5dde11de.htm">Legend</a></li> 
+</ul>									                                            
+</li>
+</ul>
+</div>
+<div class="col-sm-auto"><a class="nav-link search" href="#" onclick=showHideSearch("search-section-fuse")><i class="fa fa-search mr-1 form-control-feedback"></i></a></div>
+</div>
+</nav>
+<div id="search-section-fuse" style="display:none">>
+<div class="search_header"><span class="closesearch">&times;</span>
+<nav class="breadcrumb">
+<a class="breadcrumb-item" href="../index.htm">Home </a> 
+<span class="breadcrumb-item active">Search</span> 
+</nav>
+</div>
+<input id="search-fuse" placeholder="Search..."  name="q" onfocus="this.value=''" type="search">
+<div class="searchresults-fuse"></div>
+</div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>function showHideSearch(elementId) {var contentDivs = document.getElementsByClassName('content');var footerDivs = document.getElementsByClassName('footer'); var containerDivs = document.getElementsByClassName('container');var containerfluidDivs = document.getElementsByClassName('container-fluid');var x = document.getElementById(elementId);if (x.style.display === "none") {x.style.display = "block";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "none";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "none";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "none";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "none";}} else {x.style.display = "none";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "block";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "block";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "block";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "block";}}} ;<!-- END WIDGET DRILL DOWN --></script><script>$(document).ready(function() {$(window).scroll(function() {if ($(this).scrollTop() > 100) {$('.scrollup').fadeIn();} else {$('.scrollup').fadeOut();}});$('.scrollup').click(function() {$("html, body").animate({scrollTop: 0}, 600);return false;});});</script><script>
+var modal = document.getElementById("search-section-fuse");
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = "none";
+}
+}
+$(document).on('click', '.closesearch', function() {
+showHideSearch("search-section-fuse");
+
+
+
+
+
+});</script><div class="container-fluid col-lg-11"><nav class="breadcrumb"><a class="breadcrumb-item" href="../index.htm">Home</a> <span class="breadcrumb-item active">
+<a  href="c5dfc62c54810c2c.htm" target="_top">Dictionary of HOPEX concepts</a>&nbsp;/&nbsp;EA Pattern - Physical Data Domain</span></nav></div>
+<div class="container-fluid col-lg-11 content">
+<section class="fadeInDown animated"><a href="#idt" class="btn btn-d">DEFINITION</a> <a href="#grf" class="btn btn-d">CONCEPT GRAPH</a> <a href="#des" class="btn btn-d">CONCEPT DESCRIPTIONS</a> 
+</section>
+<a class="object-section-anchor" id="idt"></a>
+<section class="object-section">
+<h4>CONCEPT DOMAIN - EA Pattern - Physical Data Domain</h4><hr class="sectionbreak" /><table class="table table-vertical-headers table-set-col-width"><tr><th>Description</th><td class="description-text"><i>Pattern Domain</i><br/>The&#160;<b> EA Pattern - Physical Data Domain</b> comprises abstract concepts used to describe the physical structure of <a href="6d2b7c935fbb6270.htm" target="_top"><b><u>Data Object</u></b></a>s.<div></div></td></tr><tr><th>Dictionary</th><td><img src="../standard/dicsubjectarea.ico.gif"/>&nbsp;
+<a  href="c5dfc62c54810c2c.htm" target="_top">Dictionary of HOPEX concepts</a></td></tr><tr><th>Parent Domain</th><td></td></tr>
+<tr><th>Imported Domains</th><td><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="2b58a67a5eec0662.htm" target="_top">EA Pattern - Data Domain</a>&nbsp;</td></tr>
+<tr><th>Domain dependencies</th><td><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="2b58a67a5eec0662.htm" target="_top">EA Pattern - Data Domain</a>&nbsp;</td></tr></table></section>
+<a class="object-section-anchor" id="grf"></a>
+<section class="object-section">
+<h4>DOMAIN CONCEPT GRAPH</h4>
+<hr class="sectionbreak" />
+<a href="#" class="btn btn-d" value="Relationship1" onclick="showDiagOnClick(this)">Diagram</a>
+<a href="#" class="btn btn-d" value="Relationship2" onclick="showDiagOnClick(this)">Graph</a>
+<div class="Relationship" id="Relationship1">
+
+<map  name="75EF50BB620FB869">
+  <area  href=163c2a625fda69e0.htm shape="polygon" coords="926, 300, 1078, 301, 1078, 311, 926, 310"   target="_top"  title="-">
+  
+  <area  href=43ee3c7963725899.htm#OBMK43EE3C7963725899 shape="polygon" coords="1096, 288, 1096, 277, 1170, 277, 1170, 288, 1096, 288"   target="_top"  title="A&#160; Business Object is an aspect of any tangible or intanglible resource or state of such resource, that can be the subject of a business transaction.">
+  
+  <area  href=30efb18261f374d5.htm#OBMK30EFB18261F374D5 shape="polygon" coords="1106, 299, 1106, 288, 1160, 288, 1160, 299, 1106, 299"   target="_top"  title="A&#160; Data Asset is an Information Asset used for the description of data consumed and produced by Software Systems.">
+  
+  <area  href=e6f250185f772ee1.htm#OBMKE6F250185F772EE1 shape="polygon" coords="1091, 310, 1091, 299, 1174, 299, 1174, 310, 1091, 310"   target="_top"  title="An&#160; Information Object&#160; represents anything that can be communicated or memorized by an Agent in order to produce its Outcomes.">
+  
+  <area  href=650bc5d9550fd138.htm#OBMK650BC5D9550FD138 shape="polygon" coords="1105, 342, 1105, 328, 1160, 328, 1160, 342, 1105, 342"   target="_top"  title="-">
+  
+  <area  href="6d2b7c935fbb6270.htm" shape="rect" coords="1078, 275, 1188, 346"   target="_top"  title="A&#160; Data Object&#160; represents the abstract structure of any kind of data that can be memorized by a Software System.">
+  
+  <area  href=#OBMK514E524F620F0B37 shape="polygon" coords="650, 225, 652, 222, 661, 227, 659, 231"    title="-">
+  
+  <area  href=#OBMK514E5249620F0AF1 shape="polygon" coords="715, 127, 662, 127, 662, 224, 651, 224, 651, 116, 715, 116"    title="-">
+  
+  <area  href=#OBMK514E5244620F0AAB shape="polygon" coords="548, 116, 662, 116, 662, 224, 651, 224, 651, 127, 548, 127"    title="-">
+  
+  <area  href=30efb19d61f37587.htm#OBMK30EFB19D61F37587 shape="polygon" coords="325, 170, 321, 170, 321, 183, 169, 183, 169, 170, 325, 170"   target="_top"  title="-">
+  
+  <area  href=514e51b2620f09ae.htm shape="polygon" coords="154, 185, 359, 185, 359, 196, 154, 196"   target="_top"  title="-">
+  
+  <area  href=#OBMK82C3BBBC5FDCC43A shape="polygon" coords="824, 256, 846, 256, 846, 280, 836, 280, 836, 267, 824, 267"    title="-">
+  
+  <area  href=82c3bbbb5fdcc433.htm shape="polygon" coords="767, 280, 767, 256, 846, 256, 846, 280, 836, 280, 836, 267, 778, 267, 778, 280"   target="_top"  title="-">
+  
+  <area  href=#OBMK82C3BBBC5FDCC456 shape="polygon" coords="767, 280, 767, 256, 789, 256, 789, 267, 778, 267, 778, 280"    title="-">
+  
+  <area  href=#OBMKB6E3DF985FBB7294 shape="polygon" coords="492, 254, 515, 254, 515, 278, 505, 278, 505, 265, 492, 265"    title="-">
+  
+  <area  href=b6e3df8e5fbb724d.htm shape="polygon" coords="433, 279, 433, 254, 515, 254, 515, 278, 505, 278, 505, 265, 443, 265, 443, 279"   target="_top"  title="-">
+  
+  <area  href=#OBMKB6E3DF8E5FBB725B shape="polygon" coords="433, 279, 433, 254, 455, 254, 455, 265, 443, 265, 443, 279"    title="-">
+  
+  <area  href=#OBMKF4BE4C025EE18D26 shape="polygon" coords="660, 116, 715, 116, 715, 127, 660, 127"    title="-">
+  
+  <area  href=F4BE4C025EE18D1E.htm shape="polygon" coords="548, 116, 715, 116, 715, 127, 548, 127"   target="_top"  title="Physical Data Domain that is a part of a Physical Data Map.">
+  
+  <area  href=#OBMKF4BE4C025EE18D62 shape="polygon" coords="548, 116, 604, 116, 604, 127, 548, 127"    title="-">
+  
+  <area  href=6d2b80db5fbb700b.htm#OBMK6D2B80DB5FBB700B shape="polygon" coords="449, 103, 449, 92, 498, 92, 498, 103, 449, 103"   target="_top"  title="A&#160; Data Map is an urbanization tool for&#160; Data Asset. It represents a set of Data Domains in a particular context.">
+  
+  <area  href=75ef4ea8620fb39f.htm#OBMK75EF4EA8620FB39F shape="polygon" coords="429, 114, 429, 103, 519, 103, 519, 114, 429, 114"   target="_top"  title="A&#160; Physical Data Asset is a Data Asset used for the physical description of data consumed and produced by Software Systems.">
+  
+  <area  href=c5d9cff45948362f.htm#OBMKC5D9CFF45948362F shape="polygon" coords="434, 146, 434, 132, 513, 132, 513, 146, 434, 146"   target="_top"  title="-">
+  
+  <area  href="f4be4bb95ee18b51.htm" shape="rect" coords="399, 89, 548, 154"   target="_top"  title="A&#160; Physical Data Map is a top level grouping of Physical Data Domains.">
+  
+  <area  href=#OBMKE6F230FB5F777969 shape="polygon" coords="552, 302, 654, 297, 655, 307, 553, 312"    title="-">
+  
+  <area  href=#OBMKE6F223F55F771B92 shape="polygon" coords="793, 203, 793, 228, 782, 228, 782, 203"    title="-">
+  
+  <area  href=E6F223F55F771B8D.htm shape="polygon" coords="793, 154, 793, 228, 782, 228, 782, 154"   target="_top"  title="-">
+  
+  <area  href=#OBMKE6F223F65F771BE8 shape="polygon" coords="793, 154, 793, 178, 782, 178, 782, 154"    title="-">
+  
+  <area  href=325C32165EB02A4A.htm#OBMK325C32165EB02A4A shape="polygon" coords="759, 103, 759, 92, 820, 92, 820, 103, 759, 103"   target="_top"  title="A&#160; Data Domain is subset of the enterprise&rsquo;s data that are meant to be manipulated together in the context of business operations.">
+  
+  <area  href=75ef4ea8620fb39f.htm#OBMK75EF4EA8620FB39F shape="polygon" coords="745, 114, 745, 103, 835, 103, 835, 114, 745, 114"   target="_top"  title="A&#160; Physical Data Asset is a Data Asset used for the physical description of data consumed and produced by Software Systems.">
+  
+  <area  href=246c375a55313a68.htm#OBMK246C375A55313A68 shape="polygon" coords="750, 146, 750, 132, 830, 132, 830, 146, 750, 146"   target="_top"  title="-">
+  
+  <area  href="028f03ff5b4f55ee.htm" shape="rect" coords="716, 89, 865, 154"   target="_top"  title="A&#160; Physical Data Domain is subset of the metadata of an enterprise&rsquo;s data store.">
+  
+  <area  href=#OBMKE6F222845F771918 shape="polygon" coords="675, 306, 736, 307, 736, 317, 675, 316"    title="-">
+  
+  <area  href=e6f222845f771913.htm shape="polygon" coords="553, 306, 736, 307, 736, 317, 553, 316"   target="_top"  title="-">
+  
+  <area  href=#OBMKE6F222855F77196F shape="polygon" coords="553, 306, 614, 306, 614, 316, 553, 316"    title="-">
+  
+  <area  href=6d2b7fce5fbb69c7.htm#OBMK6D2B7FCE5FBB69C7 shape="polygon" coords="775, 294, 775, 283, 839, 283, 839, 294, 775, 294"   target="_top"  title="A&#160; Data Property is a Data Object that is fundamentally defined by its value. It doesn&#39;t evolve over time is thereby immutable.">
+  
+  <area  href=7d37d08d5fd07aaa.htm#OBMK7D37D08D5FD07AAA shape="polygon" coords="761, 305, 761, 294, 853, 294, 853, 305, 761, 305"   target="_top"  title="A&#160; Physical Data Object&#160; represents the physical structure of any kind of data that can be memorized by a Software System.">
+  
+  <area  href=e3caed13624b470a.htm#OBMKE3CAED13624B470A shape="polygon" coords="759, 337, 759, 323, 855, 323, 855, 337, 759, 337"   target="_top"  title="-">
+  
+  <area  href="e6f220d45f771837.htm" shape="rect" coords="736, 280, 878, 345"   target="_top"  title="A&#160; Physical Data Property is a Physical Data Object that is fundamentally defined by its value. It doesn&#39;t evolve over time is thereby immutable.">
+  
+  <area  href=325c32fc5eb02d02.htm#OBMK325C32FC5EB02D02 shape="polygon" coords="456, 292, 456, 281, 508, 281, 508, 292, 456, 292"   target="_top"  title="A&#160; Data Entity is an abstract structure of an Information Entity. It has an independent existence and can be uniquely identified.">
+  
+  <area  href=7d37d08d5fd07aaa.htm#OBMK7D37D08D5FD07AAA shape="polygon" coords="436, 303, 436, 292, 528, 292, 528, 303, 436, 303"   target="_top"  title="A&#160; Physical Data Object&#160; represents the physical structure of any kind of data that can be memorized by a Software System.">
+  
+  <area  href=e3caf1c0624b4974.htm#OBMKE3CAF1C0624B4974 shape="polygon" coords="436, 335, 436, 321, 528, 321, 528, 335, 436, 335"   target="_top"  title="-">
+  
+  <area  href="762582bb5f6bd659.htm" shape="rect" coords="411, 278, 553, 343"   target="_top"  title="A&#160; Physical Data Entity is a representation the physical structure of a Data Entity as it will be stored in a DBMS.">
+  
+  <area  href=82c3b89c5fdcbd0f.htm#OBMK82C3B89C5FDCBD0F shape="polygon" coords="55, 167, 55, 156, 124, 156, 124, 167, 55, 167"   target="_top"  title="A&#160; Data Dictionary is a dictionary of Data Assets used to describe a data architecture. This includes:">
+  
+  <area  href="6ba771525f6b8ad4.htm" shape="rect" coords="24, 154, 155, 219"   target="_top"  title="A&#160; Physical Data Dictionary is Data Dictionary that holds the definition of Physical Data Assets such as Physical Data Domain definitions, Table definitions, Column Type definitions.">
+  
+  <area  href=6d2b7c935fbb6270.htm#OBMK6D2B7C935FBB6270 shape="polygon" coords="627, 241, 627, 230, 683, 230, 683, 241, 627, 241"   target="_top"  title="A&#160; Data Object&#160; represents the abstract structure of any kind of data that can be memorized by a Software System.">
+  
+  <area  href=75ef4ea8620fb39f.htm#OBMK75EF4EA8620FB39F shape="polygon" coords="610, 252, 610, 241, 700, 241, 700, 252, 610, 252"   target="_top"  title="A&#160; Physical Data Asset is a Data Asset used for the physical description of data consumed and produced by Software Systems.">
+  
+  <area  href=01dc041858b72109.htm#OBMK01DC041858B72109 shape="polygon" coords="613, 278, 613, 265, 696, 265, 696, 278, 613, 278"   target="_top"  title="-">
+  
+  <area  href="7d37d08d5fd07aaa.htm" shape="rect" coords="384, 228, 927, 377"   target="_top"  title="A&#160; Physical Data Object&#160; represents the physical structure of any kind of data that can be memorized by a Software System.">
+  
+  <area  href=30efb18261f374d5.htm#OBMK30EFB18261F374D5 shape="polygon" coords="630, 59, 630, 48, 684, 48, 684, 59, 630, 59"   target="_top"  title="A&#160; Data Asset is an Information Asset used for the description of data consumed and produced by Software Systems.">
+  
+  <area  href="75ef4ea8620fb39f.htm" shape="rect" coords="360, 46, 955, 403"   target="_top"  title="A&#160; Physical Data Asset is a Data Asset used for the physical description of data consumed and produced by Software Systems.">
+  
+  <area  href="75ef50ab620fb787.htm" shape="rect" coords="0, 0, 1211, 441"   target="_top"  title="The&#160; EA Pattern - Physical Data Domain comprises abstract concepts used to describe the physical structure of Data Objects.">
+  
+</map>
+<img  src="../images/75ef50ab620fb787_75ef50bb620fb869_i.png" alt="../images/75ef50ab620fb787_75ef50bb620fb869_i.png" usemap="#75EF50BB620FB869" height="441" width="1211" border=0>
+
+</div>
+<div class="Relationship" id="Relationship2">
+<div id="klmm" style="width: 100vw; height: 100vh;" ></div>
+<!-- <script src="../standard/assets/js/keylines_domain.js"></script> -->
+<script >
+const data = {
+ type: 'LinkChart',
+  items: [
+  //nodes
+    {type: 'node', id:'75EF50AB620FB787', t:"EA Pattern - Physical Data Domain", sh:'box', d:"The EA Pattern - Physical Data Domain comprises abstract concepts used to describe the physical structure of Data Objects."},
+    {type: 'node', id:'762582BB5F6BD659', t:"Physical Data Entity", parentId:'7D37D08D5FD07AAA', sh:'circle', d:"A Physical Data Entity is a representation the physical structure of a Data Entity as it will be stored in a DBMS."},
+    {type: 'node', id:'7D37D08D5FD07AAA', t:"Physical Data Object", parentId:'75EF4EA8620FB39F', sh:'circle', d:"A Physical Data Object  represents the physical structure of any kind of data that can be memorized by a Software System."},
+    {type: 'node', id:'028F03FF5B4F55EE', t:"Physical Data Domain", parentId:'75EF4EA8620FB39F', sh:'circle', d:"A Physical Data Domain is subset of the metadata of an enterprises data store."},
+    {type: 'node', id:'6BA771525F6B8AD4', t:"Physical Data Dictionary", parentId:'82C3B89C5FDCBD0F', sh:'circle', d:"A Physical Data Dictionary is Data Dictionary that holds the definition of Physical Data Assets such as Physical Data Domain definitions, Table definitions, Column Type definitions."},
+    {type: 'node', id:'F4BE4BB95EE18B51', t:"Physical Data Map", parentId:'75EF4EA8620FB39F', sh:'circle', d:"A Physical Data Map is a top level grouping of Physical Data Domains."},
+    {type: 'node', id:'75EF4EA8620FB39F', t:"Physical Data Asset", parentId:'75EF50AB620FB787', sh:'circle', d:"A Physical Data Asset is a Data Asset used for the physical description of data consumed and produced by Software Systems."},
+    {type: 'node', id:'E6F220D45F771837', t:"Physical Data Property", parentId:'7D37D08D5FD07AAA', sh:'circle', d:"A Physical Data Property is a Physical Data Object that is fundamentally defined by its value. It doesnt evolve over time is thereby immutable."},
+    {type: 'node', id:'6D2B7C935FBB6270', t:"Data Object", parentId:'75EF50AB620FB787', sh:'circle', d:"A Data Object  represents the abstract structure of any kind of data that can be memorized by a Software System."},
+    {type: 'node', id:'02AF08F05A1821D3', t:"Enterprise Glossary", sh:'box', d:"The Enterprise Glossary domain comprises the Concepts, relationships and Terms used to build the glossary of an enterprise."},
+    {type: 'node', id:'362FC8045B3C3E65', t:"Conceptual Object", parentId:'02AF08F05A1821D3', sh:'circle', d:"A Conceptual Object is the representation of any tangible or intanglible resource, or its respective state, that is critical for comprehending an enterprise, including its data, resources, and activities."},
+    {type: 'node', id:'325C32165EB02A4A', t:"Data Domain", parentId:'75EF50AB620FB787', sh:'circle', d:"A Data Domain is subset of the enterprises data that are meant to be manipulated together in the context of business operations."},
+    {type: 'node', id:'203B8FF05A5F43FE', t:"Concept Domain", parentId:'02AF08F05A1821D3', sh:'circle', d:"A Concept Domain is a subset of the Concepts of a Business Dictionary that are relevant to an Activity Domain."},
+    {type: 'node', id:'82C3B89C5FDCBD0F', t:"Data Dictionary", parentId:'75EF50AB620FB787', sh:'circle', d:"A Data Dictionary is a dictionary of Data Assets used to describe a data architecture. This includes:"},
+    {type: 'node', id:'2B58A67A5EEC0662', t:"EA Pattern - Data Domain", sh:'box', d:"The EA Pattern - Data Domain comprises abstract concepts used to describe the logical and physical structure of Information Objects."},
+    {type: 'node', id:'30EFB18261F374D5', t:"Data Asset", parentId:'2B58A67A5EEC0662', sh:'circle', d:"A Data Asset is an Information Asset used for the description of data consumed and produced by Software Systems."},
+  //edges
+    { type: 'link', id:'762582BB5F6BD659-163C2BF75FDA6CA1', id1:'762582BB5F6BD659', id2:'762582BB5F6BD659', t:"Specialized Physical Entity"},
+    { type: 'link', id:'762582BB5F6BD659-E6F222845F771913', id1:'762582BB5F6BD659', id2:'E6F220D45F771837', t:"Physical Data Slot"},
+    { type: 'link', id:'762582BB5F6BD659-B6E3DF8E5FBB724D', id1:'762582BB5F6BD659', id2:'762582BB5F6BD659', t:"Physical Relationship"},
+    { type: 'link', id:'7D37D08D5FD07AAA-163C2A3F5FDA68D1', id1:'7D37D08D5FD07AAA', id2:'7D37D08D5FD07AAA', t:"Specialized Physical Object"},
+    { type: 'link', id:'7D37D08D5FD07AAA-163C2A625FDA69E0', id1:'7D37D08D5FD07AAA', id2:'6D2B7C935FBB6270', t:"Realized Data Object"},
+    { type: 'link', id:'7D37D08D5FD07AAA-163C29E85FDA678C', id1:'7D37D08D5FD07AAA', id2:'7D37D08D5FD07AAA', t:"Physical Data Component"},
+    { type: 'link', id:'028F03FF5B4F55EE-E6F223F55F771B8D', id1:'028F03FF5B4F55EE', id2:'7D37D08D5FD07AAA', t:"Physical Domain Object"},
+    { type: 'link', id:'6BA771525F6B8AD4-514E51B2620F09AE', id1:'6BA771525F6B8AD4', id2:'75EF4EA8620FB39F', t:"Owned Physical Data Asset"},
+    { type: 'link', id:'F4BE4BB95EE18B51-4447473C5F4F6A69', id1:'F4BE4BB95EE18B51', id2:'028F03FF5B4F55EE', t:"External Physical Domain"},
+    { type: 'link', id:'F4BE4BB95EE18B51-F4BE4C025EE18D1E', id1:'F4BE4BB95EE18B51', id2:'028F03FF5B4F55EE', t:"Physical Domain Component"},
+    { type: 'link', id:'E6F220D45F771837-82C3C2655FDCD217', id1:'E6F220D45F771837', id2:'E6F220D45F771837', t:"Specialized Physical Value Object"},
+    { type: 'link', id:'E6F220D45F771837-82C3BBBB5FDCC433', id1:'E6F220D45F771837', id2:'E6F220D45F771837', t:"Sub Physical Data Property"},
+    { type: 'link', id:'6D2B7C935FBB6270-FD790CF65FDA3DAF', id1:'6D2B7C935FBB6270', id2:'6D2B7C935FBB6270', t:"Specialized Data Object"},
+    { type: 'link', id:'6D2B7C935FBB6270-6D2B854D5FBB87CA', id1:'6D2B7C935FBB6270', id2:'362FC8045B3C3E65', t:"Realized Business Object"},
+    { type: 'link', id:'6D2B7C935FBB6270-B6E3CDF35FBB6AD1', id1:'6D2B7C935FBB6270', id2:'6D2B7C935FBB6270', t:"Data Object Component"},
+    { type: 'link', id:'325C32165EB02A4A-11D714605FDA5D46', id1:'325C32165EB02A4A', id2:'203B8FF05A5F43FE', t:"Realized Concept Domain"},
+    { type: 'link', id:'325C32165EB02A4A-11D7148F5FDA5DF0', id1:'325C32165EB02A4A', id2:'325C32165EB02A4A', t:"Specialized Data Area"},
+    { type: 'link', id:'325C32165EB02A4A-6D2B7D9E5FBB65F3', id1:'325C32165EB02A4A', id2:'6D2B7C935FBB6270', t:"Domain Data Object"},
+    { type: 'link', id:'82C3B89C5FDCBD0F-30EFB19D61F37587', id1:'82C3B89C5FDCBD0F', id2:'30EFB18261F374D5', t:"Owned Data Dictionary Asset"}
+  ]
+}
+</script>
+<script src="../standard/assets/js/keylines_domain.js" type="module"></script>
+</div>
+</section>
+<a class="object-section-anchor" id="des"></a>
+<section class="object-section">
+<h4>CONCEPT DESCRIPTIONS</h4> 
+<hr class="sectionbreak" />
+<h5>Abstract Concepts</h5>
+<table class="table  table-set-col-width">
+<thead >
+<tr><th>Concept</th><th>Description</th><th>HOPEX Metaclass</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="6d2b7c935fbb6270.htm" target="_top">Data Object</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Data Object</b>&#160; represents the abstract structure of any kind of data that can be memorized by a <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a>.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Data Object</b> is either a <a href="325c32fc5eb02d02.htm" target="_top"><b><u>Data Entity</u></b></a> or a <a href="6d2b7fce5fbb69c7.htm" target="_top"><b><u>Data Property</u></b></a>.</div><div align="left" style="min-height: 12pt; ">Only <a href="325c32fc5eb02d02.htm" target="_top"><b><u>Data Entity</u></b></a>s can have identity and states. <a href="6d2b7fce5fbb69c7.htm" target="_top"><b><u>Data Property</u></b></a>s only handle raw data.</div><i><ul>References:<li><a href="https://csrc.nist.gov/glossary/term/data_asset"><img src="../standard/extr.ico.gif">&nbsp;NIST - Data Asset</a></li> <li><a href="https://compliancedictionary.com/term/270"><img src="../standard/extr.ico.gif">&nbsp;UCF Glossary - Data</a></li> <li><a href="https://compliancedictionary.com/term/2969"><img src="../standard/extr.ico.gif">&nbsp;UCF Glossary - Data Element</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="650bc5d9550fd138.htm" target="_top">Data Entity</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="75ef4ea8620fb39f.htm" target="_top">Physical Data Asset</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Physical Data Asset</b> is a <a href="30efb18261f374d5.htm" target="_top"><b><u>Data Asset</u></b></a> used for the physical description of data consumed and produced by <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a>s.</div><div align="left" style="min-height: 12pt; "><b>&#160;Physical Data Asset</b>s range from <a href="028f03ff5b4f55ee.htm" target="_top"><b><u>Physical Data Domain</u></b></a>s to <a href="e6f220d45f771837.htm" target="_top"><b><u>Physical Data Property</u></b></a>.</div><div align="left" style="min-height: 12pt; ">They are defined in <a href="6ba771525f6b8ad4.htm" target="_top"><b><u>Physical Data Dictionary</u></b></a>(ies) and managed in Data Catalogs.</div>       </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="6ba771525f6b8ad4.htm" target="_top">Physical Data Dictionary</a></td>
+<td class="description-text">A&#160;<b> Physical Data Dictionary</b> is <a href="82c3b89c5fdcbd0f.htm" target="_top"><b><u>Data Dictionary</u></b></a> that holds the definition of <a href="75ef4ea8620fb39f.htm" target="_top"><b><u>Physical Data Asset</u></b></a>s such as <a href="028f03ff5b4f55ee.htm" target="_top"><b><u>Physical Data Domain</u></b></a> definitions, <a href="137d21b55ee2c717.htm" target="_top"><b><u>Table</u></b></a> definitions, <a href="137d21d35ee2c7f3.htm" target="_top"><b><u>Column Type</u></b></a> definitions.       </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="028f03ff5b4f55ee.htm" target="_top">Physical Data Domain</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Physical Data Domain</b> is subset of the metadata of an enterprise&rsquo;s data store.</div><div align="left" style="min-height: 12pt; ">For instance, a &quot;Sales&quot;&#160;<b> Physical Data Domain</b> contains a &quot;Client&quot; <a href="137d21b55ee2c717.htm" target="_top"><b><u>Table</u></b></a> and a &quot;Order&quot; <a href="137d21b55ee2c717.htm" target="_top"><b><u>Table</u></b></a>.</div><div align="left" style="min-height: 12pt; ">Each <a href="762582bb5f6bd659.htm" target="_top"><b><u>Physical Data Entity</u></b></a> in a&#160;<b> Physical Data Domain</b> has CRUD characteristics. For instance, the &quot;Client&quot; Table in the &quot;Sales&quot;&#160;<b> Physical Data Domain</b>, has all CRUD characteristics.</div><div align="left" style="min-height: 12pt; "><b>&#160;Physical Data Domain</b>s define functional data boundaries used both for Data Allocation to <a href="278675d65b252f4d.htm" target="_top"><b><u>Business System</u></b></a>s (see <a href="CA9DF5BB5FCF5A75.htm" target="_top"><b><u>Resource Agent Store</u></b></a>) and data governance for data stewardship (see <a href="9152d8875ed741ef.htm" target="_top"><b><u>Data Catalog</u></b></a>).</div>       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="246c375a55313a68.htm" target="_top">Physical Data Area</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="762582bb5f6bd659.htm" target="_top">Physical Data Entity</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Physical Data Entity</b> is a representation the physical structure of a <a href="325c32fc5eb02d02.htm" target="_top"><b><u>Data Entity</u></b></a> as it will be stored in a DBMS.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Physical Data Entity</b> has an independent existence and can be uniquely identified.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Physical Data Entity</b> is characterized by <a href="b6e3df8e5fbb724d.htm" target="_top"><b><u>Physical Relationship</u></b></a>s it has with other&#160;<b> Physical Data Entity</b>(ies) and by <a href="e6f220d45f771837.htm" target="_top"><b><u>Physical Data Property</u></b></a>(ies).</div><i><ul>References:<li><a href="https://www.google.com/search?q=site%3Ahttps%3A%2F%2Fwww.dddcommunity.org%2Fresources%2Fddd_terms%2F+Entity"><img src="../standard/extr.ico.gif">&nbsp;DDD - Glossary - Entity</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="e3caf1c0624b4974.htm" target="_top">Physical Data Entity E</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="f4be4bb95ee18b51.htm" target="_top">Physical Data Map</a></td>
+<td class="description-text">A&#160;<b> Physical Data Map</b> is a top level grouping of <a href="028f03ff5b4f55ee.htm" target="_top"><b><u>Physical Data Domain</u></b></a>s.       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="c5d9cff45948362f.htm" target="_top">Physical Data Map</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="7d37d08d5fd07aaa.htm" target="_top">Physical Data Object</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Physical Data Object</b>&#160; represents the physical structure of any kind of data that can be memorized by a <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a>.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Physical Data Object</b> is either a <a href="762582bb5f6bd659.htm" target="_top"><b><u>Physical Data Entity</u></b></a> or a <a href="e6f220d45f771837.htm" target="_top"><b><u>Physical Data Property</u></b></a>.</div><div align="left" style="min-height: 12pt; ">Only <a href="762582bb5f6bd659.htm" target="_top"><b><u>Physical Data Entity</u></b></a>s can have an identity can by be referenced by <a href="b6e3df8e5fbb724d.htm" target="_top"><b><u>Physical Relationship</u></b></a>. <a href="e6f220d45f771837.htm" target="_top"><b><u>Physical Data Property</u></b></a> only handle raw data.</div>       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="01dc041858b72109.htm" target="_top">Physical Data Entity</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="e6f220d45f771837.htm" target="_top">Physical Data Property</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Physical Data Property</b> is a <a href="7d37d08d5fd07aaa.htm" target="_top"><b><u>Physical Data Object</u></b></a> that is fundamentally defined by its value. It doesn&#39;t evolve over time is thereby immutable.</div><div align="left" style="min-height: 12pt; ">It represents a data structure that is stored in any kind of data store: databases, data files.</div><div align="left" style="min-height: 12pt; ">For instance an &quot;address&quot; or a &quot;customer name&quot; are usually considered as&#160;<b> Physical Data Property</b>(ies).</div>       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="e3caed13624b470a.htm" target="_top">Physical Data Property</a></td>
+</tr>  
+</tbody>
+</table>
+<section>
+
+</div>
+<button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button>
+<script>window.onscroll = function() {scrollFunction()};$(document).on('click', 'a[href^="#"]', function (event) {event.preventDefault();$('html, body').animate({scrollTop: $($.attr(this, 'href')).offset().top}, 500);});function showDiagOnClick(elem){ var x = document.getElementsByClassName('Relationship');var e = elem.getAttribute("value"); for (var i=0; i < x.length ;i++){x[i].style.display="none"; if (x[i].id == e){x[i].style.display="block";x[i].style.textAlign="left";}}}
+</script></html>

@@ -1,0 +1,967 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="keywords" content="">
+<meta name="description" content="">    
+<LINK REL="icon" HREF="../standard/assets/img/favicon.ico">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/bootstrap.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nav.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/eaportal.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/font-awesome.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/animate.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/datatables.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/grid.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nae.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/custom.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/chosen.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/prism.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery.dataTables.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jsTreeStyle.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.theme.css" media="screen" />
+<script type="text/javascript" src="../standard/assets/js/jquery-3.2.1.min.js" ></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-ui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.columnFilter.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3-force.v2.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.gui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.search.js"></script> 
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.util.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-2.1.1.min.js"></script>
+<script src="../standard/assets/js/ws_zoomtemplate_firefox.js"></script>
+<script src="../standard/assets/js/bootstrap.min.js"></script>
+<script src="../standard/assets/js/datatables.min.js"></script>
+<script src="../standard/assets/js/moment.min.js"></script>
+<script src="../standard/assets/js/datetime-moment.js"></script>
+<script src="../standard/assets/js/chartjs.min.js"></script>
+<script src="../standard/assets/js/searchindexcontent.json"></script>
+<script src="../standard/assets/js/anls.js"></script>
+<script src="../../../cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script src="../standard/assets/js/gauge.js"></script> 
+<script src="../standard/assets/js/domesticApi.js"></script> 
+<script src="../standard/assets/js/piecelabel.js"></script>
+<script src="../standard/assets/js/popper.min.js"></script>
+<script src="../standard/assets/js/custom.js"></script>
+<script src="../standard/assets/js/chosen.jquery.js"></script>
+<script src="../standard/assets/js/prism.js"></script>
+<script src="../standard/assets/js/init-chosen.js"></script>
+<script src="../standard/assets/js/chart-data-flow.js"></script>
+<script src="../standard/assets/js/chart-data-gantt.js"></script>
+<script type="module" src="../standard/assets/js/Fuse.esm.min.js"></script>
+<script type="module">
+import Fuse from '../standard/assets/js/Fuse.esm.min.js';
+$(document).ready(function () {
+console.log('getjson');
+window.$.getJSON('../standard/assets/js/searchindexcontent.json', function (response) {
+console.log('getjson ok');
+var isIndex = "";
+var url = window.location.pathname;
+var filename = url.substring(url.lastIndexOf('/')+1);
+if( filename.includes("index") || filename === "" ){
+isIndex = "pages/";
+} else {
+isIndex = "";
+}
+const fuse = new Fuse(response, {
+keys: ['title','text'],
+shouldSort: true,
+includeMatches : true,
+findAllMatches : true
+});
+$('#search-fuse').on('keyup', function () {
+let result = fuse.search($(this).val());
+console.log(result);
+let resultdiv = $('div.searchresults-fuse');
+if (result.length === 0) {
+resultdiv.hide();
+} else {
+resultdiv.empty();
+resultdiv.append('<table class="table-search" width="100%" cellspacing="0"><thead ><tr><th>Name</th><th>Object Type</th><th>Modification date</th></tr></thead><tbody>');
+
+for (let obj in result.slice(0,10)) {
+
+let searchObj = '<tr><td><a href="./'+ isIndex + result[obj].item.url + '">' + result[obj].item.title +'</a></td><td>' + result[obj].item.ObjectType + '</td><td>' + result[obj].item.ModificationDate + '</td></tr>' ;
+
+
+resultdiv.find('tbody').append(searchObj);
+}
+resultdiv.append('</tbody></table>');
+resultdiv.show();
+}
+});
+});
+});
+</script>
+<title>HOPEX Metamodel Overview (Beta Version)</title>
+</head>
+<nav class="navbar navbar-expand-md navbar-dark  navbar-mega"><!-- Brand --><!--<a class="navbar-brand" href="#">Navbar</a>--><a class="" href="../index.htm"><img class="logo-mega" src="../standard/assets/img/logo.png"  alt="">(Beta Version)</a><!-- Toggler/collapsibe Button --><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><!-- Navbar links -->
+<div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsibleNavbar"><div class="col-sm-auto col-md-auto col-lg-5"></div>
+<div class="col-sm-auto">
+<ul class="navbar-nav">      
+<li><a class="dropdown-item" href="ad30ce115ebf7e90.htm">EA Grid</a></li> 
+<li><a class="dropdown-item" href="fdd5018459bc3c6a.htm">EA Domains</a></li> 
+<li><a class="dropdown-item" href="07e731775ecc93f4.htm">Solutions</a></li> 
+<li><a class="dropdown-item" href="c5dfc62c54810c2c.htm">Glossary</a></li> 
+<li class="nav-item dropdown mx-1">
+<a class="nav-link" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</a>
+<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<li><a class="dropdown-item" href="5446555d5f88c32e.htm">Outcome Driven Metamodel</a></li> 
+<li><a class="dropdown-item" href="e1ccfc295f8f7b90.htm">Playbooks</a></li> 
+<li><a class="dropdown-item" href="42bc992862d20ea7.htm">Framework Mappings</a></li> 
+<li><a class="dropdown-item" href="e93aebb35fa20550.htm">Metamodel Patterns</a></li> 
+<li><a class="dropdown-item" href="d599fe87602b2b85.htm">References</a></li> 
+<li><a class="dropdown-item" href="333f3a7f5dde11de.htm">Legend</a></li> 
+</ul>									                                            
+</li>
+</ul>
+</div>
+<div class="col-sm-auto"><a class="nav-link search" href="#" onclick=showHideSearch("search-section-fuse")><i class="fa fa-search mr-1 form-control-feedback"></i></a></div>
+</div>
+</nav>
+<div id="search-section-fuse" style="display:none">>
+<div class="search_header"><span class="closesearch">&times;</span>
+<nav class="breadcrumb">
+<a class="breadcrumb-item" href="../index.htm">Home </a> 
+<span class="breadcrumb-item active">Search</span> 
+</nav>
+</div>
+<input id="search-fuse" placeholder="Search..."  name="q" onfocus="this.value=''" type="search">
+<div class="searchresults-fuse"></div>
+</div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>function showHideSearch(elementId) {var contentDivs = document.getElementsByClassName('content');var footerDivs = document.getElementsByClassName('footer'); var containerDivs = document.getElementsByClassName('container');var containerfluidDivs = document.getElementsByClassName('container-fluid');var x = document.getElementById(elementId);if (x.style.display === "none") {x.style.display = "block";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "none";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "none";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "none";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "none";}} else {x.style.display = "none";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "block";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "block";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "block";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "block";}}} ;<!-- END WIDGET DRILL DOWN --></script><script>$(document).ready(function() {$(window).scroll(function() {if ($(this).scrollTop() > 100) {$('.scrollup').fadeIn();} else {$('.scrollup').fadeOut();}});$('.scrollup').click(function() {$("html, body").animate({scrollTop: 0}, 600);return false;});});</script><script>
+var modal = document.getElementById("search-section-fuse");
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = "none";
+}
+}
+$(document).on('click', '.closesearch', function() {
+showHideSearch("search-section-fuse");
+
+
+
+
+
+});</script><div class="container-fluid col-lg-11"><nav class="breadcrumb"><a class="breadcrumb-item" href="../index.htm">Home </a> <span class="breadcrumb-item active">Framework Mapping/UAF - Resource Views</span> </nav></div>
+<div class="container-fluid col-lg-11 content">
+<section class="fadeInDown animated"><a href="#det" class="btn btn-d">IDENTITY</a><a href="#dia" class="btn btn-d">DIAGRAM</a> <a href="#map" class="btn btn-d">MAPPING</a> <a href="#ext" class="btn btn-d">EXTERNAL REFERENCES</a> 
+</section>
+<a class="object-section-anchor" id="det"></a>
+<section class="object-section">
+<h4>IDENTITY - UAF - Resource Views</h4> 
+<hr class="sectionbreak" />
+<table class="table table-vertical-headers table-set-col-width">
+<tr><th>Description</th><td class="description-text">Captures a solution architecture consisting of resources, e.g.&#160; organizational, software, artifacts, capability configurations, natural esources that implement the operational requirements. Further design of a resource is typically detailed in SysML or UML.</td></tr>
+<tr><th>References</th><td>
+<a  href="da2edace633161a4.htm" target="_top">OMG - UAF - View - Resource Views</a></td></tr>
+<tr><th>Parent Mapping</th><td class="description-text">UAF Mappings</td></tr>            
+</table>
+</section>
+<a class="object-section-anchor" id="dia"></a>
+<section class="object-section">
+<hr class="sectionbreak" />
+<map  name="E288E49E63190EC1">
+  <area  href=861987db6372446e.htm#OBMK861987DB6372446E shape="polygon" coords="1172, 479, 1172, 463, 1185, 463, 1185, 479, 1172, 479"   target="_self"  title="A&#160; Natural Resource is a kind of Resource Operating Asset that occurs in nature such as oil, water, gas or coal.">
+  
+  <area  href="#OBMKADFED56263996F7B" shape="rect" coords="1170, 459, 1285, 484"   target="_self"  title="Type of physical resource that occurs in nature such as oil, water, gas or coal. ">
+  
+  <area  href="#OBMKADFF063E639AC72B" shape="rect" coords="1041, 392, 1148, 422"   target="_self"  title="A services that a ResourcePerformer provides to support higher level Services or OperationalActivities. Employee ">
+  
+  <area  href=bcebd31f5491302c.htm#OBMKBCEBD31F5491302C shape="polygon" coords="1453, 924, 1453, 908, 1466, 908, 1466, 924, 1453, 924"   target="_self"  title="A&#160; Resource Agent is a Business Operating Agent which represents physical resources that produce Business Outcomes of the enterprise.">
+  
+  <area  href="#OBMKE288FF7B63190F4E" shape="rect" coords="1441, 899, 1594, 934"   target="_self"  title="An abstract grouping of elements that can perform Functions. ">
+  
+  <area  href="#OBMKADFF063E639AC72B" shape="rect" coords="76, 1054, 172, 1079"   target="_self"  title="A services that a ResourcePerformer provides to support higher level Services or OperationalActivities. Employee ">
+  
+  <area  href=26b82a7d5eea9c4b.htm#OBMK26B82A7D5EEA9C4B shape="polygon" coords="1393, 1030, 1393, 1017, 1407, 1017, 1407, 1030, 1393, 1030"   target="_self"  title="A&#160; System of System Environment is an operating context which defines the interactions ( Business Service Channel) of a System of Systems with its partners (Partner Resource Architecture).">
+  
+  <area  href="#OBMK4A6E559F631B40C8" shape="rect" coords="1393, 1010, 1516, 1039"   target="_self"  title="A type used to denote a model of the Architecture, described from the ResourcePerformer perspective. ">
+  
+  <area  href="#OBMKADFF063E639AC72B" shape="rect" coords="1469, 977, 1565, 1002"   target="_self"  title="A services that a ResourcePerformer provides to support higher level Services or OperationalActivities. Employee ">
+  
+  <area  href="#OBMKADFF063E639AC72B" shape="rect" coords="359, 306, 481, 333"   target="_self"  title="A services that a ResourcePerformer provides to support higher level Services or OperationalActivities. Employee ">
+  
+  <area  href="#OBMKADFF063E639AC72B" shape="rect" coords="336, 1996, 468, 2027"   target="_self"  title="A services that a ResourcePerformer provides to support higher level Services or OperationalActivities. Employee ">
+  
+  <area  href=9e3837e46192fcad.htm#OBMK9E3837E46192FCAD shape="polygon" coords="353, 1938, 353, 1925, 366, 1925, 366, 1938, 353, 1938"   target="_self"  title="A&#160; Deployed Agent is an entity that exists in space/time and that is able to participate actively to Processes and/or to conduct Processes.">
+  
+  <area  href="#OBMKADFF05C5639AC6C3" shape="rect" coords="337, 1917, 462, 1948"   target="_self"  title="An instance of a ResourcePerformer in the real world. ">
+  
+  <area  href=861987db6372446e.htm#OBMK861987DB6372446E shape="polygon" coords="233, 2090, 233, 2074, 246, 2074, 246, 2090, 233, 2090"   target="_self"  title="A&#160; Natural Resource is a kind of Resource Operating Asset that occurs in nature such as oil, water, gas or coal.">
+  
+  <area  href="#OBMKADFED56263996F7B" shape="rect" coords="198, 2074, 322, 2107"   target="_self"  title="Type of physical resource that occurs in nature such as oil, water, gas or coal. ">
+  
+  <area  href=6d2b7c935fbb6270.htm#OBMK6D2B7C935FBB6270 shape="polygon" coords="474, 1939, 474, 1923, 488, 1923, 488, 1939, 474, 1939"   target="_self"  title="A&#160; Data Object&#160; represents the abstract structure of any kind of data that can be memorized by a Software System.">
+  
+  <area  href="#OBMK9E1DAD0B636B5B69" shape="rect" coords="474, 1915, 608, 1948"   target="_self"  title="-">
+  
+  <area  href="#OBMKADFFFE6F6399B6D6" shape="rect" coords="1511, 1332, 1633, 1360"   target="_self"  title="An abstract type that represents an individual participant in the InteractionScenario.">
+  
+  <area  href=333f35ee5dde0c8c.htm#OBMK333F35EE5DDE0C8C shape="polygon" coords="1301, 1521, 1301, 1508, 1314, 1508, 1314, 1521, 1301, 1521"   target="_self"  title="An&#160; Interaction Scenario is a story (Behavior) that describes how the components of an Agent interacts to produce Outcomes.This includes:">
+  
+  <area  href="#OBMKADFFFDF66399B638" shape="rect" coords="1270, 1501, 1444, 1530"   target="_self"  title="An abstract type that specifies interactions between Assets, like ResourcePerformers, and Services.">
+  
+  <area  href=230b35b461d8884d.htm#OBMK230B35B461D8884D shape="polygon" coords="1270, 1461, 1270, 1445, 1284, 1445, 1284, 1461, 1270, 1461"   target="_self"  title="A&#160; Resource Interaction Scenario is a story involving the components of a Resource Agent interacting in order to produce Business Outcomes.">
+  
+  <area  href="#OBMKADFFFD876399B5EB" shape="rect" coords="1269, 1438, 1451, 1469"   target="_self"  title="-">
+  
+  <area  href=bcebd31f5491302c.htm#OBMKBCEBD31F5491302C shape="polygon" coords="1176, 1269, 1176, 1256, 1189, 1256, 1189, 1269, 1176, 1269"   target="_self"  title="A&#160; Resource Agent is a Business Operating Agent which represents physical resources that produce Business Outcomes of the enterprise.">
+  
+  <area  href="#OBMKE288FF7B63190F4E" shape="rect" coords="1142, 1243, 1321, 1282"   target="_self"  title="An abstract grouping of elements that can perform Functions. ">
+  
+  <area  href="#OBMKADFFECFC63995190" shape="rect" coords="896, 638, 973, 671"   target="_self"  title="An abstract type that represents a behavior or process (i.e., a Function or OperationalActivity) that can be performed by a Performer.">
+  
+  <area  href="#OBMKF97E35D4632B2899" shape="rect" coords="894, 689, 1088, 721"   target="_self"  title="A call of a Function indicating that the Function is performed by a ResourceRole in a specific context.">
+  
+  <area  href="#OBMKADFED8226399CF36" shape="rect" coords="295, 1304, 569, 1340"   target="_self"  title="-">
+  
+  <area  href="#OBMKADFED7BC6399C0B9" shape="rect" coords="296, 1383, 571, 1417"   target="_self"  title="A state machine describing the behavior of a ResourcePerformer, depicting how the ResourcePerformer responds to various events and the actions.">
+  
+  <area  href=57dfc52d550932ef.htm#OBMK57DFC52D550932EF shape="polygon" coords="1494, 1203, 1494, 1187, 1507, 1187, 1507, 1203, 1494, 1203"   target="_self"  title="An&#160; Business Process is a set of Operations performed by Human Resources and/or by automated systems (Business Systems) to produce a Business Outcome. It is depicted as a sequence of Operations, controlled by events and conditions. ">
+  
+  <area  href="#OBMK4A6E523D631B3D8A" shape="rect" coords="1422, 1182, 1628, 1208"   target="_self"  title="-">
+  
+  <area  href=076d15425a5e158c.htm#OBMK076D15425A5E158C shape="polygon" coords="706, 2167, 706, 2154, 720, 2154, 720, 2167, 706, 2167"   target="_self"  title="A&#160; Human Resource is a Resource Agent&#160; used to describe both the Organizational Positions of people who work for an organization and the type of department (Org-Unit) responsible for running business operations.">
+  
+  <area  href="#OBMK4A72E398631EAB85" shape="rect" coords="684, 2151, 793, 2183"   target="_self"  title="An abstract type for Organization, Person, Post and Responsibility. ">
+  
+  <area  href=076d15425a5e158c.htm#OBMK076D15425A5E158C shape="polygon" coords="358, 456, 358, 442, 371, 442, 371, 456, 358, 456"   target="_self"  title="A&#160; Human Resource is a Resource Agent&#160; used to describe both the Organizational Positions of people who work for an organization and the type of department (Org-Unit) responsible for running business operations.">
+  
+  <area  href="#OBMK4A72E398631EAB85" shape="rect" coords="358, 435, 490, 463"   target="_self"  title="An abstract type for Organization, Person, Post and Responsibility. ">
+  
+  <area  href=861987db6372446e.htm#OBMK861987DB6372446E shape="polygon" coords="567, 387, 567, 371, 580, 371, 580, 387, 567, 387"   target="_self"  title="A&#160; Natural Resource is a kind of Resource Operating Asset that occurs in nature such as oil, water, gas or coal.">
+  
+  <area  href="#OBMKADFED56263996F7B" shape="rect" coords="541, 371, 647, 403"   target="_self"  title="Type of physical resource that occurs in nature such as oil, water, gas or coal. ">
+  
+  <area  href=861987db6372446e.htm#OBMK861987DB6372446E shape="polygon" coords="489, 1010, 489, 994, 503, 994, 503, 1010, 489, 1010"   target="_self"  title="A&#160; Natural Resource is a kind of Resource Operating Asset that occurs in nature such as oil, water, gas or coal.">
+  
+  <area  href="#OBMKADFED56263996F7B" shape="rect" coords="469, 994, 566, 1027"   target="_self"  title="Type of physical resource that occurs in nature such as oil, water, gas or coal. ">
+  
+  <area  href=0cbd1fa663fe18ac.htm#OBMK0CBD1FA663FE18AC shape="polygon" coords="573, 1075, 573, 1059, 586, 1059, 586, 1075, 573, 1075"   target="_self"  title="A&#160; Technology System is an Agent which produces Technology Outcomes through Technology Interfaces.&#160; Technology Systems are enabler of Business Systems. They do not directly deliver Business Outcomes to internal or external customers.">
+  
+  <area  href="#OBMK14D0A7656387E471" shape="rect" coords="570, 1056, 653, 1079"   target="_self"  title="A sub type of ResourceArtifact that indicates a technology domain, i.e. nuclear, mechanical, electronic, mobile telephony etc. ">
+  
+  <area  href="#OBMK9E1DA6AB636B5AA2" shape="rect" coords="259, 2152, 388, 2183"   target="_self"  title="A type of a human being used to define the characteristics that need to be described for ActualPersons (e.g. properties such as address, telephone number, nationality, etc).">
+  
+  <area  href="#OBMK9E1DA6AB636B5AA2" shape="rect" coords="458, 1055, 562, 1080"   target="_self"  title="A type of a human being used to define the characteristics that need to be described for ActualPersons (e.g. properties such as address, telephone number, nationality, etc).">
+  
+  <area  href=6d2b7c935fbb6270.htm#OBMK6D2B7C935FBB6270 shape="polygon" coords="522, 664, 522, 648, 536, 648, 536, 664, 522, 664"   target="_self"  title="A&#160; Data Object&#160; represents the abstract structure of any kind of data that can be memorized by a Software System.">
+  
+  <area  href="#OBMK9E1DAD0B636B5B69" shape="rect" coords="521, 641, 657, 671"   target="_self"  title="-">
+  
+  <area  href=d682ef5e56144e77.htm#OBMKD682EF5E56144E77 shape="polygon" coords="1271, 713, 1271, 699, 1285, 699, 1285, 713, 1271, 713"   target="_self"  title="A&#160; Process is a Behavior that describes a typical course of action intended to produce Outcomes, through the involvement of Agents as Active Participants.">
+  
+  <area  href="#OBMK9E1DA918636B5B11" shape="rect" coords="1254, 689, 1344, 723"   target="_self"  title="-">
+  
+  <area  href="#OBMK9E1DA890636B5AD4" shape="rect" coords="1003, 926, 1095, 953"   target="_self"  title="-">
+  
+  <area  href="#OBMK9E1DA6AB636B5AA2" shape="rect" coords="250, 438, 369, 462"   target="_self"  title="A type of a human being used to define the characteristics that need to be described for ActualPersons (e.g. properties such as address, telephone number, nationality, etc).">
+  
+  <area  href="#OBMKF97E361A632B28C8" shape="rect" coords="901, 874, 1037, 903"   target="_self"  title="A tuple that shows the flow of Resources (objects/data) between FunctionActions.">
+  
+  <area  href=9dcea2655ec768ee.htm#OBMK9DCEA2655EC768EE shape="polygon" coords="684, 988, 684, 975, 697, 975, 697, 988, 684, 988"   target="_self"  title="A&#160; Business Service Interface is a communication behavior that describes a typical course of interactions intended to produce Business Outcomes, through the involvement of Business Operating Agents.">
+  
+  <area  href="#OBMK9E1DA3B3636B5A0D" shape="rect" coords="672, 971, 804, 993"   target="_self"  title="A declaration that specifies a contract between the ResourcePerformers it is related to and any other ResourcePerformers it can interact with. It is also intended to be an implementation of a specification of an Interface in the Business and/or Service layer.">
+  
+  <area  href=959320325ee7fe24.htm#OBMK959320325EE7FE24 shape="polygon" coords="284, 1753, 284, 1740, 297, 1740, 297, 1753, 284, 1753"   target="_self"  title="A&#160; Policy is a Directive that is not directly enforceable whose purpose is to govern, guide or constrain the structure and behavior of Agents in the enterprise. ">
+  
+  <area  href="#OBMKEB76CE2663477860" shape="rect" coords="260, 1727, 400, 1766"   target="_self"  title="-">
+  
+  <area  href="#OBMKE28CFC12631A72E6" shape="rect" coords="609, 1915, 722, 1948"   target="_self"  title="An interaction point for a ResourcePerformer through which it can interact with the outside environment and which is defined by a ResourceInterface. ">
+  
+  <area  href=d682ef5e56144e77.htm#OBMKD682EF5E56144E77 shape="polygon" coords="140, 582, 140, 569, 153, 569, 153, 582, 140, 582"   target="_self"  title="A&#160; Process is a Behavior that describes a typical course of action intended to produce Outcomes, through the involvement of Agents as Active Participants.">
+  
+  <area  href="#OBMKEB76C7FD63477474" shape="rect" coords="77, 564, 258, 587"   target="_self"  title="An abstract type that represents a behavior or process (i.e. a Function or OperationalActivity) that can be performed by a Performer. ">
+  
+  <area  href=076d15425a5e158c.htm#OBMK076D15425A5E158C shape="polygon" coords="350, 2096, 350, 2082, 364, 2082, 364, 2096, 350, 2096"   target="_self"  title="A&#160; Human Resource is a Resource Agent&#160; used to describe both the Organizational Positions of people who work for an organization and the type of department (Org-Unit) responsible for running business operations.">
+  
+  <area  href="#OBMK4A72E13A631EA87F" shape="rect" coords="329, 2072, 514, 2106"   target="_self"  title="An abstract type for Organization, Person, Post and Responsibility. ">
+  
+  <area  href=6dc39a5661c08c55.htm#OBMK6DC39A5661C08C55 shape="polygon" coords="313, 1712, 313, 1698, 326, 1698, 326, 1712, 313, 1712"   target="_self"  title="A&#160; Resource Rule is an Business Operating Rule that is enforced by Resource Operating Assets of the Enterprise.">
+  
+  <area  href="#OBMK58EC647663310C38" shape="rect" coords="261, 1690, 400, 1720"   target="_self"  title="-">
+  
+  <area  href="#OBMKF97E361A632B28C8" shape="rect" coords="93, 758, 198, 779"   target="_self"  title="A tuple that shows the flow of Resources (objects/data) between FunctionActions.">
+  
+  <area  href="#OBMKF97E35D4632B2899" shape="rect" coords="114, 692, 252, 715"   target="_self"  title="A call of a Function indicating that the Function is performed by a ResourceRole in a specific context.">
+  
+  <area  href=57dfc52d550932ef.htm#OBMK57DFC52D550932EF shape="polygon" coords="139, 660, 139, 646, 153, 646, 153, 660, 139, 660"   target="_self"  title="An&#160; Business Process is a set of Operations performed by Human Resources and/or by automated systems (Business Systems) to produce a Business Outcome. It is depicted as a sequence of Operations, controlled by events and conditions. ">
+  
+  <area  href="#OBMK4A6E523D631B3D8A" shape="rect" coords="75, 642, 260, 664"   target="_self"  title="-">
+  
+  <area  href=46195775560d4ec0.htm#OBMK46195775560D4EC0 shape="polygon" coords="557, 2096, 557, 2082, 570, 2082, 570, 2096, 557, 2096"   target="_self"  title="A&#160; System of Systems is a Macro Capability Configuration that combine several System of Resources to deliver a common high level Business Capability.">
+  
+  <area  href="#OBMK4A6E55ED631B4107" shape="rect" coords="537, 2073, 708, 2105"   target="_self"  title="A composite structure representing the physical and human resources (and their interactions) in an enterprise, assembled to meet a capability. ">
+  
+  <area  href=26b82a7d5eea9c4b.htm#OBMK26B82A7D5EEA9C4B shape="polygon" coords="558, 2017, 558, 2003, 571, 2003, 571, 2017, 558, 2017"   target="_self"  title="A&#160; System of System Environment is an operating context which defines the interactions ( Business Service Channel) of a System of Systems with its partners (Partner Resource Architecture).">
+  
+  <area  href="#OBMK4A6E559F631B40C8" shape="rect" coords="538, 1994, 701, 2026"   target="_self"  title="A type used to denote a model of the Architecture, described from the ResourcePerformer perspective. ">
+  
+  <area  href=57dfc52d550932ef.htm#OBMK57DFC52D550932EF shape="polygon" coords="255, 1939, 255, 1923, 269, 1923, 269, 1939, 255, 1939"   target="_self"  title="An&#160; Business Process is a set of Operations performed by Human Resources and/or by automated systems (Business Systems) to produce a Business Outcome. It is depicted as a sequence of Operations, controlled by events and conditions. ">
+  
+  <area  href="#OBMK4A6E523D631B3D8A" shape="rect" coords="246, 1915, 326, 1947"   target="_self"  title="-">
+  
+  <area  href="#OBMK4A6E56BB631B41C0" shape="rect" coords="623, 792, 813, 821"   target="_self"  title="A channel for exchange between two ResourceRoles.">
+  
+  <area  href=076d15425a5e158c.htm#OBMK076D15425A5E158C shape="polygon" coords="322, 1011, 322, 997, 336, 997, 336, 1011, 322, 1011"   target="_self"  title="A&#160; Human Resource is a Resource Agent&#160; used to describe both the Organizational Positions of people who work for an organization and the type of department (Org-Unit) responsible for running business operations.">
+  
+  <area  href="#OBMK4A72E13A631EA87F" shape="rect" coords="323, 992, 464, 1017"   target="_self"  title="An abstract type for Organization, Person, Post and Responsibility. ">
+  
+  <area  href="#OBMKE28CFC12631A72E6" shape="rect" coords="1225, 1333, 1326, 1395"   target="_self"  title="An interaction point for a ResourcePerformer through which it can interact with the outside environment and which is defined by a ResourceInterface. ">
+  
+  <area  href=57dfc52d550932ef.htm#OBMK57DFC52D550932EF shape="polygon" coords="1101, 790, 1101, 774, 1115, 774, 1115, 790, 1101, 790"   target="_self"  title="An&#160; Business Process is a set of Operations performed by Human Resources and/or by automated systems (Business Systems) to produce a Business Outcome. It is depicted as a sequence of Operations, controlled by events and conditions. ">
+  
+  <area  href="#OBMK4A6E523D631B3D8A" shape="rect" coords="1075, 733, 1192, 831"   target="_self"  title="-">
+  
+  <area  href=46195775560d4ec0.htm#OBMK46195775560D4EC0 shape="polygon" coords="185, 1012, 185, 999, 198, 999, 198, 1012, 185, 1012"   target="_self"  title="A&#160; System of Systems is a Macro Capability Configuration that combine several System of Resources to deliver a common high level Business Capability.">
+  
+  <area  href="#OBMK4A6E55ED631B4107" shape="rect" coords="185, 993, 315, 1019"   target="_self"  title="A composite structure representing the physical and human resources (and their interactions) in an enterprise, assembled to meet a capability. ">
+  
+  <area  href=26b82a7d5eea9c4b.htm#OBMK26B82A7D5EEA9C4B shape="polygon" coords="74, 951, 74, 938, 87, 938, 87, 951, 74, 951"   target="_self"  title="A&#160; System of System Environment is an operating context which defines the interactions ( Business Service Channel) of a System of Systems with its partners (Partner Resource Architecture).">
+  
+  <area  href="#OBMK4A6E559F631B40C8" shape="rect" coords="74, 933, 196, 956"   target="_self"  title="A type used to denote a model of the Architecture, described from the ResourcePerformer perspective. ">
+  
+  <area  href=278675d65b252f4d.htm#OBMK278675D65B252F4D shape="polygon" coords="74, 2098, 74, 2082, 87, 2082, 87, 2098, 74, 2098"   target="_self"  title="A&#160; Business System is a man made artifact (Hardware System or Software System) which exposes Functionalityies and can produce Business Outcomes.">
+  
+  <area  href="#OBMK4A6E565F631B413D" shape="rect" coords="68, 2073, 193, 2108"   target="_self"  title="A type of man-made object that contains no human beings (i.e. satellite, radio, petrol, gasoline, etc.). ">
+  
+  <area  href=076d151c5a5e1561.htm#OBMK076D151C5A5E1561 shape="polygon" coords="445, 2176, 445, 2160, 458, 2160, 458, 2176, 445, 2176"   target="_self"  title="An&#160; Organizational Position is a type of position held by people when part of an Org-Unit. ">
+  
+  <area  href="#OBMKE28CFD4B631A74B3" shape="rect" coords="400, 2153, 531, 2184"   target="_self"  title="A type of job title or position that a person can fill (e.g. Lawyer, Solution Architect, Machine Operator or Chief Executive Officer).">
+  
+  <area  href=7c408aa155270eea.htm#OBMK7C408AA155270EEA shape="polygon" coords="565, 2175, 565, 2159, 578, 2159, 578, 2175, 565, 2175"   target="_self"  title="An&#160; Org-Unit is a type of administrative unit in government or business that is a template of Organization .">
+  
+  <area  href="#OBMKE28CFCDC631A744B" shape="rect" coords="536, 2152, 680, 2183"   target="_self"  title="A group of OrganizationalResources (Persons, Posts, Organizations and Responsibilities) associated for a particular purpose.">
+  
+  <area  href=bcebd31f5491302c.htm#OBMKBCEBD31F5491302C shape="polygon" coords="86, 1943, 86, 1927, 99, 1927, 99, 1943, 86, 1943"   target="_self"  title="A&#160; Resource Agent is a Business Operating Agent which represents physical resources that produce Business Outcomes of the enterprise.">
+  
+  <area  href="#OBMKE288FF7B63190F4E" shape="rect" coords="66, 1911, 234, 1960"   target="_self"  title="An abstract grouping of elements that can perform Functions. ">
+  
+  <area  href=bcebd31f5491302c.htm#OBMKBCEBD31F5491302C shape="polygon" coords="368, 1508, 368, 1492, 382, 1492, 382, 1508, 368, 1508"   target="_self"  title="A&#160; Resource Agent is a Business Operating Agent which represents physical resources that produce Business Outcomes of the enterprise.">
+  
+  <area  href="#OBMKE288FF7B63190F4E" shape="rect" coords="296, 1479, 569, 1521"   target="_self"  title="An abstract grouping of elements that can perform Functions. ">
+  
+  <area  href=bcebd31f5491302c.htm#OBMKBCEBD31F5491302C shape="polygon" coords="337, 885, 337, 869, 350, 869, 350, 885, 337, 885"   target="_self"  title="A&#160; Resource Agent is a Business Operating Agent which represents physical resources that produce Business Outcomes of the enterprise.">
+  
+  <area  href="#OBMKE288FF7B63190F4E" shape="rect" coords="307, 854, 495, 900"   target="_self"  title="An abstract grouping of elements that can perform Functions. ">
+  
+  <area  href=278675d65b252f4d.htm#OBMK278675D65B252F4D shape="polygon" coords="588, 1013, 588, 1000, 601, 1000, 601, 1013, 588, 1013"   target="_self"  title="A&#160; Business System is a man made artifact (Hardware System or Software System) which exposes Functionalityies and can produce Business Outcomes.">
+  
+  <area  href="#OBMK4A6E565F631B413D" shape="rect" coords="574, 995, 700, 1018"   target="_self"  title="A type of man-made object that contains no human beings (i.e. satellite, radio, petrol, gasoline, etc.). ">
+  
+  <area  href="#OBMK4A6E5877631B43AF" shape="rect" coords="679, 934, 800, 955"   target="_self"  title="-">
+  
+  <area  href=9dcea2655ec768ee.htm#OBMK9DCEA2655EC768EE shape="polygon" coords="428, 951, 428, 937, 441, 937, 441, 951, 428, 951"   target="_self"  title="A&#160; Business Service Interface is a communication behavior that describes a typical course of interactions intended to produce Business Outcomes, through the involvement of Business Operating Agents.">
+  
+  <area  href="#OBMK4A6E583D631B433D" shape="rect" coords="418, 933, 543, 955"   target="_self"  title="-">
+  
+  <area  href=d6cd02865ab966e8.htm#OBMKD6CD02865AB966E8 shape="polygon" coords="669, 1073, 669, 1060, 682, 1060, 682, 1073, 669, 1073"   target="_self"  title="A&#160; Software System is a Business System used by Business Operations, that represents all granularities of software - ranging from MicroServices to enterprise wide Application Systems - used by Business Operations.">
+  
+  <area  href="#OBMKE28CFEC2631A7561" shape="rect" coords="659, 1057, 737, 1078"   target="_self"  title="A sub-type of ResourceArtifact that specifies an executable computer program. ">
+  
+  <area  href=076d151c5a5e1561.htm#OBMK076D151C5A5E1561 shape="polygon" coords="364, 1074, 364, 1058, 377, 1058, 377, 1074, 364, 1074"   target="_self"  title="An&#160; Organizational Position is a type of position held by people when part of an Org-Unit. ">
+  
+  <area  href="#OBMKE28CFD4B631A74B3" shape="rect" coords="319, 1056, 448, 1077"   target="_self"  title="A type of job title or position that a person can fill (e.g. Lawyer, Solution Architect, Machine Operator or Chief Executive Officer).">
+  
+  <area  href=7c408aa155270eea.htm#OBMK7C408AA155270EEA shape="polygon" coords="203, 1074, 203, 1058, 217, 1058, 217, 1074, 203, 1074"   target="_self"  title="An&#160; Org-Unit is a type of administrative unit in government or business that is a template of Organization .">
+  
+  <area  href="#OBMKE28CFCDC631A744B" shape="rect" coords="185, 1054, 307, 1078"   target="_self"  title="A group of OrganizationalResources (Persons, Posts, Organizations and Responsibilities) associated for a particular purpose.">
+  
+  <area  href="#OBMKE28CFC12631A72E6" shape="rect" coords="538, 856, 727, 877"   target="_self"  title="An interaction point for a ResourcePerformer through which it can interact with the outside environment and which is defined by a ResourceInterface. ">
+  
+  <area  href="#OBMKE28CFC12631A72E6" shape="rect" coords="894, 586, 1088, 621"   target="_self"  title="An interaction point for a ResourcePerformer through which it can interact with the outside environment and which is defined by a ResourceInterface. ">
+  
+  <area  href=076d15425a5e158c.htm#OBMK076D15425A5E158C shape="polygon" coords="371, 391, 371, 375, 384, 375, 384, 391, 371, 391"   target="_self"  title="A&#160; Human Resource is a Resource Agent&#160; used to describe both the Organizational Positions of people who work for an organization and the type of department (Org-Unit) responsible for running business operations.">
+  
+  <area  href="#OBMK4A72E13A631EA87F" shape="rect" coords="364, 370, 529, 396"   target="_self"  title="An abstract type for Organization, Person, Post and Responsibility. ">
+  
+  <area  href="#OBMK4A6E597C631B4566" shape="rect" coords="637, 143, 781, 182"   target="_self"  title="-">
+  
+  <area  href="#OBMKE28CFC12631A72E6" shape="rect" coords="1455, 283, 1631, 335"   target="_self"  title="An interaction point for a ResourcePerformer through which it can interact with the outside environment and which is defined by a ResourceInterface. ">
+  
+  <area  href=278675d65b252f4d.htm#OBMK278675D65B252F4D shape="polygon" coords="1303, 479, 1303, 463, 1316, 463, 1316, 479, 1303, 479"   target="_self"  title="A&#160; Business System is a man made artifact (Hardware System or Software System) which exposes Functionalityies and can produce Business Outcomes.">
+  
+  <area  href="#OBMK4A6E565F631B413D" shape="rect" coords="1296, 458, 1422, 485"   target="_self"  title="A type of man-made object that contains no human beings (i.e. satellite, radio, petrol, gasoline, etc.). ">
+  
+  <area  href="#OBMK4A6E5877631B43AF" shape="rect" coords="1252, 130, 1340, 183"   target="_self"  title="-">
+  
+  <area  href=9dcea2655ec768ee.htm#OBMK9DCEA2655EC768EE shape="polygon" coords="1017, 154, 1017, 138, 1031, 138, 1031, 154, 1017, 154"   target="_self"  title="A&#160; Business Service Interface is a communication behavior that describes a typical course of interactions intended to produce Business Outcomes, through the involvement of Business Operating Agents.">
+  
+  <area  href="#OBMK4A6E583D631B433D" shape="rect" coords="1015, 130, 1141, 162"   target="_self"  title="-">
+  
+  <area  href=7c4094d2552717db.htm#OBMK7C4094D2552717DB shape="polygon" coords="641, 288, 641, 272, 655, 272, 655, 288, 641, 288"   target="_self"  title="A&#160; Business Function is a unit of the enterprise functional division of labor. It is used to shape the enterprise management structure in regard to how it produces, consumes or processes Business Outcomes: information, energy, materiel.">
+  
+  <area  href="#OBMK4A6E57D2631B4205" shape="rect" coords="640, 266, 782, 294"   target="_self"  title="A logical entity that IsCapableToPerform OperationalActivities which produce, consume and process Resources. ">
+  
+  <area  href="#OBMK4A6E56BB631B41C0" shape="rect" coords="1455, 130, 1581, 183"   target="_self"  title="A channel for exchange between two ResourceRoles.">
+  
+  <area  href=278675d65b252f4d.htm#OBMK278675D65B252F4D shape="polygon" coords="663, 390, 663, 374, 676, 374, 676, 390, 663, 390"   target="_self"  title="A&#160; Business System is a man made artifact (Hardware System or Software System) which exposes Functionalityies and can produce Business Outcomes.">
+  
+  <area  href="#OBMK4A6E565F631B413D" shape="rect" coords="659, 369, 779, 395"   target="_self"  title="A type of man-made object that contains no human beings (i.e. satellite, radio, petrol, gasoline, etc.). ">
+  
+  <area  href=46195775560d4ec0.htm#OBMK46195775560D4EC0 shape="polygon" coords="883, 479, 883, 463, 896, 463, 896, 479, 883, 479"   target="_self"  title="A&#160; System of Systems is a Macro Capability Configuration that combine several System of Resources to deliver a common high level Business Capability.">
+  
+  <area  href="#OBMK4A6E55ED631B4107" shape="rect" coords="883, 458, 1031, 484"   target="_self"  title="A composite structure representing the physical and human resources (and their interactions) in an enterprise, assembled to meet a capability. ">
+  
+  <area  href=26b82a7d5eea9c4b.htm#OBMK26B82A7D5EEA9C4B shape="polygon" coords="885, 415, 885, 399, 898, 399, 898, 415, 885, 415"   target="_self"  title="A&#160; System of System Environment is an operating context which defines the interactions ( Business Service Channel) of a System of Systems with its partners (Partner Resource Architecture).">
+  
+  <area  href="#OBMK4A6E559F631B40C8" shape="rect" coords="882, 393, 1028, 422"   target="_self"  title="A type used to denote a model of the Architecture, described from the ResourcePerformer perspective. ">
+  
+  <area  href=46195775560d4ec0.htm#OBMK46195775560D4EC0 shape="polygon" coords="47, 393, 47, 377, 60, 377, 60, 393, 47, 393"   target="_self"  title="A&#160; System of Systems is a Macro Capability Configuration that combine several System of Resources to deliver a common high level Business Capability.">
+  
+  <area  href="#OBMK4A6E55ED631B4107" shape="rect" coords="47, 372, 195, 399"   target="_self"  title="A composite structure representing the physical and human resources (and their interactions) in an enterprise, assembled to meet a capability. ">
+  
+  <area  href=26b82a7d5eea9c4b.htm#OBMK26B82A7D5EEA9C4B shape="polygon" coords="52, 326, 52, 310, 66, 310, 66, 326, 52, 326"   target="_self"  title="A&#160; System of System Environment is an operating context which defines the interactions ( Business Service Channel) of a System of Systems with its partners (Partner Resource Architecture).">
+  
+  <area  href="#OBMK4A6E559F631B40C8" shape="rect" coords="48, 306, 197, 331"   target="_self"  title="A type used to denote a model of the Architecture, described from the ResourcePerformer perspective. ">
+  
+  <area  href=f4be14d25ee1eaff.htm#OBMKF4BE14D25EE1EAFF shape="polygon" coords="234, 328, 234, 312, 247, 312, 247, 328, 234, 328"   target="_self"  title="A Resource Configuration is a generic System of Resources that represensed System of Resources that are not Facilitys.(Data centers, Factories, Outlets).">
+  
+  <area  href="#OBMK4A6E555C631B3F71" shape="rect" coords="188, 305, 338, 335"   target="_self"  title="-">
+  
+  <area  href=7c40987055271d04.htm#OBMK7C40987055271D04 shape="polygon" coords="653, 236, 653, 220, 666, 220, 666, 236, 653, 236"   target="_self"  title="A&#160; Conceptual Agent is a type of Business Operating Agent that depicts a functional division of labor within an enterprise, influencing the formation of its business operating model.">
+  
+  <area  href="#OBMK4A6E54F8631B3F32" shape="rect" coords="640, 214, 779, 243"   target="_self"  title="An abstract type grouping OperationalArchitecture and OperationalPerformer. ">
+  
+  <area  href="#OBMK4A6E52F2631B3E22" shape="rect" coords="1311, 392, 1436, 429"   target="_self"  title="-">
+  
+  <area  href=62466ea661b80d09.htm#OBMK62466EA661B80D09 shape="polygon" coords="886, 180, 886, 164, 899, 164, 899, 180, 886, 180"   target="_self"  title="&#160;Resource Operating Assets comprise physical assets which contribute to the delivery of Business Outcomes of the enterprise. This includes Resource Agents, their behaviors (Resource Behavior:&#160; Resource Process, Resource Interaction Scenario), and Natural Resources.">
+  
+  <area  href="#OBMKE28CFBA3631A727B" shape="rect" coords="877, 159, 997, 186"   target="_self"  title="An abstract element used to group the elements of ResourcePerformer and ResourceInformation allowing them to own ">
+  
+  <area  href=07ca0f015dd84efa.htm#OBMK07CA0F015DD84EFA shape="polygon" coords="905, 126, 905, 110, 918, 110, 918, 126, 905, 126"   target="_self"  title="&#160;Functional Assets encompasse Architecture Blocks used to describe how an enterprise function. This includes the purposes of an enterprise (Capability) and the way the enterprise operates to fulfill these purposes (Agents and their&#160; Behaviors).">
+  
+  <area  href="#OBMKE288FF6963190F28" shape="rect" coords="883, 103, 973, 134"   target="_self"  title="An abstract element that indicates the types of elements that can be affected by Risk. Asset as applied to Security views is an abstract element that indicates the types of elements that can be considered as a subject for security analysis.">
+  
+  <area  href=d6cd02865ab966e8.htm#OBMKD6CD02865AB966E8 shape="polygon" coords="1532, 480, 1532, 464, 1545, 464, 1545, 480, 1532, 480"   target="_self"  title="A&#160; Software System is a Business System used by Business Operations, that represents all granularities of software - ranging from MicroServices to enterprise wide Application Systems - used by Business Operations.">
+  
+  <area  href="#OBMKE28CFEC2631A7561" shape="rect" coords="1499, 457, 1631, 487"   target="_self"  title="A sub-type of ResourceArtifact that specifies an executable computer program. ">
+  
+  <area  href=57dfc52d550932ef.htm#OBMK57DFC52D550932EF shape="polygon" coords="1555, 416, 1555, 400, 1569, 400, 1569, 416, 1555, 416"   target="_self"  title="An&#160; Business Process is a set of Operations performed by Human Resources and/or by automated systems (Business Systems) to produce a Business Outcome. It is depicted as a sequence of Operations, controlled by events and conditions. ">
+  
+  <area  href="#OBMK4A6E523D631B3D8A" shape="rect" coords="1542, 392, 1631, 425"   target="_self"  title="-">
+  
+  <area  href=bcebd31f5491302c.htm#OBMKBCEBD31F5491302C shape="polygon" coords="947, 292, 947, 276, 960, 276, 960, 292, 947, 292"   target="_self"  title="A&#160; Resource Agent is a Business Operating Agent which represents physical resources that produce Business Outcomes of the enterprise.">
+  
+  <area  href="#OBMKE288FF7B63190F4E" shape="rect" coords="883, 210, 1139, 359"   target="_self"  title="An abstract grouping of elements that can perform Functions. ">
+  
+  <area  href=d6cd02865ab966e8.htm#OBMKD6CD02865AB966E8 shape="polygon" coords="690, 462, 690, 446, 703, 446, 703, 462, 690, 462"   target="_self"  title="A&#160; Software System is a Business System used by Business Operations, that represents all granularities of software - ranging from MicroServices to enterprise wide Application Systems - used by Business Operations.">
+  
+  <area  href="#OBMKE28CFEC2631A7561" shape="rect" coords="659, 438, 788, 471"   target="_self"  title="A sub-type of ResourceArtifact that specifies an executable computer program. ">
+  
+  <area  href=076d151c5a5e1561.htm#OBMK076D151C5A5E1561 shape="polygon" coords="509, 457, 509, 441, 522, 441, 522, 457, 509, 457"   target="_self"  title="An&#160; Organizational Position is a type of position held by people when part of an Org-Unit. ">
+  
+  <area  href="#OBMKE28CFD4B631A74B3" shape="rect" coords="469, 436, 588, 462"   target="_self"  title="A type of job title or position that a person can fill (e.g. Lawyer, Solution Architect, Machine Operator or Chief Executive Officer).">
+  
+  <area  href=7c408aa155270eea.htm#OBMK7C408AA155270EEA shape="polygon" coords="101, 459, 101, 443, 114, 443, 114, 459, 101, 459"   target="_self"  title="An&#160; Org-Unit is a type of administrative unit in government or business that is a template of Organization .">
+  
+  <area  href="#OBMKE28CFCDC631A744B" shape="rect" coords="53, 438, 238, 465"   target="_self"  title="A group of OrganizationalResources (Persons, Posts, Organizations and Responsibilities) associated for a particular purpose.">
+  
+  <area  href="#OBMKE28CFC12631A72E6" shape="rect" coords="51, 227, 221, 251"   target="_self"  title="An interaction point for a ResourcePerformer through which it can interact with the outside environment and which is defined by a ResourceInterface. ">
+  
+  <area  href=62466ea661b80d09.htm#OBMK62466EA661B80D09 shape="polygon" coords="695, 71, 695, 55, 709, 55, 709, 71, 695, 71"   target="_self"  title="&#160;Resource Operating Assets comprise physical assets which contribute to the delivery of Business Outcomes of the enterprise. This includes Resource Agents, their behaviors (Resource Behavior:&#160; Resource Process, Resource Interaction Scenario), and Natural Resources.">
+  
+  <area  href="#OBMKE28CFBA3631A727B" shape="rect" coords="687, 48, 806, 78"   target="_self"  title="An abstract element used to group the elements of ResourcePerformer and ResourceInformation allowing them to own ">
+  
+  <area  href=bcebd31f5491302c.htm#OBMKBCEBD31F5491302C shape="polygon" coords="341, 209, 341, 193, 355, 193, 355, 209, 341, 209"   target="_self"  title="A&#160; Resource Agent is a Business Operating Agent which represents physical resources that produce Business Outcomes of the enterprise.">
+  
+  <area  href="#OBMKE288FF7B63190F4E" shape="rect" coords="283, 154, 528, 248"   target="_self"  title="An abstract grouping of elements that can perform Functions. ">
+  
+  <area  href=07ca0f015dd84efa.htm#OBMK07CA0F015DD84EFA shape="polygon" coords="529, 69, 529, 53, 542, 53, 542, 69, 529, 69"   target="_self"  title="&#160;Functional Assets encompasse Architecture Blocks used to describe how an enterprise function. This includes the purposes of an enterprise (Capability) and the way the enterprise operates to fulfill these purposes (Agents and their&#160; Behaviors).">
+  
+  <area  href="#OBMKE288FF6963190F28" shape="rect" coords="514, 47, 590, 76"   target="_self"  title="An abstract element that indicates the types of elements that can be affected by Risk. Asset as applied to Security views is an abstract element that indicates the types of elements that can be considered as a subject for security analysis.">
+  
+</map>
+<img  src="../images/e288e48263190e75_e288e49e63190ec1_i.png" alt="../images/e288e48263190e75_e288e49e63190ec1_i.png" usemap="#E288E49E63190EC1" height="2214" width="4084" border=0>
+
+</section>
+<a class="object-section-anchor" id="map"></a>
+<section class="object-section">
+<h4>MAPPED ENTITIES</h4> 
+<hr class="sectionbreak" />
+<table id="sortabletable" class="table table-sm  table-bordered table-cell-resizable table-index-set-col-width-4 table-custom-style table-scrollX" width="100%" cellspacing="0">
+<tr><th>Framework Concept</th><th>Framework Definition</th><th>HOPEX Concept</th><th>HOPEX Definition</th></tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMKADFF05C5639AC6C3"/>ActualResource</td>
+<td>An instance of a ResourcePerformer in the real world. <i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ActualResource" target="_blank">OMG - UAF ActualResource</a></i></td>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="9e3837e46192fcad.htm" target="_top">Deployed Agent</a></td>
+<td class="description-text">A&#160;<b> Deployed Agent</b> is an entity that exists in space/time and that is able to participate actively to <a href="d682ef5e56144e77.htm" target="_top"><b><u>Process</u></b></a>es and/or to conduct <a href="d682ef5e56144e77.htm" target="_top"><b><u>Process</u></b></a>es.<i><br/>References:<br/><a href="../../../www.omg.org/spec/KerML/1.0/Beta1/ptc-23-06-01.pdf#page=309" target="_blank">OMG - KerML - Object</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMKE288FF6963190F28"/>Asset</td>
+<td>An abstract element that indicates the types of elements that can be affected by Risk. Asset as applied to Security views is an abstract element that indicates the types of elements that can be considered as a subject for security analysis.<i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Asset" target="_blank">OMG - UAF - Asset</a></i></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="07ca0f015dd84efa.htm" target="_top">Functional Asset</a><br>   <img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="c229c44e5d0c649f.htm" target="_top">Functional Building Block</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; "><b>&#160;Functional Asset</b>s encompasse <a href="d342d88e5b121401.htm" target="_top"><b><u>Architecture Block</u></b></a>s used to describe how an enterprise function. This includes the purposes of an enterprise (<a href="b181b98c54891882.htm" target="_top"><b><u>Capability</u></b></a>) and the way the enterprise operates to fulfill these purposes (<a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s and their&#160; <a href="986cd4ec5ffca3ac.htm" target="_top"><b><u>Behavior</u></b></a>s).</div><div align="left" style="min-height: 12pt; "><b>&#160;Functional Asset</b>s include:</div><div align="left" style="min-height: 12pt; ">1. Blocks defining results of <a href="986cd4ec5ffca3ac.htm" target="_top"><b><u>Behavior</u></b></a>s of the enterprise or its sub-systems, that benefit to it internal or external customers : <a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>,</div><div align="left" style="min-height: 12pt; ">2. Blocks used to describe the capabilities of the enterprise or its sub-systems: <a href="b181b98c54891882.htm" target="_top"><b><u>Capability</u></b></a>,</div><div align="left" style="min-height: 12pt; ">3. Blocks used to describe information: <a href="e6f250185f772ee1.htm" target="_top"><b><u>Information Object</u></b></a>.</div><div align="left" style="min-height: 12pt; ">4. Blocks used to describe how the enterprise operates: <a href="a371a43b5b865817.htm" target="_top"><b><u>Operating Asset</u></b></a>s (<a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>, <a href="d682ef5e56144e77.htm" target="_top"><b><u>Process</u></b></a>, <a href="333f35ee5dde0c8c.htm" target="_top"><b><u>Interaction Scenario</u></b></a>, <a href="24ae31b55ed1c66d.htm" target="_top"><b><u>Service Interface</u></b></a>).</div><div align="left" style="min-height: 12pt; ">All&#160;<b> Functional Asset</b>s are constrained by <a href="959320325ee7fe24.htm" target="_top"><b><u>Policy</u></b></a>s and are exposed to <a href="427c1c7d64b5d4a1.htm" target="_top"><b><u>Risk Type</u></b></a>s.</div><i><br/>References:<br/><a href="../../../complexsystems.mst.edu/media/conference/complexsystems/documents/de_Weck_CAS_Keynote_Nov_2015_updated.pdf#page=40" target="_blank">de Weck - The three dimensions of complexity</a><br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Asset" target="_blank">OMG - UAF - Asset</a><br/><a href="../resources/Ackoff-Choice-Communication-and-Conflict.pdf#FunctionalClass" target="_blank">Russell Ackoff - Choice &amp; Communication - FunctionalClass</a><br/><a href="https://www.sebokwiki.org/wiki/Functional_Architecture_(glossary)" target="_blank">SEBoK - Functional Architecture</a><br/><a href="https://en.wikipedia.org/wiki/Functional_software_architecture#:~:text=A%20functional%20software%20architecture%20(FSA,%2Doperative%20information%2Ddriven%20enterprise." target="_blank">Wikipedia - Software Functional Architecture</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK4A6E55ED631B4107"/>CapabilityConfiguration</td>
+<td>A composite structure representing the physical and human resources (and their interactions) in an enterprise, assembled to meet a capability. <i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#CapabilityConfiguration" target="_blank">OMG - UAF - CapabilityConfiguration</a></i></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="46195775560d4ec0.htm" target="_top">System of Systems</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="6FD1704049880061.htm" target="_top">Resource Architecture</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> System of Systems</b> is a <a href="5c43886f64103e09.htm" target="_top"><b><u>Macro</u></b></a> <a href="d1600c7062e093eb.htm" target="_top"><b><u>Capability Configuration</u></b></a> that combine several <a href="f4be11b15ee1e0fa.htm" target="_top"><b><u>System of Resources</u></b></a> to deliver a common high level <a href="9810abf3551135c4.htm" target="_top"><b><u>Business Capability</u></b></a>.</div><div align="left" style="min-height: 12pt; ">Examples:</div><div align="left" style="min-height: 12pt; ">- Air traffic control system</div><div align="left" style="min-height: 12pt; ">- Smart city system</div><div align="left" style="min-height: 12pt; ">- Health Care System</div><div align="left" style="min-height: 12pt; ">- Search and Resue system (SAR)</div><div align="left" style="min-height: 12pt; ">- Naval squadron consisting of an aircraft carrier, its escort ships and its C5ISR capabilities.</div><i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#CapabilityConfiguration" target="_blank">OMG - UAF - CapabilityConfiguration</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK4A6E523D631B3D8A"/>Function</td>
+<td></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="57dfc52d550932ef.htm" target="_top">Business Process</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="b1edb25e2c1401bb.htm" target="_top">Organizational Process</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Business Process</b> is a set of <a href="0f9213fd5ebc1b87.htm" target="_top"><b><u>Operation</u></b></a>s performed by <a href="076d15425a5e158c.htm" target="_top"><b><u>Human Resource</u></b></a>s and/or by automated systems (<a href="278675d65b252f4d.htm" target="_top"><b><u>Business System</u></b></a>s) to produce a <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>. It is depicted as a sequence of <a href="0f9213fd5ebc1b87.htm" target="_top"><b><u>Operation</u></b></a>s, controlled by events and conditions. </div><div align="left" style="min-height: 12pt; "><a href="0f9213fd5ebc1b87.htm" target="_top"><b><u>Operation</u></b></a>s are carried out by the involvment of <a href="076d15425a5e158c.htm" target="_top"><b><u>Human Resource</u></b></a>s and system resources (<a href="bcebd8e9549144db.htm" target="_top"><b><u>Application</u></b></a>) as participants in the process (<a href="b4ebbe325ffdca40.htm" target="_top"><u>Participant Resource Agent</u></a>).</div><div align="left" style="min-height: 12pt; ">During its course of action, an&#160;<b> Business Process</b> consumes or produces <a href="6d2b7c935fbb6270.htm" target="_top"><b><u>Data Object</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">1) It may read or write <a href="6d2b7c935fbb6270.htm" target="_top"><b><u>Data Object</u></b></a>s in its Process Store.</div><div align="left" style="min-height: 12pt; ">2) It may receive <a href="6d2b7c935fbb6270.htm" target="_top"><b><u>Data Object</u></b></a>s at its boundary:&#160;<b> Triggering Business Outcome</b>.</div><div align="left" style="min-height: 12pt; ">3) It may produce <a href="6d2b7c935fbb6270.htm" target="_top"><b><u>Data Object</u></b></a>s at its boundary:&#160;<b> Published Business Outcome</b>.</div><div align="left" style="min-height: 12pt; ">The course of actions of an&#160;<b> Business Process</b> is constrained by the application of rules (<a href="0f9215805ebc1d2a.htm" target="_top"><b><u>Business Rule Enforcement</u></b></a>) that define what is allowed and not allowed to do.</div><i><br/>References:<br/><a href="https://www.iso.org/obp/ui/#iso:std:iso:9000:ed-4:v1:en" target="_blank">ISO 9000 - 3.4 - Process</a><br/><a href="https://www.lean.org/lexicon-terms/value-stream/" target="_blank">Lean.org - Value Stream</a><br/><a href="https://www.lean.org/lexicon-terms/value-stream-mapping/" target="_blank">Lean.org - Value Stream Mapping</a><br/><a href="../../../www.omg.org/spec/BMM/1.3/formal-15-05-19.pdf#page=64" target="_blank">OMG - BMM - Business Process</a><br/><a href="../../../www.omg.org/spec/BPMN/2.0.2/formal-13-12-09.pdf#page=173" target="_blank">OMG - BPMN - Process</a><br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Function" target="_blank">OMG - UAF - Function</a><br/><a href="https://pubs.opengroup.org/architecture/o-aa-standard/definitions.html#_process" target="_blank">OpenGroup - OAA - Process</a><br/><a href="https://pubs.opengroup.org/togaf-standard/architecture-content/chap02.html" target="_blank">OpenGroup - TOGAF - Content Metamodel</a><br/><a href="https://pubs.opengroup.org/architecture/togaf9-doc/m/apdxa.html#tag_47_48" target="_blank">OpenGroup - TOGAF 9 - Definition - Process</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMKF97E35D4632B2899"/>FunctionAction</td>
+<td>A call of a Function indicating that the Function is performed by a ResourceRole in a specific context.<i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#FunctionAction" target="_blank">OMG - UAF - FunctionAction</a></i></td>
+<td><img src="../standard/concepttype-trait.ico.gif"/>&nbsp;
+<a  href="0f9213fd5ebc1b87.htm" target="_top">Operation</a><br>   <img src="../standard/metaclasspart_concrete.ico.gif"/>&nbsp;
+<a  href="b1edb25c2c1401ab.htm" target="_top">Operation</a></td>
+<td class="description-text">An&#160;<b> Operation</b> is a step in an <a href="57dfc52d550932ef.htm" target="_top"><b><u>Business Process</u></b></a> executed by a participant of the process.</td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMKF97E361A632B28C8"/>FunctionEdge</td>
+<td>A tuple that shows the flow of Resources (objects/data) between FunctionActions.<i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#FunctionEdge" target="_blank">OMG - UAF - FunctionEdge</a></i></td>
+<td><img src="../standard/concepttype-connection.ico.gif"/>&nbsp;Operation Sequence<br>   <img src="../standard/metaclasspart_concrete.ico.gif"/>&nbsp;
+<a  href="19fd1d9f4755013e.htm" target="_top">Sequence Flow</a></td>
+<td class="description-text">An&#160;<b> Operation Sequence</b> is used to show the order in which steps of a process will be performed. Each&#160;<b> Operation Sequence</b> has only one source and only one target. </td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK4A6E597C631B4566"/>Implements Operational Agent</td>
+<td></td>
+<td><img src="../standard/dic_concepttype_component.ico.gif"/>&nbsp;
+<a  href="d770dadf5ef4bc20.htm" target="_top">Realized Business Function</a></td>
+<td class="description-text"></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMKADFFFE6F6399B6D6"/>InteractionRole</td>
+<td>An abstract type that represents an individual participant in the InteractionScenario.<i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#InteractionRole" target="_blank">OMG - UAF - InteractionRole</a></i></td>
+<td><img src="../standard/ctx-concepttype.ico.gif"/>&nbsp;
+<a  href="07e737495eccd831.htm" target="_top">Scenario Participant</a></td>
+<td class="description-text"></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMKADFFFDF66399B638"/>InteractionScenario</td>
+<td>An abstract type that specifies interactions between Assets, like ResourcePerformers, and Services.<i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#InteractionScenario" target="_blank">OMG - UAF - InteractionScenario</a></i></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="333f35ee5dde0c8c.htm" target="_top">Interaction Scenario</a><br>   <img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="d9fdde4f5829524f.htm" target="_top">Scenario of Enterprise Agent Flow</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Interaction Scenario</b> is a story (<a href="986cd4ec5ffca3ac.htm" target="_top"><b><u>Behavior</u></b></a>) that describes how the components of an <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a> interacts to produce <a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>s.<br />This includes:</div><div align="left" style="min-height: 12pt; ">1) A course of events represented by&#160;<b> Object Flow</b>s depicting the story towards the delivery of expected <a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">2) Interacting <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s who participate to the story.</div><i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#InteractionScenario" target="_blank">OMG - UAF - InteractionScenario</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK4A6E52F2631B3E22"/>IsCapableToPerform</td>
+<td></td>
+<td><img src="../standard/ctx-concepttype.ico.gif"/>&nbsp;
+<a  href="240353b45fc7a13f.htm" target="_top">Performed Resource Process</a></td>
+<td class="description-text"></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMKADFED56263996F7B"/>Natural Resource</td>
+<td>Type of physical resource that occurs in nature such as oil, water, gas or coal. <i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#NaturalResource" target="_blank">OMG - UAF - NaturalResource</a></i></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="861987db6372446e.htm" target="_top">Natural Resource</a></td>
+<td class="description-text">A&#160;<b> Natural Resource</b> is a kind of <a href="62466ea661b80d09.htm" target="_top"><b><u>Resource Operating Asset</u></b></a> that occurs in nature such as oil, water, gas or coal.<i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#NaturalResource" target="_blank">OMG - UAF - NaturalResource</a></i><p style="color:red"><b>Natural Resource</b> is not directly implemented in HOPEX.</p>Rational:<br/>Natural Resource is not implemented as a subtype of ResourcePerformer as it is not consider to be a &quot;performer&quot;.<br>Natural Resource is implemented as a subtype of Value Add Object: an object that can be transformed by performers and is the source of value added results (outcomes)."</td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK4A6E54F8631B3F32"/>OperationalAgent</td>
+<td>An abstract type grouping OperationalArchitecture and OperationalPerformer. <i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#OperationalAgent" target="_blank">OMG - UAF - OperationalAgent</a></i></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="7c40987055271d04.htm" target="_top">Conceptual Agent</a><br>   <img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="b3c7b9b656497db2.htm" target="_top">Class of Business Agent</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Conceptual Agent</b> is a type of <a href="e2ef091962147ad7.htm" target="_top"><b><u>Business Operating Agent</u></b></a> that depicts a functional division of labor within an enterprise, influencing the formation of its business operating model.</div><div align="left" style="min-height: 12pt; ">The concrete realizations of&#160;<b> Conceptual Agent</b> come in the form of <a href="9810b060551137d0.htm" target="_top"><b><u>Activity Domain</u></b></a> (a macro&#160;<b> Conceptual Agent</b>) and <a href="7c4094d2552717db.htm" target="_top"><b><u>Business Function</u></b></a> (a mezzo&#160;<b> Conceptual Agent</b>).</div><i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#OperationalAgent" target="_blank">OMG - UAF - OperationalAgent</a><br/><a href="../resources/Ackoff-Towards-a-system-of-systems-concepts.pdf#FunctionalDivisionOfLabor" target="_blank">Russell Ackoff - System of concepts - FunctionalDivisionOfLabor</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMKE23FA22B631846A1"/>OperationalAgent</td>
+<td></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="7c40987055271d04.htm" target="_top">Conceptual Agent</a><br>   <img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="b3c7b9b656497db2.htm" target="_top">Class of Business Agent</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Conceptual Agent</b> is a type of <a href="e2ef091962147ad7.htm" target="_top"><b><u>Business Operating Agent</u></b></a> that depicts a functional division of labor within an enterprise, influencing the formation of its business operating model.</div><div align="left" style="min-height: 12pt; ">The concrete realizations of&#160;<b> Conceptual Agent</b> come in the form of <a href="9810b060551137d0.htm" target="_top"><b><u>Activity Domain</u></b></a> (a macro&#160;<b> Conceptual Agent</b>) and <a href="7c4094d2552717db.htm" target="_top"><b><u>Business Function</u></b></a> (a mezzo&#160;<b> Conceptual Agent</b>).</div><i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#OperationalAgent" target="_blank">OMG - UAF - OperationalAgent</a><br/><a href="../resources/Ackoff-Towards-a-system-of-systems-concepts.pdf#FunctionalDivisionOfLabor" target="_blank">Russell Ackoff - System of concepts - FunctionalDivisionOfLabor</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK4A6E57D2631B4205"/>OperationalPerformer</td>
+<td>A logical entity that IsCapableToPerform OperationalActivities which produce, consume and process Resources. <i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#OperationalPerformer" target="_blank">OMG - UAF - OperationalPerformer</a></i></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="7c4094d2552717db.htm" target="_top">Business Function</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="b1edb2582c140183.htm" target="_top">Business Function</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Business Function</b> is a unit of the enterprise functional division of labor. It is used to shape the enterprise management structure in regard to how it produces, consumes or processes <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s: information, energy, materiel.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Business Function</b> specifies <a href="7c409e95552724ab.htm" target="_top"><b><u>Skill</u></b></a>s and <a href="598272e954c622f4.htm" target="_top"><b><u>Functionality</u></b></a>(ies) required to perform their activities.</div><i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#OperationalPerformer" target="_blank">OMG - UAF - OperationalPerformer</a><br/><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_29" target="_blank">OpenGroup - TOGAF - Definition - Business Function</a><br/><a href="https://pubs.opengroup.org/architecture/togaf9-doc/m/chap03.html#tag_03_26" target="_blank">OpenGroup - TOGAF 9 - Definition - Business Function</a><br/><a href="../resources/Ackoff-Towards-a-system-of-systems-concepts.pdf#FunctionalDivisionOfLabor" target="_blank">Russell Ackoff - System of concepts - FunctionalDivisionOfLabor</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMKE28CFCDC631A744B"/>Organization</td>
+<td>A group of OrganizationalResources (Persons, Posts, Organizations and Responsibilities) associated for a particular purpose.<i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Organization" target="_blank">OMG - UAF - Organization</a></i></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="7c408aa155270eea.htm" target="_top">Org-Unit</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="b1edb2562c140173.htm" target="_top">Org-Unit</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Org-Unit</b> is a type of administrative unit in government or business that is a template of <a href="910196ca550a2ec2.htm" target="_top"><b><u>Organization</u></b></a> .</div><div align="left" style="min-height: 12pt; ">Example : Sales Department, Finance Department, Logistics Deparment.</div><i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Organization" target="_blank">OMG - UAF - Organization</a><br/><a href="https://method.demomega.com/MM-OVERVIEW/pages/architecture-content/chap02.html#tag_02_04" target="_blank">OpenGroup - TOGAF - Content Metamodel - Organization Unit</a><br/><a href="../resources/Ackoff-Towards-a-system-of-systems-concepts.pdf#FunctionalDivisionOfLabor" target="_blank">Russell Ackoff - System of concepts - FunctionalDivisionOfLabor</a><br/><a href="../resources/Ackoff-Towards-a-system-of-systems-concepts.pdf#Organizations" target="_blank">Russell Ackoff - System of Concepts - Organizations</a><br/><a href="https://compliancedictionary.com/term/1463" target="_blank">UCF Glossary - Department</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK4A72E13A631EA87F"/>OrganizationalResource</td>
+<td>An abstract type for Organization, Person, Post and Responsibility. <i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#organizationalresource" target="_blank">OMG - UAF - OrganizationalResource</a></i></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="076d15425a5e158c.htm" target="_top">Human Resource</a><br>   <img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="f3b7f5bc58806f49.htm" target="_top">Class of Organizational Agent</a></td>
+<td class="description-text">A&#160;<b> Human Resource</b> is a <a href="bcebd31f5491302c.htm" target="_top"><b><u>Resource Agent</u></b></a>&#160; used to describe both the <a href="076d151c5a5e1561.htm" target="_top"><b><u>Organizational Position</u></b></a>s of people who work for an organization and the type of department (<a href="7c408aa155270eea.htm" target="_top"><b><u>Org-Unit</u></b></a>) responsible for running business operations.<i><br/>References:<br/><a href="https://www.humanresourcesedu.org/what-is-human-resources/" target="_blank">Humanresourcesedu.org - Human Resource</a><br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#organizationalresource" target="_blank">OMG - UAF - OrganizationalResource</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK4A72E398631EAB85"/>OrganizationalResource</td>
+<td>An abstract type for Organization, Person, Post and Responsibility. </td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="076d15425a5e158c.htm" target="_top">Human Resource</a><br>   <img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="f3b7f5bc58806f49.htm" target="_top">Class of Organizational Agent</a></td>
+<td class="description-text">A&#160;<b> Human Resource</b> is a <a href="bcebd31f5491302c.htm" target="_top"><b><u>Resource Agent</u></b></a>&#160; used to describe both the <a href="076d151c5a5e1561.htm" target="_top"><b><u>Organizational Position</u></b></a>s of people who work for an organization and the type of department (<a href="7c408aa155270eea.htm" target="_top"><b><u>Org-Unit</u></b></a>) responsible for running business operations.<i><br/>References:<br/><a href="https://www.humanresourcesedu.org/what-is-human-resources/" target="_blank">Humanresourcesedu.org - Human Resource</a><br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#organizationalresource" target="_blank">OMG - UAF - OrganizationalResource</a></i><p style="color:red"><b>OrganizationalResource</b> is not directly implemented in HOPEX.</p>Rational:<br/>The definition of Responsibility is not mature enough regarding the HR discipline and the change management discipline.<br>Indeed, &quot;duty&quot; is not a Responsabiliy as stated in UAF (see the Wordnet Definition of Responsibility)."</td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK9E1DA6AB636B5AA2"/>Person</td>
+<td>A type of a human being used to define the characteristics that need to be described for ActualPersons (e.g. properties such as address, telephone number, nationality, etc).<i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Person" target="_blank">OMG - UAF - Person</a></i></td>
+<td></td>
+<td class="description-text"><p style="color:red"><b>Person</b> is not directly implemented in HOPEX.</p>Rational:<br/>The definition and usage of the concept are unclear and overlapp too much with the Post concept."</td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMKEB76C7FD63477474"/>Process</td>
+<td>An abstract type that represents a behavior or process (i.e. a Function or OperationalActivity) that can be performed by a Performer. <i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Process" target="_blank">OMG - UAF - Process</a></i></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="d682ef5e56144e77.htm" target="_top">Process</a><br>   <img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="39924a285927597c.htm" target="_top">Action Process</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Process</b> is a <a href="986cd4ec5ffca3ac.htm" target="_top"><b><u>Behavior</u></b></a> that describes a typical course of action intended to produce <a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>s, through the involvement of <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s as <a href="004b041f5ebd1119.htm" target="_top"><b><u>Active Participant</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">During its course of action, a process consumes or produces <a href="43ee620e63725a56.htm" target="_top"><b><u>Value Added Object</u></b></a>s, including <a href="e6f250185f772ee1.htm" target="_top"><b><u>Information Object</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">1) It may read or write <a href="e6f250185f772ee1.htm" target="_top"><b><u>Information Object</u></b></a>s from and to its <a href="e4c003255ed1f037.htm" target="_top"><b><u>Process Store</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">2) It may receive <a href="43ee620e63725a56.htm" target="_top"><b><u>Value Added Object</u></b></a>s at its boundary:&#160;<b> Consumed Outcome</b>s.</div><div align="left" style="min-height: 12pt; ">3) It may produce <a href="43ee620e63725a56.htm" target="_top"><b><u>Value Added Object</u></b></a>s at its boundary:&#160;<b> Produced Outcome</b>s.</div><div align="left" style="min-height: 12pt; ">The course of actions of a&#160;<b> Process</b> is constrained (<a href="24ae36805ed1cd18.htm" target="_top"><b><u>Rule Enforcement</u></b></a>) by the application of <a href="fe2203ca5c4f0fed.htm" target="_top"><b><u>Behavioral Rule</u></b></a>s that define what is allowed and not allowed to do.</div><i><br/>References:<br/><a href="https://15926.blog/topics/data-model/index.htm#ClassOfActivity" target="_blank">ISO 15926 - ClassOfActivity</a><br/><a href="https://www.iso.org/obp/ui/#iso:std:iso:9000:ed-4:v1:en" target="_blank">ISO 9000 - 3.4 - Process</a><br/><a href="https://www.merriam-webster.com/dictionary/process" target="_blank">Merriam Webster - Process</a><br/><a href="../../../www.omg.org/spec/BPMN/2.0.2/formal-13-12-09.pdf#page=173" target="_blank">OMG - BPMN - Process</a><br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Process" target="_blank">OMG - UAF - Process</a><br/><a href="../../../www.omg.org/spec/UML/2.5.1/formal-17-12-05.pdf#page=415" target="_blank">OMG - UML - Activity</a><br/><a href="../resources/Ackoff-Towards-a-system-of-systems-concepts.pdf#Process" target="_blank">Russell Ackoff - System of Concepts - Process</a><br/><a href="http://wordnetweb.princeton.edu/perl/webwn?o2=&amp;o0=1&amp;o8=1&amp;o1=1&amp;o7=&amp;o5=&amp;o9=&amp;o6=&amp;o3=&amp;o4=&amp;s=process&amp;i=0&amp;h=0000000000000#c" target="_blank">WordNet -Process</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK9E1DA918636B5B11"/>Process</td>
+<td></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="d682ef5e56144e77.htm" target="_top">Process</a><br>   <img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="39924a285927597c.htm" target="_top">Action Process</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Process</b> is a <a href="986cd4ec5ffca3ac.htm" target="_top"><b><u>Behavior</u></b></a> that describes a typical course of action intended to produce <a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>s, through the involvement of <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s as <a href="004b041f5ebd1119.htm" target="_top"><b><u>Active Participant</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">During its course of action, a process consumes or produces <a href="43ee620e63725a56.htm" target="_top"><b><u>Value Added Object</u></b></a>s, including <a href="e6f250185f772ee1.htm" target="_top"><b><u>Information Object</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">1) It may read or write <a href="e6f250185f772ee1.htm" target="_top"><b><u>Information Object</u></b></a>s from and to its <a href="e4c003255ed1f037.htm" target="_top"><b><u>Process Store</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">2) It may receive <a href="43ee620e63725a56.htm" target="_top"><b><u>Value Added Object</u></b></a>s at its boundary:&#160;<b> Consumed Outcome</b>s.</div><div align="left" style="min-height: 12pt; ">3) It may produce <a href="43ee620e63725a56.htm" target="_top"><b><u>Value Added Object</u></b></a>s at its boundary:&#160;<b> Produced Outcome</b>s.</div><div align="left" style="min-height: 12pt; ">The course of actions of a&#160;<b> Process</b> is constrained (<a href="24ae36805ed1cd18.htm" target="_top"><b><u>Rule Enforcement</u></b></a>) by the application of <a href="fe2203ca5c4f0fed.htm" target="_top"><b><u>Behavioral Rule</u></b></a>s that define what is allowed and not allowed to do.</div><i><br/>References:<br/><a href="https://15926.blog/topics/data-model/index.htm#ClassOfActivity" target="_blank">ISO 15926 - ClassOfActivity</a><br/><a href="https://www.iso.org/obp/ui/#iso:std:iso:9000:ed-4:v1:en" target="_blank">ISO 9000 - 3.4 - Process</a><br/><a href="https://www.merriam-webster.com/dictionary/process" target="_blank">Merriam Webster - Process</a><br/><a href="../../../www.omg.org/spec/BPMN/2.0.2/formal-13-12-09.pdf#page=173" target="_blank">OMG - BPMN - Process</a><br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Process" target="_blank">OMG - UAF - Process</a><br/><a href="../../../www.omg.org/spec/UML/2.5.1/formal-17-12-05.pdf#page=415" target="_blank">OMG - UML - Activity</a><br/><a href="../resources/Ackoff-Towards-a-system-of-systems-concepts.pdf#Process" target="_blank">Russell Ackoff - System of Concepts - Process</a><br/><a href="http://wordnetweb.princeton.edu/perl/webwn?o2=&amp;o0=1&amp;o8=1&amp;o1=1&amp;o7=&amp;o5=&amp;o9=&amp;o6=&amp;o3=&amp;o4=&amp;s=process&amp;i=0&amp;h=0000000000000#c" target="_blank">WordNet -Process</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK9E1DA890636B5AD4"/>ProcessEdge</td>
+<td></td>
+<td><img src="../standard/concepttype-connection.ico.gif"/>&nbsp;Process Flow<br>   <img src="../standard/metaclasspart_concrete.ico.gif"/>&nbsp;
+<a  href="580566cc493605f9.htm" target="_top">Message Flow</a></td>
+<td class="description-text"></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMKADFFECFC63995190"/>ProcessUsage</td>
+<td>An abstract type that represents a behavior or process (i.e., a Function or OperationalActivity) that can be performed by a Performer.<i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.1/DMM/formal-19-11-05.pdf#ProcessUsage" target="_blank">OMG - UAF - ProcessUsage</a></i></td>
+<td><img src="../standard/ctx-concepttype.ico.gif"/>&nbsp;
+<a  href="8e1390925ebe3db7.htm" target="_top">Sub-Process</a><br>   <img src="../standard/metaclasspart_abstract.ico.gif"/>&nbsp;
+<a  href="d419d4d24ee018be.htm" target="_top">BPMN Activity Component</a></td>
+<td class="description-text">A&#160;<b> Sub-Process</b> is a <a href="e4c0fe7b5ed0eb4e.htm" target="_top"><b><u>Process Activity</u></b></a>&#160; invoking another <a href="d682ef5e56144e77.htm" target="_top"><b><u>Process</u></b></a><i><br/>References:<br/><a href="../../../www.omg.org/spec/BPMN/2.0.2/formal-13-12-09.pdf#page=212" target="_blank">OMG - BPMN - Call Activity</a><br/><a href="../../../www.omg.org/spec/UAF/1.1/DMM/formal-19-11-05.pdf#ProcessUsage" target="_blank">OMG - UAF - ProcessUsage</a><br/><a href="../../../www.omg.org/spec/UML/2.5.1/formal-17-12-05.pdf#page=538" target="_blank">OMG - UML - CallBehaviorAction</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK9E1DA3B3636B5A0D"/>Resource Interface</td>
+<td>A declaration that specifies a contract between the ResourcePerformers it is related to and any other ResourcePerformers it can interact with. It is also intended to be an implementation of a specification of an Interface in the Business and/or Service layer.<i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ResourceInterface" target="_blank">OMG - UAF - ResourceInterface</a></i></td>
+<td><img src="../standard/relationship-concepttype.ico.gif"/>&nbsp;
+<a  href="9dcea2655ec768ee.htm" target="_top">Business Service Interface</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="ee0cee7f3919000d.htm" target="_top">Exchange Contract</a></td>
+<td class="description-text">A&#160;<b> Business Service Interface</b> is a communication behavior that describes a typical course of interactions intended to produce <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s, through the involvement of <a href="e2ef091962147ad7.htm" target="_top"><b><u>Business Operating Agent</u></b></a>s.<i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#OperationalInterface" target="_blank">OMG - UAF - Operational Interface</a><br/><a href="https://publications.opengroup.org/w161" target="_blank">OpenGroup - IT4IT - Defining Service Reference Architecture</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK4A6E559F631B40C8"/>ResourceArchitecture</td>
+<td>A type used to denote a model of the Architecture, described from the ResourcePerformer perspective. <i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ResourceArchitecture" target="_blank">OMG - UAF - ResourceArchitecture</a></i></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="26b82a7d5eea9c4b.htm" target="_top">System of System Environment</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="4ef0964756fa9002.htm" target="_top">Resource Architecture Environment</a></td>
+<td class="description-text">A&#160;<b> System of System Environment</b> is an operating context which defines the interactions (<b> Business Service Channel</b>) of a <a href="46195775560d4ec0.htm" target="_top"><b><u>System of Systems</u></b></a> with its partners (<a href="26b8376c5eeae057.htm" target="_top"><b><u>Partner Resource Architecture</u></b></a>).<i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ResourceArchitecture" target="_blank">OMG - UAF - ResourceArchitecture</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK4A6E565F631B413D"/>ResourceArtifact</td>
+<td>A type of man-made object that contains no human beings (i.e. satellite, radio, petrol, gasoline, etc.). <i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ResourceArtifact" target="_blank">OMG - UAF - ResourceArtifact</a></i></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="278675d65b252f4d.htm" target="_top">Business System</a><br>   <img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="386846ca58937252.htm" target="_top">Class of Enterprise Artifact Assembly</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Business System</b> is a man made artifact (<a href="c30bf4015a5da72b.htm" target="_top"><b><u>Hardware System</u></b></a> or <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a>) which exposes <a href="598272e954c622f4.htm" target="_top"><b><u>Functionality</u></b></a>ies and can produce <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Business System</b> performs <a href="46194939560d374f.htm" target="_top"><b><u>System Process</u></b></a>es and participates to <a href="46194939560d374f.htm" target="_top"><b><u>System Process</u></b></a>es or to <a href="57dfc52d550932ef.htm" target="_top"><b><u>Business Process</u></b></a>es.</div><div align="left" style="min-height: 12pt; ">In <a href="46194939560d374f.htm" target="_top"><b><u>System Process</u></b></a>es, a&#160;<b> Business System</b> is always an active participant (<a href="0c9b0d1b5ebd8260.htm" target="_top"><b><u>System Process Participant</u></b></a>).</div><div align="left" style="min-height: 12pt; ">In <a href="57dfc52d550932ef.htm" target="_top"><b><u>Business Process</u></b></a>es, a&#160;<b> Business System</b> is either an active participant (<a href="0f92123f5ebc184e.htm" target="_top"><b><u>Automated Participant</u></b></a>) or an <a href="0f9213345ebc1a67.htm" target="_top"><b><u>Instrument</u></b></a> used by <a href="076d15425a5e158c.htm" target="_top"><b><u>Human Resource</u></b></a>s.</div><i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ResourceArtifact" target="_blank">OMG - UAF - ResourceArtifact</a><br/><a href="https://compliancedictionary.com/term/580" target="_blank">UCF Glossary - Business System</a><br/><a href="http://wordnetweb.princeton.edu/perl/webwn?o2=&amp;o0=1&amp;o8=1&amp;o1=1&amp;o7=&amp;o5=&amp;o9=&amp;o6=&amp;o3=&amp;o4=&amp;s=artifact&amp;i=0&amp;h=0#c" target="_blank">WordNet - Artifact</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMKE28CFBA3631A727B"/>ResourceAsset</td>
+<td><div align="left" style="min-height: 12pt; ">An abstract element used to group the elements of ResourcePerformer and ResourceInformation allowing them to own </div><div align="left" style="min-height: 12pt; ">ResourceInformationRoles</div><i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ResourceAsset" target="_blank">OMG - UAF - ResourceAsset</a></i></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="62466ea661b80d09.htm" target="_top">Resource Operating Asset</a><br>   <img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="6dfa892056b416f4.htm" target="_top">Class of Operating Resource</a></td>
+<td class="description-text"><b>&#160;Resource Operating Asset</b>s comprise physical assets which contribute to the delivery of <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s of the enterprise. This includes <a href="bcebd31f5491302c.htm" target="_top"><b><u>Resource Agent</u></b></a>s, their behaviors (<a href="b4ebbf3e5ffdccdf.htm" target="_top"><b><u>Resource Behavior</u></b></a>:&#160; <a href="7c40c3c85527466b.htm" target="_top"><b><u>Resource Process</u></b></a>, <a href="230b35b461d8884d.htm" target="_top"><b><u>Resource Interaction Scenario</u></b></a>), and <a href="861987db6372446e.htm" target="_top"><b><u>Natural Resource</u></b></a>s.<i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#CapableElement" target="_blank">OMG - UAF - CapableElement</a><br/><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_73" target="_blank">OpenGroup - TOGAF - Definition - Solution Building Block</a><br/><a href="https://pubs.opengroup.org/togaf-standard/architecture-content/chap05.html#tag_05_02_04" target="_blank">OpenGroup - TOGAF - Guide - Solution Building Blocks</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK4A6E56BB631B41C0"/>ResourceConnector</td>
+<td>A channel for exchange between two ResourceRoles.<i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ResourceConnector" target="_blank">OMG - UAF - ResourceConnector</a></i></td>
+<td><img src="../standard/concepttype-connection.ico.gif"/>&nbsp;Business Connection<br>   <img src="../standard/metaclasspart_concrete.ico.gif"/>&nbsp;
+<a  href="efcaeff239b3000f.htm" target="_top">Interaction</a></td>
+<td class="description-text"><i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ResourceConnector" target="_blank">OMG - UAF - ResourceConnector</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK9E1DAD0B636B5B69"/>ResourceInformation</td>
+<td></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="6d2b7c935fbb6270.htm" target="_top">Data Object</a><br>   <img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="650bc5d9550fd138.htm" target="_top">Data Entity</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Data Object</b>&#160; represents the abstract structure of any kind of data that can be memorized by a <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a>.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Data Object</b> is either a <a href="325c32fc5eb02d02.htm" target="_top"><b><u>Data Entity</u></b></a> or a <a href="6d2b7fce5fbb69c7.htm" target="_top"><b><u>Data Property</u></b></a>.</div><div align="left" style="min-height: 12pt; ">Only <a href="325c32fc5eb02d02.htm" target="_top"><b><u>Data Entity</u></b></a>s can have identity and states. <a href="6d2b7fce5fbb69c7.htm" target="_top"><b><u>Data Property</u></b></a>s only handle raw data.</div><i><br/>References:<br/><a href="https://csrc.nist.gov/glossary/term/data_asset" target="_blank">NIST - Data Asset</a><br/><a href="https://compliancedictionary.com/term/270" target="_blank">UCF Glossary - Data</a><br/><a href="https://compliancedictionary.com/term/2969" target="_blank">UCF Glossary - Data Element</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMKADFFFD876399B5EB"/>ResourceInteractionScenario</td>
+<td></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="230b35b461d8884d.htm" target="_top">Resource Interaction Scenario</a><br>   <img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="8d5f8de058de03ec.htm" target="_top">Scenario of Enterprise Resource Agent Flow Internal Structure</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Resource Interaction Scenario</b> is a story involving the components of a <a href="bcebd31f5491302c.htm" target="_top"><b><u>Resource Agent</u></b></a> interacting in order to produce <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">This includes:</div><div align="left" style="min-height: 12pt; ">1) A course of events represented by&#160;<b> Resource Flow</b>s depicting the steps towards the delivery of expected <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">2) Component <a href="bcebd31f5491302c.htm" target="_top"><b><u>Resource Agent</u></b></a>s that participate to the story.</div></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK4A6E583D631B433D"/>ResourceInterface</td>
+<td></td>
+<td><img src="../standard/relationship-concepttype.ico.gif"/>&nbsp;
+<a  href="9dcea2655ec768ee.htm" target="_top">Business Service Interface</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="ee0cee7f3919000d.htm" target="_top">Exchange Contract</a></td>
+<td class="description-text">A&#160;<b> Business Service Interface</b> is a communication behavior that describes a typical course of interactions intended to produce <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s, through the involvement of <a href="e2ef091962147ad7.htm" target="_top"><b><u>Business Operating Agent</u></b></a>s.<i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#OperationalInterface" target="_blank">OMG - UAF - Operational Interface</a><br/><a href="https://publications.opengroup.org/w161" target="_blank">OpenGroup - IT4IT - Defining Service Reference Architecture</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMKE288FF7B63190F4E"/>ResourcePerformer</td>
+<td>An abstract grouping of elements that can perform Functions. <i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#resourceperformer" target="_blank">OMG - UAF - ResourcePerformer</a></i></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="bcebd31f5491302c.htm" target="_top">Resource Agent</a><br>   <img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="79a98236563c7174.htm" target="_top">Class of Enterprise Resource Agent Assembly</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Resource Agent</b> is a <a href="e2ef091962147ad7.htm" target="_top"><b><u>Business Operating Agent</u></b></a> which represents physical resources that produce <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s of the enterprise.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Resource Agent</b> can be a <a href="076d15425a5e158c.htm" target="_top"><b><u>Human Resource</u></b></a> (<a href="076d151c5a5e1561.htm" target="_top"><b><u>Organizational Position</u></b></a> or <a href="7c408aa155270eea.htm" target="_top"><b><u>Org-Unit</u></b></a>), a <a href="278675d65b252f4d.htm" target="_top"><b><u>Business System</u></b></a> (<a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a> or <a href="c30bf4015a5da72b.htm" target="_top"><b><u>Hardware System</u></b></a>) or a <a href="d1600c7062e093eb.htm" target="_top"><b><u>Capability Configuration</u></b></a> (an assembly of <a href="076d15425a5e158c.htm" target="_top"><b><u>Human Resource</u></b></a>s and <a href="278675d65b252f4d.htm" target="_top"><b><u>Business System</u></b></a>s.)</div><i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#resourceperformer" target="_blank">OMG - UAF - ResourcePerformer</a><br/><a href="https://pubs.opengroup.org/togaf-standard/introduction/apdxb.html#tag_06_03" target="_blank">OpenGroup - TOGAF - Definition - Business System</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK4A6E5877631B43AF"/>ResourcePort</td>
+<td></td>
+<td><img src="../standard/concepttype-incoming-boundary.ico.gif"/>&nbsp;Service Point<br>   <img src="../standard/metaclasspart_concrete.ico.gif"/>&nbsp;
+<a  href="1B9D1D024A2E00A5.htm" target="_top">Service Point</a></td>
+<td class="description-text"></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMKE28CFC12631A72E6"/>ResourceRole</td>
+<td>An interaction point for a ResourcePerformer through which it can interact with the outside environment and which is defined by a ResourceInterface. <i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ResourceRole" target="_blank">OMG - UAF - ResourceRole</a><br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/UAFML/dtc-21-12-07.pdf#ResourceRole" target="_blank">OMG - UAF - ResourceRole (Profile Spec)</a></i></td>
+<td><img src="../standard/ctx-concepttype.ico.gif"/>&nbsp;
+<a  href="24034F6D5FC79C3F.htm" target="_top">Resource Agent Component</a><br>   <img src="../standard/metaclasspart_abstract.ico.gif"/>&nbsp;
+<a  href="79a97ef3563c70c5.htm" target="_top">Class of Enterprise Resource Agent Assembly Component</a></td>
+<td class="description-text"></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMKADFF063E639AC72B"/>ResourceService</td>
+<td><div align="left" style="min-height: 12pt; ">A services that a ResourcePerformer provides to support higher level Services or OperationalActivities. Employee </div><div align="left" style="min-height: 12pt; ">provisioning, backup and recovery, storage, self-service help desk are examples of ResourceServices.</div><i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ResourceService" target="_blank">OMG - UAF - ResourceService</a></i></td>
+<td></td>
+<td class="description-text"><p style="color:red"><b>ResourceService</b> is not directly implemented in HOPEX.</p>Rational:<br/>The UAF Service layer is methodologically redundant with the Operational Layer.<br>An issue has been raised to the UAF Group to address this issue."</td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMKADFED7BC6399C0B9"/>ResourceStateDescription</td>
+<td>A state machine describing the behavior of a ResourcePerformer, depicting how the ResourcePerformer responds to various events and the actions.<i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ResourceStateDescription" target="_blank">OMG - UAF - ResourceStateDescription</a></i></td>
+<td></td>
+<td class="description-text"></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK58EC647663310C38"/>Rule</td>
+<td></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="6dc39a5661c08c55.htm" target="_top">Resource Rule</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="75cb8c1758b6482f.htm" target="_top">Operational Rule</a></td>
+<td class="description-text">A&#160;<b> Resource Rule</b> is an <a href="3be69d8c63037c0f.htm" target="_top"><b><u>Business Operating Rule</u></b></a> that is enforced by <a href="62466ea661b80d09.htm" target="_top"><b><u>Resource Operating Asset</u></b></a>s of the Enterprise.<i><br/>References:<br/><a href="../../../www.omg.org/spec/BMM/1.3/formal-15-05-19.pdf#page=46" target="_blank">OMG - BMM - Business Rule</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMKEB76CE2663477860"/>Rule - Guidance</td>
+<td></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="959320325ee7fe24.htm" target="_top">Policy</a><br>   <img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="68ed6a295d065b7b.htm" target="_top">Policy</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Policy</b> is a <a href="278678e95b2533d6.htm" target="_top"><b><u>Directive</u></b></a> that is not directly enforceable whose purpose is to govern, guide or constrain the structure and behavior of <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s in the enterprise. </div><div align="left" style="min-height: 12pt; ">Policies provide the basis for rules and govern <a href="986cd4ec5ffca3ac.htm" target="_top"><b><u>Behavior</u></b></a>s carried out by <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s.<br />Example of&#160;<b> Policy</b>s are <a href="07ca0ca15dd84ada.htm" target="_top"><b><u>Regulation Article</u></b></a>s, <a href="fe22ffdd5c4e0bd4.htm" target="_top"><b><u>Business Policy</u></b></a>s or <a href="07231aff5f4eb337.htm" target="_top"><b><u>Architecture principle</u></b></a>s.</div><i><br/>References:<br/><a href="../../../www.omg.org/spec/BMM/1.3/formal-15-05-19.pdf#page=45" target="_blank">OMG - BMM 1.3 - Business Policy</a><br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Rule" target="_blank">OMG - UAF - Rule</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMKE28CFEC2631A7561"/>Software</td>
+<td>A sub-type of ResourceArtifact that specifies an executable computer program. <i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Software" target="_blank">OMG - UAF - Software</a></i></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="d6cd02865ab966e8.htm" target="_top">Software System</a><br>   <img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="fd7f9e474e76235c.htm" target="_top">Software System</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Software System</b> is a <a href="278675d65b252f4d.htm" target="_top"><b><u>Business System</u></b></a> used by <a href="2d1874635ac352f3.htm" target="_top"><b><u>Business Operations</u></b></a>, that represents all granularities of software - ranging from <a href="d6a956495a395d28.htm" target="_top"><b><u>MicroService</u></b></a>s to enterprise wide <a href="46194ca7560d3a45.htm" target="_top"><b><u>Application System</u></b></a>s - used by <a href="2d1874635ac352f3.htm" target="_top"><b><u>Business Operations</u></b></a>.</div><div align="left" style="min-height: 12pt; ">All&#160;<b> Software System</b>s share the following characteristics:</div><div align="left" style="min-height: 12pt; ">1) They provide <a href="598272e954c622f4.htm" target="_top"><b><u>Functionality</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">2) They expose APIs (<a href="9dce9f8d5ec76311.htm" target="_top"><b><u>Application Interface</u></b></a>s) through which they deliver <a href="302238be5ec9020a.htm" target="_top"><b><u>Information Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">3) They handle datastores defined by <a href="028f03ff5b4f55ee.htm" target="_top"><b><u>Physical Data Domain</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">4) They perform and participate to <a href="46194939560d374f.htm" target="_top"><b><u>System Process</u></b></a>es.</div><i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Software" target="_blank">OMG - UAF - Software</a><br/><a href="https://compliancedictionary.com/term/1588" target="_blank">UCF Glossary - Software Asset</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMKADFED8226399CF36"/>StateDescription</td>
+<td><i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#StateDescription" target="_blank">OMG - UAF - StateDescription</a></i></td>
+<td></td>
+<td class="description-text"></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK4A6E555C631B3F71"/>System</td>
+<td><i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#System" target="_blank">OMG - UAF - System</a></i></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="f4be14d25ee1eaff.htm" target="_top">Resource Configuration</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="854ba6c559a65957.htm" target="_top">Resource Configuration</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A <a href="854ba6c559a65957.htm" target="_top"><b><u>Resource Configuration</u></b></a> is a generic <a href="f4be11b15ee1e0fa.htm" target="_top"><b><u>System of Resources</u></b></a> that represensed <a href="f4be11b15ee1e0fa.htm" target="_top"><b><u>System of Resources</u></b></a> that are not <a href="f4be0e865ee1d53b.htm" target="_top"><b><u>Facility</u></b></a>s.(Data centers, Factories, Outlets).</div><div align="left" style="min-height: 12pt; ">Examples: </div><div align="left" style="min-height: 12pt; ">- Configured Nuclear power plant (with operating teams),&#160; </div><div align="left" style="min-height: 12pt; ">- Configured aircraft carrier (with crew), Configured rescue ship (with rescue team).</div><div align="left" style="min-height: 12pt; ">When specific characteristics need to be considered for a given type of&#160;<b> Resource Configuration</b>, it is recommended to create a new sub-type of <a href="f4be11b15ee1e0fa.htm" target="_top"><b><u>System of Resources</u></b></a> to host these characteristics.</div></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK14D0A7656387E471"/>technology</td>
+<td>A sub type of ResourceArtifact that indicates a technology domain, i.e. nuclear, mechanical, electronic, mobile telephony etc. <i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Technology" target="_blank">OMG - UAF - Technology</a></i></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="0cbd1fa663fe18ac.htm" target="_top">Technology System</a></td>
+<td class="description-text">A&#160;<b> Technology System</b> is an <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a> which produces <a href="f4be0a955ee1c4f5.htm" target="_top"><b><u>Technology Outcome</u></b></a>s through <a href="26b8382f5eeae265.htm" target="_top"><b><u>Technology Interface</u></b></a>s.&#160;<b> Technology System</b>s are enabler of <a href="278675d65b252f4d.htm" target="_top"><b><u>Business System</u></b></a>s. They do not directly deliver <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s to internal or external customers.<i><br/>References:<br/><a href="https://pubs.opengroup.org/architecture/o-aa-standard/definitions.html#_digital_technology" target="_blank">OpenGroup - OAA - Digital Technology</a></i></td>
+</tr>
+</table>
+</section>
+<a class="object-section-anchor" id="ext"></a>
+<section class="object-section">
+<h4>EXTERNAL REFERENCES</h4> 
+<hr class="sectionbreak" />
+<table id="sortabletable" class="table table-sm  table-bordered table-cell-resizable table-index-set-col-width-4 table-custom-style table-scrollX" width="100%" cellspacing="0">
+<tr><th>Framework reference</th><th>HOPEX Description</th></tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMK3C03536661E1971E"/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Asset">OMG - UAF - Asset</a></td>
+<td><br/> An abstract element that indicates the types of elements that can be affected by Risk. Asset as applied to Security views is an abstract element that indicates the types of elements that can be considered as a subject for security analysis.<br/><br/><br/> An abstract element that indicates the types of elements that can be affected by Risk. Asset as applied to Security views is an abstract element that indicates the types of elements that can be considered as a subject for security analysis<br/><br/><br/> An abstract element that indicates the types of elements that can be affected by Risk. Asset as applied to Security views is an abstract element that indicates the types of elements that can be considered as a subject for security analysis<br/><br/><br/> An abstract element that indicates the types of elements that can be affected by Risk. Asset as applied to Security views is an abstract element that indicates the types of elements that can be considered as a subject for security analysis.<br/><br/><br/> <br/><br/><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="07ca0f015dd84efa.htm" target="_top">Functional Asset</a><br>   <img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="c229c44e5d0c649f.htm" target="_top">Functional Building Block</a><br/> <div align="left" style="min-height: 12pt; "><b>&#160;Functional Asset</b>s encompasse <a href="d342d88e5b121401.htm" target="_top"><b><u>Architecture Block</u></b></a>s used to describe how an enterprise function. This includes the purposes of an enterprise (<a href="b181b98c54891882.htm" target="_top"><b><u>Capability</u></b></a>) and the way the enterprise operates to fulfill these purposes (<a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s and their&#160; <a href="986cd4ec5ffca3ac.htm" target="_top"><b><u>Behavior</u></b></a>s).</div><div align="left" style="min-height: 12pt; "><b>&#160;Functional Asset</b>s include:</div><div align="left" style="min-height: 12pt; ">1. Blocks defining results of <a href="986cd4ec5ffca3ac.htm" target="_top"><b><u>Behavior</u></b></a>s of the enterprise or its sub-systems, that benefit to it internal or external customers : <a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>,</div><div align="left" style="min-height: 12pt; ">2. Blocks used to describe the capabilities of the enterprise or its sub-systems: <a href="b181b98c54891882.htm" target="_top"><b><u>Capability</u></b></a>,</div><div align="left" style="min-height: 12pt; ">3. Blocks used to describe information: <a href="e6f250185f772ee1.htm" target="_top"><b><u>Information Object</u></b></a>.</div><div align="left" style="min-height: 12pt; ">4. Blocks used to describe how the enterprise operates: <a href="a371a43b5b865817.htm" target="_top"><b><u>Operating Asset</u></b></a>s (<a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>, <a href="d682ef5e56144e77.htm" target="_top"><b><u>Process</u></b></a>, <a href="333f35ee5dde0c8c.htm" target="_top"><b><u>Interaction Scenario</u></b></a>, <a href="24ae31b55ed1c66d.htm" target="_top"><b><u>Service Interface</u></b></a>).</div><div align="left" style="min-height: 12pt; ">All&#160;<b> Functional Asset</b>s are constrained by <a href="959320325ee7fe24.htm" target="_top"><b><u>Policy</u></b></a>s and are exposed to <a href="427c1c7d64b5d4a1.htm" target="_top"><b><u>Risk Type</u></b></a>s.</div></td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMKEA37EB86632102A7"/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#CapabilityConfiguration">OMG - UAF - CapabilityConfiguration</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="d1600c7062e093eb.htm" target="_top">Capability Configuration</a><br>   <img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="818285fd59ae040b.htm" target="_top">Class of Enterprise System of Resource Internal Structure</a><br/> <div align="left" style="min-height: 12pt; ">A&#160;<b> Capability Configuration</b> is a <a href="bcebd31f5491302c.htm" target="_top"><b><u>Resource Agent</u></b></a> which combines <a href="076d15425a5e158c.htm" target="_top"><b><u>Human Resource</u></b></a>s and <a href="278675d65b252f4d.htm" target="_top"><b><u>Business System</u></b></a>s along with networking capabilities in order to provide <a href="9810abf3551135c4.htm" target="_top"><b><u>Business Capability</u></b></a>(ies).</div><div align="left" style="min-height: 12pt; ">There are two levels of granularity of&#160;<b> Capability Configuration</b>s: <a href="46195775560d4ec0.htm" target="_top"><b><u>System of Systems</u></b></a> and <a href="f4be11b15ee1e0fa.htm" target="_top"><b><u>System of Resources</u></b></a>.</div><br/><br/><br/> A composite structure representing the physical and human resources (and their interactions) in an enterprise, assembled to meet a capability. <br/><br/><br/> A composite structure representing the physical and human resources (and their interactions) in an enterprise, assembled to meet a capability. <br/><br/><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="46195775560d4ec0.htm" target="_top">System of Systems</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="6FD1704049880061.htm" target="_top">Resource Architecture</a><br/> <div align="left" style="min-height: 12pt; ">A&#160;<b> System of Systems</b> is a <a href="5c43886f64103e09.htm" target="_top"><b><u>Macro</u></b></a> <a href="d1600c7062e093eb.htm" target="_top"><b><u>Capability Configuration</u></b></a> that combine several <a href="f4be11b15ee1e0fa.htm" target="_top"><b><u>System of Resources</u></b></a> to deliver a common high level <a href="9810abf3551135c4.htm" target="_top"><b><u>Business Capability</u></b></a>.</div><div align="left" style="min-height: 12pt; ">Examples:</div><div align="left" style="min-height: 12pt; ">- Air traffic control system</div><div align="left" style="min-height: 12pt; ">- Smart city system</div><div align="left" style="min-height: 12pt; ">- Health Care System</div><div align="left" style="min-height: 12pt; ">- Search and Resue system (SAR)</div><div align="left" style="min-height: 12pt; ">- Naval squadron consisting of an aircraft carrier, its escort ships and its C5ISR capabilities.</div></td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMKADFFEC71639950FB"/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#FunctionAction">OMG - UAF - FunctionAction</a></td>
+<td><br/> A call of a Function indicating that the Function is performed by a ResourceRole in a specific context.<br/><br/><br/> A call of a Function indicating that the Function is performed by a ResourceRole in a specific context.</td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMKADFFEC1D6399509B"/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#FunctionEdge">OMG - UAF - FunctionEdge</a></td>
+<td><br/> A tuple that shows the flow of Resources (objects/data) between FunctionActions.</td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMKADFFFE8D6399B707"/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#InteractionRole">OMG - UAF - InteractionRole</a></td>
+<td><br/> An abstract type that represents an individual participant in the InteractionScenario.</td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMKE6D987A461C32FC9"/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#InteractionScenario">OMG - UAF - InteractionScenario</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="333f35ee5dde0c8c.htm" target="_top">Interaction Scenario</a><br>   <img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="d9fdde4f5829524f.htm" target="_top">Scenario of Enterprise Agent Flow</a><br/> <div align="left" style="min-height: 12pt; ">An&#160;<b> Interaction Scenario</b> is a story (<a href="986cd4ec5ffca3ac.htm" target="_top"><b><u>Behavior</u></b></a>) that describes how the components of an <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a> interacts to produce <a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>s.<br />This includes:</div><div align="left" style="min-height: 12pt; ">1) A course of events represented by&#160;<b> Object Flow</b>s depicting the story towards the delivery of expected <a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">2) Interacting <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s who participate to the story.</div><br/><br/><br/> An abstract type that specifies interactions between Assets, like ResourcePerformers, and Services.<br/><br/><br/> An abstract type that specifies interactions between Assets, like ResourcePerformers, and Services. </td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMK86198826637244F0"/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#NaturalResource">OMG - UAF - NaturalResource</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="861987db6372446e.htm" target="_top">Natural Resource</a><br/> A&#160;<b> Natural Resource</b> is a kind of <a href="62466ea661b80d09.htm" target="_top"><b><u>Resource Operating Asset</u></b></a> that occurs in nature such as oil, water, gas or coal.<br/><br/><br/> Type of physical resource that occurs in nature such as oil, water, gas or coal. <br/><br/><br/> Type of physical resource that occurs in nature such as oil, water, gas or coal. <br/><br/><br/> Type of physical resource that occurs in nature such as oil, water, gas or coal. </td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMKE6D984FD61C32C2B"/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#OperationalAgent">OMG - UAF - OperationalAgent</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="7c40987055271d04.htm" target="_top">Conceptual Agent</a><br>   <img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="b3c7b9b656497db2.htm" target="_top">Class of Business Agent</a><br/> <div align="left" style="min-height: 12pt; ">A&#160;<b> Conceptual Agent</b> is a type of <a href="e2ef091962147ad7.htm" target="_top"><b><u>Business Operating Agent</u></b></a> that depicts a functional division of labor within an enterprise, influencing the formation of its business operating model.</div><div align="left" style="min-height: 12pt; ">The concrete realizations of&#160;<b> Conceptual Agent</b> come in the form of <a href="9810b060551137d0.htm" target="_top"><b><u>Activity Domain</u></b></a> (a macro&#160;<b> Conceptual Agent</b>) and <a href="7c4094d2552717db.htm" target="_top"><b><u>Business Function</u></b></a> (a mezzo&#160;<b> Conceptual Agent</b>).</div><br/><br/><br/> An abstract type grouping OperationalArchitecture and OperationalPerformer. <br/><br/><br/> An abstract type grouping OperationalArchitecture and OperationalPerformer. </td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMKE6D9845561C32BC6"/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#OperationalPerformer">OMG - UAF - OperationalPerformer</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="9810b060551137d0.htm" target="_top">Activity Domain</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="99c2b97055b05d62.htm" target="_top">Business Functional Area</a><br/> <div align="left" style="min-height: 12pt; ">An&#160;<b> Activity Domain</b> is a <a href="5c43886f64103e09.htm" target="_top"><b><u>Macro</u></b></a> functional division of labor within an enterprise, acting as a <a href="7c40987055271d04.htm" target="_top"><b><u>Conceptual Agent</u></b></a>.</div><div align="left" style="min-height: 12pt; ">It embodies a collection of interrelated&#160; <a href="7c4094d2552717db.htm" target="_top"><b><u>Business Function</u></b></a>s which collaboratively provide one or more <a href="9810abf3551135c4.htm" target="_top"><b><u>Business Capability</u></b></a>(ies).<br /><b> Activity Domain</b>s serve as the highest hierarchical grouping of <a href="7c4094d2552717db.htm" target="_top"><b><u>Business Function</u></b></a>s within the enterprise&#39;s <a href="7c4097c855271c8e.htm" target="_top"><b><u>Conceptual Environment</u></b></a>.</div><br/><br/><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="7c4094d2552717db.htm" target="_top">Business Function</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="b1edb2582c140183.htm" target="_top">Business Function</a><br/> <div align="left" style="min-height: 12pt; ">A&#160;<b> Business Function</b> is a unit of the enterprise functional division of labor. It is used to shape the enterprise management structure in regard to how it produces, consumes or processes <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s: information, energy, materiel.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Business Function</b> specifies <a href="7c409e95552724ab.htm" target="_top"><b><u>Skill</u></b></a>s and <a href="598272e954c622f4.htm" target="_top"><b><u>Functionality</u></b></a>(ies) required to perform their activities.</div><br/><br/><br/> A logical entity that IsCapableToPerform OperationalActivities which produce, consume and process Resources.<br/><br/><br/> A logical entity that IsCapableToPerform OperationalActivities which produce, consume and process Resources. <br/><br/><br/> A logical entity that IsCapableToPerform OperationalActivities which produce, consume and process Resources.<br/><br/><br/> A logical entity that IsCapableToPerform OperationalActivities which produce, consume and process Resources. </td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMK826B882961A84627"/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Organization">OMG - UAF - Organization</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="7c408aa155270eea.htm" target="_top">Org-Unit</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="b1edb2562c140173.htm" target="_top">Org-Unit</a><br/> <div align="left" style="min-height: 12pt; ">An&#160;<b> Org-Unit</b> is a type of administrative unit in government or business that is a template of <a href="910196ca550a2ec2.htm" target="_top"><b><u>Organization</u></b></a> .</div><div align="left" style="min-height: 12pt; ">Example : Sales Department, Finance Department, Logistics Deparment.</div><br/><br/><br/> A group of OrganizationalResources (Persons, Posts, Organizations and Responsibilities) associated for a particular purpose.<br/><br/><br/> A group of OrganizationalResources (Persons, Posts, Organizations and Responsibilities) associated for a particular purpose.</td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMK58EC5DB76331067B"/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#organizationalresource">OMG - UAF - OrganizationalResource</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="076d15425a5e158c.htm" target="_top">Human Resource</a><br>   <img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="f3b7f5bc58806f49.htm" target="_top">Class of Organizational Agent</a><br/> A&#160;<b> Human Resource</b> is a <a href="bcebd31f5491302c.htm" target="_top"><b><u>Resource Agent</u></b></a>&#160; used to describe both the <a href="076d151c5a5e1561.htm" target="_top"><b><u>Organizational Position</u></b></a>s of people who work for an organization and the type of department (<a href="7c408aa155270eea.htm" target="_top"><b><u>Org-Unit</u></b></a>) responsible for running business operations.<br/><br/><br/> <div align="left" style="min-height: 12pt; ">A group of OrganizationalResources (Persons, Posts, Organizations and Responsibilities) associated for a particular </div><div align="left" style="min-height: 12pt; ">purpose.</div><br/><br/><br/> An abstract type for Organization, Person, Post and Responsibility. <br/><br/><br/> An abstract type for Organization, Person, Post and Responsibility.<br/><br/><br/> An abstract type for Organization, Person, Post and Responsibility. <br/><br/><br/> A group of OrganizationalResources (Persons, Posts, Organizations and Responsibilities) associated for a particular purpose.<br/><br/><br/> A group of OrganizationalResources (Persons, Posts, Organizations and Responsibilities) associated for a particular purpose.</td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMK122A3E5763865A9C"/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Person">OMG - UAF - Person</a></td>
+<td><br/> A type of a human being used to define the characteristics that need to be described for ActualPersons (e.g. properties such as address, telephone number, nationality, etc).<br/><br/><br/> A type of a human being used to define the characteristics that need to be described for ActualPersons (e.g. properties such as address, telephone number, nationality, etc).<br/><br/><br/> A type of a human being used to define the characteristics that need to be described for ActualPersons (e.g. properties such as address, telephone number, nationality, etc).</td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMK826BB10061A848A2"/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Process">OMG - UAF - Process</a></td>
+<td><br/> An abstract type that represents a behavior or process (i.e. a Function or OperationalActivity) that can be performed by a Performer. <br/><br/><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="d682ef5e56144e77.htm" target="_top">Process</a><br>   <img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="39924a285927597c.htm" target="_top">Action Process</a><br/> <div align="left" style="min-height: 12pt; ">A&#160;<b> Process</b> is a <a href="986cd4ec5ffca3ac.htm" target="_top"><b><u>Behavior</u></b></a> that describes a typical course of action intended to produce <a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>s, through the involvement of <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s as <a href="004b041f5ebd1119.htm" target="_top"><b><u>Active Participant</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">During its course of action, a process consumes or produces <a href="43ee620e63725a56.htm" target="_top"><b><u>Value Added Object</u></b></a>s, including <a href="e6f250185f772ee1.htm" target="_top"><b><u>Information Object</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">1) It may read or write <a href="e6f250185f772ee1.htm" target="_top"><b><u>Information Object</u></b></a>s from and to its <a href="e4c003255ed1f037.htm" target="_top"><b><u>Process Store</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">2) It may receive <a href="43ee620e63725a56.htm" target="_top"><b><u>Value Added Object</u></b></a>s at its boundary:&#160;<b> Consumed Outcome</b>s.</div><div align="left" style="min-height: 12pt; ">3) It may produce <a href="43ee620e63725a56.htm" target="_top"><b><u>Value Added Object</u></b></a>s at its boundary:&#160;<b> Produced Outcome</b>s.</div><div align="left" style="min-height: 12pt; ">The course of actions of a&#160;<b> Process</b> is constrained (<a href="24ae36805ed1cd18.htm" target="_top"><b><u>Rule Enforcement</u></b></a>) by the application of <a href="fe2203ca5c4f0fed.htm" target="_top"><b><u>Behavioral Rule</u></b></a>s that define what is allowed and not allowed to do.</div><br/><br/><br/> An abstract type that represents a behavior or process (i.e. a Function or OperationalActivity) that can be performed by a Performer. <br/><br/><br/> An abstract type that represents a behavior or process (i.e. a Function or OperationalActivity) that can be performed by a Performer.</td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMKE6D986D261C32E68"/><a href="../../../www.omg.org/spec/UAF/1.1/DMM/formal-19-11-05.pdf#ProcessUsage">OMG - UAF - ProcessUsage</a></td>
+<td><br/> An abstract type that represents a behavior or process (i.e., a Function or OperationalActivity) that can be performed by a Performer.<br/><br/><br/> An abstract type that represents a behavior or process (i.e., a Function or OperationalActivity) that can be performed by a Performer.<br/><br/><br/> An abstract type that represents a behavior or process (i.e., a Function or OperationalActivity) that can be performed by a Performer.<br/><br/><img src="../standard/ctx-concepttype.ico.gif"/>&nbsp;
+<a  href="8e1390925ebe3db7.htm" target="_top">Sub-Process</a><br>   <img src="../standard/metaclasspart_abstract.ico.gif"/>&nbsp;
+<a  href="d419d4d24ee018be.htm" target="_top">BPMN Activity Component</a><br/> A&#160;<b> Sub-Process</b> is a <a href="e4c0fe7b5ed0eb4e.htm" target="_top"><b><u>Process Activity</u></b></a>&#160; invoking another <a href="d682ef5e56144e77.htm" target="_top"><b><u>Process</u></b></a></td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMK14CC183A63876E16"/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ResourceArchitecture">OMG - UAF - ResourceArchitecture</a></td>
+<td><br/> A type used to denote a model of the Architecture, described from the ResourcePerformer perspective. <br/><br/><br/> A type used to denote a model of the Architecture, described from the ResourcePerformer perspective. <br/><br/><br/> A type used to denote a model of the Architecture, described from the ResourcePerformer perspective. <br/><br/><br/> A type used to denote a model of the Architecture, described from the ResourcePerformer perspective. <br/><br/><br/> A type used to denote a model of the Architecture, described from the ResourcePerformer perspective. <br/><br/><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="26b82a7d5eea9c4b.htm" target="_top">System of System Environment</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="4ef0964756fa9002.htm" target="_top">Resource Architecture Environment</a><br/> A&#160;<b> System of System Environment</b> is an operating context which defines the interactions (<b> Business Service Channel</b>) of a <a href="46195775560d4ec0.htm" target="_top"><b><u>System of Systems</u></b></a> with its partners (<a href="26b8376c5eeae057.htm" target="_top"><b><u>Partner Resource Architecture</u></b></a>).</td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMK62461A8661BA3445"/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ResourceArtifact">OMG - UAF - ResourceArtifact</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="278675d65b252f4d.htm" target="_top">Business System</a><br>   <img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="386846ca58937252.htm" target="_top">Class of Enterprise Artifact Assembly</a><br/> <div align="left" style="min-height: 12pt; ">A&#160;<b> Business System</b> is a man made artifact (<a href="c30bf4015a5da72b.htm" target="_top"><b><u>Hardware System</u></b></a> or <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a>) which exposes <a href="598272e954c622f4.htm" target="_top"><b><u>Functionality</u></b></a>ies and can produce <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Business System</b> performs <a href="46194939560d374f.htm" target="_top"><b><u>System Process</u></b></a>es and participates to <a href="46194939560d374f.htm" target="_top"><b><u>System Process</u></b></a>es or to <a href="57dfc52d550932ef.htm" target="_top"><b><u>Business Process</u></b></a>es.</div><div align="left" style="min-height: 12pt; ">In <a href="46194939560d374f.htm" target="_top"><b><u>System Process</u></b></a>es, a&#160;<b> Business System</b> is always an active participant (<a href="0c9b0d1b5ebd8260.htm" target="_top"><b><u>System Process Participant</u></b></a>).</div><div align="left" style="min-height: 12pt; ">In <a href="57dfc52d550932ef.htm" target="_top"><b><u>Business Process</u></b></a>es, a&#160;<b> Business System</b> is either an active participant (<a href="0f92123f5ebc184e.htm" target="_top"><b><u>Automated Participant</u></b></a>) or an <a href="0f9213345ebc1a67.htm" target="_top"><b><u>Instrument</u></b></a> used by <a href="076d15425a5e158c.htm" target="_top"><b><u>Human Resource</u></b></a>s.</div><br/><br/><br/> A type of man-made object that contains no human beings (i.e. satellite, radio, petrol, gasoline, etc.). <br/><br/><br/> A type of man-made object that contains no human beings (i.e. satellite, radio, petrol, gasoline, etc.). </td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMK14D0A9D66387E691"/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ResourceAsset">OMG - UAF - ResourceAsset</a></td>
+<td><br/> An abstract element used to group the elements of ResourcePerformer and ResourceInformation allowing them to own ResourceInformationRoles.<br/><br/><br/> <div align="left" style="min-height: 12pt; ">An abstract element used to group the elements of ResourcePerformer and ResourceInformation allowing them to own </div><div align="left" style="min-height: 12pt; ">ResourceInformationRoles</div></td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMKADFFEB916399502D"/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ResourceConnector">OMG - UAF - ResourceConnector</a></td>
+<td><img src="../standard/concepttype-connection.ico.gif"/>&nbsp;Business Connection<br>   <img src="../standard/metaclasspart_concrete.ico.gif"/>&nbsp;
+<a  href="efcaeff239b3000f.htm" target="_top">Interaction</a><br/> <br/><br/><br/> A channel for exchange between two ResourceRoles. <br/><br/><br/> A channel for exchange between two ResourceRoles.</td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMKAB24AC38638769F7"/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ResourceInterface">OMG - UAF - ResourceInterface</a></td>
+<td><br/> A declaration that specifies a contract between the ResourcePerformers it is related to and any other ResourcePerformers it can interact with. It is also intended to be an implementation of a specification of an Interface in the Business and/or Service layer.</td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMK58EC5BC763310530"/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#resourceperformer">OMG - UAF - ResourcePerformer</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="bcebd31f5491302c.htm" target="_top">Resource Agent</a><br>   <img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="79a98236563c7174.htm" target="_top">Class of Enterprise Resource Agent Assembly</a><br/> <div align="left" style="min-height: 12pt; ">A&#160;<b> Resource Agent</b> is a <a href="e2ef091962147ad7.htm" target="_top"><b><u>Business Operating Agent</u></b></a> which represents physical resources that produce <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s of the enterprise.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Resource Agent</b> can be a <a href="076d15425a5e158c.htm" target="_top"><b><u>Human Resource</u></b></a> (<a href="076d151c5a5e1561.htm" target="_top"><b><u>Organizational Position</u></b></a> or <a href="7c408aa155270eea.htm" target="_top"><b><u>Org-Unit</u></b></a>), a <a href="278675d65b252f4d.htm" target="_top"><b><u>Business System</u></b></a> (<a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a> or <a href="c30bf4015a5da72b.htm" target="_top"><b><u>Hardware System</u></b></a>) or a <a href="d1600c7062e093eb.htm" target="_top"><b><u>Capability Configuration</u></b></a> (an assembly of <a href="076d15425a5e158c.htm" target="_top"><b><u>Human Resource</u></b></a>s and <a href="278675d65b252f4d.htm" target="_top"><b><u>Business System</u></b></a>s.)</div><br/><br/><br/> An abstract grouping of elements that can perform Functions. <br/><br/><br/> An abstract grouping of elements that can perform Functions. <br/><br/><br/> An abstract grouping of elements that can perform Functions. <br/><br/><br/> An abstract grouping of elements that can perform Functions. <br/><br/><br/> An abstract grouping of elements that can perform Functions. <br/><br/><br/> An abstract grouping of elements that can perform Functions.</td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMK14D0A9336387E601"/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ResourceRole">OMG - UAF - ResourceRole</a></td>
+<td><br/> Usage of a ResourcePerformer in the context of another ResourcePerformer. Creates a whole-part relationship.<br/><br/><br/> An interaction point for a ResourcePerformer through which it can interact with the outside environment and which is defined by a ResourceInterface.<br/><br/><br/> Usage of a ResourcePerformer in the context of another ResourcePerformer. Creates a whole-part relationship.<br/><br/><br/> An interaction point for a ResourcePerformer through which it can interact with the outside environment and which is defined by a ResourceInterface. </td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMKADFED34C6399258B"/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/UAFML/dtc-21-12-07.pdf#ResourceRole">OMG - UAF - ResourceRole (Profile Spec)</a></td>
+<td><br/> Usage of a ResourcePerformer in the context of another ResourcePerformer. Creates a whole-part relationship.<br/><br/><br/> An interaction point for a ResourcePerformer through which it can interact with the outside environment and which is defined by a ResourceInterface.<br/><br/><br/> Usage of a ResourcePerformer in the context of another ResourcePerformer. Creates a whole-part relationship.<br/><br/><br/> An interaction point for a ResourcePerformer through which it can interact with the outside environment and which is defined by a ResourceInterface. </td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMKADFF065C639AC754"/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ResourceService">OMG - UAF - ResourceService</a></td>
+<td><br/> <div align="left" style="min-height: 12pt; ">A services that a ResourcePerformer provides to support higher level Services or OperationalActivities. Employee </div><div align="left" style="min-height: 12pt; ">provisioning, backup and recovery, storage, self-service help desk are examples of ResourceServices.</div></td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMKADFED7D96399C512"/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ResourceStateDescription">OMG - UAF - ResourceStateDescription</a></td>
+<td><br/> A state machine describing the behavior of a ResourcePerformer, depicting how the ResourcePerformer responds to various events and the actions.</td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMK624619B761BA32B6"/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Software">OMG - UAF - Software</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="bcebd8e9549144db.htm" target="_top">Application</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="b1edb2562c14016f.htm" target="_top">Application</a><br/> <div align="left" style="min-height: 12pt; ">An <a href="b1edb2562c14016f.htm" target="_top"><b><u>Application</u></b></a> is a <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a> that provides a set of <a href="598272e954c622f4.htm" target="_top"><b><u>Functionality</u></b></a>(ies) that <a href="2dcea8705fc4827c.htm" target="_top"><b><u>End User</u></b></a>s see as a single unit.</div><div align="left" style="min-height: 12pt; ">Essentially&#160;<b> Application</b>s are architectural constructions resulting from the combinaison of the following four criteria:</div><div align="left" style="min-height: 12pt; ">1) A group of <a href="598272e954c622f4.htm" target="_top"><b><u>Functionality</u></b></a> that <a href="2dcea8705fc4827c.htm" target="_top"><b><u>End User</u></b></a>s see as a single unit.</div><div align="left" style="min-height: 12pt; ">2) A managed asset (<b> Managed Application</b>) associated with a budget line in the context of an <a href="1ce3429d5c48982e.htm" target="_top"><b><u>Application Portfolio</u></b></a>.</div><div align="left" style="min-height: 12pt; ">3) A body of code that is seen by developers as a single unit.</div><div align="left" style="min-height: 12pt; ">4) A group of deployable software units (<a href="d5e6d7eb5c464b21.htm" target="_top"><b><u>Deployable Application Package</u></b></a>s) that must be installed together on one or multiple execution nodes (<a href="f4be0eda5ee1d6c0.htm" target="_top"><b><u>Computational Aspect</u></b></a>).</div><div align="left" style="min-height: 12pt; "><b>&#160;Application</b> is a <a href="5c43887c64103e30.htm" target="_top"><b><u>Mezzo</u></b></a> enterprise asset&#160; that sits between <a href="46194ca7560d3a45.htm" target="_top"><b><u>Application System</u></b></a> and <a href="46194ce9560d3ab8.htm" target="_top"><b><u>IT Service</u></b></a> in the decomposition of <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">Example: &quot;Payroll&quot; is an&#160;<b> Application</b> that is part an &quot;HR system&quot; which is an <a href="46194ca7560d3a45.htm" target="_top"><b><u>Application System</u></b></a>.</div><div align="left" style="min-height: 12pt; ">The &quot;Payroll&quot;&#160;<b> Application</b> includes, among other things, the &quot;Salary and Wage Calculation&quot; <a href="46194ce9560d3ab8.htm" target="_top"><b><u>IT Service</u></b></a>.</div><br/><br/><br/> A sub-type of ResourceArtifact that specifies an executable computer program. <br/><br/><br/> A sub-type of ResourceArtifact that specifies an executable computer program. <br/><br/><br/> A sub-type of ResourceArtifact that specifies an executable computer program. <br/><br/><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="c30bdac25a5d9eaf.htm" target="_top">Software Module</a><br>   <img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="066709bf4ec52b65.htm" target="_top">Physical Business Software</a><br/> <div align="left" style="min-height: 12pt; ">A&#160;<b> Software Module</b> is a <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a> that is part of an application system. </div><div align="left" style="min-height: 12pt; ">A&#160;<b> Software Module</b> is either an <a href="bcebd8e9549144db.htm" target="_top"><b><u>Application</u></b></a>, <a href="46194ce9560d3ab8.htm" target="_top"><b><u>IT Service</u></b></a> or a <a href="d6a956495a395d28.htm" target="_top"><b><u>MicroService</u></b></a>. </div><div align="left" style="min-height: 12pt; ">All share the ability to be composed of sub-<a href="46194ce9560d3ab8.htm" target="_top"><b><u>IT Service</u></b></a>s and have dependencies to enabling <a href="d5e6ddd05c46547c.htm" target="_top"><b><u>Software Technology</u></b></a>(ies).</div><br/><br/><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="d6cd02865ab966e8.htm" target="_top">Software System</a><br>   <img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="fd7f9e474e76235c.htm" target="_top">Software System</a><br/> <div align="left" style="min-height: 12pt; ">A&#160;<b> Software System</b> is a <a href="278675d65b252f4d.htm" target="_top"><b><u>Business System</u></b></a> used by <a href="2d1874635ac352f3.htm" target="_top"><b><u>Business Operations</u></b></a>, that represents all granularities of software - ranging from <a href="d6a956495a395d28.htm" target="_top"><b><u>MicroService</u></b></a>s to enterprise wide <a href="46194ca7560d3a45.htm" target="_top"><b><u>Application System</u></b></a>s - used by <a href="2d1874635ac352f3.htm" target="_top"><b><u>Business Operations</u></b></a>.</div><div align="left" style="min-height: 12pt; ">All&#160;<b> Software System</b>s share the following characteristics:</div><div align="left" style="min-height: 12pt; ">1) They provide <a href="598272e954c622f4.htm" target="_top"><b><u>Functionality</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">2) They expose APIs (<a href="9dce9f8d5ec76311.htm" target="_top"><b><u>Application Interface</u></b></a>s) through which they deliver <a href="302238be5ec9020a.htm" target="_top"><b><u>Information Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">3) They handle datastores defined by <a href="028f03ff5b4f55ee.htm" target="_top"><b><u>Physical Data Domain</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">4) They perform and participate to <a href="46194939560d374f.htm" target="_top"><b><u>System Process</u></b></a>es.</div></td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMKADFFED87639951EE"/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#StateDescription">OMG - UAF - StateDescription</a></td>
+<td><br/> </td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMKADFF072E639AC7D2"/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#System">OMG - UAF - System</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="c30bf4015a5da72b.htm" target="_top">Hardware System</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="a81cbcbf58947e56.htm" target="_top">Hardware</a><br/> <div align="left" style="min-height: 12pt; ">A&#160;<b> Hardware System</b> is a man made tangible artifact which exposes <a href="0b3016c05a1876d2.htm" target="_top"><b><u>Hardware Capability</u></b></a>(ies) and can produce <a href="c334e2925ecb8db4.htm" target="_top"><b><u>Physical Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Hardware System</b> performs <a href="46194939560d374f.htm" target="_top"><b><u>System Process</u></b></a>es and participates to <a href="46194939560d374f.htm" target="_top"><b><u>System Process</u></b></a>es or to <a href="57dfc52d550932ef.htm" target="_top"><b><u>Business Process</u></b></a>es.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Hardware System</b> can embed <a href="f4be0eda5ee1d6c0.htm" target="_top"><b><u>Computational Aspect</u></b></a>s. Together with its embedded <a href="f4be0eda5ee1d6c0.htm" target="_top"><b><u>Computational Aspect</u></b></a>s, a&#160;<b> Hardware System</b> can also deliver <a href="302238be5ec9020a.htm" target="_top"><b><u>Information Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Hardware System</b> may be based on a set of <a href="3b364dc363d9bda7.htm" target="_top"><b><u>Hardware Technology</u></b></a>(ies).</div><div align="left" style="min-height: 12pt; ">Examples:</div><div align="left" style="min-height: 12pt; ">- Connected Drone with Online Payment App.</div><div align="left" style="min-height: 12pt; ">- 3D printer.</div><div align="left" style="min-height: 12pt; ">- Automated Guided Vehicles (AGVs)</div><div align="left" style="min-height: 12pt; ">- Connected fridge providing ordering <a href="598272e954c622f4.htm" target="_top"><b><u>Functionality</u></b></a> and of course a freezing <a href="0b3016c05a1876d2.htm" target="_top"><b><u>Hardware Capability</u></b></a>.</div><div align="left" style="min-height: 12pt; ">- Production equipment in an assembly line (metal forging machine)</div><div align="left" style="min-height: 12pt; ">- Car</div><br/><br/><br/> </td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMK14D0A0796387E285"/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Technology">OMG - UAF - Technology</a></td>
+<td><br/> A sub type of ResourceArtifact that indicates a technology domain, i.e. nuclear, mechanical, electronic, mobile telephony etc. <br/><br/><br/> A sub type of ResourceArtifact that indicates a technology domain, i.e. nuclear, mechanical, electronic, mobile telephony etc. </td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMK14D088986387DDBF"/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ActualResource">OMG - UAF ActualResource</a></td>
+<td><br/> An instance of a ResourcePerformer in the real world. <br/><br/><br/> An instance of a ResourcePerformer in the real world. <br/><br/><br/> An instance of a ResourcePerformer in the real world. <br/><br/><br/> An instance of a ResourcePerformer in the real world. </td>
+</tr>
+</table>
+</section>
+</div></html>

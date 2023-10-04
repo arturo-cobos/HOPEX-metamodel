@@ -1,0 +1,733 @@
+<html>
+<head>
+  <meta  name="Generator" content="HOPEX by MEGA International">
+  
+  <meta  name="CompanyName" content="">
+  
+  <meta  http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  
+  <title>indexes (metamodel overview - index - external reference)
+  </title>
+  <link rel="stylesheet" type="text/css" href="../standard/newlook.css">
+  
+</head>
+<body>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="keywords" content="">
+<meta name="description" content="">    
+<LINK REL="icon" HREF="../standard/assets/img/favicon.ico">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/bootstrap.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nav.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/eaportal.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/font-awesome.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/animate.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/datatables.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/grid.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nae.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/custom.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/chosen.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/prism.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery.dataTables.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jsTreeStyle.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.theme.css" media="screen" />
+<script type="text/javascript" src="../standard/assets/js/jquery-3.2.1.min.js" ></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-ui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.columnFilter.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3-force.v2.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.gui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.search.js"></script> 
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.util.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-2.1.1.min.js"></script>
+<script src="../standard/assets/js/ws_zoomtemplate_firefox.js"></script>
+<script src="../standard/assets/js/bootstrap.min.js"></script>
+<script src="../standard/assets/js/datatables.min.js"></script>
+<script src="../standard/assets/js/moment.min.js"></script>
+<script src="../standard/assets/js/datetime-moment.js"></script>
+<script src="../standard/assets/js/chartjs.min.js"></script>
+<script src="../standard/assets/js/searchindexcontent.json"></script>
+<script src="../standard/assets/js/anls.js"></script>
+<script src="../../../cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script src="../standard/assets/js/gauge.js"></script> 
+<script src="../standard/assets/js/domesticApi.js"></script> 
+<script src="../standard/assets/js/piecelabel.js"></script>
+<script src="../standard/assets/js/popper.min.js"></script>
+<script src="../standard/assets/js/custom.js"></script>
+<script src="../standard/assets/js/chosen.jquery.js"></script>
+<script src="../standard/assets/js/prism.js"></script>
+<script src="../standard/assets/js/init-chosen.js"></script>
+<script src="../standard/assets/js/chart-data-flow.js"></script>
+<script src="../standard/assets/js/chart-data-gantt.js"></script>
+<script type="module" src="../standard/assets/js/Fuse.esm.min.js"></script>
+<script type="module">
+import Fuse from '../standard/assets/js/Fuse.esm.min.js';
+$(document).ready(function () {
+console.log('getjson');
+window.$.getJSON('../standard/assets/js/searchindexcontent.json', function (response) {
+console.log('getjson ok');
+var isIndex = "";
+var url = window.location.pathname;
+var filename = url.substring(url.lastIndexOf('/')+1);
+if( filename.includes("index") || filename === "" ){
+isIndex = "pages/";
+} else {
+isIndex = "";
+}
+const fuse = new Fuse(response, {
+keys: ['title','text'],
+shouldSort: true,
+includeMatches : true,
+findAllMatches : true
+});
+$('#search-fuse').on('keyup', function () {
+let result = fuse.search($(this).val());
+console.log(result);
+let resultdiv = $('div.searchresults-fuse');
+if (result.length === 0) {
+resultdiv.hide();
+} else {
+resultdiv.empty();
+resultdiv.append('<table class="table-search" width="100%" cellspacing="0"><thead ><tr><th>Name</th><th>Object Type</th><th>Modification date</th></tr></thead><tbody>');
+
+for (let obj in result.slice(0,10)) {
+
+let searchObj = '<tr><td><a href="./'+ isIndex + result[obj].item.url + '">' + result[obj].item.title +'</a></td><td>' + result[obj].item.ObjectType + '</td><td>' + result[obj].item.ModificationDate + '</td></tr>' ;
+
+
+resultdiv.find('tbody').append(searchObj);
+}
+resultdiv.append('</tbody></table>');
+resultdiv.show();
+}
+});
+});
+});
+</script>
+<title>HOPEX Metamodel Overview (Beta Version)</title>
+</head>
+<nav class="navbar navbar-expand-md navbar-dark  navbar-mega"><!-- Brand --><!--<a class="navbar-brand" href="#">Navbar</a>--><a class="" href="../index.htm"><img class="logo-mega" src="../standard/assets/img/logo.png"  alt="">(Beta Version)</a><!-- Toggler/collapsibe Button --><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><!-- Navbar links -->
+<div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsibleNavbar"><div class="col-sm-auto col-md-auto col-lg-5"></div>
+<div class="col-sm-auto">
+<ul class="navbar-nav">      
+<li><a class="dropdown-item" href="ad30ce115ebf7e90.htm">EA Grid</a></li> 
+<li><a class="dropdown-item" href="fdd5018459bc3c6a.htm">EA Domains</a></li> 
+<li><a class="dropdown-item" href="07e731775ecc93f4.htm">Solutions</a></li> 
+<li><a class="dropdown-item" href="c5dfc62c54810c2c.htm">Glossary</a></li> 
+<li class="nav-item dropdown mx-1">
+<a class="nav-link" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</a>
+<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<li><a class="dropdown-item" href="5446555d5f88c32e.htm">Outcome Driven Metamodel</a></li> 
+<li><a class="dropdown-item" href="e1ccfc295f8f7b90.htm">Playbooks</a></li> 
+<li><a class="dropdown-item" href="42bc992862d20ea7.htm">Framework Mappings</a></li> 
+<li><a class="dropdown-item" href="e93aebb35fa20550.htm">Metamodel Patterns</a></li> 
+<li><a class="dropdown-item" href="d599fe87602b2b85.htm">References</a></li> 
+<li><a class="dropdown-item" href="333f3a7f5dde11de.htm">Legend</a></li> 
+</ul>									                                            
+</li>
+</ul>
+</div>
+<div class="col-sm-auto"><a class="nav-link search" href="#" onclick=showHideSearch("search-section-fuse")><i class="fa fa-search mr-1 form-control-feedback"></i></a></div>
+</div>
+</nav>
+<div id="search-section-fuse" style="display:none">>
+<div class="search_header"><span class="closesearch">&times;</span>
+<nav class="breadcrumb">
+<a class="breadcrumb-item" href="../index.htm">Home </a> 
+<span class="breadcrumb-item active">Search</span> 
+</nav>
+</div>
+<input id="search-fuse" placeholder="Search..."  name="q" onfocus="this.value=''" type="search">
+<div class="searchresults-fuse"></div>
+</div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>function showHideSearch(elementId) {var contentDivs = document.getElementsByClassName('content');var footerDivs = document.getElementsByClassName('footer'); var containerDivs = document.getElementsByClassName('container');var containerfluidDivs = document.getElementsByClassName('container-fluid');var x = document.getElementById(elementId);if (x.style.display === "none") {x.style.display = "block";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "none";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "none";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "none";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "none";}} else {x.style.display = "none";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "block";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "block";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "block";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "block";}}} ;<!-- END WIDGET DRILL DOWN --></script><script>$(document).ready(function() {$(window).scroll(function() {if ($(this).scrollTop() > 100) {$('.scrollup').fadeIn();} else {$('.scrollup').fadeOut();}});$('.scrollup').click(function() {$("html, body").animate({scrollTop: 0}, 600);return false;});});</script><script>
+var modal = document.getElementById("search-section-fuse");
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = "none";
+}
+}
+$(document).on('click', '.closesearch', function() {
+showHideSearch("search-section-fuse");
+
+
+
+
+
+});</script><!-- table sorting icons --><link  type="image/png" href="../standard/assets/img/sort_both.png"><link  type="image/png" href="../standard/assets/img/sort_asc.png"><link  type="image/png" href="../standard/assets/img/sort_desc.png"><link  type="image/png" href="../standard/assets/img/sort_asc_disabled.png"><link  type="image/png" href="../standard/assets/img/sort_desc_disabled.png"><!-- BreadCrumb --><div class="container-fluid col-lg-11"><nav class="breadcrumb"><a class="breadcrumb-item" href="../index.htm">Home</a> <span class="breadcrumb-item active">List of external references</span> </nav></div><div class="container-fluid col-lg-11 content"><table id="sortabletable" class="table table-sm  table-bordered table-cell-resizable table-index-set-col-width-4 table-custom-style table-scrollX" width="100%" cellspacing="0"><thead ><tr><th>Name</th> <th>Description</th> </tr></thead><tbody><tr><td>
+<a  href="8ffd93b6628305a6.htm" target="_top">Accelerate - State of devops 2019</a></td><td></td></tr><tr><td>
+<a  href="145c21e15fffa770.htm" target="_top">Accountability Charts vs. Org Charts: A Primer</a></td><td></td></tr><tr><td>
+<a  href="255cdf8262aa18ca.htm" target="_top">AWS - What is Computer Networking?</a></td><td></td></tr><tr><td>
+<a  href="d329b368617b5c99.htm" target="_top">Blog - Explain lexical scope in plain English</a></td><td></td></tr><tr><td>
+<a  href="1fc82b9260195ebd.htm" target="_top">Britannica - Measurement scale</a></td><td></td></tr><tr><td>
+<a  href="4c3a4e5861db40fe.htm" target="_top">C4 Model - Level 1 - System Context Diagram</a></td><td></td></tr><tr><td>
+<a  href="4a314a7e61db672e.htm" target="_top">C4 Model - Level 2 - Container Diagram</a></td><td></td></tr><tr><td>
+<a  href="4a314bd761db688c.htm" target="_top">C4 Model - Level 3 - Component Diagram</a></td><td></td></tr><tr><td>
+<a  href="34775bb56410a628.htm" target="_top">C4 Model - Metamodel</a></td><td></td></tr><tr><td>
+<a  href="f8d1f7f462a204b4.htm" target="_top">C4 Model - Software System</a></td><td></td></tr><tr><td>
+<a  href="e29ce40961de7110.htm" target="_top">C4 Model - Supplementary diagrams - System Landscape diagram</a></td><td></td></tr><tr><td>
+<a  href="c450d3e261de5d45.htm" target="_top">C4 Model - Supplementary diagrams -Dynamic Diagram</a></td><td></td></tr><tr><td>
+<a  href="7abf86a66308cea9.htm" target="_top">C4 Model - Website</a></td><td></td></tr><tr><td>
+<a  href="546c51a5601173db.htm" target="_top">CIO Wiki - Architecture Principle</a></td><td></td></tr><tr><td>
+<a  href="d329a810617b5c3c.htm" target="_top">Collins - universe-of-discourse</a></td><td></td></tr><tr><td>
+<a  href="abbe1e1562aaef0d.htm" target="_top">CX University - Inside Out vs. Outside In Thinking</a></td><td></td></tr><tr><td>
+<a  href="7617b9fd61823235.htm" target="_top">DATAVERSITY - Data Govenance vs Data Management</a></td><td></td></tr><tr><td>
+<a  href="3a0ecd4d63ce3f44.htm" target="_top">DAU - Glossary - System of Systems</a></td><td></td></tr><tr><td>
+<a  href="27a4555d6407c54b.htm" target="_top">DDD - Aggregate</a></td><td></td></tr><tr><td>
+<a  href="0320043863cb61dc.htm" target="_top">DDD - Glossary - Entity</a></td><td></td></tr><tr><td>
+<a  href="0320036163cb613c.htm" target="_top">DDD - Glossary - Value Object</a></td><td></td></tr><tr><td>
+<a  href="068214126233e00c.htm" target="_top">de Weck - The three dimensions of complexity</a></td><td></td></tr><tr><td>
+<a  href="a39cbef360331e93.htm" target="_top">DoDAF2 - Capability Viewpoint</a></td><td></td></tr><tr><td>
+<a  href="a39cbe5260331dd4.htm" target="_top">DoDAF2 - CV-1</a></td><td></td></tr><tr><td>
+<a  href="a39cbe9f60331e30.htm" target="_top">DoDAF2 - CV-2</a></td><td></td></tr><tr><td>
+<a  href="a39cc05e60332011.htm" target="_top">DoDAF2 - Data and Information Viewpoint</a></td><td></td></tr><tr><td>
+<a  href="a39cc03b60331fb5.htm" target="_top">DoDAF2 - DV-1</a></td><td></td></tr><tr><td>
+<a  href="a39cc00c60331f59.htm" target="_top">DoDAF2 - OV-2</a></td><td></td></tr><tr><td>
+<a  href="a39cc0856033206f.htm" target="_top">DoDAF2 - Project Viewpoint</a></td><td></td></tr><tr><td>
+<a  href="a39cc110603320d5.htm" target="_top">DoDAF2 - PV-1</a></td><td></td></tr><tr><td>
+<a  href="a39cc12d60332133.htm" target="_top">DoDAF2 - PV-2</a></td><td></td></tr><tr><td>
+<a  href="a39cc16160332195.htm" target="_top">DoDAF2 - PV-3</a></td><td></td></tr><tr><td>
+<a  href="a39cbc9560331d09.htm" target="_top">DoDAF2 - SV-1</a></td><td></td></tr><tr><td>
+<a  href="a39cbcfb60331d68.htm" target="_top">DoDAF2 - SV-2</a></td><td></td></tr><tr><td>
+<a  href="a39cc19e603321f9.htm" target="_top">DoDAF2 - SV-3</a></td><td></td></tr><tr><td>
+<a  href="a39cbfb360331ef7.htm" target="_top">DoDAF2 - The DoDAF Architecture Framework Version 2.02</a></td><td></td></tr><tr><td>
+<a  href="a24dad6d64087a4a.htm" target="_top">EIP - messaging</a></td><td></td></tr><tr><td>
+<a  href="bb4ec29e62844558.htm" target="_top">Felipe Castro - The Beginner&rsquo;s Guide to OKRs</a></td><td></td></tr><tr><td>
+<a  href="517f6804633456b0.htm" target="_top">Gartner - Application Architecture</a></td><td></td></tr><tr><td>
+<a  href="17dfe08461d505ba.htm" target="_top">Gartner - business-capability-modeling</a></td><td></td></tr><tr><td>
+<a  href="83b8842f61924e54.htm" target="_top">Gartner - Data Center</a></td><td></td></tr><tr><td>
+<a  href="17decf2061d5fc5a.htm" target="_top">Gartner - Operating Model</a></td><td></td></tr><tr><td>
+<a  href="6123618561dd739d.htm" target="_top">Gartner - strategic-planning</a></td><td></td></tr><tr><td>
+<a  href="49029ad5635b39de.htm" target="_top">GRCschema.org - Control</a></td><td></td></tr><tr><td>
+<a  href="b0eec41c6011f8aa.htm" target="_top">HBR - Agile at scale</a></td><td></td></tr><tr><td>
+<a  href="d3db20c963f702c4.htm" target="_top">HBR - Know your customers- jobs-to-be-done</a></td><td></td></tr><tr><td>
+<a  href="abbe1cba62aaee8d.htm" target="_top">HBR - Understanding Customer Experience</a></td><td></td></tr><tr><td>
+<a  href="d3db198963f70217.htm" target="_top">HBS - Clayton Christensen - The theory of jobs-to-be-done</a></td><td></td></tr><tr><td>
+<a  href="790eaafb617241ec.htm" target="_top">Holacracy</a></td><td></td></tr><tr><td>
+<a  href="31255fcf61dcc203.htm" target="_top">HOPEX - BPA</a></td><td></td></tr><tr><td>
+<a  href="3125603f61dcc2e7.htm" target="_top">HOPEX - IRM</a></td><td></td></tr><tr><td>
+<a  href="8bfd76b162bd0a61.htm" target="_top">HOPEX - Outcome centric approach presentation</a></td><td></td></tr><tr><td>
+<a  href="3125601161dcc286.htm" target="_top">HOPEX Solution - Data Intelligence</a></td><td></td></tr><tr><td>
+<a  href="61278b7461dd1a9f.htm" target="_top">HOPEX Solution - IT Architecture</a></td><td></td></tr><tr><td>
+<a  href="61278b4261dd1a33.htm" target="_top">HOPEX Solution - ITBM</a></td><td></td></tr><tr><td>
+<a  href="83bb98eb6192302b.htm" target="_top">HOPEX Solution - ITPM</a></td><td></td></tr><tr><td>
+<a  href="a646008b61e2c43b.htm" target="_top">Humanresourcesedu.org - Human Resource</a></td><td></td></tr><tr><td>
+<a  href="a2af70b5638f5616.htm" target="_top">Information</a></td><td></td></tr><tr><td>
+<a  href="d599728a602e129c.htm" target="_top">Interaction Design Foundation - Usability</a></td><td></td></tr><tr><td>
+<a  href="889fa3cd62c23218.htm" target="_top">Investopedia - Value Proposition</a></td><td></td></tr><tr><td>
+<a  href="7c3aa084617a0e62.htm" target="_top">ISO - 22301:2019 - Business continuity management system</a></td><td></td></tr><tr><td>
+<a  href="790eb0dd61724594.htm" target="_top">ISO - The process approach</a></td><td></td></tr><tr><td>
+<a  href="67db478461c067ce.htm" target="_top">ISO 15926 - ArrangedIndividual</a></td><td></td></tr><tr><td>
+<a  href="67db434161c066fa.htm" target="_top">ISO 15926 - Class</a></td><td></td></tr><tr><td>
+<a  href="e6d988b761c33032.htm" target="_top">ISO 15926 - ClassOfActivity</a></td><td></td></tr><tr><td>
+<a  href="4f5caa6565125c4c.htm" target="_top">ISO 15926 - ClassOfClass</a></td><td></td></tr><tr><td>
+<a  href="a0dbab0664751df1.htm" target="_top">ISO 15926 - ClassOfClassification</a></td><td></td></tr><tr><td>
+<a  href="9d3bcea961d2c9cc.htm" target="_top">ISO 15926 - ClassOfIndividual</a></td><td></td></tr><tr><td>
+<a  href="a0dba39364751d32.htm" target="_top">ISO 15926 - ClassOfProperty</a></td><td></td></tr><tr><td>
+<a  href="d88adc7163bb1525.htm" target="_top">ISO 15926 - ClassOfRelativeLocation</a></td><td></td></tr><tr><td>
+<a  href="67db46d561c06760.htm" target="_top">ISO 15926 - PossibleIndividual</a></td><td></td></tr><tr><td>
+<a  href="a0dba3e564751d97.htm" target="_top">ISO 15926 - Property</a></td><td></td></tr><tr><td>
+<a  href="122a196663853930.htm" target="_top">ISO 15926 - Relationship</a></td><td></td></tr><tr><td>
+<a  href="58ec75596331161e.htm" target="_top">ISO 15926 - SpatialLocation</a></td><td></td></tr><tr><td>
+<a  href="67db42f561c06693.htm" target="_top">ISO 15926 - Thing</a></td><td></td></tr><tr><td>
+<a  href="0f09fab0639268e1.htm" target="_top">ISO 22301 - Management System</a></td><td></td></tr><tr><td>
+<a  href="003853e662d6d011.htm" target="_top">ISO 37000 - 3.4.4 Governing Body</a></td><td></td></tr><tr><td>
+<a  href="49936d3063908330.htm" target="_top">ISO 42010 - Concern</a></td><td></td></tr><tr><td>
+<a  href="58e593af619f989f.htm" target="_top">ISO 42010 - Terms - 3.10 - Stakeholder</a></td><td></td></tr><tr><td>
+<a  href="370d631a61c2bd99.htm" target="_top">ISO 9000 - 3.4 - Process</a></td><td></td></tr><tr><td>
+<a  href="b4ccee176177966b.htm" target="_top">Lean.org - Value Stream</a></td><td></td></tr><tr><td>
+<a  href="b4cceec0617796d6.htm" target="_top">Lean.org - Value Stream Mapping</a></td><td></td></tr><tr><td>
+<a  href="3bfb9ab6649e1d4b.htm" target="_top">Martin Fowler - Aggregate</a></td><td></td></tr><tr><td>
+<a  href="bb4ebc0e62843d1e.htm" target="_top">Martin Fowler - API Design</a></td><td></td></tr><tr><td>
+<a  href="8ffda2026283071a.htm" target="_top">Martin Fowler - Application Architecture</a></td><td></td></tr><tr><td>
+<a  href="a48deeb362200032.htm" target="_top">Martin Fowler - Application Boundary</a></td><td></td></tr><tr><td>
+<a  href="b6522481627d3a17.htm" target="_top">Martin Fowler - Micro-Service</a></td><td></td></tr><tr><td>
+<a  href="8ffda2436283075a.htm" target="_top">Martin Fowler - Micro-Service Guide</a></td><td></td></tr><tr><td>
+<a  href="3c8a49a96283d9cc.htm" target="_top">Martin Fowler - Products over Projects</a></td><td></td></tr><tr><td>
+<a  href="02f5b490641d9130.htm" target="_top">Martin Fowler - Richardson Maturity Model</a></td><td></td></tr><tr><td>
+<a  href="02f537076420922e.htm" target="_top">Martin Fowler- Software Architecture</a></td><td></td></tr><tr><td>
+<a  href="d8cf02db61aa8195.htm" target="_top">MBN - Customer</a></td><td></td></tr><tr><td>
+<a  href="b4c8be4f6172d2cf.htm" target="_top">Merriam Webster - Building Block</a></td><td></td></tr><tr><td>
+<a  href="dc94f8da602321e0.htm" target="_top">Merriam Webster - Person</a></td><td></td></tr><tr><td>
+<a  href="9e38a4db618eb6b9.htm" target="_top">Merriam Webster - Process</a></td><td></td></tr><tr><td>
+<a  href="ae9f82c1600ef0d9.htm" target="_top">Merriam Webster - Undertaking</a></td><td></td></tr><tr><td>
+<a  href="fffe3ea86406fd7b.htm" target="_top">Method Resources - Operating Model Animation</a></td><td></td></tr><tr><td>
+<a  href="02f5af8f641d8f3a.htm" target="_top">Microsoft - Architecture Design - Architecture Styles</a></td><td></td></tr><tr><td>
+<a  href="02f5afed641d8f88.htm" target="_top">Microsoft - Architecture Design - Microservice architecture style</a></td><td></td></tr><tr><td>
+<a  href="02f5ae4b641d8e69.htm" target="_top">Microsoft - Architecture Design - RESTful web API design</a></td><td></td></tr><tr><td>
+<a  href="da45dfc4627b41da.htm" target="_top">Modern Analyst - Using Feature Trees to Depict Scope</a></td><td></td></tr><tr><td>
+<a  href="7c3aac8c617a2177.htm" target="_top">NIST - Assurance Case</a></td><td></td></tr><tr><td>
+<a  href="40a8418061aa3c0a.htm" target="_top">NIST - Data Asset</a></td><td></td></tr><tr><td>
+<a  href="50ad6c13632dac6e.htm" target="_top">NIST - Glossary - Security Control</a></td><td></td></tr><tr><td>
+<a  href="58ec5f2463310768.htm" target="_top">OMG &nbsp;- UAF - ProblemDomain</a></td><td></td></tr><tr><td>
+<a  href="c3cec41962b40d3b.htm" target="_top">OMG - BACM - Business Object</a></td><td></td></tr><tr><td>
+<a  href="c3cec70362b40e80.htm" target="_top">OMG - BACM - Outcome</a></td><td></td></tr><tr><td>
+<a  href="c3cec85a62b41018.htm" target="_top">OMG - BACM - Value Proposition</a></td><td></td></tr><tr><td>
+<a  href="42bc8ab262d20412.htm" target="_top">OMG - BMM - Business Process</a></td><td></td></tr><tr><td>
+<a  href="ff9d503c60411d97.htm" target="_top">OMG - BMM - Business Rule</a></td><td></td></tr><tr><td>
+<a  href="f5e90c84639153c3.htm" target="_top">OMG - BMM - Common Vocabulary</a></td><td></td></tr><tr><td>
+<a  href="42bc87cb62d20316.htm" target="_top">OMG - BMM - Course of Action</a></td><td></td></tr><tr><td>
+<a  href="6699547160532150.htm" target="_top">OMG - BMM - Desired Result</a></td><td></td></tr><tr><td>
+<a  href="147996c8603f7087.htm" target="_top">OMG - BMM - Directive</a></td><td></td></tr><tr><td>
+<a  href="f5e90cf76391541d.htm" target="_top">OMG - BMM - External Influencer</a></td><td></td></tr><tr><td>
+<a  href="bb4ec46f62844880.htm" target="_top">OMG - BMM - Goal</a></td><td></td></tr><tr><td>
+<a  href="889fbd8662c240ea.htm" target="_top">OMG - BMM - Influencer</a></td><td></td></tr><tr><td>
+<a  href="f5e90e006391548e.htm" target="_top">OMG - BMM - Internal Influencer</a></td><td></td></tr><tr><td>
+<a  href="42bc863562d2024e.htm" target="_top">OMG - BMM - Mission</a></td><td></td></tr><tr><td>
+<a  href="bb4ec4516284483f.htm" target="_top">OMG - BMM - Objective</a></td><td></td></tr><tr><td>
+<a  href="122a193a63864411.htm" target="_top">OMG - BMM - Opportunity</a></td><td></td></tr><tr><td>
+<a  href="42bc88f762d20372.htm" target="_top">OMG - BMM - Organizational Unit</a></td><td></td></tr><tr><td>
+<a  href="3c036d6e61e1a4e1.htm" target="_top">OMG - BMM - Rule Enforcement</a></td><td></td></tr><tr><td>
+<a  href="42bc911662d20a84.htm" target="_top">OMG - BMM - Strategy</a></td><td></td></tr><tr><td>
+<a  href="42bc918762d20ae2.htm" target="_top">OMG - BMM - Tactic</a></td><td></td></tr><tr><td>
+<a  href="122a221c638648e5.htm" target="_top">OMG - BMM - Threat</a></td><td></td></tr><tr><td>
+<a  href="ff9d4fe56041092e.htm" target="_top">OMG - BMM 1.3 - Business Policy</a></td><td></td></tr><tr><td>
+<a  href="ff9d510a6041516e.htm" target="_top">OMG - BMM 1.3 - Directive Category</a></td><td></td></tr><tr><td>
+<a  href="370d684861c2c57a.htm" target="_top">OMG - BPMN - Activity</a></td><td></td></tr><tr><td>
+<a  href="370d6a0c61c2c6b0.htm" target="_top">OMG - BPMN - Call Activity</a></td><td></td></tr><tr><td>
+<a  href="370d679561c2c4dd.htm" target="_top">OMG - BPMN - Process</a></td><td></td></tr><tr><td>
+<a  href="4f5ccba665115558.htm" target="_top">OMG - KerML - Anything</a></td><td></td></tr><tr><td>
+<a  href="4f5cbe65651152b2.htm" target="_top">OMG - KerML - Class</a></td><td></td></tr><tr><td>
+<a  href="4f5ca5ea65125bcf.htm" target="_top">OMG - KerML - Classifier</a></td><td></td></tr><tr><td>
+<a  href="49bef2dc6509477f.htm" target="_top">OMG - KerML - Element</a></td><td></td></tr><tr><td>
+<a  href="4f5c7985651256a9.htm" target="_top">OMG - KerML - Feature</a></td><td></td></tr><tr><td>
+<a  href="4f5c995b651258c9.htm" target="_top">OMG - KerML - LibraryPackage</a></td><td></td></tr><tr><td>
+<a  href="49bef67865094a41.htm" target="_top">OMG - KerML - Namespace</a></td><td></td></tr><tr><td>
+<a  href="4f5cbf2865115401.htm" target="_top">OMG - KerML - Object</a></td><td></td></tr><tr><td>
+<a  href="4f5cbe216511525b.htm" target="_top">OMG - KerML - Occurrence</a></td><td></td></tr><tr><td>
+<a  href="49bef631650949ea.htm" target="_top">OMG - KerML - Package</a></td><td></td></tr><tr><td>
+<a  href="4f5c91c06512577e.htm" target="_top">OMG - KerML - Root</a></td><td></td></tr><tr><td>
+<a  href="4f5cc360651154ad.htm" target="_top">OMG - KerML - Specialization</a></td><td></td></tr><tr><td>
+<a  href="4f5cbf9965115457.htm" target="_top">OMG - KerML - Structure</a></td><td></td></tr><tr><td>
+<a  href="614597e86158c3cd.htm" target="_top">OMG - KerML - Structure Package</a></td><td></td></tr><tr><td>
+<a  href="4f5c9ede65125a30.htm" target="_top">OMG - KerML - Type</a></td><td></td></tr><tr><td>
+<a  href="48d28f5b63b674a5.htm" target="_top">OMG - SACM : Structured Assurance Case Metamodel</a></td><td></td></tr><tr><td>
+<a  href="ff9d51d560416ad9.htm" target="_top">OMG - SBVR - Business Rule (Behavioral)</a></td><td></td></tr><tr><td>
+<a  href="9d3bcfb161d2ca43.htm" target="_top">OMG - SBVR - Concept</a></td><td></td></tr><tr><td>
+<a  href="e073219661d326e7.htm" target="_top">OMG - SBVR - Element of Guidance</a></td><td></td></tr><tr><td>
+<a  href="9d3bcffc61d2caa0.htm" target="_top">OMG - SBVR - General Concept</a></td><td></td></tr><tr><td>
+<a  href="9d3bde3a61d2cc92.htm" target="_top">OMG - SBVR - Role</a></td><td></td></tr><tr><td>
+<a  href="67db412261c06619.htm" target="_top">OMG - SBVR - Thing</a></td><td></td></tr><tr><td>
+<a  href="ff9d55ba604112ec.htm" target="_top">OMG - SVBR - Categorization</a></td><td></td></tr><tr><td>
+<a  href="df7cf71c6368370b.htm" target="_top">OMG - SysML 1.X - Requirement</a></td><td></td></tr><tr><td>
+<a  href="6a9ea5ed63be55fa.htm" target="_top">OMG - UAF - ActivityPerformableUnderCondition</a></td><td></td></tr><tr><td>
+<a  href="f68d6d5b63b8e7e8.htm" target="_top">OMG - UAF - ActualCondition</a></td><td></td></tr><tr><td>
+<a  href="14cc2ee6638787df.htm" target="_top">OMG - UAF - ActualEnduringTask</a></td><td></td></tr><tr><td>
+<a  href="a2af7cd9638f5dde.htm" target="_top">OMG - UAF - ActualEnterprisePhase</a></td><td></td></tr><tr><td>
+<a  href="f68d4d5c63b8e74a.htm" target="_top">OMG - UAF - ActualEnvironment</a></td><td></td></tr><tr><td>
+<a  href="bb4ebd3762843d7f.htm" target="_top">OMG - UAF - ActualLocation</a></td><td></td></tr><tr><td>
+<a  href="1bc1300663da4317.htm" target="_top">OMG - UAF - ActualMeasurement</a></td><td></td></tr><tr><td>
+<a  href="48d2c01663b56c95.htm" target="_top">OMG - UAF - ActualMeasurementSet</a></td><td></td></tr><tr><td>
+<a  href="9746ac9161a05a3b.htm" target="_top">OMG - UAF - ActualOrganization</a></td><td></td></tr><tr><td>
+<a  href="f5e9fe3063904f31.htm" target="_top">OMG - UAF - ActualOrganizationalResource</a></td><td></td></tr><tr><td>
+<a  href="14d087896387dd38.htm" target="_top">OMG - UAF - ActualOutcome</a></td><td></td></tr><tr><td>
+<a  href="826bb65261a84aa6.htm" target="_top">OMG - UAF - ActualPerson</a></td><td></td></tr><tr><td>
+<a  href="14cc1d306387717a.htm" target="_top">OMG - UAF - ActualPost</a></td><td></td></tr><tr><td>
+<a  href="14cc193863876f0d.htm" target="_top">OMG - UAF - ActualProject</a></td><td></td></tr><tr><td>
+<a  href="48d4d5fc63b69b34.htm" target="_top">OMG - UAF - ActualProjectMileStone</a></td><td></td></tr><tr><td>
+<a  href="fc0f002f63e269cf.htm" target="_top">OMG - UAF - ActualPropertySet</a></td><td></td></tr><tr><td>
+<a  href="6a9eb18f63be586f.htm" target="_top">OMG - UAF - ActualResponsibility</a></td><td></td></tr><tr><td>
+<a  href="889f8dd862c23043.htm" target="_top">OMG - UAF - ActualResponsibleResource</a></td><td></td></tr><tr><td>
+<a  href="6a9efd8863be6b5b.htm" target="_top">OMG - UAF - ActualService</a></td><td></td></tr><tr><td>
+<a  href="14cc2db4638780d1.htm" target="_top">OMG - UAF - ActualStrategicPhase</a></td><td></td></tr><tr><td>
+<a  href="a2af6e50638f5054.htm" target="_top">OMG - UAF - Alias</a></td><td></td></tr><tr><td>
+<a  href="a2af77f4638f5a93.htm" target="_top">OMG - UAF - ArchitecturalDescription</a></td><td></td></tr><tr><td>
+<a  href="122a3d5c638659b8.htm" target="_top">OMG - UAF - Architecture</a></td><td></td></tr><tr><td>
+<a  href="f5e9f6b663904c35.htm" target="_top">OMG - UAF - ArchitectureMetaData</a></td><td></td></tr><tr><td>
+<a  href="3c03536661e1971e.htm" target="_top">OMG - UAF - Asset</a></td><td></td></tr><tr><td>
+<a  href="370d619361c2bc04.htm" target="_top">OMG - UAF - Capability</a></td><td></td></tr><tr><td>
+<a  href="ea37eb86632102a7.htm" target="_top">OMG - UAF - CapabilityConfiguration</a></td><td></td></tr><tr><td>
+<a  href="122a3bf763865896.htm" target="_top">OMG - UAF - CapabilityDependency</a></td><td></td></tr><tr><td>
+<a  href="122a2af763864c27.htm" target="_top">OMG - UAF - CapabilityRole</a></td><td></td></tr><tr><td>
+<a  href="122a3c5e638658f3.htm" target="_top">OMG - UAF - CapabilityRoleDependency</a></td><td></td></tr><tr><td>
+<a  href="826bb20261a84931.htm" target="_top">OMG - UAF - CapableElement</a></td><td></td></tr><tr><td>
+<a  href="122a20d86386489a.htm" target="_top">OMG - UAF - Challenge</a></td><td></td></tr><tr><td>
+<a  href="826b88de61a84688.htm" target="_top">OMG - UAF - Competence</a></td><td></td></tr><tr><td>
+<a  href="58ec5cfb633105df.htm" target="_top">OMG - UAF - Concept Item</a></td><td></td></tr><tr><td>
+<a  href="a2af7603638f58ec.htm" target="_top">OMG - UAF - Concern</a></td><td></td></tr><tr><td>
+<a  href="4993646263907bb6.htm" target="_top">OMG - UAF - Definition</a></td><td></td></tr><tr><td>
+<a  href="889fbd1e62c2409d.htm" target="_top">OMG - UAF - Driver</a></td><td></td></tr><tr><td>
+<a  href="14cc1c0c638770b3.htm" target="_top">OMG - UAF - Effect</a></td><td></td></tr><tr><td>
+<a  href="adfa8ea363997936.htm" target="_top">OMG - UAF - EnhancedSecurityControl</a></td><td></td></tr><tr><td>
+<a  href="806a143d62d1f614.htm" target="_top">OMG - UAF - EnterpriseGoal</a></td><td></td></tr><tr><td>
+<a  href="14d09cc06387dff7.htm" target="_top">OMG - UAF - EnterpriseMission</a></td><td></td></tr><tr><td>
+<a  href="806a140562d1f5d1.htm" target="_top">OMG - UAF - EnterpriseObjective</a></td><td></td></tr><tr><td>
+<a  href="f68d275063b8e4ca.htm" target="_top">OMG - UAF - Environment</a></td><td></td></tr><tr><td>
+<a  href="f68d4ad263b8e61a.htm" target="_top">OMG - UAF - EnvironmentProperty</a></td><td></td></tr><tr><td>
+<a  href="d88ae14e63bb16a0.htm" target="_top">OMG - UAF - EvokedBy</a></td><td></td></tr><tr><td>
+<a  href="58ec5ecc63310719.htm" target="_top">OMG - UAF - Exhibits</a></td><td></td></tr><tr><td>
+<a  href="255ce2d362aa1af0.htm" target="_top">OMG - UAF - Facility</a></td><td></td></tr><tr><td>
+<a  href="da60def263f92c78.htm" target="_top">OMG - UAF - FillsPost</a></td><td></td></tr><tr><td>
+<a  href="826bb5a661a84a34.htm" target="_top">OMG - UAF - Function</a></td><td></td></tr><tr><td>
+<a  href="adffec71639950fb.htm" target="_top">OMG - UAF - FunctionAction</a></td><td></td></tr><tr><td>
+<a  href="adffec1d6399509b.htm" target="_top">OMG - UAF - FunctionEdge</a></td><td></td></tr><tr><td>
+<a  href="14cc2a5b63877d5f.htm" target="_top">OMG - UAF - GeopoliticalExtentType</a></td><td></td></tr><tr><td>
+<a  href="58ec5e2a633106ca.htm" target="_top">OMG - UAF - HighLevelOperationalConcept</a></td><td></td></tr><tr><td>
+<a  href="14cc2bac63877e61.htm" target="_top">OMG - UAF - ImpactedBy</a></td><td></td></tr><tr><td>
+<a  href="a2af7fe6638f6320.htm" target="_top">OMG - UAF - Implements</a></td><td></td></tr><tr><td>
+<a  href="a2af72b9638f56a3.htm" target="_top">OMG - UAF - InformationKind</a></td><td></td></tr><tr><td>
+<a  href="adffefae6399540e.htm" target="_top">OMG - UAF - InformationModel</a></td><td></td></tr><tr><td>
+<a  href="adff0f3d639acca7.htm" target="_top">OMG - UAF - InteractionMessage</a></td><td></td></tr><tr><td>
+<a  href="adfffe8d6399b707.htm" target="_top">OMG - UAF - InteractionRole</a></td><td></td></tr><tr><td>
+<a  href="e6d987a461c32fc9.htm" target="_top">OMG - UAF - InteractionScenario</a></td><td></td></tr><tr><td>
+<a  href="6a9efbde63be69d3.htm" target="_top">OMG - UAF - KnownResource</a></td><td></td></tr><tr><td>
+<a  href="48d4cf5463b694c3.htm" target="_top">OMG - UAF - Location</a></td><td></td></tr><tr><td>
+<a  href="fc0fff0563e16912.htm" target="_top">OMG - UAF - LocationKind</a></td><td></td></tr><tr><td>
+<a  href="fc0ffd0463e16840.htm" target="_top">OMG - UAF - LocationTypeKind</a></td><td></td></tr><tr><td>
+<a  href="f5e90aea639152c3.htm" target="_top">OMG - UAF - MapstoGoal</a></td><td></td></tr><tr><td>
+<a  href="1bc12d9363da41a0.htm" target="_top">OMG - UAF - MeasurableElement</a></td><td></td></tr><tr><td>
+<a  href="1bc12b3163da4030.htm" target="_top">OMG - UAF - Measurement</a></td><td></td></tr><tr><td>
+<a  href="230f734461d87da1.htm" target="_top">OMG - UAF - MeasurementSet</a></td><td></td></tr><tr><td>
+<a  href="f5e9f95663904d2d.htm" target="_top">OMG - UAF - MetaData</a></td><td></td></tr><tr><td>
+<a  href="adfa91e863997aed.htm" target="_top">OMG - UAF - Mitigates</a></td><td></td></tr><tr><td>
+<a  href="4997e2ba6390f1c2.htm" target="_top">OMG - UAF - MotivedBy</a></td><td></td></tr><tr><td>
+<a  href="86198826637244f0.htm" target="_top">OMG - UAF - NaturalResource</a></td><td></td></tr><tr><td>
+<a  href="4a5ea4d86297313d.htm" target="_top">OMG - UAF - Operational Activity</a></td><td></td></tr><tr><td>
+<a  href="4a5ea3ea62973020.htm" target="_top">OMG - UAF - Operational Constraint</a></td><td></td></tr><tr><td>
+<a  href="4a5ea5a962973446.htm" target="_top">OMG - UAF - Operational Interface</a></td><td></td></tr><tr><td>
+<a  href="e6d9857661c32cee.htm" target="_top">OMG - UAF - OperationalActivity</a></td><td></td></tr><tr><td>
+<a  href="e6d9861d61c32d7e.htm" target="_top">OMG - UAF - OperationalActivityAction</a></td><td></td></tr><tr><td>
+<a  href="e6d984fd61c32c2b.htm" target="_top">OMG - UAF - OperationalAgent</a></td><td></td></tr><tr><td>
+<a  href="e6d9854661c32c92.htm" target="_top">OMG - UAF - OperationalArchitecture</a></td><td></td></tr><tr><td>
+<a  href="58ec5d516331062d.htm" target="_top">OMG - UAF - OperationalAsset</a></td><td></td></tr><tr><td>
+<a  href="147a4693636a5e2e.htm" target="_top">OMG - UAF - OperationalInformation</a></td><td></td></tr><tr><td>
+<a  href="adff0ee1639acc1d.htm" target="_top">OMG - UAF - OperationalInteractionScenario</a></td><td></td></tr><tr><td>
+<a  href="e6d9845561c32bc6.htm" target="_top">OMG - UAF - OperationalPerformer</a></td><td></td></tr><tr><td>
+<a  href="48d4d03363b6959c.htm" target="_top">OMG - UAF - OperationalRole</a></td><td></td></tr><tr><td>
+<a  href="58ec5f9a633107c8.htm" target="_top">OMG - UAF - OperationalSignal</a></td><td></td></tr><tr><td>
+<a  href="122a0e506386435b.htm" target="_top">OMG - UAF - Opportunity</a></td><td><div align="left" style="min-height: 12pt; ">The Opportunity concept is not directly implemented in HOPEX.</div><div align="left" style="min-height: 12pt; ">Rational: HOPEX follows the BMM approach (see BMM Mapping) where Opportunies are the result of Assessments.</div></td></tr><tr><td>
+<a  href="826b882961a84627.htm" target="_top">OMG - UAF - Organization</a></td><td></td></tr><tr><td>
+<a  href="58ec5db76331067b.htm" target="_top">OMG - UAF - OrganizationalResource</a></td><td></td></tr><tr><td>
+<a  href="122a3e5763865a9c.htm" target="_top">OMG - UAF - Person</a></td><td></td></tr><tr><td>
+<a  href="adfdcd1963992878.htm" target="_top">OMG - UAF - PhaseableElement</a></td><td></td></tr><tr><td>
+<a  href="adff0aca639ac8f5.htm" target="_top">OMG - UAF - PhysicalResource</a></td><td></td></tr><tr><td>
+<a  href="826bb55361a849d7.htm" target="_top">OMG - UAF - Post</a></td><td></td></tr><tr><td>
+<a  href="826bb10061a848a2.htm" target="_top">OMG - UAF - Process</a></td><td></td></tr><tr><td>
+<a  href="e6d986d261c32e68.htm" target="_top">OMG - UAF - ProcessUsage</a></td><td></td></tr><tr><td>
+<a  href="31254a7f61dcba3e.htm" target="_top">OMG - UAF - Project</a></td><td></td></tr><tr><td>
+<a  href="31254b0161dcba9c.htm" target="_top">OMG - UAF - ProjectKind</a></td><td></td></tr><tr><td>
+<a  href="48d4ec3663b69c2d.htm" target="_top">OMG - UAF - ProjectKind</a></td><td></td></tr><tr><td>
+<a  href="ddc7dee163b61007.htm" target="_top">OMG - UAF - ProjectMilestoneRole</a></td><td></td></tr><tr><td>
+<a  href="14cc183a63876e16.htm" target="_top">OMG - UAF - ResourceArchitecture</a></td><td></td></tr><tr><td>
+<a  href="62461a8661ba3445.htm" target="_top">OMG - UAF - ResourceArtifact</a></td><td></td></tr><tr><td>
+<a  href="14d0a9d66387e691.htm" target="_top">OMG - UAF - ResourceAsset</a></td><td></td></tr><tr><td>
+<a  href="adffeb916399502d.htm" target="_top">OMG - UAF - ResourceConnector</a></td><td></td></tr><tr><td>
+<a  href="4bac9541624df865.htm" target="_top">OMG - UAF - ResourceInformation</a></td><td></td></tr><tr><td>
+<a  href="ab24ac38638769f7.htm" target="_top">OMG - UAF - ResourceInterface</a></td><td></td></tr><tr><td>
+<a  href="58ec5bc763310530.htm" target="_top">OMG - UAF - ResourcePerformer</a></td><td></td></tr><tr><td>
+<a  href="7bfddbd363f8eb8c.htm" target="_top">OMG - UAF - ResourcePort</a></td><td></td></tr><tr><td>
+<a  href="14d0a9336387e601.htm" target="_top">OMG - UAF - ResourceRole</a></td><td></td></tr><tr><td>
+<a  href="adfed34c6399258b.htm" target="_top">OMG - UAF - ResourceRole (Profile Spec)</a></td><td></td></tr><tr><td>
+<a  href="adff065c639ac754.htm" target="_top">OMG - UAF - ResourceService</a></td><td></td></tr><tr><td>
+<a  href="adfed7d96399c512.htm" target="_top">OMG - UAF - ResourceStateDescription</a></td><td></td></tr><tr><td>
+<a  href="122a412663865c4a.htm" target="_top">OMG - UAF - Responsibility</a></td><td></td></tr><tr><td>
+<a  href="adfa8f2c639979cc.htm" target="_top">OMG - UAF - Risk</a></td><td></td></tr><tr><td>
+<a  href="c70af20c62c62d09.htm" target="_top">OMG - UAF - Rule</a></td><td></td></tr><tr><td>
+<a  href="a2af74c9638f57fa.htm" target="_top">OMG - UAF - SameAs</a></td><td></td></tr><tr><td>
+<a  href="f5eb220b6391c8e9.htm" target="_top">OMG - UAF - SecurityControl</a></td><td></td></tr><tr><td>
+<a  href="adfa93d4639980c2.htm" target="_top">OMG - UAF - SecurityControlFamily</a></td><td></td></tr><tr><td>
+<a  href="adff11ce639ace96.htm" target="_top">OMG - UAF - Service</a></td><td></td></tr><tr><td>
+<a  href="b47cd9bb63ca6326.htm" target="_top">OMG - UAF - ServiceFunction</a></td><td></td></tr><tr><td>
+<a  href="fc0f027363e26b44.htm" target="_top">OMG - UAF - ServiceInterface</a></td><td></td></tr><tr><td>
+<a  href="624619b761ba32b6.htm" target="_top">OMG - UAF - Software</a></td><td></td></tr><tr><td>
+<a  href="50ab52d9632d700b.htm" target="_top">OMG - UAF - Specification</a></td><td></td></tr><tr><td>
+<a  href="4993675763907f0b.htm" target="_top">OMG - UAF - Stakeholder</a></td><td></td></tr><tr><td>
+<a  href="adffed87639951ee.htm" target="_top">OMG - UAF - StateDescription</a></td><td></td></tr><tr><td>
+<a  href="f5ed9d7f6391f474.htm" target="_top">OMG - UAF - StrategicAsset</a></td><td></td></tr><tr><td>
+<a  href="a2af8384638f6523.htm" target="_top">OMG - UAF - StrategicConstraint</a></td><td></td></tr><tr><td>
+<a  href="6a9ef77963be6783.htm" target="_top">OMG - UAF - StrategicExchangeItem</a></td><td></td></tr><tr><td>
+<a  href="14d0893a6387de4d.htm" target="_top">OMG - UAF - StrategicInformation</a></td><td></td></tr><tr><td>
+<a  href="ab26c1796387c06e.htm" target="_top">OMG - UAF - StrategicPhase</a></td><td></td></tr><tr><td>
+<a  href="7bfddeb163f8edc6.htm" target="_top">OMG - UAF - SubjectOfResourceConstraint</a></td><td></td></tr><tr><td>
+<a  href="f5e9099663915231.htm" target="_top">OMG - UAF - SubjectOfStrategicConstraint</a></td><td></td></tr><tr><td>
+<a  href="adff072e639ac7d2.htm" target="_top">OMG - UAF - System</a></td><td></td></tr><tr><td>
+<a  href="14d0a0796387e285.htm" target="_top">OMG - UAF - Technology</a></td><td></td></tr><tr><td>
+<a  href="af4dbd5d62993f08.htm" target="_top">OMG - UAF - UAFElement</a></td><td></td></tr><tr><td>
+<a  href="14cc254f63877a56.htm" target="_top">OMG - UAF - ValueItem</a></td><td></td></tr><tr><td>
+<a  href="122a2c8263864d2f.htm" target="_top">OMG - UAF - ValueStream</a></td><td></td></tr><tr><td>
+<a  href="49937de26390869c.htm" target="_top">OMG - UAF - View</a></td><td></td></tr><tr><td>
+<a  href="f5e91563639156b0.htm" target="_top">OMG - UAF - View - Architecture Management</a></td><td></td></tr><tr><td>
+<a  href="14cc217a638777b1.htm" target="_top">OMG - UAF - View - Information</a></td><td></td></tr><tr><td>
+<a  href="14cc221163877847.htm" target="_top">OMG - UAF - View - InformationModel</a></td><td></td></tr><tr><td>
+<a  href="9bf8a4c863c14076.htm" target="_top">OMG - UAF - View - Motivation</a></td><td></td></tr><tr><td>
+<a  href="6123699561dd7f8d.htm" target="_top">OMG - UAF - View - Operational Views</a></td><td></td></tr><tr><td>
+<a  href="f68d244f63b8e225.htm" target="_top">OMG - UAF - View - Parameters</a></td><td></td></tr><tr><td>
+<a  href="31254b2261dcbaf7.htm" target="_top">OMG - UAF - View - Project View</a></td><td></td></tr><tr><td>
+<a  href="9bf8a5d263c19702.htm" target="_top">OMG - UAF - View - Project Views</a></td><td></td></tr><tr><td>
+<a  href="da2edace633161a4.htm" target="_top">OMG - UAF - View - Resource Views</a></td><td></td></tr><tr><td>
+<a  href="d98bdbbf63225f4b.htm" target="_top">OMG - UAF - View - Security Views</a></td><td></td></tr><tr><td>
+<a  href="14cc15a063876c51.htm" target="_top">OMG - UAF - View - Strategic</a></td><td></td></tr><tr><td>
+<a  href="612369df61dd7fe8.htm" target="_top">OMG - UAF - View - Strategic Views</a></td><td></td></tr><tr><td>
+<a  href="ef5d0c8163229ecc.htm" target="_top">OMG - UAF - View - Summary &amp; Overview</a></td><td></td></tr><tr><td>
+<a  href="49937d8b63908610.htm" target="_top">OMG - UAF - Viewpoint</a></td><td></td></tr><tr><td>
+<a  href="9746aaeb61a0599f.htm" target="_top">OMG - UAF - WholeLifeEnterprise</a></td><td></td></tr><tr><td>
+<a  href="adfa96206399829b.htm" target="_top">OMG - UAF -Enhances</a></td><td></td></tr><tr><td>
+<a  href="14d088986387ddbf.htm" target="_top">OMG - UAF ActualResource</a></td><td></td></tr><tr><td>
+<a  href="14d082b96387dbd1.htm" target="_top">OMG - UAFML - InformationModelKind</a></td><td></td></tr><tr><td>
+<a  href="370d609b61c2bb99.htm" target="_top">OMG - UML - Activity</a></td><td></td></tr><tr><td>
+<a  href="370d68e661c2c5e1.htm" target="_top">OMG - UML - ActivityNode</a></td><td></td></tr><tr><td>
+<a  href="370d604b61c2bb2a.htm" target="_top">OMG - UML - Behavior</a></td><td></td></tr><tr><td>
+<a  href="370d692461c2c64e.htm" target="_top">OMG - UML - CallBehaviorAction</a></td><td></td></tr><tr><td>
+<a  href="67db48af61c06945.htm" target="_top">OMG - UML - Element</a></td><td></td></tr><tr><td>
+<a  href="370d5fa461c2bac3.htm" target="_top">OMG - UML - EncapsulatedClassifier</a></td><td></td></tr><tr><td>
+<a  href="adff0d17639aca68.htm" target="_top">OMG - UML - Lifeline</a></td><td></td></tr><tr><td>
+<a  href="370d668661c2c38b.htm" target="_top">OMG - UML - Namespace</a></td><td></td></tr><tr><td>
+<a  href="370d651c61c2c0ba.htm" target="_top">OMG - UML - Package</a></td><td></td></tr><tr><td>
+<a  href="9d3bde8461d2cd06.htm" target="_top">OMG - UML - Part and Role</a></td><td></td></tr><tr><td>
+<a  href="e29ce72e61de7534.htm" target="_top">OMG - UML - Signal</a></td><td></td></tr><tr><td>
+<a  href="370d65ab61c2c234.htm" target="_top">OMG - UML - StructuredClassifier</a></td><td></td></tr><tr><td>
+<a  href="15c2184d62365e1a.htm" target="_top">OMG - UML - Type</a></td><td></td></tr><tr><td>
+<a  href="42bc938662d20c83.htm" target="_top">OMG- BMM - Assessment</a></td><td></td></tr><tr><td>
+<a  href="8a868c7d6282504a.htm" target="_top">OpenGroup - ArchiMate - Application Component</a></td><td></td></tr><tr><td>
+<a  href="8a868d7562825218.htm" target="_top">OpenGroup - ArchiMate - Application Interface</a></td><td></td></tr><tr><td>
+<a  href="255ce31862aa1b3d.htm" target="_top">OpenGroup - ArchiMate - Facility</a></td><td></td></tr><tr><td>
+<a  href="129115bc61981992.htm" target="_top">OpenGroup - ArchiMate - Layer - Application Layer</a></td><td></td></tr><tr><td>
+<a  href="694d6c94619b5215.htm" target="_top">OpenGroup - ArchiMate - Layer - Business Layer</a></td><td></td></tr><tr><td>
+<a  href="f8654bfc619574c8.htm" target="_top">OpenGroup - ArchiMate - Layer - Strategy</a></td><td></td></tr><tr><td>
+<a  href="1291162a61981a09.htm" target="_top">OpenGroup - ArchiMate - Layer - Technology Layer</a></td><td></td></tr><tr><td>
+<a  href="f8654aeb61957461.htm" target="_top">OpenGroup - ArchiMate - Motivation Elements</a></td><td></td></tr><tr><td>
+<a  href="1291168161981a7e.htm" target="_top">OpenGroup - ArchiMate - Physical Elements</a></td><td></td></tr><tr><td>
+<a  href="45dc465e618e1c4b.htm" target="_top">OpenGroup - ArchiMate - Resource</a></td><td></td></tr><tr><td>
+<a  href="f4f327d1618ef11b.htm" target="_top">OpenGroup - ArchiMate - Top Level Language Structure</a></td><td></td></tr><tr><td>
+<a  href="49bb4fd4623c7ae2.htm" target="_top">OpenGroup - IT4IT - Defining Service Reference Architecture</a></td><td></td></tr><tr><td>
+<a  href="410082dc65047595.htm" target="_top">OpenGroup - OAA - Architecture Principle</a></td><td></td></tr><tr><td>
+<a  href="4100833e650475fc.htm" target="_top">OpenGroup - OAA - Capability</a></td><td></td></tr><tr><td>
+<a  href="4100839165047674.htm" target="_top">OpenGroup - OAA - Customer Experience</a></td><td></td></tr><tr><td>
+<a  href="3c8a53b06283eeb2.htm" target="_top">OpenGroup - OAA - Definition - Customer Journey</a></td><td></td></tr><tr><td>
+<a  href="3c8a4a966283dc32.htm" target="_top">OpenGroup - OAA - Definition - Outcome</a></td><td></td></tr><tr><td>
+<a  href="3c8a4a1b6283db01.htm" target="_top">OpenGroup - OAA - Definition - Product</a></td><td></td></tr><tr><td>
+<a  href="4100868e65047841.htm" target="_top">OpenGroup - OAA - Digital Technology</a></td><td></td></tr><tr><td>
+<a  href="410083f3650476d1.htm" target="_top">OpenGroup - OAA - Ecosystem</a></td><td></td></tr><tr><td>
+<a  href="4100bb976506795b.htm" target="_top">OpenGroup - OAA - Experience Design</a></td><td></td></tr><tr><td>
+<a  href="410084ef65047787.htm" target="_top">OpenGroup - OAA - Feature</a></td><td></td></tr><tr><td>
+<a  href="410085b3650477df.htm" target="_top">OpenGroup - OAA - Hardware</a></td><td></td></tr><tr><td>
+<a  href="410084b46504772f.htm" target="_top">OpenGroup - OAA - Job-to-be-done</a></td><td></td></tr><tr><td>
+<a  href="4100bbd7650679a5.htm" target="_top">OpenGroup - OAA - Journey Mapping</a></td><td></td></tr><tr><td>
+<a  href="24ad4d55650896d8.htm" target="_top">OpenGroup - OAA - Modularity</a></td><td></td></tr><tr><td>
+<a  href="0d76187865084c8c.htm" target="_top">OpenGroup - OAA - Operating System</a></td><td></td></tr><tr><td>
+<a  href="4100bac0650678a7.htm" target="_top">OpenGroup - OAA - Operations Architecture</a></td><td></td></tr><tr><td>
+<a  href="24ad5b316508bc1f.htm" target="_top">OpenGroup - OAA - Process</a></td><td></td></tr><tr><td>
+<a  href="4100bb4d6506790e.htm" target="_top">OpenGroup - OAA - Product Architecture</a></td><td></td></tr><tr><td>
+<a  href="4100bc3565067a22.htm" target="_top">OpenGroup - OAA - Software Architecture</a></td><td></td></tr><tr><td>
+<a  href="0d760e3665084705.htm" target="_top">OpenGroup - OAA - Software Defined Infrastructure</a></td><td></td></tr><tr><td>
+<a  href="58037529623cc835.htm" target="_top">OpenGroup - TOGAF - ADM - Phase A: Architecture Vision</a></td><td></td></tr><tr><td>
+<a  href="5803754e623cc891.htm" target="_top">OpenGroup - TOGAF - ADM - Phase B: Business Architecture</a></td><td></td></tr><tr><td>
+<a  href="355a628c627ae297.htm" target="_top">OpenGroup - TOGAF - ADM - Phase C : Application</a></td><td></td></tr><tr><td>
+<a  href="355a61a9627ae193.htm" target="_top">OpenGroup - TOGAF - ADM - Phase C: Data Architecture</a></td><td></td></tr><tr><td>
+<a  href="580375b2623cc8f0.htm" target="_top">OpenGroup - TOGAF - ADM - Phase C: Information Systems Architectures</a></td><td></td></tr><tr><td>
+<a  href="58037612623cc94c.htm" target="_top">OpenGroup - TOGAF - ADM - Phase D: Technology Architecture</a></td><td></td></tr><tr><td>
+<a  href="788183be623c9aeb.htm" target="_top">OpenGroup - TOGAF - ADM - Phase E: Opportunities &amp; Solutions</a></td><td></td></tr><tr><td>
+<a  href="788183f0623c9b47.htm" target="_top">OpenGroup - TOGAF - ADM - Phase F: Migration Planning</a></td><td></td></tr><tr><td>
+<a  href="78818425623c9ba3.htm" target="_top">Opengroup - TOGAF - ADM - Phase G: Implementation Governance</a></td><td></td></tr><tr><td>
+<a  href="7881844c623c9c01.htm" target="_top">OpenGroup - TOGAF - ADM - Phase H: Architecture Change Management</a></td><td></td></tr><tr><td>
+<a  href="355a677f627ae3ac.htm" target="_top">OpenGroup - TOGAF - ADM - Requirement Management</a></td><td></td></tr><tr><td>
+<a  href="6699b66b604b303d.htm" target="_top">OpenGroup - TOGAF - Architecture Building Blocks</a></td><td></td></tr><tr><td>
+<a  href="49bb4e74623c7a14.htm" target="_top">OpenGroup - TOGAF - Content Metamodel</a></td><td></td></tr><tr><td>
+<a  href="f72ef93b62d4541c.htm" target="_top">OpenGroup - TOGAF - Content Metamodel - Application Service</a></td><td></td></tr><tr><td>
+<a  href="2da3a6c562d374c6.htm" target="_top">OpenGroup - TOGAF - Content Metamodel - Business Information</a></td><td></td></tr><tr><td>
+<a  href="ee24f1fe62857ba3.htm" target="_top">OpenGroup - TOGAF - Content MetaModel - Control</a></td><td></td></tr><tr><td>
+<a  href="ddb3e348628541cd.htm" target="_top">OpenGroup - TOGAF - Content MetaModel - Data Entity</a></td><td></td></tr><tr><td>
+<a  href="806a15b062d1f6d5.htm" target="_top">OpenGroup - TOGAF - Content MetaModel - Driver</a></td><td></td></tr><tr><td>
+<a  href="2da3a73d62d37533.htm" target="_top">OpenGroup - TOGAF - Content Metamodel - Event</a></td><td></td></tr><tr><td>
+<a  href="806a115062d1f21d.htm" target="_top">OpenGroup - TOGAF - Content MetaModel - Goal</a></td><td></td></tr><tr><td>
+<a  href="ddb3e3ef62854213.htm" target="_top">OpenGroup - TOGAF - Content MetaModel - Logical Data Component</a></td><td></td></tr><tr><td>
+<a  href="f72efa1662d45495.htm" target="_top">OpenGroup - TOGAF - Content Metamodel - Measure</a></td><td></td></tr><tr><td>
+<a  href="806a117062d1f260.htm" target="_top">OpenGroup - TOGAF - Content Metamodel - Objective</a></td><td></td></tr><tr><td>
+<a  href="f72f000a62d5dc74.htm" target="_top">OpenGroup - TOGAF - Content Metamodel - Organization Unit</a></td><td></td></tr><tr><td>
+<a  href="5803724e623c863d.htm" target="_top">OpenGroup - TOGAF - Content MetaModel - Physical Application Component</a></td><td></td></tr><tr><td>
+<a  href="ddb3e0c9628540c7.htm" target="_top">OpenGroup - TOGAF - Content MetaModel - Technology Component</a></td><td></td></tr><tr><td>
+<a  href="ddb3e8816285427e.htm" target="_top">OpenGroup - TOGAF - Content MetaModel - Technology Service</a></td><td></td></tr><tr><td>
+<a  href="355a7ccf627aecdb.htm" target="_top">OpenGroup - TOGAF - Definition - Application Component</a></td><td></td></tr><tr><td>
+<a  href="aee3af0e623d6d63.htm" target="_top">OpenGroup - TOGAF - Definition - Application Software</a></td><td></td></tr><tr><td>
+<a  href="546c51ce60117436.htm" target="_top">OpenGroup - TOGAF - Definition - Architecture Principle</a></td><td></td></tr><tr><td>
+<a  href="31254e7f61dcbd70.htm" target="_top">OpenGroup - TOGAF - Definition - Building Block</a></td><td></td></tr><tr><td>
+<a  href="52995346623c6ba1.htm" target="_top">OpenGroup - TOGAF - Definition - Business Capability</a></td><td></td></tr><tr><td>
+<a  href="355a70ab627ae4a8.htm" target="_top">OpenGroup - TOGAF - Definition - Business Function</a></td><td></td></tr><tr><td>
+<a  href="5299545d623c6d12.htm" target="_top">OpenGroup - TOGAF - Definition - Business Service</a></td><td></td></tr><tr><td>
+<a  href="84d9aca2623ddf10.htm" target="_top">OpenGroup - TOGAF - Definition - Business System</a></td><td></td></tr><tr><td>
+<a  href="5803774d623cca31.htm" target="_top">OpenGroup - TOGAF - Definition - Capability</a></td><td></td></tr><tr><td>
+<a  href="97439cdd62905e8c.htm" target="_top">OpenGroup - TOGAF - Definition - Course of Action</a></td><td></td></tr><tr><td>
+<a  href="84d9acef623ddf83.htm" target="_top">OpenGroup - TOGAF - Definition - Data Element</a></td><td></td></tr><tr><td>
+<a  href="e0d2a8f662848a7e.htm" target="_top">OpenGroup - TOGAF - Definition - Enterprise</a></td><td></td></tr><tr><td>
+<a  href="289256426307965a.htm" target="_top">OpenGroup - TOGAF - Definition - Objective</a></td><td></td></tr><tr><td>
+<a  href="3c8a4c9e6283e7b3.htm" target="_top">OpenGroup - TOGAF - Definition - Portfolio</a></td><td></td></tr><tr><td>
+<a  href="801c8b83627a6416.htm" target="_top">OpenGroup - TOGAF - Definition - Product</a></td><td></td></tr><tr><td>
+<a  href="49bb4b8c623c786e.htm" target="_top">OpenGroup - TOGAF - Definition - Requirement</a></td><td></td></tr><tr><td>
+<a  href="28925559630782a5.htm" target="_top">OpenGroup - TOGAF - Definition - Role</a></td><td></td></tr><tr><td>
+<a  href="3c883f76628336f0.htm" target="_top">OpenGroup - TOGAF - Definition - Solution Building Block</a></td><td></td></tr><tr><td>
+<a  href="3c8a50a46283e9eb.htm" target="_top">OpenGroup - TOGAF - Definition - System</a></td><td></td></tr><tr><td>
+<a  href="58037687623cc9ae.htm" target="_top">OpenGroup - TOGAF - Definition - Technology Component</a></td><td></td></tr><tr><td>
+<a  href="529952e1623c6b31.htm" target="_top">OpenGroup - TOGAF - Definition - Value Stream</a></td><td></td></tr><tr><td>
+<a  href="529954bc623c6dad.htm" target="_top">OpenGroup - TOGAF - Definition -Actor</a></td><td></td></tr><tr><td>
+<a  href="49937be663908528.htm" target="_top">OpenGroup - TOGAF - Definitions - Concern</a></td><td></td></tr><tr><td>
+<a  href="0038586462d6d051.htm" target="_top">OpenGroup - TOGAF - Definitions - Governance</a></td><td></td></tr><tr><td>
+<a  href="49937b056390849f.htm" target="_top">OpenGroup - TOGAF - Definitions - Stakeholder</a></td><td></td></tr><tr><td>
+<a  href="2da32e5462d370fc.htm" target="_top">OpenGroup - TOGAF - Definitions - Work Package</a></td><td></td></tr><tr><td>
+<a  href="355a78ff627aea51.htm" target="_top">OpenGroup - TOGAF - Guide - Architecture Principles</a></td><td></td></tr><tr><td>
+<a  href="95afb1b76282a5e8.htm" target="_top">OpenGroup - TOGAF - Guide - Building Blocks</a></td><td></td></tr><tr><td>
+<a  href="3c883ed0628336a6.htm" target="_top">OpenGroup - TOGAF - Guide - Solution Building Blocks</a></td><td></td></tr><tr><td>
+<a  href="b6522082627d39b4.htm" target="_top">OpenGroup - TOGAF - Logical Application Component</a></td><td></td></tr><tr><td>
+<a  href="82d683c7641978d1.htm" target="_top">OpenGroup - TOGAF - Method - Reference Libraries</a></td><td></td></tr><tr><td>
+<a  href="49bb4f0e623c7a74.htm" target="_top">OpenGroup - TOGAF 9 - Definition - Business Function</a></td><td></td></tr><tr><td>
+<a  href="355a7155627ae4f4.htm" target="_top">OpenGroup - TOGAF 9 - Definition - Business Service</a></td><td></td></tr><tr><td>
+<a  href="c2e93e28624ddc2a.htm" target="_top">OpenGroup - TOGAF 9 - Definition - Process</a></td><td></td></tr><tr><td>
+<a  href="c559d364616f8e7c.htm" target="_top">Oxford - Asset</a></td><td></td></tr><tr><td>
+<a  href="abbe1c3462aaee4c.htm" target="_top">Oxford Lexion - Touch Point</a></td><td></td></tr><tr><td>
+<a  href="da60dc3563f92ad3.htm" target="_top">RequiresCompetence</a></td><td></td></tr><tr><td>
+<a  href="a2af1407638e47b0.htm" target="_top">Russell Ackoff - Choice &amp; Communication - FunctionalClass</a></td><td></td></tr><tr><td>
+<a  href="4a5b4b1262977562.htm" target="_top">Russell Ackoff - Choice &amp; Communication - Instrument</a></td><td></td></tr><tr><td>
+<a  href="c3cea1c462b51176.htm" target="_top">Russell Ackoff - Choice &amp; Communication - MorphologicalProperty</a></td><td></td></tr><tr><td>
+<a  href="f8cc2e83629f78bb.htm" target="_top">Russell Ackoff - Choice &amp; Communication - Outcomes</a></td><td></td></tr><tr><td>
+<a  href="f8ccf93b629e785b.htm" target="_top">Russell Ackoff - Choice &amp; Communication - Signal</a></td><td></td></tr><tr><td>
+<a  href="6a9e799263be515f.htm" target="_top">Russell Ackoff - Choice &amp; Communication - Utility</a></td><td></td></tr><tr><td>
+<a  href="6bf392db626a0617.htm" target="_top">Russell Ackoff - System of Concepts - Abstract System</a></td><td></td></tr><tr><td>
+<a  href="b5ebd330638941aa.htm" target="_top">Russell Ackoff - System of Concepts - Behavior</a></td><td></td></tr><tr><td>
+<a  href="42215c5e626ad835.htm" target="_top">Russell Ackoff - System of Concepts - Environment of a system</a></td><td></td></tr><tr><td>
+<a  href="8fc900ca640b9b8f.htm" target="_top">Russell Ackoff - System of concepts - FunctionalDivisionOfLabor</a></td><td></td></tr><tr><td>
+<a  href="889f0a9662c34a62.htm" target="_top">Russell Ackoff - System of Concepts - Objective</a></td><td></td></tr><tr><td>
+<a  href="42215a5d626ad6b1.htm" target="_top">Russell Ackoff - System of Concepts - Organizations</a></td><td></td></tr><tr><td>
+<a  href="42216a88626ad8bb.htm" target="_top">Russell Ackoff - System of Concepts - Process</a></td><td></td></tr><tr><td>
+<a  href="8e1b8fa6626b4cfa.htm" target="_top">Russell Ackoff - System of Concepts - System Changes</a></td><td></td></tr><tr><td>
+<a  href="4568cd645f9a6d86.htm" target="_top">SAFe&copy; - Agile Release Train</a></td><td></td></tr><tr><td>
+<a  href="4568cdd35f9a6ded.htm" target="_top">SAFe&copy; - Agile Teams</a></td><td></td></tr><tr><td>
+<a  href="3e1f66335fa98990.htm" target="_top">SAFe&copy; - Applying Participatory Budgeting in SAFe</a></td><td></td></tr><tr><td>
+<a  href="3e1f43e35fa98093.htm" target="_top">SAFe&copy; - Architectural Runway</a></td><td></td></tr><tr><td>
+<a  href="0f9879475fa594b7.htm" target="_top">SAFe&copy; - Business Owner</a></td><td></td></tr><tr><td>
+<a  href="3e1f7c4e5fa99acb.htm" target="_top">SAFe&copy; - Community of Practice</a></td><td></td></tr><tr><td>
+<a  href="ff242354603691d1.htm" target="_top">SAFe&copy; - Continuous Exploration</a></td><td></td></tr><tr><td>
+<a  href="0f9881305fa5969f.htm" target="_top">SAFe&copy; - Customer Centricity</a></td><td></td></tr><tr><td>
+<a  href="8ffd90626283053f.htm" target="_top">SAFe&copy; - DevOps</a></td><td></td></tr><tr><td>
+<a  href="5786755a6037d835.htm" target="_top">SAFe&copy; - Enabler</a></td><td></td></tr><tr><td>
+<a  href="ff24597b6036b2f7.htm" target="_top">SAFe&copy; - Enterprise</a></td><td></td></tr><tr><td>
+<a  href="0f9884a95fa5985c.htm" target="_top">SAFe&copy; - Enterprise Architect</a></td><td></td></tr><tr><td>
+<a  href="4568cc8e5f9a6cb6.htm" target="_top">SAFe&copy; - Epic</a></td><td></td></tr><tr><td>
+<a  href="578674cf6037d7be.htm" target="_top">SAFe&copy; - Epic Owner</a></td><td></td></tr><tr><td>
+<a  href="2de7238f5fb49995.htm" target="_top">SAFe&copy; - Essential SAFe</a></td><td></td></tr><tr><td>
+<a  href="e30d200561d8431a.htm" target="_top">SAFe&copy; - Feature</a></td><td></td></tr><tr><td>
+<a  href="4568cc575f9a6c5a.htm" target="_top">SAFe&copy; - Features and Capabilities</a></td><td></td></tr><tr><td>
+<a  href="ff244f0a60366ab7.htm" target="_top">SAFe&copy; - Hardware Team</a></td><td></td></tr><tr><td>
+<a  href="2de720aa5fb49694.htm" target="_top">SAFe&copy; - Large Solution SAFe</a></td><td></td></tr><tr><td>
+<a  href="96749ba4603644a3.htm" target="_top">SAFe&copy; - Lean Budget</a></td><td></td></tr><tr><td>
+<a  href="e93ac09a5fa30fea.htm" target="_top">SAFe&copy; - Lean Portfolio Management</a></td><td></td></tr><tr><td>
+<a  href="ff242a4e60369596.htm" target="_top">SAFe&copy; - Milestone</a></td><td></td></tr><tr><td>
+<a  href="3c8a513c6283ebb8.htm" target="_top">SAFe&copy; - Organizational Agility</a></td><td></td></tr><tr><td>
+<a  href="a39cf41d60337297.htm" target="_top">SAFe&copy; - Participatory Budgeting</a></td><td></td></tr><tr><td>
+<a  href="9674bc1f6036f92c.htm" target="_top">SAFe&copy; - PI Objective</a></td><td></td></tr><tr><td>
+<a  href="ff24561f60366f49.htm" target="_top">SAFe&copy; - PI Planning</a></td><td></td></tr><tr><td>
+<a  href="57867c146037dd52.htm" target="_top">SAFe&copy; - Portfolio Backlog</a></td><td></td></tr><tr><td>
+<a  href="57867bc96037dce9.htm" target="_top">SAFe&copy; - Portfolio Kanban</a></td><td></td></tr><tr><td>
+<a  href="7c3aab27617a20ef.htm" target="_top">SAFe&copy; - Portfolio SAFe</a></td><td></td></tr><tr><td>
+<a  href="4568ced25f9a6f72.htm" target="_top">SAFe&copy; - Portfolio Vision</a></td><td></td></tr><tr><td>
+<a  href="83dbf8a15f9fd979.htm" target="_top">SAFe&copy; - Product and Solution Management</a></td><td></td></tr><tr><td>
+<a  href="4568c89c5f9a6977.htm" target="_top">SAFe&copy; - Program and Solution Back Log</a></td><td></td></tr><tr><td>
+<a  href="4568cdf15f9a6e4b.htm" target="_top">SAFe&copy; - Program Increment</a></td><td></td></tr><tr><td>
+<a  href="9674ac716036b5af.htm" target="_top">SAFe&copy; - Release on Demand</a></td><td></td></tr><tr><td>
+<a  href="83db00495fa0dc26.htm" target="_top">SAFe&copy; - Release Train Engineer and Solution Train Engineer</a></td><td></td></tr><tr><td>
+<a  href="4568ce345f9a6eaf.htm" target="_top">SAFe&copy; - Roadmap</a></td><td></td></tr><tr><td>
+<a  href="a39c1c076035001f.htm" target="_top">SAFe&copy; - SAFE for government</a></td><td></td></tr><tr><td>
+<a  href="3d90a9d15ff8db6f.htm" target="_top">SAFe&copy; - SAFe Requirements Model</a></td><td></td></tr><tr><td>
+<a  href="a39ce1c6603326ea.htm" target="_top">SAFe&copy; - Scale Agile Framework</a></td><td></td></tr><tr><td>
+<a  href="2de726115fb4a097.htm" target="_top">SAFe&copy; - ScrumXP</a></td><td></td></tr><tr><td>
+<a  href="3e1f7d095fa99c3f.htm" target="_top">SAFe&copy; - Shared Service</a></td><td></td></tr><tr><td>
+<a  href="4568cc285f9a6bfe.htm" target="_top">SAFe&copy; - Solution</a></td><td></td></tr><tr><td>
+<a  href="0f9880675fa595bd.htm" target="_top">SAFe&copy; - Solution Context</a></td><td></td></tr><tr><td>
+<a  href="cbd929155fb56f8d.htm" target="_top">SAFe&copy; - Solution Intent</a></td><td></td></tr><tr><td>
+<a  href="4568c90f5f9a69d8.htm" target="_top">SAFe&copy; - Solution Train</a></td><td></td></tr><tr><td>
+<a  href="4568cd0b5f9a6d1f.htm" target="_top">SAFe&copy; - Story</a></td><td></td></tr><tr><td>
+<a  href="96749c8b603646db.htm" target="_top">SAFe&copy; - Strategic Themes</a></td><td></td></tr><tr><td>
+<a  href="0f9881675fa59724.htm" target="_top">SAFe&copy; - Supplier</a></td><td></td></tr><tr><td>
+<a  href="0f98801e5fa5954c.htm" target="_top">SAFe&copy; - System and Solution Architect/Engineering</a></td><td></td></tr><tr><td>
+<a  href="0f9885945fa59914.htm" target="_top">SAFe&copy; - System Team</a></td><td></td></tr><tr><td>
+<a  href="a39ccb696034f2f2.htm" target="_top">SAFe&copy; - Team and Technical Agility</a></td><td></td></tr><tr><td>
+<a  href="a39cc8726034f16a.htm" target="_top">SAFe&copy; - Team Backlog</a></td><td></td></tr><tr><td>
+<a  href="4568cf495f9a7038.htm" target="_top">SAFe&copy; - Value Stream</a></td><td></td></tr><tr><td>
+<a  href="4568ce775f9a6f0e.htm" target="_top">SAFe&copy; - Vision</a></td><td></td></tr><tr><td>
+<a  href="abbdfb8a62a91e41.htm" target="_top">SAFe&copy; -Enterprise Solution Delivery</a></td><td></td></tr><tr><td>
+<a  href="92289ec9602bbe75.htm" target="_top">SEBoK - Functional Architecture</a></td><td></td></tr><tr><td>
+<a  href="a2af7bc4638f5d17.htm" target="_top">ServiceArchitecture</a></td><td></td></tr><tr><td>
+<a  href="8bfd948262bc0369.htm" target="_top">Strategyzer - Value Proposition Canvas (YouTube)</a></td><td></td></tr><tr><td>
+<a  href="6145986a6158c43b.htm" target="_top">SysML2 - Structure Concept</a></td><td></td></tr><tr><td>
+<a  href="3a0eccac63ce3ec1.htm" target="_top">Systems_of_Systems_(SoS)</a></td><td></td></tr><tr><td>
+<a  href="a951eb0661940e59.htm" target="_top">TechTarget - Data Center</a></td><td></td></tr><tr><td>
+<a  href="d3db228d63f7033a.htm" target="_top">Tony Ulwick - What is jobs-to-be-done &amp; outcome</a></td><td></td></tr><tr><td>
+<a  href="7bfcc16463f8ed7e.htm" target="_top">UAF - ResourceConstraint</a></td><td></td></tr><tr><td>
+<a  href="a808af3463d2682b.htm" target="_top">UCF - Glossary - Data Store</a></td><td></td></tr><tr><td>
+<a  href="3a0ec79963ce398f.htm" target="_top">UCF - Glossary - IT Infrastructure</a></td><td></td></tr><tr><td>
+<a  href="3a0ecbc563ce3df4.htm" target="_top">UCF - Glossary - Network</a></td><td></td></tr><tr><td>
+<a  href="4902a24e635b3e11.htm" target="_top">UCF - Glossary Operating Model</a></td><td></td></tr><tr><td>
+<a  href="490298e8635b390b.htm" target="_top">UCF - How to write definitions</a></td><td></td></tr><tr><td>
+<a  href="49029a0f635b399e.htm" target="_top">UCF - What are Common Controls</a></td><td></td></tr><tr><td>
+<a  href="49029955635b395c.htm" target="_top">UCF - What is a compliance framework</a></td><td></td></tr><tr><td>
+<a  href="4902b411635b4382.htm" target="_top">UCF Glossary - Architecture Principle</a></td><td></td></tr><tr><td>
+<a  href="4902a2e5635b3e66.htm" target="_top">UCF Glossary - Business Model</a></td><td></td></tr><tr><td>
+<a  href="b47acffc63ca8d25.htm" target="_top">UCF Glossary - Business System</a></td><td></td></tr><tr><td>
+<a  href="49029ce8635b3b57.htm" target="_top">UCF Glossary - Common Control</a></td><td></td></tr><tr><td>
+<a  href="49029bd4635b3a74.htm" target="_top">UCF Glossary - Control</a></td><td></td></tr><tr><td>
+<a  href="147a47a4636a5ea9.htm" target="_top">UCF Glossary - Data</a></td><td></td></tr><tr><td>
+<a  href="461f3c1463765ca8.htm" target="_top">UCF Glossary - Data Center</a></td><td></td></tr><tr><td>
+<a  href="13ffc19863add05b.htm" target="_top">UCF Glossary - Data Element</a></td><td></td></tr><tr><td>
+<a  href="13ffc20063add0a6.htm" target="_top">UCF Glossary - Data Field</a></td><td></td></tr><tr><td>
+<a  href="62fff145637b5e53.htm" target="_top">UCF Glossary - Department</a></td><td></td></tr><tr><td>
+<a  href="13ffa78663adccb2.htm" target="_top">UCF Glossary - Directive</a></td><td></td></tr><tr><td>
+<a  href="283531086424fbcf.htm" target="_top">UCF Glossary - Enterprise Objective</a></td><td></td></tr><tr><td>
+<a  href="461f3eab63765cf5.htm" target="_top">UCF Glossary - Facility</a></td><td></td></tr><tr><td>
+<a  href="4902a0cc635b3db6.htm" target="_top">UCF Glossary - Framework</a></td><td></td></tr><tr><td>
+<a  href="4902b348635b4213.htm" target="_top">UCF Glossary - Policy and Procedure</a></td><td></td></tr><tr><td>
+<a  href="62fff2e9637b5ebd.htm" target="_top">UCF Glossary - Position Description</a></td><td></td></tr><tr><td>
+<a  href="49029c63635b3b05.htm" target="_top">UCF Glossary - regulatory authority</a></td><td></td></tr><tr><td>
+<a  href="4902a065635b3c5d.htm" target="_top">UCF Glossary - Regulatory Framework</a></td><td></td></tr><tr><td>
+<a  href="461f415463765d65.htm" target="_top">UCF Glossary - Server</a></td><td></td></tr><tr><td>
+<a  href="13ffc29163add103.htm" target="_top">UCF Glossary - Software Asset</a></td><td></td></tr><tr><td>
+<a  href="9e1df3f4636c6d3f.htm" target="_top">UCF Glossary - Term</a></td><td></td></tr><tr><td>
+<a  href="af4dbcd162993e79.htm" target="_top">W3C - OWL - Class</a></td><td></td></tr><tr><td>
+<a  href="af4dbca062993e39.htm" target="_top">W3C - OWL - Individual</a></td><td></td></tr><tr><td>
+<a  href="a397bf915fbf7223.htm" target="_top">What Is an Operational Framework in Business?</a></td><td></td></tr><tr><td>
+<a  href="1bc14e8d63da4916.htm" target="_top">Wikipeddia - List of quality attributes</a></td><td></td></tr><tr><td>
+<a  href="a941d40c6321ac0d.htm" target="_top">Wikipedia - 4+1 architectural view model</a></td><td></td></tr><tr><td>
+<a  href="a941d4296321ae4f.htm" target="_top">Wikipedia - C4 Model</a></td><td></td></tr><tr><td>
+<a  href="af4db86b62993c8d.htm" target="_top">Wikipedia - Class (knowledge representation)</a></td><td></td></tr><tr><td>
+<a  href="af4db89e62993cd4.htm" target="_top">Wikipedia - Class (set theory)</a></td><td></td></tr><tr><td>
+<a  href="d3db235463f703dc.htm" target="_top">Wikipedia - Clayton Christensen</a></td><td></td></tr><tr><td>
+<a  href="abbe1cdf62aaeecd.htm" target="_top">Wikipedia - Customer Experience</a></td><td></td></tr><tr><td>
+<a  href="801f5ce5627b78f1.htm" target="_top">Wikipedia - DevOps</a></td><td></td></tr><tr><td>
+<a  href="1fc82c0660195f5a.htm" target="_top">Wikipedia - Level of measurement</a></td><td></td></tr><tr><td>
+<a  href="147e7457636aac8e.htm" target="_top">Wikipedia - Measurement</a></td><td></td></tr><tr><td>
+<a  href="db2fdb6162637b79.htm" target="_top">Wikipedia - OKR - Objectives and key results</a></td><td></td></tr><tr><td>
+<a  href="92289de6602bab7e.htm" target="_top">Wikipedia - Software Functional Architecture</a></td><td></td></tr><tr><td>
+<a  href="3a0ecc5f63ce3e78.htm" target="_top">Wikipedia - System of systems</a></td><td></td></tr><tr><td>
+<a  href="66714418600d9d4c.htm" target="_top">Wikipedia - Upper ontology</a></td><td></td></tr><tr><td>
+<a  href="b4ccd3ca61778e69.htm" target="_top">Wikipedia - Value Stream</a></td><td></td></tr><tr><td>
+<a  href="9744a6ef62905b5f.htm" target="_top">WordNet - Agent</a></td><td></td></tr><tr><td>
+<a  href="d599ef32602ceb4d.htm" target="_top">WordNet - Annotation</a></td><td></td></tr><tr><td>
+<a  href="41b54926601db340.htm" target="_top">WordNet - Annotation</a></td><td></td></tr><tr><td>
+<a  href="9e395a4b61920f01.htm" target="_top">WordNet - Artifact</a></td><td></td></tr><tr><td>
+<a  href="6671692e600c1d98.htm" target="_top">WordNet - Behavior and Activity</a></td><td></td></tr><tr><td>
+<a  href="b4c8bed26172d32d.htm" target="_top">WordNet - Building Block</a></td><td></td></tr><tr><td>
+<a  href="cabc926361834501.htm" target="_top">WordNet - Capabiity</a></td><td></td></tr><tr><td>
+<a  href="ce6b0f3264764b4f.htm" target="_top">WordNet - Change</a></td><td></td></tr><tr><td>
+<a  href="af4dba8e62993d4b.htm" target="_top">WordNet - Class</a></td><td></td></tr><tr><td>
+<a  href="9746aa8c61a05943.htm" target="_top">WordNet - Enterprise</a></td><td></td></tr><tr><td>
+<a  href="255ce22362aa1aa6.htm" target="_top">WordNet - Facility</a></td><td></td></tr><tr><td>
+<a  href="6248274061baa930.htm" target="_top">WordNet - Governing Body</a></td><td></td></tr><tr><td>
+<a  href="d8cf078361aa8345.htm" target="_top">WordNet - Measure</a></td><td></td></tr><tr><td>
+<a  href="9746ad2261a05a97.htm" target="_top">WordNet - Organization</a></td><td></td></tr><tr><td>
+<a  href="48d2b20363b561ef.htm" target="_top">WordNet - Outcome</a></td><td></td></tr><tr><td>
+<a  href="1d51b0b5635327ee.htm" target="_top">WordNet - Period</a></td><td></td></tr><tr><td>
+<a  href="dc94f94860232250.htm" target="_top">WordNet - Person</a></td><td></td></tr><tr><td>
+<a  href="559c5ae4647065e1.htm" target="_top">WordNet - Product</a></td><td></td></tr><tr><td>
+<a  href="b5ebd7e063895f9f.htm" target="_top">WordNet - Product (Production)</a></td><td></td></tr><tr><td>
+<a  href="e07327d061d3287c.htm" target="_top">WordNet - Resolution</a></td><td></td></tr><tr><td>
+<a  href="122a4e4663865cf5.htm" target="_top">WordNet - Responsibility</a></td><td></td></tr><tr><td>
+<a  href="e309230a61d6afe8.htm" target="_top">Wordnet - Skill</a></td><td></td></tr><tr><td>
+<a  href="6c0450d761f2e190.htm" target="_top">WordNet - Supplier</a></td><td></td></tr><tr><td>
+<a  href="0ffefac0600be495.htm" target="_top">Wordnet - Undertaking</a></td><td></td></tr><tr><td>
+<a  href="9e38a46b618e9e0c.htm" target="_top">WordNet -Process</a></td><td></td></tr></tbody></table></div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>window.onscroll = function() {scrollFunction()};$(document).on('click', 'a[href^="#"]', function (event) {event.preventDefault();$('html, body').animate({scrollTop: $($.attr(this, 'href')).offset().top}, 500);});</script><script type="text/javascript">$('#sortabletable thead tr').clone(true).appendTo( '#sortabletable thead' );$('#sortabletable thead tr:eq(1) th').each( function (i) {var title = $(this).text();$(this).html( '<input type="text" placeholder="" style="width:100%;"/>' );$( 'input', this ).on( 'keyup change', function () {if ( table.column(i).search() !== this.value ) {table.column(i).search( this.value ).draw();}} );} );$(".table-cell-resizable td").wrapInner("<div></div>");var numRowsInCell;$('#sortabletable div').each(function addBtnTgglClass() {numRowsInCell = $(this).find('br').length;if (numRowsInCell  > 5) {$(this).prepend('<button class="cellResize-btn">+ (' + numRowsInCell + ')</button>');$(this).closest('tr').find('div').toggleClass('reduceCellHeight');}});$('.cellResize-btn').unbind().click(function handlePlusMinusBtn() {var $rowInQuestion = $(this).closest('tr');$rowInQuestion.find('div').toggleClass('reduceCellHeight');$rowInQuestion.find('button').each(function switchBtnSign() {var numRowsInClickedCell = $(this).parent().find('br').length;if ($(this).html() == '+ (' + numRowsInClickedCell + ')') {$(this).html('-');} else {$(this).html('+ (' + numRowsInClickedCell + ')');}});});var table = $('#sortabletable').DataTable({scrollCollapse: true,dom: 'lBrtip',orderCellsTop: true,fixedHeader: false,buttons: [$.extend( true, {}, getExportOptions(), {extend: 'excelHtml5',customize: function( xlsx ) {var sheet = xlsx.xl.worksheets['sheet1.xml'];$('row c', sheet).attr( 's', '55' );},title: ''} )],scrollX:true});$('.buttons-excel').children().remove('span');$('.buttons-excel').append('<img id="excel-icon" src="../standard/assets/img/excel-icon.png"/> Excel');</script>
+</body></html>

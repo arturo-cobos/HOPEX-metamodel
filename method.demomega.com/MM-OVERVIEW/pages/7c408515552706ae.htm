@@ -1,0 +1,314 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="keywords" content="">
+<meta name="description" content="">    
+<LINK REL="icon" HREF="../standard/assets/img/favicon.ico">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/bootstrap.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nav.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/eaportal.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/font-awesome.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/animate.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/datatables.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/grid.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nae.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/custom.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/chosen.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/prism.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery.dataTables.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jsTreeStyle.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.theme.css" media="screen" />
+<script type="text/javascript" src="../standard/assets/js/jquery-3.2.1.min.js" ></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-ui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.columnFilter.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3-force.v2.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.gui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.search.js"></script> 
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.util.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-2.1.1.min.js"></script>
+<script src="../standard/assets/js/ws_zoomtemplate_firefox.js"></script>
+<script src="../standard/assets/js/bootstrap.min.js"></script>
+<script src="../standard/assets/js/datatables.min.js"></script>
+<script src="../standard/assets/js/moment.min.js"></script>
+<script src="../standard/assets/js/datetime-moment.js"></script>
+<script src="../standard/assets/js/chartjs.min.js"></script>
+<script src="../standard/assets/js/searchindexcontent.json"></script>
+<script src="../standard/assets/js/anls.js"></script>
+<script src="../../../cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script src="../standard/assets/js/gauge.js"></script> 
+<script src="../standard/assets/js/domesticApi.js"></script> 
+<script src="../standard/assets/js/piecelabel.js"></script>
+<script src="../standard/assets/js/popper.min.js"></script>
+<script src="../standard/assets/js/custom.js"></script>
+<script src="../standard/assets/js/chosen.jquery.js"></script>
+<script src="../standard/assets/js/prism.js"></script>
+<script src="../standard/assets/js/init-chosen.js"></script>
+<script src="../standard/assets/js/chart-data-flow.js"></script>
+<script src="../standard/assets/js/chart-data-gantt.js"></script>
+<script type="module" src="../standard/assets/js/Fuse.esm.min.js"></script>
+<script type="module">
+import Fuse from '../standard/assets/js/Fuse.esm.min.js';
+$(document).ready(function () {
+console.log('getjson');
+window.$.getJSON('../standard/assets/js/searchindexcontent.json', function (response) {
+console.log('getjson ok');
+var isIndex = "";
+var url = window.location.pathname;
+var filename = url.substring(url.lastIndexOf('/')+1);
+if( filename.includes("index") || filename === "" ){
+isIndex = "pages/";
+} else {
+isIndex = "";
+}
+const fuse = new Fuse(response, {
+keys: ['title','text'],
+shouldSort: true,
+includeMatches : true,
+findAllMatches : true
+});
+$('#search-fuse').on('keyup', function () {
+let result = fuse.search($(this).val());
+console.log(result);
+let resultdiv = $('div.searchresults-fuse');
+if (result.length === 0) {
+resultdiv.hide();
+} else {
+resultdiv.empty();
+resultdiv.append('<table class="table-search" width="100%" cellspacing="0"><thead ><tr><th>Name</th><th>Object Type</th><th>Modification date</th></tr></thead><tbody>');
+
+for (let obj in result.slice(0,10)) {
+
+let searchObj = '<tr><td><a href="./'+ isIndex + result[obj].item.url + '">' + result[obj].item.title +'</a></td><td>' + result[obj].item.ObjectType + '</td><td>' + result[obj].item.ModificationDate + '</td></tr>' ;
+
+
+resultdiv.find('tbody').append(searchObj);
+}
+resultdiv.append('</tbody></table>');
+resultdiv.show();
+}
+});
+});
+});
+</script>
+<title>HOPEX Metamodel Overview (Beta Version)</title>
+</head>
+<nav class="navbar navbar-expand-md navbar-dark  navbar-mega"><!-- Brand --><!--<a class="navbar-brand" href="#">Navbar</a>--><a class="" href="../index.htm"><img class="logo-mega" src="../standard/assets/img/logo.png"  alt="">(Beta Version)</a><!-- Toggler/collapsibe Button --><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><!-- Navbar links -->
+<div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsibleNavbar"><div class="col-sm-auto col-md-auto col-lg-5"></div>
+<div class="col-sm-auto">
+<ul class="navbar-nav">      
+<li><a class="dropdown-item" href="ad30ce115ebf7e90.htm">EA Grid</a></li> 
+<li><a class="dropdown-item" href="fdd5018459bc3c6a.htm">EA Domains</a></li> 
+<li><a class="dropdown-item" href="07e731775ecc93f4.htm">Solutions</a></li> 
+<li><a class="dropdown-item" href="c5dfc62c54810c2c.htm">Glossary</a></li> 
+<li class="nav-item dropdown mx-1">
+<a class="nav-link" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</a>
+<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<li><a class="dropdown-item" href="5446555d5f88c32e.htm">Outcome Driven Metamodel</a></li> 
+<li><a class="dropdown-item" href="e1ccfc295f8f7b90.htm">Playbooks</a></li> 
+<li><a class="dropdown-item" href="42bc992862d20ea7.htm">Framework Mappings</a></li> 
+<li><a class="dropdown-item" href="e93aebb35fa20550.htm">Metamodel Patterns</a></li> 
+<li><a class="dropdown-item" href="d599fe87602b2b85.htm">References</a></li> 
+<li><a class="dropdown-item" href="333f3a7f5dde11de.htm">Legend</a></li> 
+</ul>									                                            
+</li>
+</ul>
+</div>
+<div class="col-sm-auto"><a class="nav-link search" href="#" onclick=showHideSearch("search-section-fuse")><i class="fa fa-search mr-1 form-control-feedback"></i></a></div>
+</div>
+</nav>
+<div id="search-section-fuse" style="display:none">>
+<div class="search_header"><span class="closesearch">&times;</span>
+<nav class="breadcrumb">
+<a class="breadcrumb-item" href="../index.htm">Home </a> 
+<span class="breadcrumb-item active">Search</span> 
+</nav>
+</div>
+<input id="search-fuse" placeholder="Search..."  name="q" onfocus="this.value=''" type="search">
+<div class="searchresults-fuse"></div>
+</div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>function showHideSearch(elementId) {var contentDivs = document.getElementsByClassName('content');var footerDivs = document.getElementsByClassName('footer'); var containerDivs = document.getElementsByClassName('container');var containerfluidDivs = document.getElementsByClassName('container-fluid');var x = document.getElementById(elementId);if (x.style.display === "none") {x.style.display = "block";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "none";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "none";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "none";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "none";}} else {x.style.display = "none";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "block";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "block";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "block";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "block";}}} ;<!-- END WIDGET DRILL DOWN --></script><script>$(document).ready(function() {$(window).scroll(function() {if ($(this).scrollTop() > 100) {$('.scrollup').fadeIn();} else {$('.scrollup').fadeOut();}});$('.scrollup').click(function() {$("html, body").animate({scrollTop: 0}, 600);return false;});});</script><script>
+var modal = document.getElementById("search-section-fuse");
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = "none";
+}
+}
+$(document).on('click', '.closesearch', function() {
+showHideSearch("search-section-fuse");
+
+
+
+
+
+});</script><div class="container-fluid col-lg-11"><nav class="breadcrumb"><a class="breadcrumb-item" href="../index.htm">Home</a> <span class="breadcrumb-item active">
+<a  href="c5dfc62c54810c2c.htm" target="_top">Dictionary of HOPEX concepts</a>&nbsp;/&nbsp;Sotware System ArcDevOps</span></nav></div>
+<div class="container-fluid col-lg-11 content">
+<section class="fadeInDown animated"><a href="#idt" class="btn btn-d">DEFINITION</a> <a href="#grf" class="btn btn-d">CONCEPT GRAPH</a> <a href="#sub" class="btn btn-d">SUB-DOMAINS</a> <a href="#des" class="btn btn-d">CONCEPT DESCRIPTIONS</a> 
+</section>
+<a class="object-section-anchor" id="idt"></a>
+<section class="object-section">
+<h4>CONCEPT DOMAIN - Sotware System ArcDevOps</h4><hr class="sectionbreak" /><table class="table table-vertical-headers table-set-col-width"><tr><th>Description</th><td class="description-text"><div align="left" style="min-height: 12pt; ">The&#160;<b> Sotware System ArcDevOps</b> domain describes a set of concepts used in practices that combines <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a> development (Dev) and <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a> operations (Ops). </div><div align="left" style="min-height: 12pt; ">It aims to shorten the development life cycle of <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a>s and provide continuous delivery with high system quality. DevOps is complementary with Agile software development; several DevOps aspects came from the Agile methodology.</div><div><br/><i>References:</i><br/><a href="https://pubs.opengroup.org/architecture/o-aa-standard/software-architecture.html" target="_blank">OpenGroup - OAA - Software Architecture</a><br/><a href="https://www.scaledagileframework.com/devops/" target="_blank">SAFe© - DevOps</a></div></td></tr><tr><th>Dictionary</th><td><img src="../standard/dicsubjectarea.ico.gif"/>&nbsp;
+<a  href="c5dfc62c54810c2c.htm" target="_top">Dictionary of HOPEX concepts</a></td></tr><tr><th>Parent Domain</th><td><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="f8e671d5621feded.htm" target="_top">Business System ArcDevOps</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="624e630c5ed95347.htm" target="_top">HOPEX - IT Architecture</a>&nbsp;</td></tr>
+<tr><th>Domain dependencies</th><td><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="25c09f1b61e2f2a0.htm" target="_top">EA Pattern - Business Software System Pattern</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="75ef50ab620fb787.htm" target="_top">EA Pattern - Physical Data Domain</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="70ba83a464213bcf.htm" target="_top">EA Pattern - Physical Software Operating Pattern</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="d160039d62e081a5.htm" target="_top">EA Pattern - Technology Operating Pattern</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="1ce356355c48c0e2.htm" target="_top">People &amp; Accountability</a>&nbsp;</td></tr></table></section>
+<a class="object-section-anchor" id="grf"></a>
+<section class="object-section">
+<h4>DOMAIN CONCEPT GRAPH</h4>
+<hr class="sectionbreak" />
+<a href="#" class="btn btn-d" value="Relationship1" onclick="showDiagOnClick(this)">Diagram</a>
+<a href="#" class="btn btn-d" value="Relationship2" onclick="showDiagOnClick(this)">Graph</a>
+<div class="Relationship" id="Relationship1">
+
+<map  name="C2DBD7815B026041">
+  <area  href=#OBMK02F5166C641C845D shape="polygon" coords="558, 375, 558, 362, 743, 362, 743, 375, 558, 375"   target="_top"  title="-">
+  
+  <area  href=#OBMKF82BA3D360420B39 shape="polygon" coords="558, 388, 558, 375, 743, 375, 743, 388, 558, 388"   target="_top"  title="-">
+  
+  <area  href=#OBMKF59425B161F83E1B shape="polygon" coords="558, 401, 558, 388, 743, 388, 743, 401, 558, 401"   target="_top"  title="-">
+  
+  <area  href=#OBMK5B7A04B361F55517 shape="polygon" coords="558, 414, 558, 401, 743, 401, 743, 414, 558, 414"   target="_top"  title="-">
+  
+  <area  href=#OBMK0991110764373C4F shape="polygon" coords="558, 427, 558, 414, 743, 414, 743, 427, 558, 427"   target="_top"  title="-">
+  
+  <area  href=#OBMKF82BA66060421025 shape="polygon" coords="558, 441, 558, 427, 743, 427, 743, 441, 558, 441"   target="_top"  title="-">
+  
+  <area  href=#OBMK070B096B64011978 shape="polygon" coords="558, 454, 558, 441, 743, 441, 743, 454, 558, 454"   target="_top"  title="-">
+  
+  <area  href="a9a9ae4b60376c7b.htm" shape="rect" coords="547, 333, 754, 483"   target="_top"  title="-">
+  
+  <area  href=#OBMKD5E6E3C65C465B50 shape="polygon" coords="308, 576, 308, 563, 535, 563, 535, 576, 308, 576"   target="_top"  title="-">
+  
+  <area  href=#OBMKD5E6E3C15C465B41 shape="polygon" coords="308, 589, 308, 576, 535, 576, 535, 589, 308, 589"   target="_top"  title="-">
+  
+  <area  href=#OBMK6BBB8646640FC999 shape="polygon" coords="308, 602, 308, 589, 535, 589, 535, 602, 308, 602"   target="_top"  title="-">
+  
+  <area  href=#OBMKD5E6E3CA5C465B5F shape="polygon" coords="308, 615, 308, 602, 535, 602, 535, 615, 308, 615"   target="_top"  title="-">
+  
+  <area  href=#OBMKD5E6E3CE5C465B6E shape="polygon" coords="308, 628, 308, 615, 535, 615, 535, 628, 308, 628"   target="_top"  title="-">
+  
+  <area  href=#OBMKC993CAE6602B625C shape="polygon" coords="308, 641, 308, 628, 535, 628, 535, 641, 308, 641"   target="_top"  title="-">
+  
+  <area  href=#OBMKD5E6EB915C466749 shape="polygon" coords="308, 654, 308, 641, 535, 641, 535, 654, 308, 654"   target="_top"  title="-">
+  
+  <area  href=#OBMKFFFE39AC6406F3B3 shape="polygon" coords="308, 667, 308, 654, 535, 654, 535, 667, 308, 667"   target="_top"  title="-">
+  
+  <area  href=#OBMK6BBB863D640FC94C shape="polygon" coords="308, 681, 308, 667, 535, 667, 535, 681, 308, 681"   target="_top"  title="-">
+  
+  <area  href=#OBMK6BBB8643640FC973 shape="polygon" coords="308, 694, 308, 681, 535, 681, 535, 694, 308, 694"   target="_top"  title="-">
+  
+  <area  href="f2771c08601b37d5.htm" shape="rect" coords="297, 534, 546, 723"   target="_top"  title="-">
+  
+  <area  href=#OBMK3E1FB4805FAAAE27 shape="polygon" coords="40, 373, 40, 360, 265, 360, 265, 373, 40, 373"   target="_top"  title="-">
+  
+  <area  href=#OBMK964F01FB61FBA708 shape="polygon" coords="40, 386, 40, 373, 265, 373, 265, 386, 40, 386"   target="_top"  title="-">
+  
+  <area  href=#OBMK964F01F761FBA6D1 shape="polygon" coords="40, 399, 40, 386, 265, 386, 265, 399, 40, 399"   target="_top"  title="-">
+  
+  <area  href=#OBMK624616CC61BA2DE0 shape="polygon" coords="40, 413, 40, 399, 265, 399, 265, 413, 40, 413"   target="_top"  title="-">
+  
+  <area  href=#OBMK3E1FB4765FAAAD76 shape="polygon" coords="40, 426, 40, 413, 265, 413, 265, 426, 40, 426"   target="_top"  title="-">
+  
+  <area  href=#OBMK8FFDC7E262830EEC shape="polygon" coords="40, 439, 40, 426, 265, 426, 265, 439, 40, 439"   target="_top"  title="-">
+  
+  <area  href=#OBMK964F01F361FBA69A shape="polygon" coords="40, 452, 40, 439, 265, 439, 265, 452, 40, 452"   target="_top"  title="-">
+  
+  <area  href=#OBMK3E1FB47D5FAAADED shape="polygon" coords="40, 465, 40, 452, 265, 452, 265, 465, 40, 465"   target="_top"  title="-">
+  
+  <area  href=#OBMK3E1FB47A5FAAADB3 shape="polygon" coords="40, 478, 40, 465, 265, 465, 265, 478, 40, 478"   target="_top"  title="-">
+  
+  <area  href=#OBMK48D4F24463B6A441 shape="polygon" coords="40, 491, 40, 478, 265, 478, 265, 491, 40, 491"   target="_top"  title="-">
+  
+  <area  href=#OBMKF82BA7DA6042144E shape="polygon" coords="40, 504, 40, 491, 265, 491, 265, 504, 40, 504"   target="_top"  title="-">
+  
+  <area  href="f2771bc1601b377c.htm" shape="rect" coords="30, 332, 277, 575"   target="_top"  title="-">
+  
+  <area  href=#OBMKF4BEEBC95EE1C936 shape="polygon" coords="40, 102, 40, 89, 265, 89, 265, 102, 40, 102"   target="_top"  title="-">
+  
+  <area  href=#OBMKF4BEEBCE5EE1C978 shape="polygon" coords="40, 115, 40, 102, 265, 102, 265, 115, 40, 115"   target="_top"  title="-">
+  
+  <area  href=#OBMKF4BEE9245EE1C1DB shape="polygon" coords="40, 128, 40, 115, 265, 115, 265, 128, 40, 128"   target="_top"  title="-">
+  
+  <area  href=#OBMK78E3648363120277 shape="polygon" coords="40, 141, 40, 128, 265, 128, 265, 141, 40, 141"   target="_top"  title="-">
+  
+  <area  href=#OBMKF4BEE9FF5EE1C43E shape="polygon" coords="40, 154, 40, 141, 265, 141, 265, 154, 40, 154"   target="_top"  title="-">
+  
+  <area  href=#OBMK78E364A4631202EF shape="polygon" coords="40, 167, 40, 154, 265, 154, 265, 167, 40, 167"   target="_top"  title="-">
+  
+  <area  href=#OBMK78E364896312029C shape="polygon" coords="40, 180, 40, 167, 265, 167, 265, 180, 40, 180"   target="_top"  title="-">
+  
+  <area  href=#OBMK78E36490631202C1 shape="polygon" coords="40, 193, 40, 180, 265, 180, 265, 193, 40, 193"   target="_top"  title="-">
+  
+  <area  href=#OBMKF82BA27D6042083E shape="polygon" coords="40, 206, 40, 193, 265, 193, 265, 206, 40, 206"   target="_top"  title="-">
+  
+  <area  href="a7ac80f95ff53fc2.htm" shape="rect" coords="30, 60, 277, 222"   target="_top"  title="-">
+  
+  <area  href="7c408515552706ae.htm" shape="rect" coords="0, 0, 778, 740"   target="_top"  title="The&#160; Sotware System ArcDevOps domain describes a set of concepts used in practices that combines Software System development (Dev) and Software System operations (Ops). ">
+  
+</map>
+<img  src="../images/7c408515552706ae_c2dbd7815b026041_i.png" alt="../images/7c408515552706ae_c2dbd7815b026041_i.png" usemap="#C2DBD7815B026041" height="740" width="778" border=0>
+
+</div>
+<hr class="sectionbreak" />
+<table class="table  table-set-col-width">
+<tr><th>Name</th> <th>Description</th> </tr>
+<tr>
+<td><img src="../standard/dic_graph.ico.gif"> 
+<a  href="c2dbe1db5b026b30.htm" target="_top">Software Technology ArcDevOps</a></td>
+<td><div align="left" style="min-height: 12pt; ">The&#160;<b> Software Technology ArcDevOps</b> domain describes a set of concepts used in practices that combines <a href="0463ea9a63fd8b6c.htm" target="_top"><b><u>Software Technology System</u></b></a> development (Dev) and <a href="0463ea9a63fd8b6c.htm" target="_top"><b><u>Software Technology System</u></b></a> operations (Ops). </div><div align="left" style="min-height: 12pt; ">It aims to shorten the development life cycle of <a href="0463ea9a63fd8b6c.htm" target="_top"><b><u>Software Technology System</u></b></a>s and provide continuous delivery with high system quality. DevOps is complementary with Agile software development; several DevOps aspects came from the Agile methodology.</div><i><ul>References:<li><a href="https://martinfowler.com/architecture"><img src="../standard/extr.ico.gif">&nbsp;Martin Fowler- Software Architecture</a></li></ul></i> </td>
+</tr>  
+<tr>
+<td><img src="../standard/dic_graph.ico.gif"> 
+<a  href="d5e6d6b05c4648d8.htm" target="_top">Application Functional Architecture</a></td>
+<td><div align="left" style="min-height: 12pt; ">The&#160;<b> Application Functional Architecture</b> domain is used to describe the functional structure and behavior of <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">HOPEX provides three level of granularity to represent software systems:</div><div align="left" style="min-height: 12pt; ">1) Macro <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a>s are represented by <a href="46194ca7560d3a45.htm" target="_top"><b><u>Application System</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">2) Mezzo <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a>s are represented by <a href="bcebd8e9549144db.htm" target="_top"><b><u>Application</u></b></a>s, which compose <a href="46194ca7560d3a45.htm" target="_top"><b><u>Application System</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">3) Micro <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a>s are represented by <a href="46194ce9560d3ab8.htm" target="_top"><b><u>IT Service</u></b></a>s and <a href="d6a956495a395d28.htm" target="_top"><b><u>MicroService</u></b></a>s which compose <a href="bcebd8e9549144db.htm" target="_top"><b><u>Application</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">All <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a>s provide <a href="598272e954c622f4.htm" target="_top"><b><u>Functionality</u></b></a>s, expose APIs by means of <a href="9dce9f8d5ec76311.htm" target="_top"><b><u>Application Interface</u></b></a>s, have a data scope defined by <a href="028f03ff5b4f55ee.htm" target="_top"><b><u>Physical Data Domain</u></b></a>s, perform <a href="46194939560d374f.htm" target="_top"><b><u>System Process</u></b></a>es and have their interactions described by <a href="25c09cb461e2efd3.htm" target="_top"><b><u>Software System Scenario</u></b></a>s.</div><i><ul>References:<li><a href="https://c4model.com/#SystemContextDiagram"><img src="../standard/extr.ico.gif">&nbsp;C4 Model - Level 1 - System Context Diagram</a></li> <li><a href="https://www.gartner.com/en/information-technology/glossary/application-architecture-aa"><img src="../standard/extr.ico.gif">&nbsp;Gartner - Application Architecture</a></li> <li><a href="https://martinfowler.com/tags/application%20architecture.html"><img src="../standard/extr_htm.ico.gif">&nbsp;Martin Fowler - Application Architecture</a></li> <li><a href="https://martinfowler.com/microservices"><img src="../standard/extr.ico.gif">&nbsp;Martin Fowler - Micro-Service Guide</a></li></ul></i> </td>
+</tr>  
+<tr>
+<td><img src="../standard/dic_graph.ico.gif"> 
+<a  href="d5e6d6c25c464906.htm" target="_top">Application Deployment Architecture</a></td>
+<td><div align="left" style="min-height: 12pt; ">The&#160;<b> Application Deployment Architecture</b> domain defines concepts used to organize <a href="bcebd8e9549144db.htm" target="_top"><b><u>Application</u></b></a>s in <a href="4c7883cd5fca4d5b.htm" target="_top"><b><u>Deployable Package</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">It comprises:</div><div align="left" style="min-height: 12pt; ">1) software code packages (<a href="d5e6d7eb5c464b21.htm" target="_top"><b><u>Deployable Application Package</u></b></a>s) </div><div align="left" style="min-height: 12pt; ">2) Data packages (<a href="d5e6dc425c46518a.htm" target="_top"><b><u>Deployable Data Package</u></b></a>s).</div><div align="left" style="min-height: 12pt; ">3) Prescribed type of hosting</div><div align="left" style="min-height: 12pt; ">4) required technical connections (with communication protocols, port numbers...)&#160; to communicate with each other.</div><i><ul>References:<li><a href="https://c4model.com/#ContainerDiagram"><img src="../standard/extr.ico.gif">&nbsp;C4 Model - Level 2 - Container Diagram</a></li></ul></i> </td>
+</tr>  
+<tr>
+<td><img src="../standard/dic_graph.ico.gif"> 
+<a  href="325c30135eb0227e.htm" target="_top">Logical Application Architecture</a></td>
+<td><div align="left" style="min-height: 12pt; ">The&#160;<b> Logical Application Architecture</b> domain provides means of describing the logical structure and behavior of <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a>s of the enterprise. </div><div align="left" style="min-height: 12pt; ">The aim of&#160;<b> Logical Application Architecture</b> is to describe an optimal optimal organization of the enterprise IT systems. It is used to guide how key sub-systems and data domains are to be configured to meet IT systems missions and purposes. </div><div align="left" style="min-height: 12pt; ">A&#160;<b> Logical Application Architecture</b> is concerned with how the IT Operating Model should look, not how it does look now.</div><div align="left" style="min-height: 12pt; ">This includes:</div><div align="left" style="min-height: 12pt; ">1)&#160; <a href="255833f95c6d1db3.htm" target="_top"><b><u>Logical Application</u></b></a> as the core building logical blocks for software components.</div><div align="left" style="min-height: 12pt; ">2)&#160; <a href="255833cb5c6d1d64.htm" target="_top"><b><u>Logical Application System</u></b></a> as consistent ssembly of <a href="255833f95c6d1db3.htm" target="_top"><b><u>Logical Application</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">3)&#160; <a href="461950e9560d4461.htm" target="_top"><b><u>Logical Data Domain</u></b></a>s of data entities.</div><div align="left" style="min-height: 12pt; ">4)&#160; <a href="598272e954c622f4.htm" target="_top"><b><u>Functionality</u></b></a>(ies) fulfilled by logical systems.</div><div align="left" style="min-height: 12pt; ">5) Functional APIs exposed and used by applications: Application Interfaces.</div></td>
+</tr>  
+</table>
+</section>
+<div class="Relationship" id="Relationship2">
+<div id="klmm" style="width: 100vw; height: 100vh;" ></div>
+<!-- <script src="../standard/assets/js/keylines_domain.js"></script> -->
+<script >
+const data = {
+ type: 'LinkChart',
+  items: [
+  //nodes
+    {type: 'node', id:'7C408515552706AE', t:"Sotware System ArcDevOps", sh:'box', d:"The Sotware System ArcDevOps domain describes a set of concepts used in practices that combines Software System development (Dev) and Software System operations (Ops). "},
+  //edges
+
+  ]
+}
+</script>
+<script src="../standard/assets/js/keylines_domain.js" type="module"></script>
+</div>
+</section>
+
+</div>
+<button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button>
+<script>window.onscroll = function() {scrollFunction()};$(document).on('click', 'a[href^="#"]', function (event) {event.preventDefault();$('html, body').animate({scrollTop: $($.attr(this, 'href')).offset().top}, 500);});function showDiagOnClick(elem){ var x = document.getElementsByClassName('Relationship');var e = elem.getAttribute("value"); for (var i=0; i < x.length ;i++){x[i].style.display="none"; if (x[i].id == e){x[i].style.display="block";x[i].style.textAlign="left";}}}
+</script></html>

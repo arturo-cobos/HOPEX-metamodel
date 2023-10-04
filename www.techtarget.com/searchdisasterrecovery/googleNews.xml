@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:ns2="http://www.google.com/schemas/sitemap-news/0.9">
+    <url>
+        <loc>https://www.techtarget.com/searchdisasterrecovery/news/366554237/Nutanix-adds-ransomware-alerts-recovery-tools-to-HCI-SaaS</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-10-04</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>Nutanix adds ransomware alerts, recovery tools to HCI SaaS</ns2:title>
+        </ns2:news>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchdisasterrecovery/news/366553734/Everbridge-360-emphasizes-communication-preparedness</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-28</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>Everbridge 360 emphasizes communication, preparedness</ns2:title>
+        </ns2:news>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchdisasterrecovery/tip/How-to-use-a-SWOT-analysis-for-IT-disaster-recovery-planning</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-26</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>How to use a SWOT analysis for IT disaster recovery planning</ns2:title>
+        </ns2:news>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchdisasterrecovery/news/366553339/MSP-shares-details-of-Kaseya-VSA-ransomware-attack-recovery</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-26</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>MSP shares details of Kaseya VSA ransomware attack, recovery</ns2:title>
+        </ns2:news>
+    </url>
+</urlset>

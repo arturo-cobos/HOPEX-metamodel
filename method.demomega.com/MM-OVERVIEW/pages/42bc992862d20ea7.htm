@@ -1,0 +1,172 @@
+<html>
+<head>
+  <meta  name="Generator" content="HOPEX by MEGA International">
+  
+  <meta  name="CompanyName" content="">
+  
+  <meta  http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  
+  <title>indexes (metamodel overview - index - frameworkmapping)
+  </title>
+  <link rel="stylesheet" type="text/css" href="../standard/newlook.css">
+  
+</head>
+<body>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="keywords" content="">
+<meta name="description" content="">    
+<LINK REL="icon" HREF="../standard/assets/img/favicon.ico">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/bootstrap.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nav.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/eaportal.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/font-awesome.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/animate.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/datatables.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/grid.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nae.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/custom.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/chosen.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/prism.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery.dataTables.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jsTreeStyle.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.theme.css" media="screen" />
+<script type="text/javascript" src="../standard/assets/js/jquery-3.2.1.min.js" ></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-ui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.columnFilter.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3-force.v2.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.gui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.search.js"></script> 
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.util.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-2.1.1.min.js"></script>
+<script src="../standard/assets/js/ws_zoomtemplate_firefox.js"></script>
+<script src="../standard/assets/js/bootstrap.min.js"></script>
+<script src="../standard/assets/js/datatables.min.js"></script>
+<script src="../standard/assets/js/moment.min.js"></script>
+<script src="../standard/assets/js/datetime-moment.js"></script>
+<script src="../standard/assets/js/chartjs.min.js"></script>
+<script src="../standard/assets/js/searchindexcontent.json"></script>
+<script src="../standard/assets/js/anls.js"></script>
+<script src="../../../cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script src="../standard/assets/js/gauge.js"></script> 
+<script src="../standard/assets/js/domesticApi.js"></script> 
+<script src="../standard/assets/js/piecelabel.js"></script>
+<script src="../standard/assets/js/popper.min.js"></script>
+<script src="../standard/assets/js/custom.js"></script>
+<script src="../standard/assets/js/chosen.jquery.js"></script>
+<script src="../standard/assets/js/prism.js"></script>
+<script src="../standard/assets/js/init-chosen.js"></script>
+<script src="../standard/assets/js/chart-data-flow.js"></script>
+<script src="../standard/assets/js/chart-data-gantt.js"></script>
+<script type="module" src="../standard/assets/js/Fuse.esm.min.js"></script>
+<script type="module">
+import Fuse from '../standard/assets/js/Fuse.esm.min.js';
+$(document).ready(function () {
+console.log('getjson');
+window.$.getJSON('../standard/assets/js/searchindexcontent.json', function (response) {
+console.log('getjson ok');
+var isIndex = "";
+var url = window.location.pathname;
+var filename = url.substring(url.lastIndexOf('/')+1);
+if( filename.includes("index") || filename === "" ){
+isIndex = "pages/";
+} else {
+isIndex = "";
+}
+const fuse = new Fuse(response, {
+keys: ['title','text'],
+shouldSort: true,
+includeMatches : true,
+findAllMatches : true
+});
+$('#search-fuse').on('keyup', function () {
+let result = fuse.search($(this).val());
+console.log(result);
+let resultdiv = $('div.searchresults-fuse');
+if (result.length === 0) {
+resultdiv.hide();
+} else {
+resultdiv.empty();
+resultdiv.append('<table class="table-search" width="100%" cellspacing="0"><thead ><tr><th>Name</th><th>Object Type</th><th>Modification date</th></tr></thead><tbody>');
+
+for (let obj in result.slice(0,10)) {
+
+let searchObj = '<tr><td><a href="./'+ isIndex + result[obj].item.url + '">' + result[obj].item.title +'</a></td><td>' + result[obj].item.ObjectType + '</td><td>' + result[obj].item.ModificationDate + '</td></tr>' ;
+
+
+resultdiv.find('tbody').append(searchObj);
+}
+resultdiv.append('</tbody></table>');
+resultdiv.show();
+}
+});
+});
+});
+</script>
+<title>HOPEX Metamodel Overview (Beta Version)</title>
+</head>
+<nav class="navbar navbar-expand-md navbar-dark  navbar-mega"><!-- Brand --><!--<a class="navbar-brand" href="#">Navbar</a>--><a class="" href="../index.htm"><img class="logo-mega" src="../standard/assets/img/logo.png"  alt="">(Beta Version)</a><!-- Toggler/collapsibe Button --><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><!-- Navbar links -->
+<div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsibleNavbar"><div class="col-sm-auto col-md-auto col-lg-5"></div>
+<div class="col-sm-auto">
+<ul class="navbar-nav">      
+<li><a class="dropdown-item" href="ad30ce115ebf7e90.htm">EA Grid</a></li> 
+<li><a class="dropdown-item" href="fdd5018459bc3c6a.htm">EA Domains</a></li> 
+<li><a class="dropdown-item" href="07e731775ecc93f4.htm">Solutions</a></li> 
+<li><a class="dropdown-item" href="c5dfc62c54810c2c.htm">Glossary</a></li> 
+<li class="nav-item dropdown mx-1">
+<a class="nav-link" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</a>
+<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<li><a class="dropdown-item" href="5446555d5f88c32e.htm">Outcome Driven Metamodel</a></li> 
+<li><a class="dropdown-item" href="e1ccfc295f8f7b90.htm">Playbooks</a></li> 
+<li><a class="dropdown-item" href="42bc992862d20ea7.htm">Framework Mappings</a></li> 
+<li><a class="dropdown-item" href="e93aebb35fa20550.htm">Metamodel Patterns</a></li> 
+<li><a class="dropdown-item" href="d599fe87602b2b85.htm">References</a></li> 
+<li><a class="dropdown-item" href="333f3a7f5dde11de.htm">Legend</a></li> 
+</ul>									                                            
+</li>
+</ul>
+</div>
+<div class="col-sm-auto"><a class="nav-link search" href="#" onclick=showHideSearch("search-section-fuse")><i class="fa fa-search mr-1 form-control-feedback"></i></a></div>
+</div>
+</nav>
+<div id="search-section-fuse" style="display:none">>
+<div class="search_header"><span class="closesearch">&times;</span>
+<nav class="breadcrumb">
+<a class="breadcrumb-item" href="../index.htm">Home </a> 
+<span class="breadcrumb-item active">Search</span> 
+</nav>
+</div>
+<input id="search-fuse" placeholder="Search..."  name="q" onfocus="this.value=''" type="search">
+<div class="searchresults-fuse"></div>
+</div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>function showHideSearch(elementId) {var contentDivs = document.getElementsByClassName('content');var footerDivs = document.getElementsByClassName('footer'); var containerDivs = document.getElementsByClassName('container');var containerfluidDivs = document.getElementsByClassName('container-fluid');var x = document.getElementById(elementId);if (x.style.display === "none") {x.style.display = "block";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "none";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "none";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "none";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "none";}} else {x.style.display = "none";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "block";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "block";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "block";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "block";}}} ;<!-- END WIDGET DRILL DOWN --></script><script>$(document).ready(function() {$(window).scroll(function() {if ($(this).scrollTop() > 100) {$('.scrollup').fadeIn();} else {$('.scrollup').fadeOut();}});$('.scrollup').click(function() {$("html, body").animate({scrollTop: 0}, 600);return false;});});</script><script>
+var modal = document.getElementById("search-section-fuse");
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = "none";
+}
+}
+$(document).on('click', '.closesearch', function() {
+showHideSearch("search-section-fuse");
+
+
+
+
+
+});</script><!-- table sorting icons --><link  type="image/png" href="../standard/assets/img/sort_both.png"><link  type="image/png" href="../standard/assets/img/sort_asc.png"><link  type="image/png" href="../standard/assets/img/sort_desc.png"><link  type="image/png" href="../standard/assets/img/sort_asc_disabled.png"><link  type="image/png" href="../standard/assets/img/sort_desc_disabled.png"><!-- BreadCrumb --><div class="container-fluid col-lg-11"><nav class="breadcrumb"><a class="breadcrumb-item" href="../index.htm">Home</a> <span class="breadcrumb-item active">Playbooks (Value Stream) list </span> </nav></div><div class="container-fluid col-lg-11 content"><table id="sortabletable" class="table table-sm  table-bordered table-cell-resizable table-index-set-col-width-4 table-custom-style table-scrollX" width="100%" cellspacing="0"><thead ><tr><th>Name</th> <th>Comment</th> </tr></thead><tbody><tr><td>
+<a  href="bb4ec4eb628448e9.htm" target="_top">BMM Mapping</a></td><td class="description-text">Mapping of the OMG BMM metamodel with HOPEX Concepts.</td></tr><tr><td>
+<a  href="a100db1c62d765fb.htm" target="_top">C4 Model Mappings</a></td><td class="description-text">The C4 model graphical notation technique for modelling the architecture of software systems. created by the software architect Simon Brown.<br />C4 model provides a way for software development teams to efficiently and effectively communicate their software architecture, at different levels of detail, telling different stories to different types of audience, when doing up front design or retrospectively documenting an existing codebase.</td></tr><tr><td>
+<a  href="082e27b55f514b37.htm" target="_top">DoDAF Mapping</a></td><td class="description-text"><div align="left" style="min-height: 12pt; ">Mapping of Dodaf 2 concepts (DM2) to HOPEX concepts.</div><div align="left" style="min-height: 12pt; ">HOPEX has a border set of concepts than DM2 as it also covers the larger scope of Enterprise Architecture, IT Architecture, IT Asset Management, Information Architecture and GRC.</div></td></tr><tr><td>
+<a  href="4f5c99d86512591c.htm" target="_top">OMG KerML Mapping</a></td><td class="description-text"><div align="left" style="min-height: 12pt; ">KerML is a foundational modeling language provided by the OMG for expressing various</div><div align="left" style="min-height: 12pt; ">kinds of system models with consistent semantics.</div></td></tr><tr><td>
+<a  href="e9b863d95f51e220.htm" target="_top">TOGAF - Content MetaModel Mapping</a></td><td class="description-text">Mapping of core concepts of the TOGAF Content Metamodel to HOPEX concepts.</td></tr><tr><td>
+<a  href="e23fa4876318484d.htm" target="_top">UAF Mappings</a></td><td class="description-text"><div align="left" style="min-height: 12pt; ">UAF evolved from the Unified Profile for DoDAF and MODAF (UPDM), version 2.1. UAF extends the scope of UPDM and generalizes it to make it applicable to commercial as well as military architectures. The intent of UAF is to provide a standard representation for describing enterprise architectures using a Model Based Systems Engineering (MBSE) approach.</div><div align="left" style="min-height: 12pt; ">The core concepts in the UAF are based upon the DoDAF 2.0.2 Domain Metamodel (DM2) and the MODAF ontological data exchange mechanism (MODEM), Security Views from Canada&#39;s Department of National Defense Architecture Framework (DNDAF) and the North Atlantic Treaty Organization (NATO) Architecture Framework (NAF) v 4.</div><div align="left" style="min-height: 12pt; "></div><div align="left" style="min-height: 12pt; ">The following diagrams provide a mapping of UAF concepts to HOPEX concepts.</div><div align="left" style="min-height: 12pt; ">As HOPEX goes beyond MBSE, it provides a broder set of concepts than UAF to cover the entire spectrum of Enterprise Architecture. This includes IT Architecture, IT Asset Management, Information Architecture and GRC.</div><div align="left" style="min-height: 12pt; ">The mapping provides a comprehensive understanding of UAF Domain Metamodel concepts (DMM) in HOPEX as well as correspondance between UAF and HOPEX terminologies.</div></td></tr></tbody></table></div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>window.onscroll = function() {scrollFunction()};$(document).on('click', 'a[href^="#"]', function (event) {event.preventDefault();$('html, body').animate({scrollTop: $($.attr(this, 'href')).offset().top}, 500);});</script><script type="text/javascript">$('#sortabletable thead tr').clone(true).appendTo( '#sortabletable thead' );$('#sortabletable thead tr:eq(1) th').each( function (i) {var title = $(this).text();$(this).html( '<input type="text" placeholder="" style="width:100%;"/>' );$( 'input', this ).on( 'keyup change', function () {if ( table.column(i).search() !== this.value ) {table.column(i).search( this.value ).draw();}} );} );$(".table-cell-resizable td").wrapInner("<div></div>");var numRowsInCell;$('#sortabletable div').each(function addBtnTgglClass() {numRowsInCell = $(this).find('br').length;if (numRowsInCell  > 5) {$(this).prepend('<button class="cellResize-btn">+ (' + numRowsInCell + ')</button>');$(this).closest('tr').find('div').toggleClass('reduceCellHeight');}});$('.cellResize-btn').unbind().click(function handlePlusMinusBtn() {var $rowInQuestion = $(this).closest('tr');$rowInQuestion.find('div').toggleClass('reduceCellHeight');$rowInQuestion.find('button').each(function switchBtnSign() {var numRowsInClickedCell = $(this).parent().find('br').length;if ($(this).html() == '+ (' + numRowsInClickedCell + ')') {$(this).html('-');} else {$(this).html('+ (' + numRowsInClickedCell + ')');}});});var table = $('#sortabletable').DataTable({scrollCollapse: true,dom: 'lBrtip',orderCellsTop: true,fixedHeader: false,buttons: [$.extend( true, {}, getExportOptions(), {extend: 'excelHtml5',customize: function( xlsx ) {var sheet = xlsx.xl.worksheets['sheet1.xml'];$('row c', sheet).attr( 's', '55' );},title: ''} )],scrollX:true});$('.buttons-excel').children().remove('span');$('.buttons-excel').append('<img id="excel-icon" src="../standard/assets/img/excel-icon.png"/> Excel');</script>
+</body></html>

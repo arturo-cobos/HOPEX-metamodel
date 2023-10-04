@@ -1,0 +1,445 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="keywords" content="">
+<meta name="description" content="">    
+<LINK REL="icon" HREF="../standard/assets/img/favicon.ico">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/bootstrap.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nav.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/eaportal.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/font-awesome.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/animate.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/datatables.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/grid.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nae.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/custom.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/chosen.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/prism.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery.dataTables.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jsTreeStyle.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.theme.css" media="screen" />
+<script type="text/javascript" src="../standard/assets/js/jquery-3.2.1.min.js" ></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-ui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.columnFilter.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3-force.v2.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.gui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.search.js"></script> 
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.util.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-2.1.1.min.js"></script>
+<script src="../standard/assets/js/ws_zoomtemplate_firefox.js"></script>
+<script src="../standard/assets/js/bootstrap.min.js"></script>
+<script src="../standard/assets/js/datatables.min.js"></script>
+<script src="../standard/assets/js/moment.min.js"></script>
+<script src="../standard/assets/js/datetime-moment.js"></script>
+<script src="../standard/assets/js/chartjs.min.js"></script>
+<script src="../standard/assets/js/searchindexcontent.json"></script>
+<script src="../standard/assets/js/anls.js"></script>
+<script src="../../../cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script src="../standard/assets/js/gauge.js"></script> 
+<script src="../standard/assets/js/domesticApi.js"></script> 
+<script src="../standard/assets/js/piecelabel.js"></script>
+<script src="../standard/assets/js/popper.min.js"></script>
+<script src="../standard/assets/js/custom.js"></script>
+<script src="../standard/assets/js/chosen.jquery.js"></script>
+<script src="../standard/assets/js/prism.js"></script>
+<script src="../standard/assets/js/init-chosen.js"></script>
+<script src="../standard/assets/js/chart-data-flow.js"></script>
+<script src="../standard/assets/js/chart-data-gantt.js"></script>
+<script type="module" src="../standard/assets/js/Fuse.esm.min.js"></script>
+<script type="module">
+import Fuse from '../standard/assets/js/Fuse.esm.min.js';
+$(document).ready(function () {
+console.log('getjson');
+window.$.getJSON('../standard/assets/js/searchindexcontent.json', function (response) {
+console.log('getjson ok');
+var isIndex = "";
+var url = window.location.pathname;
+var filename = url.substring(url.lastIndexOf('/')+1);
+if( filename.includes("index") || filename === "" ){
+isIndex = "pages/";
+} else {
+isIndex = "";
+}
+const fuse = new Fuse(response, {
+keys: ['title','text'],
+shouldSort: true,
+includeMatches : true,
+findAllMatches : true
+});
+$('#search-fuse').on('keyup', function () {
+let result = fuse.search($(this).val());
+console.log(result);
+let resultdiv = $('div.searchresults-fuse');
+if (result.length === 0) {
+resultdiv.hide();
+} else {
+resultdiv.empty();
+resultdiv.append('<table class="table-search" width="100%" cellspacing="0"><thead ><tr><th>Name</th><th>Object Type</th><th>Modification date</th></tr></thead><tbody>');
+
+for (let obj in result.slice(0,10)) {
+
+let searchObj = '<tr><td><a href="./'+ isIndex + result[obj].item.url + '">' + result[obj].item.title +'</a></td><td>' + result[obj].item.ObjectType + '</td><td>' + result[obj].item.ModificationDate + '</td></tr>' ;
+
+
+resultdiv.find('tbody').append(searchObj);
+}
+resultdiv.append('</tbody></table>');
+resultdiv.show();
+}
+});
+});
+});
+</script>
+<title>HOPEX Metamodel Overview (Beta Version)</title>
+</head>
+<nav class="navbar navbar-expand-md navbar-dark  navbar-mega"><!-- Brand --><!--<a class="navbar-brand" href="#">Navbar</a>--><a class="" href="../index.htm"><img class="logo-mega" src="../standard/assets/img/logo.png"  alt="">(Beta Version)</a><!-- Toggler/collapsibe Button --><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><!-- Navbar links -->
+<div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsibleNavbar"><div class="col-sm-auto col-md-auto col-lg-5"></div>
+<div class="col-sm-auto">
+<ul class="navbar-nav">      
+<li><a class="dropdown-item" href="ad30ce115ebf7e90.htm">EA Grid</a></li> 
+<li><a class="dropdown-item" href="fdd5018459bc3c6a.htm">EA Domains</a></li> 
+<li><a class="dropdown-item" href="07e731775ecc93f4.htm">Solutions</a></li> 
+<li><a class="dropdown-item" href="c5dfc62c54810c2c.htm">Glossary</a></li> 
+<li class="nav-item dropdown mx-1">
+<a class="nav-link" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</a>
+<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<li><a class="dropdown-item" href="5446555d5f88c32e.htm">Outcome Driven Metamodel</a></li> 
+<li><a class="dropdown-item" href="e1ccfc295f8f7b90.htm">Playbooks</a></li> 
+<li><a class="dropdown-item" href="42bc992862d20ea7.htm">Framework Mappings</a></li> 
+<li><a class="dropdown-item" href="e93aebb35fa20550.htm">Metamodel Patterns</a></li> 
+<li><a class="dropdown-item" href="d599fe87602b2b85.htm">References</a></li> 
+<li><a class="dropdown-item" href="333f3a7f5dde11de.htm">Legend</a></li> 
+</ul>									                                            
+</li>
+</ul>
+</div>
+<div class="col-sm-auto"><a class="nav-link search" href="#" onclick=showHideSearch("search-section-fuse")><i class="fa fa-search mr-1 form-control-feedback"></i></a></div>
+</div>
+</nav>
+<div id="search-section-fuse" style="display:none">>
+<div class="search_header"><span class="closesearch">&times;</span>
+<nav class="breadcrumb">
+<a class="breadcrumb-item" href="../index.htm">Home </a> 
+<span class="breadcrumb-item active">Search</span> 
+</nav>
+</div>
+<input id="search-fuse" placeholder="Search..."  name="q" onfocus="this.value=''" type="search">
+<div class="searchresults-fuse"></div>
+</div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>function showHideSearch(elementId) {var contentDivs = document.getElementsByClassName('content');var footerDivs = document.getElementsByClassName('footer'); var containerDivs = document.getElementsByClassName('container');var containerfluidDivs = document.getElementsByClassName('container-fluid');var x = document.getElementById(elementId);if (x.style.display === "none") {x.style.display = "block";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "none";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "none";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "none";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "none";}} else {x.style.display = "none";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "block";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "block";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "block";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "block";}}} ;<!-- END WIDGET DRILL DOWN --></script><script>$(document).ready(function() {$(window).scroll(function() {if ($(this).scrollTop() > 100) {$('.scrollup').fadeIn();} else {$('.scrollup').fadeOut();}});$('.scrollup').click(function() {$("html, body").animate({scrollTop: 0}, 600);return false;});});</script><script>
+var modal = document.getElementById("search-section-fuse");
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = "none";
+}
+}
+$(document).on('click', '.closesearch', function() {
+showHideSearch("search-section-fuse");
+
+
+
+
+
+});</script><div class="container-fluid col-lg-11"><nav class="breadcrumb"><a class="breadcrumb-item" href="../index.htm">Home</a> <span class="breadcrumb-item active">
+<a  href="02af0a215a1823ee.htm" target="_top">Dictionary of HOPEX patterns</a>&nbsp;/&nbsp;Aggregate Syntax</span></nav></div>
+<div class="container-fluid col-lg-11 content">
+<section class="fadeInDown animated"><a href="#idt" class="btn btn-d">DEFINITION</a> <a href="#grf" class="btn btn-d">CONCEPT GRAPH</a> <a href="#des" class="btn btn-d">CONCEPT DESCRIPTIONS</a> 
+</section>
+<a class="object-section-anchor" id="idt"></a>
+<section class="object-section">
+<h4>CONCEPT DOMAIN - Aggregate Syntax</h4><hr class="sectionbreak" /><table class="table table-vertical-headers table-set-col-width"><tr><th>Description</th><td class="description-text"><i>Pattern Domain</i><br/><div align="left" style="min-height: 12pt; ">The purpose of the&#160;<b> Aggregate Syntax</b> is to provide mechanisms to support modular management of complex <a href="ccb819645a564f12.htm" target="_top"><b><u>Building Block</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">The&#160;<b> Aggregate Syntax</b> handles situations where <a href="ae26f8b05acd5185.htm" target="_top"><b><u>Entity</u></b></a>s have an internal structure. Such <a href="ae26f8b05acd5185.htm" target="_top"><b><u>Entity</u></b></a>s are called <a href="b13d31de5edf42d8.htm" target="_top"><b><u>Aggregate Entity</u></b></a>s. They are made of internal-sub <a href="ae26f8b05acd5185.htm" target="_top"><b><u>Entity</u></b></a>s called <a href="f277cfce601bd9af.htm" target="_top"><b><u>Aggregate Entity Member</u></b></a>s. <a href="f277cfce601bd9af.htm" target="_top"><b><u>Aggregate Entity Member</u></b></a>s can be either strictly local characteristics (called <a href="278c30d764870408.htm" target="_top"><b><u>Internal Entity</u></b></a>&#160; such as a gateway in a process) or the contextualization of <a href="ae26f8b05acd5185.htm" target="_top"><b><u>Entity</u></b></a>s outside the structure (such as generalization in UML).</div><div><br/><i>References:</i><br/><a href="../../../www.omg.org/spec/KerML/1.0/Beta1/ptc-23-06-01.pdf#page:237" target="_blank">OMG - KerML - Structure Package</a><br/><a href="https://pubs.opengroup.org/architecture/o-aa-standard/definitions.html#_modularity" target="_blank">OpenGroup - OAA - Modularity</a><br/><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_26" target="_blank">OpenGroup - TOGAF - Definition - Building Block</a></div></td></tr><tr><th>Dictionary</th><td><img src="../standard/dicsubjectarea.ico.gif"/>&nbsp;
+<a  href="02af0a215a1823ee.htm" target="_top">Dictionary of HOPEX patterns</a></td></tr><tr><th>Parent Domain</th><td><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="3616864f6157d242.htm" target="_top">Upper Ontology</a>&nbsp;</td></tr>
+<tr><th>Domain dependencies</th><td><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="36166c3a6157bb9b.htm" target="_top">Containers &amp; Blocks</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="ae26f9c25acd52d4.htm" target="_top">Elementary Graph</a>&nbsp;</td></tr></table></section>
+<a class="object-section-anchor" id="grf"></a>
+<section class="object-section">
+<h4>DOMAIN CONCEPT GRAPH</h4>
+<hr class="sectionbreak" />
+<a href="#" class="btn btn-d" value="Relationship1" onclick="showDiagOnClick(this)">Diagram</a>
+<a href="#" class="btn btn-d" value="Relationship2" onclick="showDiagOnClick(this)">Graph</a>
+<div class="Relationship" id="Relationship1">
+
+<map  name="36166B976157B794">
+  <area  href=#OBMKD2B05F1F65148332 shape="polygon" coords="1144, 249, 1142, 244, 1152, 241, 1154, 246"    title="-">
+  
+  <area  href=ccb819645a564f12.htm#OBMKCCB819645A564F12 shape="polygon" coords="1118, 237, 1118, 226, 1181, 226, 1181, 237, 1118, 237"   target="_top"  title="A&#160; Building Block is an autonomous, resusable Entity that contributes to the makeup of other&#160; Building Blocks.">
+  
+  <area  href="d2b05f16651482e7.htm" shape="rect" coords="1100, 223, 1198, 272"   target="_top"  title="A&#160; Simple Block is a Building Block which does not have an internal structure.">
+  
+  <area  href=#OBMK4D9461C65EC9ECA7 shape="polygon" coords="1031, 184, 1090, 184, 1090, 195, 1031, 195"    title="-">
+  
+  <area  href=4d9461c65ec9eca3.htm shape="polygon" coords="913, 184, 1090, 184, 1090, 195, 913, 195"   target="_top"  title="A&#160; Contextual Object is an Aggregate Member that represents the projection of an external Building Block in the internal structure of a nesting Aggregate Block.">
+  
+  <area  href=#OBMK4D9461C65EC9ECC6 shape="polygon" coords="913, 184, 972, 184, 972, 195, 913, 195"    title="-">
+  
+  <area  href=5b7a09ee61f55f74.htm#OBMK5B7A09EE61F55F74 shape="polygon" coords="301, 118, 277, 118, 277, 132, 162, 132, 162, 118, 301, 118"   target="_top"  title="-">
+  
+  <area  href=5B7A08E761F55DB3.htm shape="polygon" coords="156, 153, 156, 129, 277, 129, 277, 153, 267, 153, 267, 140, 166, 140, 166, 153"   target="_top"  title="-">
+  
+  <area  href=54685b4d580a2ca2.htm#OBMK54685B4D580A2CA2 shape="polygon" coords="1101, 93, 1101, 80, 1194, 80, 1194, 93, 1160, 93, 1160, 104, 1135, 104, 1135, 93, 1101, 93"   target="_top"  title="Repository Items are all objects wich make up the content of Hopex repositories excluding technical objects such as: logs, _TransferredObject, _collection... ">
+  
+  <area  href="ae26f8b05acd5185.htm" shape="rect" coords="1087, 58, 1208, 122"   target="_top"  title="An&#160; Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.">
+  
+  <area  href=#OBMK6DC3B741620F8FD9 shape="polygon" coords="619, 364, 619, 335, 619, 325, 630, 325, 630, 326, 629, 365"    title="-">
+  
+  <area  href=#OBMK915284715ED54E64 shape="polygon" coords="704, 398, 1083, 398, 1083, 409, 704, 409"    title="-">
+  
+  <area  href=#OBMK514E68FD620F294C shape="polygon" coords="513, 328, 489, 328, 489, 318, 513, 318"    title="-">
+  
+  <area  href=#OBMK514E67EF620F2864 shape="polygon" coords="310, 311, 488, 306, 488, 317, 311, 321"    title="-">
+  
+  <area  href=5B7A080561F55C10.htm#OBMK5B7A080561F55C10 shape="polygon" coords="692, 121, 689, 121, 689, 134, 550, 134, 550, 121, 692, 121"   target="_top"  title="Reference relationship between a source Building Block and a target Building Block ( Referenced Building Block).">
+  
+  <area  href=7DB003C061F98BE9.htm shape="polygon" coords="568, 156, 568, 133, 671, 133, 671, 156, 660, 156, 660, 144, 579, 144, 579, 156"   target="_top"  title="-">
+  
+  <area  href=27862DDA5B251FF5.htm shape="polygon" coords="585, 438, 585, 454, 659, 454, 659, 438, 670, 438, 670, 465, 574, 465, 574, 438"   target="_top"  title="-">
+  
+  <area  href=514E62CE620F22C1.htm#OBMK514E62CE620F22C1 shape="polygon" coords="574, 378, 574, 367, 675, 367, 675, 378, 574, 378"   target="_top"  title="An&#160; Aggregate Block (Type) is a class of&#160; Aggregate Blocks.">
+  
+  <area  href=ae26fa7f5acd535b.htm#OBMKAE26FA7F5ACD535B shape="polygon" coords="570, 389, 570, 378, 678, 378, 678, 389, 570, 389"   target="_top"  title="An&#160; Encapsulated Aggregate is a Aggregate Block where its internal structure and state changes are hidden from the outside world by means of a formal boundary.">
+  
+  <area  href=0a2d69224b2a0440.htm#OBMK0A2D69224B2A0440 shape="polygon" coords="576, 434, 576, 421, 672, 421, 672, 434, 576, 434"   target="_top"  title="Composite classifier is a structured element.">
+  
+  <area  href="14431b565ad65914.htm" shape="rect" coords="544, 365, 705, 438"   target="_top"  title="An&#160; Encapsulated Aggregate (Type) is a class of Encapsulated Aggregate (Individual).">
+  
+  <area  href=#OBMK5754805751545CA3 shape="polygon" coords="365, 406, 365, 393, 450, 393, 450, 406, 365, 406"    title="-">
+  
+  <area  href=#OBMKA6DB698B600913FA shape="polygon" coords="299, 396, 543, 396, 543, 407, 299, 406"    title="-">
+  
+  <area  href=#OBMK4D9462AF5EC9F023 shape="polygon" coords="235, 445, 252, 445, 252, 435, 263, 435, 263, 456, 235, 456"    title="-">
+  
+  <area  href=4D9462AF5EC9F01F.htm shape="polygon" coords="181, 435, 181, 445, 252, 445, 252, 435, 263, 435, 263, 456, 170, 456, 170, 435"   target="_top"  title="-">
+  
+  <area  href=#OBMK4D9462AF5EC9F040 shape="polygon" coords="181, 435, 181, 445, 198, 445, 198, 456, 170, 456, 170, 435"    title="-">
+  
+  <area  href=#OBMK14431AD85AD65901 shape="polygon" coords="298, 385, 455, 390, 466, 391, 466, 401, 455, 401, 297, 395"    title="-">
+  
+  <area  href=514e623c620f2198.htm#OBMK514E623C620F2198 shape="polygon" coords="159, 380, 159, 369, 278, 369, 278, 380, 159, 380"   target="_top"  title="An&#160; Aggregate Block (Individual) is an Individual which has an internal structure.">
+  
+  <area  href=ae26fa7f5acd535b.htm#OBMKAE26FA7F5ACD535B shape="polygon" coords="165, 391, 165, 380, 273, 380, 273, 391, 165, 391"   target="_top"  title="An&#160; Encapsulated Aggregate is a Aggregate Block where its internal structure and state changes are hidden from the outside world by means of a formal boundary.">
+  
+  <area  href="a4a5b31e55585b0a.htm" shape="rect" coords="139, 367, 300, 436"   target="_top"  title="An&#160; Encapsulated Aggregate (Individual) is a Aggregate Block (Individual) which has an internal structure and a boundary.">
+  
+  <area  href=#OBMKEBCF96565AD76930 shape="polygon" coords="559, 377, 472, 377, 472, 396, 461, 396, 461, 366, 559, 366"    title="-">
+  
+  <area  href=514e5f6c620f1ec6.htm#OBMK514E5F6C620F1EC6 shape="polygon" coords="429, 297, 429, 286, 503, 286, 503, 297, 429, 297"   target="_top"  title="An&#160; Aggregate Block is a Building Block which has an internal structure.">
+  
+  <area  href=3c294de45820813c.htm#OBMK3C294DE45820813C shape="polygon" coords="407, 323, 407, 310, 525, 310, 525, 323, 407, 323"   target="_top"  title="Is a Composition of ~PH(oL(ir7XI0[Building Block] by an inclusion relationship with a ~qc2FHv48OTRW[Block Component].">
+  
+  <area  href="ae26fa7f5acd535b.htm" shape="rect" coords="84, 284, 849, 509"   target="_top"  title="An&#160; Encapsulated Aggregate is a Aggregate Block where its internal structure and state changes are hidden from the outside world by means of a formal boundary.">
+  
+  <area  href=#OBMK514E6730620F2713 shape="polygon" coords="213, 366, 212, 319, 223, 318, 223, 366"    title="-">
+  
+  <area  href=#OBMK5754805751545CA3 shape="polygon" coords="365, 250, 365, 236, 450, 236, 450, 250, 365, 250"    title="-">
+  
+  <area  href=#OBMK514E6334620F23AE shape="polygon" coords="311, 236, 513, 236, 513, 246, 311, 246"    title="-">
+  
+  <area  href=514e5f6c620f1ec6.htm#OBMK514E5F6C620F1EC6 shape="polygon" coords="588, 169, 588, 158, 662, 158, 662, 169, 588, 169"   target="_top"  title="An&#160; Aggregate Block is a Building Block which has an internal structure.">
+  
+  <area  href=9597c202620aaa9d.htm#OBMK9597C202620AAA9D shape="polygon" coords="576, 180, 576, 169, 674, 169, 674, 180, 576, 180"   target="_top"  title="A&#160; Class of Building Block is a Class that classifies Building Blocks.">
+  
+  <area  href=3492c53e619642ed.htm#OBMK3492C53E619642ED shape="polygon" coords="584, 191, 584, 180, 666, 180, 666, 191, 584, 191"   target="_top"  title="A&#160; Class of Individual is a Class whose members are instances of&#160; Individual .">
+  
+  <area  href="514E62CE620F22C1.htm" shape="rect" coords="514, 156, 737, 494"   target="_top"  title="An&#160; Aggregate Block (Type) is a class of&#160; Aggregate Blocks.">
+  
+  <area  href=514e5f6c620f1ec6.htm#OBMK514E5F6C620F1EC6 shape="polygon" coords="181, 166, 181, 155, 255, 155, 255, 166, 181, 166"   target="_top"  title="An&#160; Aggregate Block is a Building Block which has an internal structure.">
+  
+  <area  href=348f55f661962ecc.htm#OBMK348F55F661962ECC shape="polygon" coords="195, 177, 195, 166, 241, 166, 241, 177, 195, 177"   target="_top"  title="&#160;Individuals are Entitys&#160; which represent objects of the real world that exist over space and time. Examples are, the Oackland digital hospital in 2016, the registration process used at the Oackland digital hospital in 2021 or SAP S/4HANA deployed in Argentina since 2020. ">
+  
+  <area  href="514e623c620f2198.htm" shape="rect" coords="125, 153, 311, 484"   target="_top"  title="An&#160; Aggregate Block (Individual) is an Individual which has an internal structure.">
+  
+  <area  href=#OBMKC120C2F85EF119E4 shape="polygon" coords="803, 235, 803, 210, 814, 210, 814, 235"    title="-">
+  
+  <area  href=#OBMKC120C2F85EF119DF shape="polygon" coords="803, 284, 803, 210, 814, 210, 814, 284"    title="-">
+  
+  <area  href=#OBMKC120C2FA5EF11A76 shape="polygon" coords="803, 284, 803, 259, 814, 259, 814, 284"    title="-">
+  
+  <area  href=514e5f6c620f1ec6.htm#OBMK514E5F6C620F1EC6 shape="polygon" coords="774, 165, 774, 154, 847, 154, 847, 165, 774, 165"   target="_top"  title="An&#160; Aggregate Block is a Building Block which has an internal structure.">
+  
+  <area  href="c120c19a5ef11759.htm" shape="rect" coords="754, 122, 867, 210"   target="_top"  title="-">
+  
+  <area  href=b13d31de5edf42d8.htm#OBMKB13D31DE5EDF42D8 shape="polygon" coords="451, 111, 451, 100, 526, 100, 526, 111, 451, 111"   target="_top"  title="An&#160; Aggregate Entity is a Nesting Entity which has an internal structure made of Aggregate Entity Members.">
+  
+  <area  href=ccb819645a564f12.htm#OBMKCCB819645A564F12 shape="polygon" coords="457, 122, 457, 111, 520, 111, 520, 122, 457, 122"   target="_top"  title="A&#160; Building Block is an autonomous, resusable Entity that contributes to the makeup of other&#160; Building Blocks.">
+  
+  <area  href="514e5f6c620f1ec6.htm" shape="rect" coords="64, 99, 913, 526"   target="_top"  title="An&#160; Aggregate Block is a Building Block which has an internal structure.">
+  
+  <area  href=#OBMKB13D32315EDF4485 shape="polygon" coords="1038, 85, 1087, 85, 1087, 96, 1038, 96"    title="-">
+  
+  <area  href=b13d32315edf4481.htm shape="polygon" coords="940, 85, 1087, 85, 1087, 96, 940, 96"   target="_top"  title="A&#160; Contextual Entity is Aggregate Entity Member that involves an external element in the internal structure of its nesting Aggregate Entity.">
+  
+  <area  href=#OBMKB13D32315EDF44B4 shape="polygon" coords="940, 85, 989, 85, 989, 96, 940, 96"    title="-">
+  
+  <area  href=c120c19a5ef11759.htm#OBMKC120C19A5EF11759 shape="polygon" coords="1114, 409, 1114, 398, 1168, 398, 1168, 409, 1114, 409"   target="_top"  title="-">
+  
+  <area  href="915283d05ed54ca1.htm" shape="rect" coords="1083, 364, 1199, 456"   target="_top"  title="Top level pattern of Relationship Type.">
+  
+  <area  href=ae26f8b05acd5185.htm#OBMKAE26F8B05ACD5185 shape="polygon" coords="1132, 170, 1132, 159, 1163, 159, 1163, 170, 1132, 170"   target="_top"  title="An&#160; Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.">
+  
+  <area  href=CBE4CF9547D60128.htm#OBMKCBE4CF9547D60128 shape="polygon" coords="1111, 202, 1111, 189, 1184, 189, 1184, 202, 1111, 202"   target="_top"  title="Element that can be directly contained in an another such as a library. ">
+  
+  <area  href="ccb819645a564f12.htm" shape="rect" coords="1087, 156, 1208, 329"   target="_top"  title="A&#160; Building Block is an autonomous, resusable Entity that contributes to the makeup of other&#160; Building Blocks.">
+  
+  <area  href=ae26f8d65acd51ab.htm#OBMKAE26F8D65ACD51AB shape="polygon" coords="458, 58, 458, 47, 522, 47, 522, 58, 458, 58"   target="_top"  title="A&#160; Nesting Entity is an Entity that nests other entities as sub-entities, serving as their lexical scope. The existence, visibility, and significance of Nested Entitys are confined within the boundaries of their&#160; Nesting Entity.">
+  
+  <area  href=4d41538a580e1a79.htm#OBMK4D41538A580E1A79 shape="polygon" coords="433, 84, 433, 71, 546, 71, 546, 84, 433, 84"   target="_top"  title="Objects have a characteristics via intermediary objects. ">
+  
+  <area  href="b13d31de5edf42d8.htm" shape="rect" coords="39, 45, 942, 546"   target="_top"  title="An&#160; Aggregate Entity is a Nesting Entity which has an internal structure made of Aggregate Entity Members.">
+  
+  <area  href="36166b8c6157b6b4.htm" shape="rect" coords="1, 1, 1226, 572"   target="_top"  title="The purpose of the&#160; Aggregate Syntax is to provide mechanisms to support modular management of complex Building Blocks.">
+  
+</map>
+<img  src="../images/36166b8c6157b6b4_36166b976157b794_i.png" alt="../images/36166b8c6157b6b4_36166b976157b794_i.png" usemap="#36166B976157B794" height="571" width="1225" border=0>
+
+</div>
+<div class="Relationship" id="Relationship2">
+<div id="klmm" style="width: 100vw; height: 100vh;" ></div>
+<!-- <script src="../standard/assets/js/keylines_domain.js"></script> -->
+<script >
+const data = {
+ type: 'LinkChart',
+  items: [
+  //nodes
+    {type: 'node', id:'36166B8C6157B6B4', t:"Aggregate Syntax", sh:'box', d:"The purpose of the Aggregate Syntax is to provide mechanisms to support modular management of complex Building Blocks."},
+    {type: 'node', id:'C120C19A5EF11759', t:"Connection", parentId:'514E5F6C620F1EC6', sh:'circle', d:""},
+    {type: 'node', id:'AE26FA7F5ACD535B', t:"Encapsulated Aggregate", parentId:'514E5F6C620F1EC6', sh:'circle', d:"An Encapsulated Aggregate is a Aggregate Block where its internal structure and state changes are hidden from the outside world by means of a formal boundary."},
+    {type: 'node', id:'B13D31DE5EDF42D8', t:"Aggregate Entity", parentId:'36166B8C6157B6B4', sh:'circle', d:"An Aggregate Entity is a Nesting Entity which has an internal structure made of Aggregate Entity Members."},
+    {type: 'node', id:'AE26F9C25ACD52D4', t:"Elementary Graph", sh:'box', d:"The Elementary Graph domain defines the top level constructs employed to formalize entities (Entity) and their Relationships. This comprises the formalization of elementary entities (Entity), their elementary relationship (Nested Entity, Referenced Element) and their classification (Class)."},
+    {type: 'node', id:'AE26F8B05ACD5185', t:"Entity", parentId:'AE26F9C25ACD52D4', sh:'circle', d:"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology."},
+    {type: 'node', id:'14431B565AD65914', t:"Encapsulated Aggregate (Type)", parentId:'514E62CE620F22C1', sh:'circle', d:"An Encapsulated Aggregate (Type) is a class of Encapsulated Aggregate (Individual)."},
+    {type: 'node', id:'514E623C620F2198', t:"Aggregate Block (Individual)", parentId:'514E5F6C620F1EC6', sh:'circle', d:"An Aggregate Block (Individual) is an Individual which has an internal structure."},
+    {type: 'node', id:'348F55F661962ECC', t:"Individual", parentId:'AE26F9C25ACD52D4', sh:'circle', d:"Individuals are Entitys  which represent objects of the real world that exist over space and time. Examples are, the Oackland digital hospital in 2016, the registration process used at the Oackland digital hospital in 2021 or SAP S/4HANA deployed in Argentina since 2020. "},
+    {type: 'node', id:'514E5F6C620F1EC6', t:"Aggregate Block", parentId:'B13D31DE5EDF42D8', sh:'circle', d:"An Aggregate Block is a Building Block which has an internal structure."},
+    {type: 'node', id:'36166C3A6157BB9B', t:"Containers & Blocks", sh:'box', d:"The Containers & Blocks domain defines the core elements of Building Block and Container which provide the basic for modular model management."},
+    {type: 'node', id:'CCB819645A564F12', t:"Building Block", parentId:'36166C3A6157BB9B', sh:'circle', d:"A Building Block is an autonomous, resusable Entity that contributes to the makeup of other Building Blocks."},
+    {type: 'node', id:'514E62CE620F22C1', t:"Aggregate Block (Type)", parentId:'514E5F6C620F1EC6', sh:'circle', d:"An Aggregate Block (Type) is a class of  Aggregate Blocks."},
+    {type: 'node', id:'915283D05ED54CA1', t:"Class of Connection", parentId:'C120C19A5EF11759', sh:'circle', d:"Top level pattern of Relationship Type."},
+    {type: 'node', id:'A4A5B31E55585B0A', t:"Encapsulated Aggregate (Individual)", parentId:'AE26FA7F5ACD535B', sh:'circle', d:"An Encapsulated Aggregate (Individual) is a Aggregate Block (Individual) which has an internal structure and a boundary."},
+    {type: 'node', id:'D2B05F16651482E7', t:"Simple Block", parentId:'36166B8C6157B6B4', sh:'circle', d:"A Simple Block is a Building Block which does not have an internal structure."},
+  //edges
+    { type: 'link', id:'AE26FA7F5ACD535B-278C6EDF648F1D81', id1:'AE26FA7F5ACD535B', id2:'AE26FA7F5ACD535B', t:"Contextual Encapsulated Aggregate"},
+    { type: 'link', id:'B13D31DE5EDF42D8-B13D32315EDF4481', id1:'B13D31DE5EDF42D8', id2:'AE26F8B05ACD5185', t:"Contextual Entity"},
+    { type: 'link', id:'14431B565AD65914-27862DDA5B251FF5', id1:'14431B565AD65914', id2:'14431B565AD65914', t:"Specialized Aggregate (Type)"},
+    { type: 'link', id:'14431B565AD65914-5C2D67FA622B2391', id1:'14431B565AD65914', id2:'14431B565AD65914', t:"Contextual Encapsulated Aggregate (Type)"},
+    { type: 'link', id:'514E623C620F2198-514E6334620F23AE', id1:'514E623C620F2198', id2:'514E62CE620F22C1', t:"Aggregate Block (Type)"},
+    { type: 'link', id:'514E623C620F2198-5B7A08E761F55DB3', id1:'514E623C620F2198', id2:'514E623C620F2198', t:"Referenced Individual Block"},
+    { type: 'link', id:'514E623C620F2198-278C7CA2648D133E', id1:'514E623C620F2198', id2:'348F55F661962ECC', t:"Contextual Object (Individual)"},
+    { type: 'link', id:'514E5F6C620F1EC6-4D9461C65EC9ECA3', id1:'514E5F6C620F1EC6', id2:'CCB819645A564F12', t:"Contextual Object"},
+    { type: 'link', id:'514E62CE620F22C1-7DB003C061F98BE9', id1:'514E62CE620F22C1', id2:'514E62CE620F22C1', t:"Referenced Block Class"},
+    { type: 'link', id:'514E62CE620F22C1-FA4FFCDE5EC86654', id1:'514E62CE620F22C1', id2:'514E62CE620F22C1', t:"Contextual Object (Type)"},
+    { type: 'link', id:'A4A5B31E55585B0A-A6DB698B600913FA', id1:'A4A5B31E55585B0A', id2:'14431B565AD65914', t:"Encapsulated Aggregate (Type)"},
+    { type: 'link', id:'A4A5B31E55585B0A-4D9462AF5EC9F01F', id1:'A4A5B31E55585B0A', id2:'A4A5B31E55585B0A', t:"Individual Component"}
+  ]
+}
+</script>
+<script src="../standard/assets/js/keylines_domain.js" type="module"></script>
+</div>
+</section>
+<a class="object-section-anchor" id="des"></a>
+<section class="object-section">
+<h4>CONCEPT DESCRIPTIONS</h4> 
+<hr class="sectionbreak" />
+<h5>Abstract Concepts</h5>
+<table class="table  table-set-col-width">
+<thead >
+<tr><th>Concept</th><th>Description</th><th>HOPEX Metaclass</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="514e5f6c620f1ec6.htm" target="_top">Aggregate Block</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Aggregate Block</b> is a <a href="ccb819645a564f12.htm" target="_top"><b><u>Building Block</u></b></a> which has an internal structure.</div><div align="left" style="min-height: 12pt; ">This structure is made of <a href="2c8b698f6227a6c6.htm" target="_top"><b><u>Aggregate Member</u></b></a>s which are either simple <a href="278c3f9f648708b5.htm" target="_top"><b><u>Internal Object</u></b></a>s or <a href="4d9461c65ec9eca3.htm" target="_top"><b><u>Contextual Object</u></b></a>s that project an external <a href="ccb819645a564f12.htm" target="_top"><b><u>Building Block</u></b></a> into the in the&#160;<b> Aggregate Block</b> structure.</div><i><ul>References:<li><a href="https://www.google.com/search?q=site%3Ahttps%3A%2F%2Fwww.dddcommunity.org%2Fresources%2Fddd_terms%2F+Aggregate"><img src="../standard/extr.ico.gif">&nbsp;DDD - Aggregate</a></li> <li><a href="https://martinfowler.com/bliki/DDD_Aggregate.html"><img src="../standard/extr_htm.ico.gif">&nbsp;Martin Fowler - Aggregate</a></li> <li><a href="../../../www.omg.org/spec/UML/2.5.1/formal-17-12-05.pdf#page=225"><img src="../standard/extr.ico.gif">&nbsp;OMG - UML - StructuredClassifier</a></li></ul></i>        </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="514e623c620f2198.htm" target="_top">Aggregate Block (Individual)</a></td>
+<td class="description-text">An&#160;<b> Aggregate Block (Individual)</b> is an <a href="348f55f661962ecc.htm" target="_top"><b><u>Individual</u></b></a> which has an internal structure.<i><ul>References:<li><a href="https://www.google.com/search?q=site%3Ahttps%3A%2F%2Fwww.dddcommunity.org%2Fresources%2Fddd_terms%2F+Aggregate"><img src="../standard/extr.ico.gif">&nbsp;DDD - Aggregate</a></li> <li><a href="https://martinfowler.com/bliki/DDD_Aggregate.html"><img src="../standard/extr_htm.ico.gif">&nbsp;Martin Fowler - Aggregate</a></li> <li><a href="../../../www.omg.org/spec/UML/2.5.1/formal-17-12-05.pdf#page=225"><img src="../standard/extr.ico.gif">&nbsp;OMG - UML - StructuredClassifier</a></li></ul></i>        </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="514E62CE620F22C1.htm" target="_top">Aggregate Block (Type)</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Aggregate Block (Type)</b> is a class of&#160; <a href="514e5f6c620f1ec6.htm" target="_top"><b><u>Aggregate Block</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">It is the Powertype of <a href="514e623c620f2198.htm" target="_top"><b><u>Aggregate Block (Individual)</u></b></a>.</div><i><ul>References:<li><a href="https://www.google.com/search?q=site%3Ahttps%3A%2F%2Fwww.dddcommunity.org%2Fresources%2Fddd_terms%2F+Aggregate"><img src="../standard/extr.ico.gif">&nbsp;DDD - Aggregate</a></li> <li><a href="https://martinfowler.com/bliki/DDD_Aggregate.html"><img src="../standard/extr_htm.ico.gif">&nbsp;Martin Fowler - Aggregate</a></li> <li><a href="../../../www.omg.org/spec/UML/2.5.1/formal-17-12-05.pdf#page=225"><img src="../standard/extr.ico.gif">&nbsp;OMG - UML - StructuredClassifier</a></li></ul></i>        </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="b13d31de5edf42d8.htm" target="_top">Aggregate Entity</a></td>
+<td class="description-text"><div align="left" style="min-height: 11pt; ">An&#160;<b> Aggregate Entity</b> is a <a href="ae26f8d65acd51ab.htm" target="_top"><b><u>Nesting Entity</u></b></a> which has an internal structure made of <a href="f277cfce601bd9af.htm" target="_top"><b><u>Aggregate Entity Member</u></b></a>s.</div><div align="left" style="min-height: 11pt; "></div><div align="left" style="min-height: 11pt; ">1. Internal characteristics called <a href="278c30d764870408.htm" target="_top"><b><u>Internal Entity</u></b></a>s.</div><div align="left" style="min-height: 11pt; ">2. Contextualization of external <a href="ae26f8b05acd5185.htm" target="_top"><b><u>Entity</u></b></a>s called <a href="b13d32315edf4481.htm" target="_top"><b><u>Contextual Entity</u></b></a>s.</div><i><ul>References:<li><a href="https://martinfowler.com/bliki/DDD_Aggregate.html"><img src="../standard/extr_htm.ico.gif">&nbsp;Martin Fowler - Aggregate</a></li> <li><a href="../../../www.omg.org/spec/UML/2.5.1/formal-17-12-05.pdf#page=225"><img src="../standard/extr.ico.gif">&nbsp;OMG - UML - StructuredClassifier</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="4d41538a580e1a79.htm" target="_top">Group of Object Feature</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="ccb819645a564f12.htm" target="_top">Building Block</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Building Block</b> is an autonomous, resusable <a href="ae26f8b05acd5185.htm" target="_top"><b><u>Entity</u></b></a> that contributes to the makeup of other&#160;<b> Building Block</b>s.<br /><b> Building Block</b>s have an independent existence. Because of their independent existence, they must be owned by an independent artifact which sole purpose is model management: <a href="4089423855572F23.htm" target="_top"><b><u>Container</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">Examples:<br />- <a href="598272e954c622f4.htm" target="_top"><b><u>Functionality</u></b></a>(ies), <a href="57dfc52d550932ef.htm" target="_top"><b><u>Business Process</u></b></a>(es), <a href="325c32fc5eb02d02.htm" target="_top"><b><u>Data Entity</u></b></a>(ies), <a href="AFFEE0765F6086D4.htm" target="_top"><b><u>Tag</u></b></a>s, ARE&#160;<b> Building Block</b>s. </div><div align="left" style="min-height: 12pt; ">- <a href="0f9213fd5ebc1b87.htm" target="_top"><b><u>Operation</u></b></a>s of a process or attributes of a data entity ARE NOT building blocks. They are elements on an internal structure (see <a href="514e5f6c620f1ec6.htm" target="_top"><b><u>Aggregate Block</u></b></a>).</div><i><ul>References:<li><a href="https://www.merriam-webster.com/dictionary/building%20block"><img src="../standard/extr.ico.gif">&nbsp;Merriam Webster - Building Block</a></li> <li><a href="../../../www.omg.org/spec/KerML/1.0/Beta1/ptc-23-06-01.pdf#page=276"><img src="../standard/extr.ico.gif">&nbsp;OMG - KerML - Anything</a></li> <li><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_26"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Definition - Building Block</a></li> <li><a href="https://pubs.opengroup.org/togaf-standard/architecture-content/chap05.html"><img src="../standard/extr_htm.ico.gif">&nbsp;OpenGroup - TOGAF - Guide - Building Blocks</a></li> <li><a href="http://wordnetweb.princeton.edu/perl/webwn?o2=&amp;o0=1&amp;o8=1&amp;o1=1&amp;o7=&amp;o5=&amp;o9=&amp;o6=&amp;o3=&amp;o4=&amp;s=building+block&amp;i=0&amp;h=00#c"><img src="../standard/extr.ico.gif">&nbsp;WordNet - Building Block</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="CBE4CF9547D60128.htm" target="_top">Building Block</a></td>
+</tr>
+<tr>
+<td><img src="../standard/relationship-concepttype.ico.gif"/>&nbsp;
+<a  href="915283d05ed54ca1.htm" target="_top">Class of Connection</a></td>
+<td class="description-text">Top level pattern of Relationship Type.       </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="c120c19a5ef11759.htm" target="_top">Connection</a></td>
+<td class="description-text">        </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="ae26fa7f5acd535b.htm" target="_top">Encapsulated Aggregate</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Encapsulated Aggregate</b> is a <a href="514e5f6c620f1ec6.htm" target="_top"><b><u>Aggregate Block</u></b></a> where its internal structure and state changes are hidden from the outside world by means of a formal boundary.</div><div align="left" style="min-height: 12pt; ">The only way to access to an&#160;<b> Encapsulated Aggregate</b> is through this formal boundary, which ensures the aggregate&#39;s internal consistency.</div><div align="left" style="min-height: 12pt; ">Within an&#160;<b> Encapsulated Aggregate</b> structure, <a href="4d9461c65ec9eca3.htm" target="_top"><b><u>Contextual Object</u></b></a>s can be linked together through&#160;<b> Block Connection</b>s.<br />Examples:</div><div align="left" style="min-height: 12pt; ">- Processes, their sequenced operations and their boundary events.</div><div align="left" style="min-height: 12pt; ">- Applications, their connected IT-services and their APIs boundaries (Service Points and Request Points).</div><i><ul>References:<li><a href="https://www.omg.org/members/cgi-bin/doc?ad/21-08-02.pdf#page=130"><img src="../standard/extr.ico.gif">&nbsp;SysML2 - Structure Concept</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="3c294de45820813c.htm" target="_top">Structured Building Block</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="a4a5b31e55585b0a.htm" target="_top">Encapsulated Aggregate (Individual)</a></td>
+<td class="description-text">An&#160;<b> Encapsulated Aggregate (Individual)</b> is a <a href="514e623c620f2198.htm" target="_top"><b><u>Aggregate Block (Individual)</u></b></a> which has an internal structure and a boundary.<i><ul>References:<li><a href="https://15926.blog/topics/data-model/index.htm#ArrangedIndividual"><img src="../standard/extr.ico.gif">&nbsp;ISO 15926 - ArrangedIndividual</a></li></ul></i>        </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="14431b565ad65914.htm" target="_top">Encapsulated Aggregate (Type)</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Encapsulated Aggregate (Type)</b> is a class of <a href="a4a5b31e55585b0a.htm" target="_top"><b><u>Encapsulated Aggregate (Individual)</u></b></a>.</div><div align="left" style="min-height: 12pt; ">Examples:</div><div align="left" style="min-height: 12pt; ">- Cars</div><div align="left" style="min-height: 12pt; ">- Boats</div><div align="left" style="min-height: 12pt; ">- Mountains</div><div align="left" style="min-height: 12pt; ">- Capabilities</div><div align="left" style="min-height: 12pt; ">- Organisations</div>       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="0a2d69224b2a0440.htm" target="_top">Class of Building Block</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="ae26f8b05acd5185.htm" target="_top">Entity</a></td>
+<td class="description-text">An&#160;<b> Entity</b> is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.<i><ul>References:<li><a href="https://15926.blog/topics/data-model/index.htm#Thing"><img src="../standard/extr.ico.gif">&nbsp;ISO 15926 - Thing</a></li> <li><a href="../../../www.omg.org/spec/KerML/1.0/Beta1/ptc-23-06-01.pdf#page=133"><img src="../standard/extr.ico.gif">&nbsp;OMG - KerML - Element</a></li> <li><a href="../../../www.omg.org/spec/SBVR/1.5/formal-19-10-02.pdf#page=34"><img src="../standard/extr.ico.gif">&nbsp;OMG - SBVR - Thing</a></li> <li><a href="../../../www.omg.org/spec/UML/2.5.1/formal-17-12-05.pdf#page=85"><img src="../standard/extr.ico.gif">&nbsp;OMG - UML - Element</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="54685b4d580a2ca2.htm" target="_top">Repository Content Object</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="d2b05f16651482e7.htm" target="_top">Simple Block</a></td>
+<td class="description-text">A&#160;<b> Simple Block</b> is a <a href="ccb819645a564f12.htm" target="_top"><b><u>Building Block</u></b></a> which does not have an internal structure.       </td>
+<td></td>
+</tr>  
+</tbody>
+</table>
+<section>
+
+</div>
+<button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button>
+<script>window.onscroll = function() {scrollFunction()};$(document).on('click', 'a[href^="#"]', function (event) {event.preventDefault();$('html, body').animate({scrollTop: $($.attr(this, 'href')).offset().top}, 500);});function showDiagOnClick(elem){ var x = document.getElementsByClassName('Relationship');var e = elem.getAttribute("value"); for (var i=0; i < x.length ;i++){x[i].style.display="none"; if (x[i].id == e){x[i].style.display="block";x[i].style.textAlign="left";}}}
+</script></html>

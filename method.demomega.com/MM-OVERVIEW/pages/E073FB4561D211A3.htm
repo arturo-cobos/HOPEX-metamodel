@@ -1,0 +1,447 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="keywords" content="">
+<meta name="description" content="">    
+<LINK REL="icon" HREF="../standard/assets/img/favicon.ico">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/bootstrap.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nav.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/eaportal.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/font-awesome.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/animate.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/datatables.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/grid.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nae.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/custom.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/chosen.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/prism.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery.dataTables.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jsTreeStyle.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.theme.css" media="screen" />
+<script type="text/javascript" src="../standard/assets/js/jquery-3.2.1.min.js" ></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-ui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.columnFilter.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3-force.v2.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.gui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.search.js"></script> 
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.util.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-2.1.1.min.js"></script>
+<script src="../standard/assets/js/ws_zoomtemplate_firefox.js"></script>
+<script src="../standard/assets/js/bootstrap.min.js"></script>
+<script src="../standard/assets/js/datatables.min.js"></script>
+<script src="../standard/assets/js/moment.min.js"></script>
+<script src="../standard/assets/js/datetime-moment.js"></script>
+<script src="../standard/assets/js/chartjs.min.js"></script>
+<script src="../standard/assets/js/searchindexcontent.json"></script>
+<script src="../standard/assets/js/anls.js"></script>
+<script src="../../../cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script src="../standard/assets/js/gauge.js"></script> 
+<script src="../standard/assets/js/domesticApi.js"></script> 
+<script src="../standard/assets/js/piecelabel.js"></script>
+<script src="../standard/assets/js/popper.min.js"></script>
+<script src="../standard/assets/js/custom.js"></script>
+<script src="../standard/assets/js/chosen.jquery.js"></script>
+<script src="../standard/assets/js/prism.js"></script>
+<script src="../standard/assets/js/init-chosen.js"></script>
+<script src="../standard/assets/js/chart-data-flow.js"></script>
+<script src="../standard/assets/js/chart-data-gantt.js"></script>
+<script type="module" src="../standard/assets/js/Fuse.esm.min.js"></script>
+<script type="module">
+import Fuse from '../standard/assets/js/Fuse.esm.min.js';
+$(document).ready(function () {
+console.log('getjson');
+window.$.getJSON('../standard/assets/js/searchindexcontent.json', function (response) {
+console.log('getjson ok');
+var isIndex = "";
+var url = window.location.pathname;
+var filename = url.substring(url.lastIndexOf('/')+1);
+if( filename.includes("index") || filename === "" ){
+isIndex = "pages/";
+} else {
+isIndex = "";
+}
+const fuse = new Fuse(response, {
+keys: ['title','text'],
+shouldSort: true,
+includeMatches : true,
+findAllMatches : true
+});
+$('#search-fuse').on('keyup', function () {
+let result = fuse.search($(this).val());
+console.log(result);
+let resultdiv = $('div.searchresults-fuse');
+if (result.length === 0) {
+resultdiv.hide();
+} else {
+resultdiv.empty();
+resultdiv.append('<table class="table-search" width="100%" cellspacing="0"><thead ><tr><th>Name</th><th>Object Type</th><th>Modification date</th></tr></thead><tbody>');
+
+for (let obj in result.slice(0,10)) {
+
+let searchObj = '<tr><td><a href="./'+ isIndex + result[obj].item.url + '">' + result[obj].item.title +'</a></td><td>' + result[obj].item.ObjectType + '</td><td>' + result[obj].item.ModificationDate + '</td></tr>' ;
+
+
+resultdiv.find('tbody').append(searchObj);
+}
+resultdiv.append('</tbody></table>');
+resultdiv.show();
+}
+});
+});
+});
+</script>
+<title>HOPEX Metamodel Overview (Beta Version)</title>
+</head>
+<nav class="navbar navbar-expand-md navbar-dark  navbar-mega"><!-- Brand --><!--<a class="navbar-brand" href="#">Navbar</a>--><a class="" href="../index.htm"><img class="logo-mega" src="../standard/assets/img/logo.png"  alt="">(Beta Version)</a><!-- Toggler/collapsibe Button --><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><!-- Navbar links -->
+<div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsibleNavbar"><div class="col-sm-auto col-md-auto col-lg-5"></div>
+<div class="col-sm-auto">
+<ul class="navbar-nav">      
+<li><a class="dropdown-item" href="ad30ce115ebf7e90.htm">EA Grid</a></li> 
+<li><a class="dropdown-item" href="fdd5018459bc3c6a.htm">EA Domains</a></li> 
+<li><a class="dropdown-item" href="07e731775ecc93f4.htm">Solutions</a></li> 
+<li><a class="dropdown-item" href="c5dfc62c54810c2c.htm">Glossary</a></li> 
+<li class="nav-item dropdown mx-1">
+<a class="nav-link" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</a>
+<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<li><a class="dropdown-item" href="5446555d5f88c32e.htm">Outcome Driven Metamodel</a></li> 
+<li><a class="dropdown-item" href="e1ccfc295f8f7b90.htm">Playbooks</a></li> 
+<li><a class="dropdown-item" href="42bc992862d20ea7.htm">Framework Mappings</a></li> 
+<li><a class="dropdown-item" href="e93aebb35fa20550.htm">Metamodel Patterns</a></li> 
+<li><a class="dropdown-item" href="d599fe87602b2b85.htm">References</a></li> 
+<li><a class="dropdown-item" href="333f3a7f5dde11de.htm">Legend</a></li> 
+</ul>									                                            
+</li>
+</ul>
+</div>
+<div class="col-sm-auto"><a class="nav-link search" href="#" onclick=showHideSearch("search-section-fuse")><i class="fa fa-search mr-1 form-control-feedback"></i></a></div>
+</div>
+</nav>
+<div id="search-section-fuse" style="display:none">>
+<div class="search_header"><span class="closesearch">&times;</span>
+<nav class="breadcrumb">
+<a class="breadcrumb-item" href="../index.htm">Home </a> 
+<span class="breadcrumb-item active">Search</span> 
+</nav>
+</div>
+<input id="search-fuse" placeholder="Search..."  name="q" onfocus="this.value=''" type="search">
+<div class="searchresults-fuse"></div>
+</div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>function showHideSearch(elementId) {var contentDivs = document.getElementsByClassName('content');var footerDivs = document.getElementsByClassName('footer'); var containerDivs = document.getElementsByClassName('container');var containerfluidDivs = document.getElementsByClassName('container-fluid');var x = document.getElementById(elementId);if (x.style.display === "none") {x.style.display = "block";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "none";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "none";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "none";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "none";}} else {x.style.display = "none";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "block";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "block";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "block";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "block";}}} ;<!-- END WIDGET DRILL DOWN --></script><script>$(document).ready(function() {$(window).scroll(function() {if ($(this).scrollTop() > 100) {$('.scrollup').fadeIn();} else {$('.scrollup').fadeOut();}});$('.scrollup').click(function() {$("html, body").animate({scrollTop: 0}, 600);return false;});});</script><script>
+var modal = document.getElementById("search-section-fuse");
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = "none";
+}
+}
+$(document).on('click', '.closesearch', function() {
+showHideSearch("search-section-fuse");
+
+
+
+
+
+});</script><div class="container-fluid col-lg-11"><nav class="breadcrumb"><a class="breadcrumb-item" href="../index.htm">Home</a> <span class="breadcrumb-item active">
+<a  href="02af0a215a1823ee.htm" target="_top">Dictionary of HOPEX patterns</a>&nbsp;/&nbsp;Resolution Pattern</span></nav></div>
+<div class="container-fluid col-lg-11 content">
+<section class="fadeInDown animated"><a href="#idt" class="btn btn-d">DEFINITION</a> <a href="#grf" class="btn btn-d">CONCEPT GRAPH</a> <a href="#des" class="btn btn-d">CONCEPT DESCRIPTIONS</a> 
+</section>
+<a class="object-section-anchor" id="idt"></a>
+<section class="object-section">
+<h4>CONCEPT DOMAIN - Resolution Pattern</h4><hr class="sectionbreak" /><table class="table table-vertical-headers table-set-col-width"><tr><th>Description</th><td class="description-text"><i>Pattern Domain</i><br/>The&#160;<b> Resolution Pattern</b> domain defines constructs used by stakeholders to assess and qualify <a href="07ca0f015dd84efa.htm" target="_top"><b><u>Functional Asset</u></b></a>s.<div></div></td></tr><tr><th>Dictionary</th><td><img src="../standard/dicsubjectarea.ico.gif"/>&nbsp;
+<a  href="02af0a215a1823ee.htm" target="_top">Dictionary of HOPEX patterns</a></td></tr><tr><th>Parent Domain</th><td><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="83bb9d30619233b2.htm" target="_top">Governance Pattern</a>&nbsp;</td></tr>
+<tr><th>Domain dependencies</th><td><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="02af0a4b5a182417.htm" target="_top">Operating Semantic</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="02F70FDC600F4179.htm" target="_top">Policy Pattern</a>&nbsp;</td></tr></table></section>
+<a class="object-section-anchor" id="grf"></a>
+<section class="object-section">
+<h4>DOMAIN CONCEPT GRAPH</h4>
+<hr class="sectionbreak" />
+<a href="#" class="btn btn-d" value="Relationship1" onclick="showDiagOnClick(this)">Diagram</a>
+<a href="#" class="btn btn-d" value="Relationship2" onclick="showDiagOnClick(this)">Graph</a>
+<div class="Relationship" id="Relationship1">
+
+<map  name="E073FBFC61D2147E">
+  <area  href=#OBMK7327A33D64364B90 shape="polygon" coords="99, 477, 99, 384, 110, 384, 110, 477"    title="-">
+  
+  <area  href=#OBMK7327A29F64364B2E shape="polygon" coords="154, 355, 205, 355, 205, 413, 378, 413, 378, 424, 194, 424, 194, 365, 154, 365"    title="-">
+  
+  <area  href=#OBMK732799E06436446C shape="polygon" coords="100, 335, 100, 270, 111, 270, 110, 335"    title="-">
+  
+  <area  href=D7F9FCC95F720EE0.htm#OBMKD7F9FCC95F720EE0 shape="polygon" coords="83, 349, 83, 338, 127, 338, 127, 349, 83, 349"   target="_top"  title="A&#160; Decision is time bound Resolution, agreed upon by Stakeholders, to state what shall or shall not be done regarding a specific Functional Asset.">
+  
+  <area  href="732799D364364423.htm" shape="rect" coords="56, 336, 154, 385"   target="_top"  title="A&#160; Policy Decision is a Decision that defines the applicability status of a policy to a set of Functional Assets.">
+  
+  <area  href=514E62CE620F22C1.htm#OBMK514E62CE620F22C1 shape="polygon" coords="429, 407, 429, 396, 530, 396, 530, 407, 429, 407"   target="_top"  title="An&#160; Aggregate Block (Type) is a class of&#160; Aggregate Blocks.">
+  
+  <area  href=A4A5B3F855585CE1.htm#OBMKA4A5B3F855585CE1 shape="polygon" coords="425, 418, 425, 407, 534, 407, 534, 418, 425, 418"   target="_top"  title="An&#160; Architecture Block (Type) is a type of Architecture Block which is used in the description of the enterprise, such as Processes, Org-Units, Applications.">
+  
+  <area  href=c229c44e5d0c649f.htm#OBMKC229C44E5D0C649F shape="polygon" coords="428, 450, 428, 437, 531, 437, 531, 450, 428, 450"   target="_top"  title="Blocks used to describe the functional architecture of an ~BR6K086dIfvA[Enterprise].">
+  
+  <area  href="07ca0f015dd84efa.htm" shape="rect" coords="377, 394, 581, 452"   target="_top"  title="&#160;Functional Assets encompasse Architecture Blocks used to describe how an enterprise function. This includes the purposes of an enterprise (Capability) and the way the enterprise operates to fulfill these purposes (Agents and their&#160; Behaviors).">
+  
+  <area  href=#OBMK9BB4A149626A91BE shape="polygon" coords="361, 69, 350, 69, 350, 83, 260, 83, 260, 69, 361, 69"    title="-">
+  
+  <area  href=#OBMK9BB4A40B626A98A0 shape="polygon" coords="199, 65, 387, 65, 387, 76, 199, 76"    title="-">
+  
+  <area  href=514E62CE620F22C1.htm#OBMK514E62CE620F22C1 shape="polygon" coords="402, 52, 402, 41, 503, 41, 503, 52, 402, 52"   target="_top"  title="An&#160; Aggregate Block (Type) is a class of&#160; Aggregate Blocks.">
+  
+  <area  href=A4A5B3F855585CE1.htm#OBMKA4A5B3F855585CE1 shape="polygon" coords="398, 63, 398, 52, 507, 52, 507, 63, 398, 63"   target="_top"  title="An&#160; Architecture Block (Type) is a type of Architecture Block which is used in the description of the enterprise, such as Processes, Org-Units, Applications.">
+  
+  <area  href=c229c44e5d0c649f.htm#OBMKC229C44E5D0C649F shape="polygon" coords="401, 95, 401, 81, 504, 81, 504, 95, 401, 95"   target="_top"  title="Blocks used to describe the functional architecture of an ~BR6K086dIfvA[Enterprise].">
+  
+  <area  href="07ca0f015dd84efa.htm" shape="rect" coords="387, 38, 519, 103"   target="_top"  title="&#160;Functional Assets encompasse Architecture Blocks used to describe how an enterprise function. This includes the purposes of an enterprise (Capability) and the way the enterprise operates to fulfill these purposes (Agents and their&#160; Behaviors).">
+  
+  <area  href=#OBMK9BB4A40B626A98A0 shape="polygon" coords="351, 217, 345, 217, 345, 231, 252, 231, 252, 217, 351, 217"    title="-">
+  
+  <area  href=#OBMK9BB4A2DB626A9622 shape="polygon" coords="168, 212, 387, 212, 387, 223, 168, 223"    title="Functional Asset that is the subject of a Decision.">
+  
+  <area  href=514E62CE620F22C1.htm#OBMK514E62CE620F22C1 shape="polygon" coords="402, 201, 402, 190, 503, 190, 503, 201, 402, 201"   target="_top"  title="An&#160; Aggregate Block (Type) is a class of&#160; Aggregate Blocks.">
+  
+  <area  href=A4A5B3F855585CE1.htm#OBMKA4A5B3F855585CE1 shape="polygon" coords="398, 212, 398, 201, 507, 201, 507, 212, 398, 212"   target="_top"  title="An&#160; Architecture Block (Type) is a type of Architecture Block which is used in the description of the enterprise, such as Processes, Org-Units, Applications.">
+  
+  <area  href=c229c44e5d0c649f.htm#OBMKC229C44E5D0C649F shape="polygon" coords="401, 244, 401, 231, 504, 231, 504, 244, 401, 244"   target="_top"  title="Blocks used to describe the functional architecture of an ~BR6K086dIfvA[Enterprise].">
+  
+  <area  href="07ca0f015dd84efa.htm" shape="rect" coords="387, 188, 519, 252"   target="_top"  title="&#160;Functional Assets encompasse Architecture Blocks used to describe how an enterprise function. This includes the purposes of an enterprise (Capability) and the way the enterprise operates to fulfill these purposes (Agents and their&#160; Behaviors).">
+  
+  <area  href=#OBMK9BB4A2DB626A9622 shape="polygon" coords="341, 348, 332, 348, 332, 362, 242, 362, 242, 348, 341, 348"    title="Functional Asset that is the subject of a Decision.">
+  
+  <area  href=#OBMK34BD447F61F105B8 shape="polygon" coords="154, 355, 379, 357, 378, 367, 154, 365"    title="-">
+  
+  <area  href=#OBMK34BD441D61F10524 shape="polygon" coords="167, 497, 270, 497, 270, 507, 167, 507"    title="-">
+  
+  <area  href="34bd440b61f104cb.htm" shape="rect" coords="270, 481, 368, 527"   target="_top"  title="-">
+  
+  <area  href=#OBMKE073089661D322B1 shape="polygon" coords="100, 477, 106, 340, 116, 340, 110, 477"    title="-">
+  
+  <area  href=CA353E6D5FC5E8AF.htm#OBMKCA353E6D5FC5E8AF shape="polygon" coords="436, 346, 436, 335, 526, 335, 526, 346, 436, 346"   target="_top"  title="A&#160; Model Building Block is a Building Block used to describe and manage the enterprise. It comprises:">
+  
+  <area  href=c2b8cafd5d1d208f.htm#OBMKC2B8CAFD5D1D208F shape="polygon" coords="451, 378, 451, 365, 511, 365, 511, 378, 451, 378"   target="_top"  title="-">
+  
+  <area  href="07ca0dd75dd84e92.htm" shape="rect" coords="378, 332, 584, 380"   target="_top"  title="A&#160; Policy Asset is any topic related to policy definitions.It ranges from the different kidns of Directives (Business Policy, Architecture principle, Business Rule, etc.),&#160; to classification of policies (Policy Category) up to an entire set of policies (Policy Dictionary).">
+  
+  <area  href=732799D364364423.htm#OBMK732799D364364423 shape="polygon" coords="69, 491, 69, 480, 139, 480, 139, 491, 69, 491"   target="_top"  title="A&#160; Policy Decision is a Decision that defines the applicability status of a policy to a set of Functional Assets.">
+  
+  <area  href=e073f9c161d2104a.htm#OBMKE073F9C161D2104A shape="polygon" coords="79, 502, 79, 491, 130, 491, 130, 502, 79, 502"   target="_top"  title="A&#160; Resolution is time bound Appraisal, agreed upon by Stakeholders to guide what can or cannot be done regarding a specific Functional Asset.">
+  
+  <area  href="e073084561d32165.htm" shape="rect" coords="41, 477, 168, 531"   target="_top"  title="A&#160; Waiver is a temporary Resolution, agreed upon by Stakeholders, that suspends the enforcement of a Policy Decision for a specified duration.">
+  
+  <area  href=83bb9ea661923a8d.htm#OBMK83BB9EA661923A8D shape="polygon" coords="626, 144, 617, 144, 617, 158, 546, 158, 546, 144, 626, 144"   target="_top"  title="-">
+  
+  <area  href=e07307a761d320af.htm shape="polygon" coords="518, 135, 678, 135, 679, 146, 519, 146"   target="_top"  title="-">
+  
+  <area  href=83bb9dfc61923822.htm#OBMK83BB9DFC61923822 shape="polygon" coords="704, 128, 704, 116, 775, 116, 775, 128, 704, 128"   target="_top"  title="An&#160; Appraisal Type refers to a kind of Appraisal method and technique used to evaluate the worth, effectiveness, compliance, or quality of enterprise Functional Assets.">
+  
+  <area  href="e073014961d31b47.htm" shape="rect" coords="679, 114, 800, 167"   target="_top"  title="A&#160; Resolution Type is an Appraisal Type that refers to a kind of Resolution used to guide what can or cannot be done regarding a specific Functional Asset.">
+  
+  <area  href=83bb9e81619239a7.htm#OBMK83BB9E81619239A7 shape="polygon" coords="414, 130, 414, 118, 492, 118, 492, 130, 414, 130"   target="_top"  title="An&#160; Appraisal Option is a possible value of an Appraisal Type that will be selected during an appraisal activity.">
+  
+  <area  href="e073feb361d219b7.htm" shape="rect" coords="387, 116, 519, 165"   target="_top"  title="A&#160; Resolution Option is a possible value of a Resolution Type, that will be selected during a resolution process.">
+  
+  <area  href=#OBMK5754805751545CA3 shape="polygon" coords="241, 154, 241, 140, 326, 140, 326, 154, 241, 154"    title="-">
+  
+  <area  href=#OBMKE073FD1461D21889 shape="polygon" coords="203, 143, 388, 143, 388, 153, 203, 153"    title="-">
+  
+  <area  href=#OBMKE073FC8661D2179F shape="polygon" coords="98, 551, 106, 340, 116, 340, 108, 551"    title="-">
+  
+  <area  href=e073f9c161d2104a.htm#OBMKE073F9C161D2104A shape="polygon" coords="77, 565, 77, 554, 128, 554, 128, 565, 77, 565"   target="_top"  title="A&#160; Resolution is time bound Appraisal, agreed upon by Stakeholders to guide what can or cannot be done regarding a specific Functional Asset.">
+  
+  <area  href=80638428609B56C6.htm#OBMK80638428609B56C6 shape="polygon" coords="71, 591, 71, 578, 133, 578, 133, 591, 71, 591"   target="_top"  title="-">
+  
+  <area  href="e073fc7f61d21747.htm" shape="rect" coords="35, 551, 170, 609"   target="_top"  title="An&#160; Advise is time bound Resolution, agreed upon by Stakeholders to recommend what can or cannot be done regarding a specific Functional Asset.">
+  
+  <area  href=83bb9ea661923a8d.htm#OBMK83BB9EA661923A8D shape="polygon" coords="639, 294, 630, 294, 630, 308, 559, 308, 559, 294, 639, 294"   target="_top"  title="-">
+  
+  <area  href=b750b86c61924703.htm shape="polygon" coords="518, 289, 679, 289, 679, 299, 518, 299"   target="_top"  title="-">
+  
+  <area  href=#OBMK5754805751545CA3 shape="polygon" coords="255, 308, 255, 294, 340, 294, 340, 308, 255, 308"    title="-">
+  
+  <area  href=#OBMK83BBA0EF619241C4 shape="polygon" coords="168, 296, 388, 296, 388, 307, 168, 307"    title="-">
+  
+  <area  href=83bb9dfc61923822.htm#OBMK83BB9DFC61923822 shape="polygon" coords="704, 286, 704, 274, 775, 274, 775, 286, 704, 286"   target="_top"  title="An&#160; Appraisal Type refers to a kind of Appraisal method and technique used to evaluate the worth, effectiveness, compliance, or quality of enterprise Functional Assets.">
+  
+  <area  href="83bb9fd261923ce3.htm" shape="rect" coords="679, 271, 800, 324"   target="_top"  title="A&#160; Decision Type is a Appraisal Type that refers to a kind of Decision used to state what shall or shall not be done regarding an enterprise Functional Asset.">
+  
+  <area  href=83bb9e81619239a7.htm#OBMK83BB9E81619239A7 shape="polygon" coords="414, 287, 414, 275, 492, 275, 492, 287, 414, 287"   target="_top"  title="An&#160; Appraisal Option is a possible value of an Appraisal Type that will be selected during an appraisal activity.">
+  
+  <area  href="83bb9f9b61923be7.htm" shape="rect" coords="387, 273, 519, 322"   target="_top"  title="A&#160; Decision Option is a possible value of a Decision Type, that will be selected during a decision-making process.">
+  
+  <area  href=e073f9c161d2104a.htm#OBMKE073F9C161D2104A shape="polygon" coords="80, 157, 80, 146, 131, 146, 131, 157, 80, 157"   target="_top"  title="A&#160; Resolution is time bound Appraisal, agreed upon by Stakeholders to guide what can or cannot be done regarding a specific Functional Asset.">
+  
+  <area  href=8063C7D9609B59EA.htm#OBMK8063C7D9609B59EA shape="polygon" coords="72, 184, 72, 170, 139, 170, 139, 184, 72, 184"   target="_top"  title="-">
+  
+  <area  href="D7F9FCC95F720EE0.htm" shape="rect" coords="44, 144, 169, 396"   target="_top"  title="A&#160; Decision is time bound Resolution, agreed upon by Stakeholders, to state what shall or shall not be done regarding a specific Functional Asset.">
+  
+  <area  href=BCDBC016617A55BE.htm#OBMKBCDBC016617A55BE shape="polygon" coords="87, 68, 87, 57, 134, 57, 134, 68, 87, 68"   target="_top"  title="An&#160; Appraisal is a time bound statement expressed by stakeholders to qualify Architecture Blocks with respect to their worth.">
+  
+  <area  href=8743bb1260588c3c.htm#OBMK8743BB1260588C3C shape="polygon" coords="84, 95, 84, 81, 138, 81, 138, 95, 84, 95"   target="_top"  title="-">
+  
+  <area  href="e073f9c161d2104a.htm" shape="rect" coords="19, 55, 203, 625"   target="_top"  title="A&#160; Resolution is time bound Appraisal, agreed upon by Stakeholders to guide what can or cannot be done regarding a specific Functional Asset.">
+  
+  <area  href="E073FB4561D211A3.htm" shape="rect" coords="1, 1, 832, 658"   target="_top"  title="The&#160; Resolution Pattern domain defines constructs used by stakeholders to assess and qualify Functional Assets.">
+  
+</map>
+<img  src="../images/e073fb4561d211a3_e073fbfc61d2147e_i.png" alt="../images/e073fb4561d211a3_e073fbfc61d2147e_i.png" usemap="#E073FBFC61D2147E" height="657" width="831" border=0>
+
+</div>
+<div class="Relationship" id="Relationship2">
+<div id="klmm" style="width: 100vw; height: 100vh;" ></div>
+<!-- <script src="../standard/assets/js/keylines_domain.js"></script> -->
+<script >
+const data = {
+ type: 'LinkChart',
+  items: [
+  //nodes
+    {type: 'node', id:'E073FB4561D211A3', t:"Resolution Pattern", sh:'box', d:"The Resolution Pattern domain defines constructs used by stakeholders to assess and qualify Functional Assets."},
+    {type: 'node', id:'732799D364364423', t:"Policy Decision", parentId:'D7F9FCC95F720EE0', sh:'circle', d:"A Policy Decision is a Decision that defines the applicability status of a policy to a set of Functional Assets."},
+    {type: 'node', id:'02F70FDC600F4179', t:"Policy Pattern", sh:'box', d:"The Policy Pattern domain defines Directives and rules that constrain enterprise structures and behaviors."},
+    {type: 'node', id:'07CA0DD75DD84E92', t:"Policy Asset", parentId:'02F70FDC600F4179', sh:'circle', d:"A Policy Asset is any topic related to policy definitions."},
+    {type: 'node', id:'02AF0A4B5A182417', t:"Operating Semantic", sh:'box', d:"The Operating Semantic domain is used to model how a system (Agent) operates/functions (Behavior) in its Operating Eco-System to produce Outcomes that benefit (value) to other Agents or affect (have an effect upon) these Agents."},
+    {type: 'node', id:'07CA0F015DD84EFA', t:"Functional Asset", parentId:'02AF0A4B5A182417', sh:'circle', d:"Functional Assets encompasse Architecture Blocks used to describe how an enterprise function. This includes the purposes of an enterprise (Capability) and the way the enterprise operates to fulfill these purposes (Agents and their  Behaviors)."},
+    {type: 'node', id:'E073084561D32165', t:"Waiver", parentId:'E073F9C161D2104A', sh:'circle', d:"A Waiver is a temporary Resolution, agreed upon by Stakeholders, that suspends the enforcement of a Policy Decision for a specified duration."},
+    {type: 'node', id:'E073014961D31B47', t:"Resolution Type", parentId:'E073FB4561D211A3', sh:'circle', d:"A Resolution Type is an Appraisal Type that refers to a kind of Resolution used to guide what can or cannot be done regarding a specific Functional Asset."},
+    {type: 'node', id:'E073FC7F61D21747', t:"Advise", parentId:'E073F9C161D2104A', sh:'circle', d:"An Advise is time bound Resolution, agreed upon by Stakeholders to recommend what can or cannot be done regarding a specific Functional Asset."},
+    {type: 'node', id:'E073FEB361D219B7', t:"Resolution Option", parentId:'E073FB4561D211A3', sh:'circle', d:"A Resolution Option is a possible value of a Resolution Type, that will be selected during a resolution process."},
+    {type: 'node', id:'E073F9C161D2104A', t:"Resolution", parentId:'BCDBC016617A55BE', sh:'circle', d:"A Resolution is time bound Appraisal, agreed upon by Stakeholders to guide what can or cannot be done regarding a specific Functional Asset."},
+    {type: 'node', id:'83BB9F9B61923BE7', t:"Decision Option", parentId:'E073FB4561D211A3', sh:'circle', d:"A Decision Option is a possible value of a Decision Type, that will be selected during a decision-making process."},
+    {type: 'node', id:'83BB9FD261923CE3', t:"Decision Type", parentId:'E073FB4561D211A3', sh:'circle', d:"A Decision Type is a Appraisal Type that refers to a kind of Decision used to state what shall or shall not be done regarding an enterprise Functional Asset."},
+    {type: 'node', id:'34BD440B61F104CB', t:"Waiver End", parentId:'E073FB4561D211A3', sh:'circle', d:""},
+    {type: 'node', id:'D7F9FCC95F720EE0', t:"Decision", parentId:'E073F9C161D2104A', sh:'circle', d:"A Decision is time bound Resolution, agreed upon by Stakeholders, to state what shall or shall not be done regarding a specific Functional Asset."},
+    {type: 'node', id:'BCDBC016617A55BE', t:"Appraisal", parentId:'E073FB4561D211A3', sh:'circle', d:"An Appraisal is a time bound statement expressed by stakeholders to qualify Architecture Blocks with respect to their worth."},
+    {type: 'node', id:'83BB9D706192357B', t:"Appraisal Pattern", sh:'box', d:"The Appraisal Pattern domain defines constructs used by stakeholders to asses and qualify Architecture Blocks."},
+    {type: 'node', id:'83BB9E81619239A7', t:"Appraisal Option", parentId:'83BB9D706192357B', sh:'circle', d:"An Appraisal Option is a possible value of an Appraisal Type that will be selected during an appraisal activity."},
+  //edges
+    { type: 'link', id:'732799D364364423-34BD447F61F105B8', id1:'732799D364364423', id2:'07CA0DD75DD84E92', t:"Applicable Policy"},
+    { type: 'link', id:'732799D364364423-7327A29F64364B2E', id1:'732799D364364423', id2:'07CA0F015DD84EFA', t:"Applicability Domain"},
+    { type: 'link', id:'E073FEB361D219B7-E07307A761D320AF', id1:'E073FEB361D219B7', id2:'E073014961D31B47', t:"classified by"},
+    { type: 'link', id:'E073F9C161D2104A-E073FD1461D21889', id1:'E073F9C161D2104A', id2:'E073FEB361D219B7', t:"Resolution Option"},
+    { type: 'link', id:'E073F9C161D2104A-9BB4A40B626A98A0', id1:'E073F9C161D2104A', id2:'07CA0F015DD84EFA', t:"Concerned Asset"},
+    { type: 'link', id:'83BB9F9B61923BE7-B750B86C61924703', id1:'83BB9F9B61923BE7', id2:'83BB9FD261923CE3', t:"classified by"},
+    { type: 'link', id:'D7F9FCC95F720EE0-83BBA0EF619241C4', id1:'D7F9FCC95F720EE0', id2:'83BB9F9B61923BE7', t:"Decision Option"},
+    { type: 'link', id:'D7F9FCC95F720EE0-9BB4A2DB626A9622', id1:'D7F9FCC95F720EE0', id2:'07CA0F015DD84EFA', t:"decision subject"},
+    { type: 'link', id:'BCDBC016617A55BE-83BB9E3E619238CE', id1:'BCDBC016617A55BE', id2:'83BB9E81619239A7', t:"Appraisal Option"},
+    { type: 'link', id:'BCDBC016617A55BE-9BB4A149626A91BE', id1:'BCDBC016617A55BE', id2:'07CA0F015DD84EFA', t:"Appraised Asset"}
+  ]
+}
+</script>
+<script src="../standard/assets/js/keylines_domain.js" type="module"></script>
+</div>
+</section>
+<a class="object-section-anchor" id="des"></a>
+<section class="object-section">
+<h4>CONCEPT DESCRIPTIONS</h4> 
+<hr class="sectionbreak" />
+<h5>Concrete Concepts</h5>
+<table class="table  table-set-col-width">
+<thead>
+<tr><th>Concept</th><th>Description</th><th>HOPEX Metaclass</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="e073fc7f61d21747.htm" target="_top">Advise</a></td>
+<td class="description-text">An&#160;<b> Advise</b> is time bound <a href="e073f9c161d2104a.htm" target="_top"><b><u>Resolution</u></b></a>, agreed upon by <a href="bcebd0175491272a.htm" target="_top"><b><u>Stakeholder</u></b></a>s to recommend what can or cannot be done regarding a specific <a href="07ca0f015dd84efa.htm" target="_top"><b><u>Functional Asset</u></b></a>.       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="80638428609B56C6.htm" target="_top">Advice Block</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="732799D364364423.htm" target="_top">Policy Decision</a></td>
+<td class="description-text">A&#160;<b> Policy Decision</b> is a <a href="D7F9FCC95F720EE0.htm" target="_top"><b><u>Decision</u></b></a> that defines the applicability status of a policy to a set of <a href="07ca0f015dd84efa.htm" target="_top"><b><u>Functional Asset</u></b></a>s.       </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_eventconcept.ico.gif"/>&nbsp;
+<a  href="34bd440b61f104cb.htm" target="_top">Waiver End</a></td>
+<td class="description-text">        </td>
+<td></td>
+</tr>  
+</tbody>
+</table>
+<hr class="sectionbreak" />
+<h5>Abstract Concepts</h5>
+<table class="table  table-set-col-width">
+<thead >
+<tr><th>Concept</th><th>Description</th><th>HOPEX Metaclass</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="D7F9FCC95F720EE0.htm" target="_top">Decision</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Decision</b> is time bound <a href="e073f9c161d2104a.htm" target="_top"><b><u>Resolution</u></b></a>, agreed upon by <a href="bcebd0175491272a.htm" target="_top"><b><u>Stakeholder</u></b></a>s, to state what shall or shall not be done regarding a specific <a href="07ca0f015dd84efa.htm" target="_top"><b><u>Functional Asset</u></b></a>.</div><div align="left" style="min-height: 12pt; ">Architecturally significant decisions that are been made in the organization typically includes:</div><div align="left" style="min-height: 12pt; ">a) Product selections</div><div align="left" style="min-height: 12pt; ">b) Justification for major architectural features of projects</div><div align="left" style="min-height: 12pt; ">c) Standards deviations</div><div align="left" style="min-height: 12pt; ">d) Standards lifecycle changes</div><div align="left" style="min-height: 12pt; ">e) Change Request evaluations and approvals</div><div align="left" style="min-height: 12pt; ">f) Re-use assessments</div>       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="8063C7D9609B59EA.htm" target="_top">Decision Block</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype_archgov.ico.gif"/>&nbsp;
+<a  href="83bb9f9b61923be7.htm" target="_top">Decision Option</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Decision Option</b> is a possible value of a <a href="83bb9fd261923ce3.htm" target="_top"><b><u>Decision Type</u></b></a>, that will be selected during a decision-making process.</div><div align="left" style="min-height: 12pt; ">For instance, when making decisions about invesment on an enterprise asset, the possible options are: eliminate, invest, migrate, tolerate.</div>       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="3f119d45607d64ac.htm" target="_top">Resolution Option</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype_archgov.ico.gif"/>&nbsp;
+<a  href="83bb9fd261923ce3.htm" target="_top">Decision Type</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Decision Type</b> is a <a href="83bb9dfc61923822.htm" target="_top"><b><u>Appraisal Type</u></b></a> that refers to a kind of <a href="D7F9FCC95F720EE0.htm" target="_top"><b><u>Decision</u></b></a> used to state what shall or shall not be done regarding an enterprise <a href="07ca0f015dd84efa.htm" target="_top"><b><u>Functional Asset</u></b></a>.</div><div align="left" style="min-height: 12pt; "><b>&#160;Decision Type</b>s define a set of <a href="83bb9f9b61923be7.htm" target="_top"><b><u>Decision Option</u></b></a>s which are the possible values that will result from a decision-making process.</div><div align="left" style="min-height: 12pt; ">For instance, when making decisions about invesment on an enterprise asset, the possible options can be: eliminate, invest, migrate.</div>       </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="07ca0f015dd84efa.htm" target="_top">Functional Asset</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; "><b>&#160;Functional Asset</b>s encompasse <a href="d342d88e5b121401.htm" target="_top"><b><u>Architecture Block</u></b></a>s used to describe how an enterprise function. This includes the purposes of an enterprise (<a href="b181b98c54891882.htm" target="_top"><b><u>Capability</u></b></a>) and the way the enterprise operates to fulfill these purposes (<a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s and their&#160; <a href="986cd4ec5ffca3ac.htm" target="_top"><b><u>Behavior</u></b></a>s).</div><div align="left" style="min-height: 12pt; "><b>&#160;Functional Asset</b>s include:</div><div align="left" style="min-height: 12pt; ">1. Blocks defining results of <a href="986cd4ec5ffca3ac.htm" target="_top"><b><u>Behavior</u></b></a>s of the enterprise or its sub-systems, that benefit to it internal or external customers : <a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>,</div><div align="left" style="min-height: 12pt; ">2. Blocks used to describe the capabilities of the enterprise or its sub-systems: <a href="b181b98c54891882.htm" target="_top"><b><u>Capability</u></b></a>,</div><div align="left" style="min-height: 12pt; ">3. Blocks used to describe information: <a href="e6f250185f772ee1.htm" target="_top"><b><u>Information Object</u></b></a>.</div><div align="left" style="min-height: 12pt; ">4. Blocks used to describe how the enterprise operates: <a href="a371a43b5b865817.htm" target="_top"><b><u>Operating Asset</u></b></a>s (<a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>, <a href="d682ef5e56144e77.htm" target="_top"><b><u>Process</u></b></a>, <a href="333f35ee5dde0c8c.htm" target="_top"><b><u>Interaction Scenario</u></b></a>, <a href="24ae31b55ed1c66d.htm" target="_top"><b><u>Service Interface</u></b></a>).</div><div align="left" style="min-height: 12pt; ">All&#160;<b> Functional Asset</b>s are constrained by <a href="959320325ee7fe24.htm" target="_top"><b><u>Policy</u></b></a>s and are exposed to <a href="427c1c7d64b5d4a1.htm" target="_top"><b><u>Risk Type</u></b></a>s.</div><i><ul>References:<li><a href="../../../complexsystems.mst.edu/media/conference/complexsystems/documents/de_Weck_CAS_Keynote_Nov_2015_updated.pdf#page=40"><img src="../standard/extr.ico.gif">&nbsp;de Weck - The three dimensions of complexity</a></li> <li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Asset"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - Asset</a></li> <li><a href="../resources/Ackoff-Choice-Communication-and-Conflict.pdf#FunctionalClass"><img src="../standard/extr.ico.gif">&nbsp;Russell Ackoff - Choice &amp; Communication - FunctionalClass</a></li> <li><a href="https://www.sebokwiki.org/wiki/Functional_Architecture_(glossary)"><img src="../standard/extr.ico.gif">&nbsp;SEBoK - Functional Architecture</a></li> <li><a href="https://en.wikipedia.org/wiki/Functional_software_architecture#:~:text=A%20functional%20software%20architecture%20(FSA,%2Doperative%20information%2Ddriven%20enterprise."><img src="../standard/extr.ico.gif">&nbsp;Wikipedia - Software Functional Architecture</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="c229c44e5d0c649f.htm" target="_top">Functional Building Block</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="07ca0dd75dd84e92.htm" target="_top">Policy Asset</a></td>
+<td class="description-text">A&#160;<b> Policy Asset</b> is any topic related to policy definitions.<br />It ranges from the different kidns of <a href="278678e95b2533d6.htm" target="_top"><b><u>Directive</u></b></a>s (<a href="fe22ffdd5c4e0bd4.htm" target="_top"><b><u>Business Policy</u></b></a>, <a href="07231aff5f4eb337.htm" target="_top"><b><u>Architecture principle</u></b></a>, <a href="278677bd5b253114.htm" target="_top"><b><u>Business Rule</u></b></a>, etc.),&#160; to classification of policies (<a href="744b8f3f5fbfd1c2.htm" target="_top"><b><u>Policy Category</u></b></a>) up to an entire set of policies (<a href="8d5e9560552e22b2.htm" target="_top"><b><u>Policy Dictionary</u></b></a>).       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="c2b8cafd5d1d208f.htm" target="_top">Policy Block</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="e073f9c161d2104a.htm" target="_top">Resolution</a></td>
+<td class="description-text">A&#160;<b> Resolution</b> is time bound <a href="BCDBC016617A55BE.htm" target="_top"><b><u>Appraisal</u></b></a>, agreed upon by <a href="bcebd0175491272a.htm" target="_top"><b><u>Stakeholder</u></b></a>s to guide what can or cannot be done regarding a specific <a href="07ca0f015dd84efa.htm" target="_top"><b><u>Functional Asset</u></b></a>.<i><ul>References:<li><a href="http://wordnetweb.princeton.edu/perl/webwn?o2=&amp;o0=1&amp;o8=1&amp;o1=1&amp;o7=&amp;o5=&amp;o9=&amp;o6=&amp;o3=&amp;o4=&amp;r=1&amp;s=resolution&amp;i=11&amp;h=0000000000100#c"><img src="../standard/extr.ico.gif">&nbsp;WordNet - Resolution</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="8743bb1260588c3c.htm" target="_top">Resolution</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype_archgov.ico.gif"/>&nbsp;
+<a  href="e073feb361d219b7.htm" target="_top">Resolution Option</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Resolution Option</b> is a possible value of a <a href="e073014961d31b47.htm" target="_top"><b><u>Resolution Type</u></b></a>, that will be selected during a resolution process.</div><div align="left" style="min-height: 12pt; ">For instance, when making decisions about invesment on an enterprise asset, the possible options are: eliminate, invest, migrate. tolerate.</div>       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="3f119d45607d64ac.htm" target="_top">Resolution Option</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype_archgov.ico.gif"/>&nbsp;
+<a  href="e073014961d31b47.htm" target="_top">Resolution Type</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Resolution Type</b> is an <a href="83bb9dfc61923822.htm" target="_top"><b><u>Appraisal Type</u></b></a> that refers to a kind of <a href="e073f9c161d2104a.htm" target="_top"><b><u>Resolution</u></b></a> used to guide what can or cannot be done regarding a specific <a href="07ca0f015dd84efa.htm" target="_top"><b><u>Functional Asset</u></b></a>.</div><div align="left" style="min-height: 12pt; "><b>&#160;Resolution Type</b>s define a set of <a href="e073feb361d219b7.htm" target="_top"><b><u>Resolution Option</u></b></a>s which are the possible values that will result from a resolution process.</div><div align="left" style="min-height: 12pt; ">For instance, when making decisions about invesment on an enterprise asset, the possible options can be: eliminate, invest, migrate.</div>       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="3f119d4d607d64f0.htm" target="_top">Resolution Type</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="e073084561d32165.htm" target="_top">Waiver</a></td>
+<td class="description-text">A&#160;<b> Waiver</b> is a temporary <a href="e073f9c161d2104a.htm" target="_top"><b><u>Resolution</u></b></a>, agreed upon by <a href="bcebd0175491272a.htm" target="_top"><b><u>Stakeholder</u></b></a>s, that suspends the enforcement of a <a href="732799D364364423.htm" target="_top"><b><u>Policy Decision</u></b></a> for a specified duration.       </td>
+<td></td>
+</tr>  
+</tbody>
+</table>
+<section>
+
+</div>
+<button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button>
+<script>window.onscroll = function() {scrollFunction()};$(document).on('click', 'a[href^="#"]', function (event) {event.preventDefault();$('html, body').animate({scrollTop: $($.attr(this, 'href')).offset().top}, 500);});function showDiagOnClick(elem){ var x = document.getElementsByClassName('Relationship');var e = elem.getAttribute("value"); for (var i=0; i < x.length ;i++){x[i].style.display="none"; if (x[i].id == e){x[i].style.display="block";x[i].style.textAlign="left";}}}
+</script></html>

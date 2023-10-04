@@ -1,0 +1,419 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="keywords" content="">
+<meta name="description" content="">    
+<LINK REL="icon" HREF="../standard/assets/img/favicon.ico">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/bootstrap.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nav.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/eaportal.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/font-awesome.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/animate.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/datatables.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/grid.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nae.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/custom.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/chosen.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/prism.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery.dataTables.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jsTreeStyle.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.theme.css" media="screen" />
+<script type="text/javascript" src="../standard/assets/js/jquery-3.2.1.min.js" ></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-ui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.columnFilter.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3-force.v2.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.gui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.search.js"></script> 
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.util.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-2.1.1.min.js"></script>
+<script src="../standard/assets/js/ws_zoomtemplate_firefox.js"></script>
+<script src="../standard/assets/js/bootstrap.min.js"></script>
+<script src="../standard/assets/js/datatables.min.js"></script>
+<script src="../standard/assets/js/moment.min.js"></script>
+<script src="../standard/assets/js/datetime-moment.js"></script>
+<script src="../standard/assets/js/chartjs.min.js"></script>
+<script src="../standard/assets/js/searchindexcontent.json"></script>
+<script src="../standard/assets/js/anls.js"></script>
+<script src="../../../cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script src="../standard/assets/js/gauge.js"></script> 
+<script src="../standard/assets/js/domesticApi.js"></script> 
+<script src="../standard/assets/js/piecelabel.js"></script>
+<script src="../standard/assets/js/popper.min.js"></script>
+<script src="../standard/assets/js/custom.js"></script>
+<script src="../standard/assets/js/chosen.jquery.js"></script>
+<script src="../standard/assets/js/prism.js"></script>
+<script src="../standard/assets/js/init-chosen.js"></script>
+<script src="../standard/assets/js/chart-data-flow.js"></script>
+<script src="../standard/assets/js/chart-data-gantt.js"></script>
+<script type="module" src="../standard/assets/js/Fuse.esm.min.js"></script>
+<script type="module">
+import Fuse from '../standard/assets/js/Fuse.esm.min.js';
+$(document).ready(function () {
+console.log('getjson');
+window.$.getJSON('../standard/assets/js/searchindexcontent.json', function (response) {
+console.log('getjson ok');
+var isIndex = "";
+var url = window.location.pathname;
+var filename = url.substring(url.lastIndexOf('/')+1);
+if( filename.includes("index") || filename === "" ){
+isIndex = "pages/";
+} else {
+isIndex = "";
+}
+const fuse = new Fuse(response, {
+keys: ['title','text'],
+shouldSort: true,
+includeMatches : true,
+findAllMatches : true
+});
+$('#search-fuse').on('keyup', function () {
+let result = fuse.search($(this).val());
+console.log(result);
+let resultdiv = $('div.searchresults-fuse');
+if (result.length === 0) {
+resultdiv.hide();
+} else {
+resultdiv.empty();
+resultdiv.append('<table class="table-search" width="100%" cellspacing="0"><thead ><tr><th>Name</th><th>Object Type</th><th>Modification date</th></tr></thead><tbody>');
+
+for (let obj in result.slice(0,10)) {
+
+let searchObj = '<tr><td><a href="./'+ isIndex + result[obj].item.url + '">' + result[obj].item.title +'</a></td><td>' + result[obj].item.ObjectType + '</td><td>' + result[obj].item.ModificationDate + '</td></tr>' ;
+
+
+resultdiv.find('tbody').append(searchObj);
+}
+resultdiv.append('</tbody></table>');
+resultdiv.show();
+}
+});
+});
+});
+</script>
+<title>HOPEX Metamodel Overview (Beta Version)</title>
+</head>
+<nav class="navbar navbar-expand-md navbar-dark  navbar-mega"><!-- Brand --><!--<a class="navbar-brand" href="#">Navbar</a>--><a class="" href="../index.htm"><img class="logo-mega" src="../standard/assets/img/logo.png"  alt="">(Beta Version)</a><!-- Toggler/collapsibe Button --><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><!-- Navbar links -->
+<div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsibleNavbar"><div class="col-sm-auto col-md-auto col-lg-5"></div>
+<div class="col-sm-auto">
+<ul class="navbar-nav">      
+<li><a class="dropdown-item" href="ad30ce115ebf7e90.htm">EA Grid</a></li> 
+<li><a class="dropdown-item" href="fdd5018459bc3c6a.htm">EA Domains</a></li> 
+<li><a class="dropdown-item" href="07e731775ecc93f4.htm">Solutions</a></li> 
+<li><a class="dropdown-item" href="c5dfc62c54810c2c.htm">Glossary</a></li> 
+<li class="nav-item dropdown mx-1">
+<a class="nav-link" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</a>
+<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<li><a class="dropdown-item" href="5446555d5f88c32e.htm">Outcome Driven Metamodel</a></li> 
+<li><a class="dropdown-item" href="e1ccfc295f8f7b90.htm">Playbooks</a></li> 
+<li><a class="dropdown-item" href="42bc992862d20ea7.htm">Framework Mappings</a></li> 
+<li><a class="dropdown-item" href="e93aebb35fa20550.htm">Metamodel Patterns</a></li> 
+<li><a class="dropdown-item" href="d599fe87602b2b85.htm">References</a></li> 
+<li><a class="dropdown-item" href="333f3a7f5dde11de.htm">Legend</a></li> 
+</ul>									                                            
+</li>
+</ul>
+</div>
+<div class="col-sm-auto"><a class="nav-link search" href="#" onclick=showHideSearch("search-section-fuse")><i class="fa fa-search mr-1 form-control-feedback"></i></a></div>
+</div>
+</nav>
+<div id="search-section-fuse" style="display:none">>
+<div class="search_header"><span class="closesearch">&times;</span>
+<nav class="breadcrumb">
+<a class="breadcrumb-item" href="../index.htm">Home </a> 
+<span class="breadcrumb-item active">Search</span> 
+</nav>
+</div>
+<input id="search-fuse" placeholder="Search..."  name="q" onfocus="this.value=''" type="search">
+<div class="searchresults-fuse"></div>
+</div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>function showHideSearch(elementId) {var contentDivs = document.getElementsByClassName('content');var footerDivs = document.getElementsByClassName('footer'); var containerDivs = document.getElementsByClassName('container');var containerfluidDivs = document.getElementsByClassName('container-fluid');var x = document.getElementById(elementId);if (x.style.display === "none") {x.style.display = "block";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "none";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "none";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "none";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "none";}} else {x.style.display = "none";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "block";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "block";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "block";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "block";}}} ;<!-- END WIDGET DRILL DOWN --></script><script>$(document).ready(function() {$(window).scroll(function() {if ($(this).scrollTop() > 100) {$('.scrollup').fadeIn();} else {$('.scrollup').fadeOut();}});$('.scrollup').click(function() {$("html, body").animate({scrollTop: 0}, 600);return false;});});</script><script>
+var modal = document.getElementById("search-section-fuse");
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = "none";
+}
+}
+$(document).on('click', '.closesearch', function() {
+showHideSearch("search-section-fuse");
+
+
+
+
+
+});</script><div class="container-fluid col-lg-11"><nav class="breadcrumb"><a class="breadcrumb-item" href="../index.htm">Home</a> <span class="breadcrumb-item active">
+<a  href="533b53775c916e32.htm" target="_top">HOPEX - DoDAF 2</a>&nbsp;/&nbsp;DODAF2 - DV-3 - Physical Data Model</span></nav></div>
+<div class="container-fluid col-lg-11 content">
+<section class="fadeInDown animated"><a href="#idt" class="btn btn-d">DEFINITION</a> <a href="#grf" class="btn btn-d">CONCEPT GRAPH</a> <a href="#des" class="btn btn-d">CONCEPT DESCRIPTIONS</a> 
+</section>
+<a class="object-section-anchor" id="idt"></a>
+<section class="object-section">
+<h4>CONCEPT DOMAIN - DODAF2 - DV-3 - Physical Data Model</h4><hr class="sectionbreak" /><table class="table table-vertical-headers table-set-col-width"><tr><th>Description</th><td class="description-text">The physical implementation format of the Logical Data Model entities, e.g., message formats, file structures, physical schema. In DoDAF V1.5, this was the SV-11.<div></div></td></tr><tr><th>Dictionary</th><td><img src="../standard/dicsubjectarea.ico.gif"/>&nbsp;
+<a  href="533b53775c916e32.htm" target="_top">HOPEX - DoDAF 2</a></td></tr><tr><th>Parent Domain</th><td><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="f1f118335f244fc5.htm" target="_top">DODAF2 - Data and Information Viewpoint</a>&nbsp;</td></tr></table></section>
+<a class="object-section-anchor" id="grf"></a>
+<section class="object-section">
+<h4>DOMAIN CONCEPT GRAPH</h4>
+<hr class="sectionbreak" />
+<a href="#" class="btn btn-d" value="Relationship1" onclick="showDiagOnClick(this)">Diagram</a>
+<a href="#" class="btn btn-d" value="Relationship2" onclick="showDiagOnClick(this)">Graph</a>
+<div class="Relationship" id="Relationship1">
+
+<map  name="D26B72C85FE0E0E8">
+  <area  href=514e51b2620f09ae.htm#OBMK514E51B2620F09AE shape="polygon" coords="478, 320, 480, 320, 480, 334, 336, 334, 336, 320, 478, 320"   target="_top"  title="-">
+  
+  <area  href=7731899262167813.htm shape="polygon" coords="270, 330, 500, 330, 500, 341, 270, 341"   target="_top"  title="-">
+  
+  <area  href=#OBMK2B587C735EEBEDE2 shape="polygon" coords="276, 77, 484, 77, 484, 87, 276, 87"    title="-">
+  
+  <area  href=#OBMK137D237E5EE2CE03 shape="polygon" coords="535, 190, 535, 115, 546, 115, 546, 190"    title="-">
+  
+  <area  href=6d2b80db5fbb700b.htm#OBMK6D2B80DB5FBB700B shape="polygon" coords="518, 65, 518, 54, 566, 54, 566, 65, 518, 65"   target="_top"  title="A&#160; Data Map is an urbanization tool for&#160; Data Asset. It represents a set of Data Domains in a particular context.">
+  
+  <area  href=75ef4ea8620fb39f.htm#OBMK75EF4EA8620FB39F shape="polygon" coords="497, 75, 497, 65, 587, 65, 587, 75, 497, 75"   target="_top"  title="A&#160; Physical Data Asset is a Data Asset used for the physical description of data consumed and produced by Software Systems.">
+  
+  <area  href=c5d9cff45948362f.htm#OBMKC5D9CFF45948362F shape="polygon" coords="502, 107, 502, 94, 582, 94, 582, 107, 502, 107"   target="_top"  title="-">
+  
+  <area  href="f4be4bb95ee18b51.htm" shape="rect" coords="484, 51, 600, 115"   target="_top"  title="A&#160; Physical Data Map is a top level grouping of Physical Data Domains.">
+  
+  <area  href=#OBMK1F235C605FBE93E7 shape="polygon" coords="761, 227, 761, 276, 751, 276, 751, 227"    title="-">
+  
+  <area  href=1f235c605fbe93d7.htm shape="polygon" coords="663, 216, 761, 216, 761, 276, 751, 276, 751, 227, 663, 227"   target="_top"  title="-">
+  
+  <area  href=#OBMK1F235C625FBE9442 shape="polygon" coords="663, 216, 712, 216, 712, 227, 663, 227"    title="-">
+  
+  <area  href=81f182ab646c0dfa.htm#OBMK81F182AB646C0DFA shape="polygon" coords="284, 159, 254, 159, 254, 173, 141, 173, 141, 159, 284, 159"   target="_top"  title="-">
+  
+  <area  href=2b588c2b5ef08eef.htm shape="polygon" coords="190, 119, 190, 206, 180, 206, 180, 119"   target="_top"  title="-">
+  
+  <area  href=6ba771525f6b8ad4.htm#OBMK6BA771525F6B8AD4 shape="polygon" coords="150, 318, 150, 307, 256, 307, 256, 318, 150, 318"   target="_top"  title="A&#160; Physical Data Dictionary is Data Dictionary that holds the definition of Physical Data Assets such as Physical Data Domain definitions, Table definitions, Column Type definitions.">
+  
+  <area  href=ab17ab5a2ccf0278.htm#OBMKAB17AB5A2CCF0278 shape="polygon" coords="176, 350, 176, 337, 230, 337, 230, 350, 176, 350"   target="_top"  title="A database stores data physically or logically.">
+  
+  <area  href="362f3b875b3b221e.htm" shape="rect" coords="136, 305, 270, 365"   target="_top"  title="A is&#160; Relational Dictionary a Dictionary of relational entities (Tables, Keys, Indexes, etc.) and of schema referencing theses entites: relational data areas.">
+  
+  <area  href=82c3b89c5fdcbd0f.htm#OBMK82C3B89C5FDCBD0F shape="polygon" coords="168, 270, 168, 259, 238, 259, 238, 270, 168, 270"   target="_top"  title="A&#160; Data Dictionary is a dictionary of Data Assets used to describe a data architecture. This includes:">
+  
+  <area  href="6ba771525f6b8ad4.htm" shape="rect" coords="108, 258, 297, 385"   target="_top"  title="A&#160; Physical Data Dictionary is Data Dictionary that holds the definition of Physical Data Assets such as Physical Data Domain definitions, Table definitions, Column Type definitions.">
+  
+  <area  href=d342d91a5b121454.htm#OBMKD342D91A5B121454 shape="polygon" coords="127, 58, 127, 47, 237, 47, 237, 58, 127, 58"   target="_top"  title="An&#160; Architecture Namespace is a Model Namespace&#160; that packages Architecture Blocks used to describe the architecture of the enterprise.">
+  
+  <area  href=d321c226601262ae.htm#OBMKD321C226601262AE shape="polygon" coords="143, 69, 143, 58, 222, 58, 222, 69, 143, 69"   target="_top"  title="An&#160; Enduring Initiative is a long term Initiative which involves roadmapping and governance. Enterprises and their Management Systems are typical&#160; Enduring Initiatives.">
+  
+  <area  href=50666200529c2b9a.htm#OBMK50666200529C2B9A shape="polygon" coords="157, 95, 157, 82, 208, 82, 208, 95, 157, 95"   target="_top"  title="An Enterprise is a purposeful undertaking, conducted by one or more organizations, aiming at delivering goods and services, in accordance with the enterprise mission in its changing environment.">
+  
+  <area  href="b181b82a54891668.htm" shape="rect" coords="88, 44, 276, 119"   target="_top"  title="An&#160; Enterprise is an Enduring Initiative that delivers added-value Products (goods &amp; services) to its target Customers.">
+  
+  <area  href=#OBMK137D249F5EE2D1E9 shape="polygon" coords="749, 448, 750, 442, 760, 445, 759, 450"    title="-">
+  
+  <area  href=#OBMK137D24975EE2D1A3 shape="polygon" coords="770, 454, 764, 452, 754, 449, 757, 438, 767, 441, 773, 443"    title="-">
+  
+  <area  href=362f3ca45b3b234b.htm#OBMK362F3CA45B3B234B shape="polygon" coords="792, 447, 792, 436, 864, 436, 864, 447, 792, 447"   target="_top"  title="A&#160; Relational Entity is a relational data structure that is either a Table or a Table View.">
+  
+  <area  href=46f0480536e900a5.htm#OBMK46F0480536E900A5 shape="polygon" coords="793, 479, 793, 466, 863, 466, 863, 479, 793, 479"   target="_top"  title="-">
+  
+  <area  href="137d24905ee2d0ca.htm" shape="rect" coords="769, 434, 887, 487"   target="_top"  title="A&#160; Table View is a virtual table based on the result-set of an SQL statement. A&#160; Table View contains rows and columns, just like a real Table. ">
+  
+  <area  href=#OBMK137D23D85EE2CEDB shape="polygon" coords="761, 371, 761, 386, 750, 386, 751, 370"    title="-">
+  
+  <area  href=137d23d85ee2ced6.htm shape="polygon" coords="761, 341, 761, 386, 750, 386, 751, 340"   target="_top"  title="-">
+  
+  <area  href=#OBMK137D23D85EE2CEF7 shape="polygon" coords="761, 341, 761, 355, 751, 355, 751, 341"    title="-">
+  
+  <area  href=#OBMK137D232B5EE2CCF3 shape="polygon" coords="627, 303, 673, 303, 673, 314, 627, 314"    title="-">
+  
+  <area  href=137d232b5ee2ccee.htm shape="polygon" coords="595, 254, 595, 303, 673, 303, 673, 314, 584, 314, 584, 254"   target="_top"  title="-">
+  
+  <area  href=#OBMK137D232B5EE2CD0C shape="polygon" coords="595, 254, 595, 299, 584, 299, 584, 254"    title="-">
+  
+  <area  href=f4be4bb95ee18b51.htm#OBMKF4BE4BB95EE18B51 shape="polygon" coords="548, 203, 548, 192, 632, 192, 632, 203, 548, 203"   target="_top"  title="A&#160; Physical Data Map is a top level grouping of Physical Data Domains.">
+  
+  <area  href=7731894d62166495.htm#OBMK7731894D62166495 shape="polygon" coords="542, 214, 542, 203, 637, 203, 637, 214, 542, 214"   target="_top"  title="A&#160; Relational Data Asset is a Data Asset used for description of relational data consumed and produced by Software Systems.">
+  
+  <area  href=c7f0c8b558a11d21.htm#OBMKC7F0C8B558A11D21 shape="polygon" coords="541, 246, 541, 232, 638, 232, 638, 246, 541, 246"   target="_top"  title="-">
+  
+  <area  href="137d23125ee2cb47.htm" shape="rect" coords="516, 189, 663, 254"   target="_top"  title="-">
+  
+  <area  href=#OBMK137D21E95EE2C959 shape="polygon" coords="944, 442, 970, 442, 970, 453, 944, 453"    title="-">
+  
+  <area  href=137d21e95ee2c954.htm shape="polygon" coords="892, 442, 970, 442, 970, 453, 892, 453"   target="_top"  title="A&#160; Column is the basic component of a relational Relational Entity (Table or Table View).">
+  
+  <area  href=#OBMK137D21E95EE2C96E shape="polygon" coords="892, 442, 918, 442, 918, 453, 892, 453"    title="-">
+  
+  <area  href=e6f220d45f771837.htm#OBMKE6F220D45F771837 shape="polygon" coords="999, 426, 999, 415, 1099, 415, 1099, 426, 999, 426"   target="_top"  title="A&#160; Physical Data Property is a Physical Data Object that is fundamentally defined by its value. It doesn&#39;t evolve over time is thereby immutable.">
+  
+  <area  href=7db8824033340504.htm#OBMK7DB8824033340504 shape="polygon" coords="1032, 458, 1032, 445, 1066, 445, 1066, 458, 1032, 458"   target="_top"  title="A class groups objects that share the same characteristics and have similar behavior. Persistent classes are management elements considered useful for representing enterprise activity, and are therefore reserved for this purpose. ">
+  
+  <area  href="137d21d35ee2c7f3.htm" shape="rect" coords="970, 413, 1129, 477"   target="_top"  title="An&#160; Column Type is specification of the content of a Column such as &quot;customer name&quot;, &quot;order date&quot;, &quot;address&quot;.">
+  
+  <area  href=362f3ca45b3b234b.htm#OBMK362F3CA45B3B234B shape="polygon" coords="658, 447, 658, 436, 730, 436, 730, 447, 658, 447"   target="_top"  title="A&#160; Relational Entity is a relational data structure that is either a Table or a Table View.">
+  
+  <area  href=f4f91d182e2c0392.htm#OBMKF4F91D182E2C0392 shape="polygon" coords="676, 479, 676, 466, 711, 466, 711, 479, 676, 479"   target="_top"  title="Logical structure of data, used as the reference for the switch to production, the table is the central element of the database. A table is accessible by means of a primary key, and if necessary foreign keys; it is described by an ordered sequence of columns. A table is generally derived from a class or asssociation.">
+  
+  <area  href="137d21b55ee2c717.htm" shape="rect" coords="631, 433, 756, 486"   target="_top"  title="A Table is a relational data structure, used as the reference for the switch to production. The&#160; Table is the central element of the relational databases. ">
+  
+  <area  href=762582bb5f6bd659.htm#OBMK762582BB5F6BD659 shape="polygon" coords="711, 399, 711, 388, 799, 388, 799, 399, 711, 399"   target="_top"  title="A&#160; Physical Data Entity is a representation the physical structure of a Data Entity as it will be stored in a DBMS.">
+  
+  <area  href=7731894d62166495.htm#OBMK7731894D62166495 shape="polygon" coords="708, 410, 708, 399, 803, 399, 803, 410, 708, 410"   target="_top"  title="A&#160; Relational Data Asset is a Data Asset used for description of relational data consumed and produced by Software Systems.">
+  
+  <area  href="362f3ca45b3b234b.htm" shape="rect" coords="618, 386, 892, 501"   target="_top"  title="A&#160; Relational Entity is a relational data structure that is either a Table or a Table View.">
+  
+  <area  href=028f03ff5b4f55ee.htm#OBMK028F03FF5B4F55EE shape="polygon" coords="708, 289, 708, 278, 805, 278, 805, 289, 708, 289"   target="_top"  title="A&#160; Physical Data Domain is subset of the metadata of an enterprise&rsquo;s data store.">
+  
+  <area  href=7731894d62166495.htm#OBMK7731894D62166495 shape="polygon" coords="709, 300, 709, 289, 804, 289, 804, 300, 709, 300"   target="_top"  title="A&#160; Relational Data Asset is a Data Asset used for description of relational data consumed and produced by Software Systems.">
+  
+  <area  href=eb39f82b55301079.htm#OBMKEB39F82B55301079 shape="polygon" coords="716, 332, 716, 319, 796, 319, 796, 332, 716, 332"   target="_top"  title="A relational data area represents a set of data stored in a relational database management system and used in the technical architecture of an application.">
+  
+  <area  href="362f3c7e5b3b22f8.htm" shape="rect" coords="673, 276, 840, 341"   target="_top"  title="A&#160; Relational Schema is a set of relational Table , keys, indexes and associated items that represent the structure of a relational database. A relational database can have multiple schemas.">
+  
+  <area  href=506b838c6442b46c.htm#OBMK506B838C6442B46C shape="polygon" coords="160, 219, 160, 208, 236, 208, 236, 219, 160, 219"   target="_top"  title="A&#160; Model Dictionary is a Model Namespace which sole purpose is model management.">
+  
+  <area  href=eb5e1fbe578552e0.htm#OBMKEB5E1FBE578552E0 shape="polygon" coords="119, 246, 119, 232, 277, 232, 277, 246, 119, 246"   target="_top"  title="-">
+  
+  <area  href="24ae4a185ed16aaa.htm" shape="rect" coords="82, 207, 314, 404"   target="_top"  title="An&#160; Information Dictionary is a dictionary of&#160; Information Assets used to describe an information architecture. This includes:">
+  
+  <area  href=75ef4ea8620fb39f.htm#OBMK75EF4EA8620FB39F shape="polygon" coords="782, 179, 782, 169, 872, 169, 872, 179, 782, 179"   target="_top"  title="A&#160; Physical Data Asset is a Data Asset used for the physical description of data consumed and produced by Software Systems.">
+  
+  <area  href="7731894d62166495.htm" shape="rect" coords="501, 167, 1154, 518"   target="_top"  title="A&#160; Relational Data Asset is a Data Asset used for description of relational data consumed and produced by Software Systems.">
+  
+  <area  href="4a774b5f5f246f45.htm" shape="rect" coords="0, 1, 1188, 546"   target="_top"  title="The physical implementation format of the Logical Data Model entities, e.g., message formats, file structures, physical schema. In DoDAF V1.5, this was the SV-11.">
+  
+</map>
+<img  src="../images/4a774b5f5f246f45_d26b72c85fe0e0e8_i.png" alt="../images/4a774b5f5f246f45_d26b72c85fe0e0e8_i.png" usemap="#D26B72C85FE0E0E8" height="555" width="1188" border=0>
+
+</div>
+<div class="Relationship" id="Relationship2">
+<div id="klmm" style="width: 100vw; height: 100vh;" ></div>
+<!-- <script src="../standard/assets/js/keylines_domain.js"></script> -->
+<script >
+const data = {
+ type: 'LinkChart',
+  items: [
+  //nodes
+    {type: 'node', id:'4A774B5F5F246F45', t:"DODAF2 - DV-3 - Physical Data Model", sh:'box', d:"The physical implementation format of the Logical Data Model entities, e.g., message formats, file structures, physical schema. In DoDAF V1.5, this was the SV-11."},
+  //edges
+
+  ]
+}
+</script>
+<script src="../standard/assets/js/keylines_domain.js" type="module"></script>
+</div>
+</section>
+<a class="object-section-anchor" id="des"></a>
+<section class="object-section">
+<h4>CONCEPT DESCRIPTIONS</h4> 
+<hr class="sectionbreak" />
+<h5>Concrete Concepts</h5>
+<table class="table  table-set-col-width">
+<thead>
+<tr><th>Concept</th><th>Description</th><th>HOPEX Metaclass</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="137d21d35ee2c7f3.htm" target="_top">Column Type</a></td>
+<td class="description-text">An&#160;<b> Column Type</b> is specification of the content of a <a href="137d21e95ee2c954.htm" target="_top"><b><u>Column</u></b></a> such as &quot;customer name&quot;, &quot;order date&quot;, &quot;address&quot;.       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="7db8824033340504.htm" target="_top">Class</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="b181b82a54891668.htm" target="_top">Enterprise</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Enterprise</b> is an <a href="d321c226601262ae.htm" target="_top"><b><u>Enduring Initiative</u></b></a> that delivers added-value <a href="215cceda606c35c6.htm" target="_top"><b><u>Product</u></b></a>s (goods &amp; services) to its target <a href="d6cdfdbc5ab86331.htm" target="_top"><b><u>Customer</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">It requires a formal organization of groups of people and resources to achieve its purposes.</div><i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#WholeLifeEnterprise"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - WholeLifeEnterprise</a></li> <li><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_42"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Definition - Enterprise</a></li> <li><a href="https://www.scaledagileframework.com/enterprise/"><img src="../standard/extr.ico.gif">&nbsp;SAFe&copy; - Enterprise</a></li> <li><a href="https://www.scaledagileframework.com/portfolio-safe/"><img src="../standard/extr.ico.gif">&nbsp;SAFe&copy; - Portfolio SAFe</a></li> <li><a href="http://wordnetweb.princeton.edu/perl/webwn?o2=&amp;o0=1&amp;o8=1&amp;o1=1&amp;o7=&amp;o5=&amp;o9=&amp;o6=&amp;o3=&amp;o4=&amp;r=1&amp;s=enterprise&amp;i=2&amp;h=100000#c"><img src="../standard/extr.ico.gif">&nbsp;WordNet - Enterprise</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="50666200529c2b9a.htm" target="_top">Enterprise</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="137d23125ee2cb47.htm" target="_top">Relational Data Map</a></td>
+<td class="description-text">        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="c7f0c8b558a11d21.htm" target="_top">Relational Schema Map</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="362f3b875b3b221e.htm" target="_top">Relational Dictionary</a></td>
+<td class="description-text">A is&#160;<b> Relational Dictionary</b> a Dictionary of relational entities (Tables, Keys, Indexes, etc.) and of schema referencing theses entites: relational data areas.       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="ab17ab5a2ccf0278.htm" target="_top">Database</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="362f3c7e5b3b22f8.htm" target="_top">Relational Schema</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Relational Schema</b> is a set of relational <a href="137d21b55ee2c717.htm" target="_top"><b><u>Table</u></b></a> , keys, indexes and associated items that represent the structure of a relational database. A relational database can have multiple schemas.</div><div align="left" style="min-height: 12pt; "></div>       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="eb39f82b55301079.htm" target="_top">Relational Schema</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="137d21b55ee2c717.htm" target="_top">Table</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A<b> Table</b> is a relational data structure, used as the reference for the switch to production. The&#160;<b> Table</b> is the central element of the relational databases. </div><div align="left" style="min-height: 12pt; ">A table is accessible by means of a primary key, and if necessary foreign keys; it is described by an ordered sequence of <a href="137d21e95ee2c954.htm" target="_top"><b><u>Column</u></b></a>s. A&#160;<b> Table</b> is generally derived from a <a href="4619527e560d45eb.htm" target="_top"><b><u>Logical Data Entity</u></b></a> or asssociation.</div><i><ul>References:<li><a href="https://www.google.com/search?q=site%3Ahttps%3A%2F%2Fwww.dddcommunity.org%2Fresources%2Fddd_terms%2F+Entity"><img src="../standard/extr.ico.gif">&nbsp;DDD - Glossary - Entity</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="f4f91d182e2c0392.htm" target="_top">Table</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="137d24905ee2d0ca.htm" target="_top">Table View</a></td>
+<td class="description-text">A&#160;<b> Table View</b> is a virtual table based on the result-set of an SQL statement. A&#160;<b> Table View</b> contains rows and columns, just like a real <a href="137d21b55ee2c717.htm" target="_top"><b><u>Table</u></b></a>.        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="46f0480536e900a5.htm" target="_top">Table of a View</a></td>
+</tr>  
+</tbody>
+</table>
+<hr class="sectionbreak" />
+<h5>Abstract Concepts</h5>
+<table class="table  table-set-col-width">
+<thead >
+<tr><th>Concept</th><th>Description</th><th>HOPEX Metaclass</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="24ae4a185ed16aaa.htm" target="_top">Information Dictionary</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Information Dictionary</b> is a dictionary of&#160;<b> Information Asset</b>s used to describe an information architecture. This includes:</div><div align="left" style="min-height: 12pt; ">1. <a href="d6cd116d5ab97525.htm" target="_top"><b><u>Information Domain</u></b></a> </div><div align="left" style="min-height: 12pt; ">2. <a href="d6cd2cea5ab98e5f.htm" target="_top"><b><u>Information Entity</u></b></a> </div><div align="left" style="min-height: 12pt; ">3. <a href="362fc5a85b3c3c03.htm" target="_top"><b><u>Concept Property</u></b></a> </div><div align="left" style="min-height: 12pt; ">Concrete implementations are <a href="d2a7dc875ee8740b.htm" target="_top"><b><u>Business Dictionary</u></b></a>, <a href="7eaa87e856121db2.htm" target="_top"><b><u>Logical Data Dictionary</u></b></a>, etc.</div>       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="eb5e1fbe578552e0.htm" target="_top">Architecture Information Container</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="6ba771525f6b8ad4.htm" target="_top">Physical Data Dictionary</a></td>
+<td class="description-text">A&#160;<b> Physical Data Dictionary</b> is <a href="82c3b89c5fdcbd0f.htm" target="_top"><b><u>Data Dictionary</u></b></a> that holds the definition of <a href="75ef4ea8620fb39f.htm" target="_top"><b><u>Physical Data Asset</u></b></a>s such as <a href="028f03ff5b4f55ee.htm" target="_top"><b><u>Physical Data Domain</u></b></a> definitions, <a href="137d21b55ee2c717.htm" target="_top"><b><u>Table</u></b></a> definitions, <a href="137d21d35ee2c7f3.htm" target="_top"><b><u>Column Type</u></b></a> definitions.       </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="f4be4bb95ee18b51.htm" target="_top">Physical Data Map</a></td>
+<td class="description-text">A&#160;<b> Physical Data Map</b> is a top level grouping of <a href="028f03ff5b4f55ee.htm" target="_top"><b><u>Physical Data Domain</u></b></a>s.       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="c5d9cff45948362f.htm" target="_top">Physical Data Map</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="7731894d62166495.htm" target="_top">Relational Data Asset</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Relational Data Asset</b> is a Data Asset used for description of relational data consumed and produced by <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a>s.</div><div align="left" style="min-height: 12pt; "><b>&#160;Relational Data Asset</b>s range from <a href="362f3c7e5b3b22f8.htm" target="_top"><b><u>Relational Schema</u></b></a>s to <a href="137d21d35ee2c7f3.htm" target="_top"><b><u>Column Type</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">They are defined in <a href="362f3b875b3b221e.htm" target="_top"><b><u>Relational Dictionary</u></b></a>(ies) and managed in <a href="9152d8875ed741ef.htm" target="_top"><b><u>Data Catalog</u></b></a>s.</div>       </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="362f3ca45b3b234b.htm" target="_top">Relational Entity</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Relational Entity</b> is a relational data structure that is either a <a href="137d21b55ee2c717.htm" target="_top"><b><u>Table</u></b></a> or a <a href="137d24905ee2d0ca.htm" target="_top"><b><u>Table View</u></b></a>.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Relational Entity</b> is accessible by means of a primary key, and if necessary foreign keys; it is described by an ordered sequence of <a href="137d21e95ee2c954.htm" target="_top"><b><u>Column</u></b></a>s.</div><i><ul>References:<li><a href="https://www.google.com/search?q=site%3Ahttps%3A%2F%2Fwww.dddcommunity.org%2Fresources%2Fddd_terms%2F+Entity"><img src="../standard/extr.ico.gif">&nbsp;DDD - Glossary - Entity</a></li></ul></i>        </td>
+<td></td>
+</tr>  
+</tbody>
+</table>
+<section>
+
+</div>
+<button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button>
+<script>window.onscroll = function() {scrollFunction()};$(document).on('click', 'a[href^="#"]', function (event) {event.preventDefault();$('html, body').animate({scrollTop: $($.attr(this, 'href')).offset().top}, 500);});function showDiagOnClick(elem){ var x = document.getElementsByClassName('Relationship');var e = elem.getAttribute("value"); for (var i=0; i < x.length ;i++){x[i].style.display="none"; if (x[i].id == e){x[i].style.display="block";x[i].style.textAlign="left";}}}
+</script></html>

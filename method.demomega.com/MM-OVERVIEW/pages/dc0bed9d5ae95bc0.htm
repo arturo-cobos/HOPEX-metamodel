@@ -1,0 +1,690 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="keywords" content="">
+<meta name="description" content="">    
+<LINK REL="icon" HREF="../standard/assets/img/favicon.ico">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/bootstrap.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nav.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/eaportal.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/font-awesome.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/animate.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/datatables.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/grid.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nae.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/custom.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/chosen.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/prism.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery.dataTables.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jsTreeStyle.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.theme.css" media="screen" />
+<script type="text/javascript" src="../standard/assets/js/jquery-3.2.1.min.js" ></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-ui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.columnFilter.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3-force.v2.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.gui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.search.js"></script> 
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.util.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-2.1.1.min.js"></script>
+<script src="../standard/assets/js/ws_zoomtemplate_firefox.js"></script>
+<script src="../standard/assets/js/bootstrap.min.js"></script>
+<script src="../standard/assets/js/datatables.min.js"></script>
+<script src="../standard/assets/js/moment.min.js"></script>
+<script src="../standard/assets/js/datetime-moment.js"></script>
+<script src="../standard/assets/js/chartjs.min.js"></script>
+<script src="../standard/assets/js/searchindexcontent.json"></script>
+<script src="../standard/assets/js/anls.js"></script>
+<script src="../../../cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script src="../standard/assets/js/gauge.js"></script> 
+<script src="../standard/assets/js/domesticApi.js"></script> 
+<script src="../standard/assets/js/piecelabel.js"></script>
+<script src="../standard/assets/js/popper.min.js"></script>
+<script src="../standard/assets/js/custom.js"></script>
+<script src="../standard/assets/js/chosen.jquery.js"></script>
+<script src="../standard/assets/js/prism.js"></script>
+<script src="../standard/assets/js/init-chosen.js"></script>
+<script src="../standard/assets/js/chart-data-flow.js"></script>
+<script src="../standard/assets/js/chart-data-gantt.js"></script>
+<script type="module" src="../standard/assets/js/Fuse.esm.min.js"></script>
+<script type="module">
+import Fuse from '../standard/assets/js/Fuse.esm.min.js';
+$(document).ready(function () {
+console.log('getjson');
+window.$.getJSON('../standard/assets/js/searchindexcontent.json', function (response) {
+console.log('getjson ok');
+var isIndex = "";
+var url = window.location.pathname;
+var filename = url.substring(url.lastIndexOf('/')+1);
+if( filename.includes("index") || filename === "" ){
+isIndex = "pages/";
+} else {
+isIndex = "";
+}
+const fuse = new Fuse(response, {
+keys: ['title','text'],
+shouldSort: true,
+includeMatches : true,
+findAllMatches : true
+});
+$('#search-fuse').on('keyup', function () {
+let result = fuse.search($(this).val());
+console.log(result);
+let resultdiv = $('div.searchresults-fuse');
+if (result.length === 0) {
+resultdiv.hide();
+} else {
+resultdiv.empty();
+resultdiv.append('<table class="table-search" width="100%" cellspacing="0"><thead ><tr><th>Name</th><th>Object Type</th><th>Modification date</th></tr></thead><tbody>');
+
+for (let obj in result.slice(0,10)) {
+
+let searchObj = '<tr><td><a href="./'+ isIndex + result[obj].item.url + '">' + result[obj].item.title +'</a></td><td>' + result[obj].item.ObjectType + '</td><td>' + result[obj].item.ModificationDate + '</td></tr>' ;
+
+
+resultdiv.find('tbody').append(searchObj);
+}
+resultdiv.append('</tbody></table>');
+resultdiv.show();
+}
+});
+});
+});
+</script>
+<title>HOPEX Metamodel Overview (Beta Version)</title>
+</head>
+<nav class="navbar navbar-expand-md navbar-dark  navbar-mega"><!-- Brand --><!--<a class="navbar-brand" href="#">Navbar</a>--><a class="" href="../index.htm"><img class="logo-mega" src="../standard/assets/img/logo.png"  alt="">(Beta Version)</a><!-- Toggler/collapsibe Button --><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><!-- Navbar links -->
+<div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsibleNavbar"><div class="col-sm-auto col-md-auto col-lg-5"></div>
+<div class="col-sm-auto">
+<ul class="navbar-nav">      
+<li><a class="dropdown-item" href="ad30ce115ebf7e90.htm">EA Grid</a></li> 
+<li><a class="dropdown-item" href="fdd5018459bc3c6a.htm">EA Domains</a></li> 
+<li><a class="dropdown-item" href="07e731775ecc93f4.htm">Solutions</a></li> 
+<li><a class="dropdown-item" href="c5dfc62c54810c2c.htm">Glossary</a></li> 
+<li class="nav-item dropdown mx-1">
+<a class="nav-link" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</a>
+<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<li><a class="dropdown-item" href="5446555d5f88c32e.htm">Outcome Driven Metamodel</a></li> 
+<li><a class="dropdown-item" href="e1ccfc295f8f7b90.htm">Playbooks</a></li> 
+<li><a class="dropdown-item" href="42bc992862d20ea7.htm">Framework Mappings</a></li> 
+<li><a class="dropdown-item" href="e93aebb35fa20550.htm">Metamodel Patterns</a></li> 
+<li><a class="dropdown-item" href="d599fe87602b2b85.htm">References</a></li> 
+<li><a class="dropdown-item" href="333f3a7f5dde11de.htm">Legend</a></li> 
+</ul>									                                            
+</li>
+</ul>
+</div>
+<div class="col-sm-auto"><a class="nav-link search" href="#" onclick=showHideSearch("search-section-fuse")><i class="fa fa-search mr-1 form-control-feedback"></i></a></div>
+</div>
+</nav>
+<div id="search-section-fuse" style="display:none">>
+<div class="search_header"><span class="closesearch">&times;</span>
+<nav class="breadcrumb">
+<a class="breadcrumb-item" href="../index.htm">Home </a> 
+<span class="breadcrumb-item active">Search</span> 
+</nav>
+</div>
+<input id="search-fuse" placeholder="Search..."  name="q" onfocus="this.value=''" type="search">
+<div class="searchresults-fuse"></div>
+</div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>function showHideSearch(elementId) {var contentDivs = document.getElementsByClassName('content');var footerDivs = document.getElementsByClassName('footer'); var containerDivs = document.getElementsByClassName('container');var containerfluidDivs = document.getElementsByClassName('container-fluid');var x = document.getElementById(elementId);if (x.style.display === "none") {x.style.display = "block";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "none";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "none";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "none";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "none";}} else {x.style.display = "none";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "block";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "block";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "block";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "block";}}} ;<!-- END WIDGET DRILL DOWN --></script><script>$(document).ready(function() {$(window).scroll(function() {if ($(this).scrollTop() > 100) {$('.scrollup').fadeIn();} else {$('.scrollup').fadeOut();}});$('.scrollup').click(function() {$("html, body").animate({scrollTop: 0}, 600);return false;});});</script><script>
+var modal = document.getElementById("search-section-fuse");
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = "none";
+}
+}
+$(document).on('click', '.closesearch', function() {
+showHideSearch("search-section-fuse");
+
+
+
+
+
+});</script><div class="container-fluid col-lg-11"><nav class="breadcrumb"><a class="breadcrumb-item" href="../index.htm">Home</a> <span class="breadcrumb-item active">
+<a  href="02af0a215a1823ee.htm" target="_top">Dictionary of HOPEX patterns</a>&nbsp;/&nbsp;Teams Pattern</span></nav></div>
+<div class="container-fluid col-lg-11 content">
+<section class="fadeInDown animated"><a href="#idt" class="btn btn-d">DEFINITION</a> <a href="#grf" class="btn btn-d">CONCEPT GRAPH</a> <a href="#des" class="btn btn-d">CONCEPT DESCRIPTIONS</a> 
+</section>
+<a class="object-section-anchor" id="idt"></a>
+<section class="object-section">
+<h4>CONCEPT DOMAIN - Teams Pattern</h4><hr class="sectionbreak" /><table class="table table-vertical-headers table-set-col-width"><tr><th>Description</th><td class="description-text"><i>Pattern Domain</i><br/><div align="left" style="min-height: 12pt; ">The&#160;<b> Teams Pattern</b> domain defines organization structure and behavior as well as instrurments required to govern <a href="d321c226601262ae.htm" target="_top"><b><u>Enduring Initiative</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">Any <a href="0ffeec41600be08a.htm" target="_top"><b><u>Initiative</u></b></a>, (project, enterprise, asset portfolio, privacy insurance, etc.) shall be governed. This includes:</div><div align="left" style="min-height: 12pt; ">1. <a href="2cc9717155263b89.htm" target="_top"><b><u>Governance Committee</u></b></a>s in charge of governance. They comprise persons (person (system) in HOPEX) and the role of these individual in the team (architects, auditors, product owner, etc.).</div><div align="left" style="min-height: 12pt; ">2. <a href="1737b50b5fe27cba.htm" target="_top"><b><u>Governance Event</u></b></a>s describe <i>changes</i> that need to be recorded to monitor transformations (d&#233;cisions, incidents, etc.).</div><div align="left" style="min-height: 12pt; ">3. <a href="1737b76a5fe28204.htm" target="_top"><b><u>Governance Activity</u></b></a>(ies) describe all actions that come in response to change events and may results in other change events (workflow, audits, ...).<br />4. <a href="173706265fe3f332.htm" target="_top"><b><u>Measure</u></b></a>s provide KPIs (qualification and quantification) on the status of&#160;<b> Undertaking</b>s being governed.</div><div><br/><i>References:</i><br/><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_48" target="_blank">OpenGroup - TOGAF - Definitions - Governance</a></div></td></tr><tr><th>Dictionary</th><td><img src="../standard/dicsubjectarea.ico.gif"/>&nbsp;
+<a  href="02af0a215a1823ee.htm" target="_top">Dictionary of HOPEX patterns</a></td></tr><tr><th>Parent Domain</th><td><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="83bb9d30619233b2.htm" target="_top">Governance Pattern</a>&nbsp;</td></tr>
+<tr><th>Domain dependencies</th><td><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="69346af86005efa9.htm" target="_top">Initiative and Transformation Pattern</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="02af0a4b5a182417.htm" target="_top">Operating Semantic</a>&nbsp;</td></tr></table></section>
+<a class="object-section-anchor" id="grf"></a>
+<section class="object-section">
+<h4>DOMAIN CONCEPT GRAPH</h4>
+<hr class="sectionbreak" />
+<a href="#" class="btn btn-d" value="Relationship1" onclick="showDiagOnClick(this)">Diagram</a>
+<a href="#" class="btn btn-d" value="Relationship2" onclick="showDiagOnClick(this)">Graph</a>
+<div class="Relationship" id="Relationship1">
+
+<map  name="DC0BEDAB5AE95BEB">
+  <area  href=#OBMK8F46E90164B771F3 shape="polygon" coords="471, 754, 578, 748, 592, 747, 592, 758, 584, 758, 471, 764"    title="-">
+  
+  <area  href=173706265fe3f332.htm#OBMK173706265FE3F332 shape="polygon" coords="399, 748, 399, 737, 445, 737, 445, 748, 399, 748"   target="_top"  title="A&#160; Measure is a quantified aspect of the assets of the enterprise (Agents,&#160; Behaviors, Information Objects) used by organizations to guide its transformation and assurance Initiatives.">
+  
+  <area  href="8F46E8EB64B7719A.htm" shape="rect" coords="373, 734, 471, 784"   target="_top"  title="-">
+  
+  <area  href=#OBMK910195FD550A2DB4 shape="polygon" coords="452, 233, 452, 152, 463, 152, 463, 233"    title="-">
+  
+  <area  href=#OBMK4993655963907D7A shape="polygon" coords="494, 565, 693, 565, 693, 606, 682, 606, 682, 575, 494, 575"    title="-">
+  
+  <area  href=1737b50b5fe27cba.htm#OBMK1737B50B5FE27CBA shape="polygon" coords="392, 555, 392, 544, 473, 544, 473, 555, 392, 555"   target="_top"  title="A&#160; Governance Event is any event that has an impact on the management and governance of an Enduring Initiative.">
+  
+  <area  href=850C8F8258B680EC.htm#OBMK850C8F8258B680EC shape="polygon" coords="402, 582, 402, 568, 463, 568, 463, 582, 402, 582"   target="_top"  title="This concept enables to annotate Repository objects and to follow a conversation on a dedicated object.">
+  
+  <area  href="4993655063907d35.htm" shape="rect" coords="372, 542, 495, 599"   target="_top"  title="&#160;Review Note is a comment used by a Stakeholder&#160; to annotate Repository objects.">
+  
+  <area  href=e073f9c161d2104a.htm#OBMKE073F9C161D2104A shape="polygon" coords="715, 622, 715, 611, 766, 611, 766, 622, 715, 622"   target="_top"  title="A&#160; Resolution is time bound Appraisal, agreed upon by Stakeholders to guide what can or cannot be done regarding a specific Functional Asset.">
+  
+  <area  href=8063C7D9609B59EA.htm#OBMK8063C7D9609B59EA shape="polygon" coords="707, 648, 707, 635, 774, 635, 774, 648, 707, 648"   target="_top"  title="-">
+  
+  <area  href="D7F9FCC95F720EE0.htm" shape="rect" coords="678, 608, 803, 668"   target="_top"  title="A&#160; Decision is time bound Resolution, agreed upon by Stakeholders, to state what shall or shall not be done regarding a specific Functional Asset.">
+  
+  <area  href=BCDBC016617A55BE.htm#OBMKBCDBC016617A55BE shape="polygon" coords="579, 622, 579, 611, 626, 611, 626, 622, 579, 622"   target="_top"  title="An&#160; Appraisal is a time bound statement expressed by stakeholders to qualify Architecture Blocks with respect to their worth.">
+  
+  <area  href=9500e0484e37c835.htm#OBMK9500E0484E37C835 shape="polygon" coords="563, 648, 563, 635, 643, 635, 643, 648, 563, 648"   target="_top"  title="Objects of this type are created either at assessment session deployment or at aggregation. Objects created at deployment are owned by the session and enable determination of the object that will be evaluated, by whom and where. It is also associated with values calculated from answers given in the assessor questionnaire for each of the assessed characteristics. ">
+  
+  <area  href="3B539CBB551E4C2A.htm" shape="rect" coords="540, 608, 667, 668"   target="_top"  title="An&#160; Assessment is the result of the act of judging or assessing an aspect of the enterprise, based on an enterprise description and on the comparison of this description with the actual state of the enterprise.">
+  
+  <area  href=#OBMK9BB4A609626A9B3B shape="polygon" coords="1029, 653, 1082, 653, 1082, 899, 1071, 899, 1071, 663, 1029, 663"    title="Functional Asset that is the subject of a Governance Event.">
+  
+  <area  href=#OBMK9BB4A609626A9B3B shape="polygon" coords="1029, 840, 1019, 840, 1019, 854, 943, 854, 943, 840, 1029, 840"    title="Functional Asset that is the subject of a Governance Event.">
+  
+  <area  href=#OBMK9BB4A55D626A9A6C shape="polygon" coords="976, 651, 976, 899, 965, 899, 965, 651"    title="Functional Asset that is the subject of a Driver.">
+  
+  <area  href=#OBMK9BB4A40B626A98A0 shape="polygon" coords="918, 838, 912, 838, 912, 852, 819, 852, 819, 838, 918, 838"    title="-">
+  
+  <area  href=#OBMK9BB4A2DB626A9622 shape="polygon" coords="803, 633, 903, 633, 903, 902, 892, 902, 892, 643, 803, 643"    title="Functional Asset that is the subject of a Decision.">
+  
+  <area  href=514E62CE620F22C1.htm#OBMK514E62CE620F22C1 shape="polygon" coords="948, 913, 948, 902, 1049, 902, 1049, 913, 948, 913"   target="_top"  title="An&#160; Aggregate Block (Type) is a class of&#160; Aggregate Blocks.">
+  
+  <area  href=A4A5B3F855585CE1.htm#OBMKA4A5B3F855585CE1 shape="polygon" coords="944, 924, 944, 913, 1053, 913, 1053, 924, 944, 924"   target="_top"  title="An&#160; Architecture Block (Type) is a type of Architecture Block which is used in the description of the enterprise, such as Processes, Org-Units, Applications.">
+  
+  <area  href=c229c44e5d0c649f.htm#OBMKC229C44E5D0C649F shape="polygon" coords="947, 956, 947, 942, 1050, 942, 1050, 956, 947, 956"   target="_top"  title="Blocks used to describe the functional architecture of an ~BR6K086dIfvA[Enterprise].">
+  
+  <area  href="07ca0f015dd84efa.htm" shape="rect" coords="877, 899, 1121, 964"   target="_top"  title="&#160;Functional Assets encompasse Architecture Blocks used to describe how an enterprise function. This includes the purposes of an enterprise (Capability) and the way the enterprise operates to fulfill these purposes (Agents and their&#160; Behaviors).">
+  
+  <area  href=514e623c620f2198.htm#OBMK514E623C620F2198 shape="polygon" coords="361, 911, 361, 900, 480, 900, 480, 911, 361, 911"   target="_top"  title="An&#160; Aggregate Block (Individual) is an Individual which has an internal structure.">
+  
+  <area  href=c31ce58f62158d82.htm#OBMKC31CE58F62158D82 shape="polygon" coords="388, 922, 388, 911, 453, 911, 453, 922, 388, 922"   target="_top"  title="An&#160; Initiative Block is a Model Building Block used to describe enterprise transformation.">
+  
+  <area  href="0ffeec41600be08a.htm" shape="rect" coords="354, 898, 487, 955"   target="_top"  title="An&#160; Initiative is any piece of work that is undertaken or attempted under the responsibility of a Steering Authority.">
+  
+  <area  href=a4a5b48555585d59.htm#OBMKA4A5B48555585D59 shape="polygon" coords="1009, 439, 1009, 427, 1134, 427, 1134, 439, 1009, 439"   target="_top"  title="&#160;Governance Resource Types are templates used to define Governance Resources such as Workflow templates, Assessment templates..">
+  
+  <area  href="2b5863c15eeb675a.htm" shape="rect" coords="999, 425, 1143, 472"   target="_top"  title="An Idea is a potential modification which could be carried out to the architectural landscape in order to improve its capabilities.">
+  
+  <area  href=#OBMK5754805751545CA3 shape="polygon" coords="594, 134, 594, 120, 679, 120, 679, 134, 594, 134"    title="-">
+  
+  <area  href=#OBMK426A432A5AEB3707 shape="polygon" coords="537, 122, 715, 122, 715, 133, 537, 133"    title="-">
+  
+  <area  href=9597d7b3620ab751.htm#OBMK9597D7B3620AB751 shape="polygon" coords="751, 113, 751, 101, 848, 101, 848, 113, 751, 113"   target="_top"  title="A&#160; Class of Model Block is a Class that classifies Model Building Blocks.">
+  
+  <area  href=2d9a74745b2181cd.htm#OBMK2D9A74745B2181CD shape="polygon" coords="757, 125, 757, 113, 843, 113, 843, 125, 757, 125"   target="_top"  title="&#160;Governance Blocks include all instruments used to monitor and steer transformation Initiatives. They include incidents, assessments, Workflows, indicators and their templates.">
+  
+  <area  href="a4a5b48555585d59.htm" shape="rect" coords="716, 99, 885, 158"   target="_top"  title="&#160;Governance Resource Types are templates used to define Governance Resources such as Workflow templates, Assessment templates..">
+  
+  <area  href=2d9a74745b2181cd.htm#OBMK2D9A74745B2181CD shape="polygon" coords="417, 109, 417, 98, 497, 98, 497, 109, 417, 109"   target="_top"  title="&#160;Governance Blocks include all instruments used to monitor and steer transformation Initiatives. They include incidents, assessments, Workflows, indicators and their templates.">
+  
+  <area  href="8a228c0e550a3122.htm" shape="rect" coords="377, 95, 538, 152"   target="_top"  title="&#160;Governance Resources include Governing Teams, Governance Activitys, Governance Events and Measures used to guide and steer Initiatives.">
+  
+  <area  href=bcdbc5a3617a5e6a.htm shape="polygon" coords="165, 843, 352, 843, 352, 854, 165, 854"   target="_top"  title="-">
+  
+  <area  href=8a228c0e550a3122.htm#OBMK8A228C0E550A3122 shape="polygon" coords="373, 835, 373, 825, 470, 825, 470, 835, 373, 835"   target="_top"  title="&#160;Governance Resources include Governing Teams, Governance Activitys, Governance Events and Measures used to guide and steer Initiatives.">
+  
+  <area  href=c9a2db04605d623b.htm#OBMKC9A2DB04605D623B shape="polygon" coords="376, 862, 376, 849, 468, 849, 468, 862, 376, 862"   target="_top"  title="-">
+  
+  <area  href="bcdbc52b617a5d27.htm" shape="rect" coords="352, 822, 492, 879"   target="_top"  title="A&#160; Team Responsibility is an assignment of a Functional Asset to a Stakeholder for management or governance purposes.">
+  
+  <area  href=#OBMKBCDBC028617A561C shape="polygon" coords="678, 617, 792, 617, 792, 606, 803, 606, 803, 628, 678, 628"    title="-">
+  
+  <area  href=81f182ab646c0dfa.htm#OBMK81F182AB646C0DFA shape="polygon" coords="271, 250, 290, 250, 290, 263, 176, 263, 176, 250, 271, 250"   target="_top"  title="-">
+  
+  <area  href=ac98b16e60a38cbc.htm shape="polygon" coords="160, 219, 207, 219, 207, 278, 165, 278, 165, 267, 196, 267, 196, 230, 160, 230"   target="_top"  title="-">
+  
+  <area  href=2cc9b61d55264ee2.htm shape="polygon" coords="1181, 571, 1181, 626, 1017, 626, 1017, 616, 1170, 616, 1170, 571"   target="_top"  title="Driver&#160;.which motivates an&#160;Driver Assessment&#160;.">
+  
+  <area  href=3B539CBB551E4C2A.htm#OBMK3B539CBB551E4C2A shape="polygon" coords="1139, 533, 1139, 522, 1200, 522, 1200, 533, 1139, 533"   target="_top"  title="An&#160; Assessment is the result of the act of judging or assessing an aspect of the enterprise, based on an enterprise description and on the comparison of this description with the actual state of the enterprise.">
+  
+  <area  href="2cc9b5a755264db7.htm" shape="rect" coords="1106, 519, 1233, 571"   target="_top"  title="A&#160; Driver Assessment is a kind of Assessment which is motivated by a Stakeholder Driver.">
+  
+  <area  href=#OBMK37B7A5C86026076C shape="polygon" coords="818, 450, 650, 441, 650, 431, 818, 439"    title="-">
+  
+  <area  href=1737b76a5fe28204.htm#OBMK1737B76A5FE28204 shape="polygon" coords="838, 434, 838, 423, 926, 423, 926, 434, 838, 434"   target="_top"  title="A&#160; Governance Activity is an action done by one or several Stakeholders as part of the governance of an Enduring Initiative.">
+  
+  <area  href=afa914404daf43ac.htm#OBMKAFA914404DAF43AC shape="polygon" coords="838, 460, 838, 447, 926, 447, 926, 460, 838, 460"   target="_top"  title="An assessment session is an assessment carried out over a determined time period. When an assessment session is published, an assessment questionnaire containing questions is sent to targeted assessors.">
+  
+  <area  href="37b7a5ab602606df.htm" shape="rect" coords="818, 420, 946, 478"   target="_top"  title="An assessment session is an assessment activity carried out over a determined time period. When an assessment session is published, an assessment questionnaire containing questions is sent to targeted assessors.">
+  
+  <area  href=#OBMKFF0501C05B254007 shape="polygon" coords="85, 214, 85, 158, 95, 158, 95, 214"    title="-">
+  
+  <area  href=ff0500605b253f1b.htm#OBMKFF0500605B253F1B shape="polygon" coords="313, 739, 323, 739, 323, 753, 187, 753, 187, 739, 313, 739"   target="_top"  title="-">
+  
+  <area  href=3d9074d55ffcf128.htm shape="polygon" coords="165, 754, 346, 754, 346, 764, 165, 764"   target="_top"  title="-">
+  
+  <area  href=#OBMKD7F911165F73D9F6 shape="polygon" coords="671, 443, 650, 441, 651, 431, 672, 433"    title="-">
+  
+  <area  href=1737b76a5fe28204.htm#OBMK1737B76A5FE28204 shape="polygon" coords="690, 434, 690, 423, 778, 423, 778, 434, 690, 434"   target="_top"  title="A&#160; Governance Activity is an action done by one or several Stakeholders as part of the governance of an Enduring Initiative.">
+  
+  <area  href="7625fe5b5f6c92de.htm" shape="rect" coords="670, 421, 798, 472"   target="_top"  title="-">
+  
+  <area  href=1737b76a5fe28204.htm#OBMK1737B76A5FE28204 shape="polygon" coords="549, 436, 549, 425, 637, 425, 637, 436, 549, 436"   target="_top"  title="A&#160; Governance Activity is an action done by one or several Stakeholders as part of the governance of an Enduring Initiative.">
+  
+  <area  href=0f080f304eef2b0d.htm#OBMK0F080F304EEF2B0D shape="polygon" coords="575, 462, 575, 449, 610, 449, 610, 462, 575, 462"   target="_top"  title="An audit is a mission assigned to a team of internal auditors in the context of an audit plan.">
+  
+  <area  href="f4be37465ee1cba6.htm" shape="rect" coords="537, 423, 650, 480"   target="_top"  title="An audit is a mission assigned to a team of internal auditors in the context of an audit plan.">
+  
+  <area  href=1737b76a5fe28204.htm#OBMK1737B76A5FE28204 shape="polygon" coords="397, 436, 397, 425, 485, 425, 485, 436, 397, 436"   target="_top"  title="A&#160; Governance Activity is an action done by one or several Stakeholders as part of the governance of an Enduring Initiative.">
+  
+  <area  href=0A6E1C5F53D22D8F.htm#OBMK0A6E1C5F53D22D8F shape="polygon" coords="391, 462, 391, 449, 491, 449, 491, 462, 391, 462"   target="_top"  title="-">
+  
+  <area  href="26b887fa5eea87e2.htm" shape="rect" coords="371, 422, 512, 480"   target="_top"  title="-">
+  
+  <area  href=#OBMKF4BE375D5EE1CCBF shape="polygon" coords="646, 431, 649, 430, 651, 441, 648, 442"    title="-">
+  
+  <area  href=2cc9b802552653f2.htm shape="polygon" coords="970, 591, 970, 301, 947, 301, 947, 290, 981, 290, 981, 591"   target="_top"  title="Set of Stakeholders having an interest or concern in the state of the enterprise.">
+  
+  <area  href=#OBMK91019CB6550A30D5 shape="polygon" coords="893, 622, 697, 611, 687, 611, 687, 601, 698, 601, 893, 611"    title="-">
+  
+  <area  href=1737b50b5fe27cba.htm#OBMK1737B50B5FE27CBA shape="polygon" coords="914, 605, 914, 594, 995, 594, 995, 605, 914, 605"   target="_top"  title="A&#160; Governance Event is any event that has an impact on the management and governance of an Enduring Initiative.">
+  
+  <area  href=06110e0d56466c02.htm#OBMK06110E0D56466C02 shape="polygon" coords="914, 631, 914, 618, 996, 618, 996, 631, 914, 631"   target="_top"  title="Interest in an enterprise (or a system) relevant to one or more of its stakeholders.">
+  
+  <area  href="bcebd0565491287e.htm" shape="rect" coords="893, 591, 1017, 651"   target="_top"  title="A&#160; Driver is a factor which can have a significant impact on the activities, and goals of an Enterprise or a Management System.">
+  
+  <area  href=#OBMK3B539CDA551E4CCA shape="polygon" coords="662, 620, 677, 617, 679, 627, 664, 630"    title="-">
+  
+  <area  href=ff0500605b253f1b.htm#OBMKFF0500605B253F1B shape="polygon" coords="325, 427, 328, 427, 328, 441, 192, 441, 192, 427, 325, 427"   target="_top"  title="-">
+  
+  <area  href=1737B7E55FE28304.htm shape="polygon" coords="165, 428, 346, 428, 346, 439, 165, 439"   target="_top"  title="-">
+  
+  <area  href=#OBMK2B5861B35EEB62D4 shape="polygon" coords="510, 440, 650, 430, 651, 441, 511, 450"    title="-">
+  
+  <area  href=8a228c0e550a3122.htm#OBMK8A228C0E550A3122 shape="polygon" coords="602, 390, 602, 379, 699, 379, 699, 390, 602, 390"   target="_top"  title="&#160;Governance Resources include Governing Teams, Governance Activitys, Governance Events and Measures used to guide and steer Initiatives.">
+  
+  <area  href=15c050985ffc4bed.htm#OBMK15C050985FFC4BED shape="polygon" coords="618, 416, 618, 403, 683, 403, 683, 416, 618, 416"   target="_top"  title="-">
+  
+  <area  href="1737b76a5fe28204.htm" shape="rect" coords="346, 377, 954, 496"   target="_top"  title="A&#160; Governance Activity is an action done by one or several Stakeholders as part of the governance of an Enduring Initiative.">
+  
+  <area  href=#OBMKD059DA9F5EF11452 shape="polygon" coords="497, 634, 682, 634, 682, 606, 693, 606, 693, 644, 497, 644"    title="-">
+  
+  <area  href=1737b50b5fe27cba.htm#OBMK1737B50B5FE27CBA shape="polygon" coords="393, 633, 393, 622, 474, 622, 474, 633, 393, 633"   target="_top"  title="A&#160; Governance Event is any event that has an impact on the management and governance of an Enduring Initiative.">
+  
+  <area  href=77b57df251da6884.htm#OBMK77B57DF251DA6884 shape="polygon" coords="398, 659, 398, 646, 469, 646, 469, 659, 398, 659"   target="_top"  title="The common part of incidents and macro incidents concepts.">
+  
+  <area  href="d059da695ef11294.htm" shape="rect" coords="369, 619, 498, 676"   target="_top"  title="The common part of incidents and macro incidents concepts.">
+  
+  <area  href=ff0500605b253f1b.htm#OBMKFF0500605B253F1B shape="polygon" coords="321, 603, 329, 603, 329, 617, 193, 617, 193, 603, 321, 603"   target="_top"  title="-">
+  
+  <area  href=1737b6025fe27ee8.htm shape="polygon" coords="165, 603, 346, 603, 346, 614, 165, 614"   target="_top"  title="-">
+  
+  <area  href=#OBMKA4A5B39055585C40 shape="polygon" coords="537, 113, 611, 107, 621, 107, 622, 117, 611, 118, 537, 124"    title="-">
+  
+  <area  href=#OBMK18A826A35EEB6937 shape="polygon" coords="480, 265, 511, 265, 511, 286, 501, 286, 501, 275, 480, 275"    title="-">
+  
+  <area  href=18a826a35eeb6934.htm shape="polygon" coords="408, 286, 408, 265, 511, 265, 511, 286, 501, 286, 501, 275, 419, 275, 419, 286"   target="_top"  title="-">
+  
+  <area  href=#OBMK18A826A35EEB696F shape="polygon" coords="408, 286, 408, 265, 439, 265, 439, 275, 419, 275, 419, 286"    title="-">
+  
+  <area  href=18a81ed15eeb5d60.htm shape="polygon" coords="165, 918, 354, 918, 354, 928, 165, 928"   target="_top"  title="-">
+  
+  <area  href=#OBMK24AE430D5ED1F6B1 shape="polygon" coords="637, 306, 680, 306, 680, 317, 637, 317"    title="-">
+  
+  <area  href=24ae430d5ed1f6aa.htm shape="polygon" coords="552, 306, 680, 306, 680, 317, 552, 317"   target="_top"  title="Role of a person in a Governance Committee.">
+  
+  <area  href=#OBMK24AE430E5ED1F81C shape="polygon" coords="552, 306, 594, 306, 594, 317, 552, 317"    title="-">
+  
+  <area  href=f594f72e61f736e1.htm#OBMKF594F72E61F736E1 shape="polygon" coords="302, 318, 314, 318, 314, 331, 185, 331, 185, 318, 302, 318"   target="_top"  title="-">
+  
+  <area  href=b0d7b34f5ea02f2c.htm shape="polygon" coords="165, 312, 386, 312, 386, 322, 165, 322"   target="_top"  title="-">
+  
+  <area  href=bcebd0175491272a.htm#OBMKBCEBD0175491272A shape="polygon" coords="714, 296, 714, 285, 770, 285, 770, 296, 714, 296"   target="_top"  title="A&#160; Stakeholder is an individual, team, organization, or classes thereof, having an interest in the enterprise.">
+  
+  <area  href=000000008000001d.htm#OBMK000000008000001D shape="polygon" coords="705, 322, 705, 309, 780, 309, 780, 322, 705, 322"   target="_top"  title="A Person is defined by her/his name and email.">
+  
+  <area  href="2cc9718655263c44.htm" shape="rect" coords="680, 282, 805, 342"   target="_top"  title="An&#160; Individual Stakeholder is a person with a Stakeholder role in architecture &amp; assurance activities.">
+  
+  <area  href=bcebd0175491272a.htm#OBMKBCEBD0175491272A shape="polygon" coords="441, 299, 441, 289, 497, 289, 497, 299, 441, 299"   target="_top"  title="A&#160; Stakeholder is an individual, team, organization, or classes thereof, having an interest in the enterprise.">
+  
+  <area  href=b09fc6ae56bd201e.htm#OBMKB09FC6AE56BD201E shape="polygon" coords="433, 326, 433, 313, 505, 313, 505, 326, 433, 326"   target="_top"  title="An EA Organization is a governance body regrouping several persons or organizations.">
+  
+  <area  href="2cc9717155263b89.htm" shape="rect" coords="385, 286, 553, 346"   target="_top"  title="A&#160; Governance Committee is a group of Stakeholders that contributes to architecture and assurance activities and governs Enduring Initiatives.">
+  
+  <area  href=8a228c0e550a3122.htm#OBMK8A228C0E550A3122 shape="polygon" coords="598, 246, 598, 235, 695, 235, 695, 246, 598, 246"   target="_top"  title="&#160;Governance Resources include Governing Teams, Governance Activitys, Governance Events and Measures used to guide and steer Initiatives.">
+  
+  <area  href=000000008000003f.htm#OBMK000000008000003F shape="polygon" coords="609, 272, 609, 259, 684, 259, 684, 272, 609, 272"   target="_top"  title="-">
+  
+  <area  href="bcebd0175491272a.htm" shape="rect" coords="346, 233, 947, 358"   target="_top"  title="A&#160; Stakeholder is an individual, team, organization, or classes thereof, having an interest in the enterprise.">
+  
+  <area  href=ff0500115b253e92.htm#OBMKFF0500115B253E92 shape="polygon" coords="38, 227, 38, 216, 146, 216, 146, 227, 38, 227"   target="_top"  title="Container of Building Blocks used to measure, assess, monitor transformation&#160; Initiatives .">
+  
+  <area  href=8a228c0e550a3122.htm#OBMK8A228C0E550A3122 shape="polygon" coords="43, 238, 43, 227, 141, 227, 141, 238, 43, 238"   target="_top"  title="&#160;Governance Resources include Governing Teams, Governance Activitys, Governance Events and Measures used to guide and steer Initiatives.">
+  
+  <area  href=728a7d2c59fc72b3.htm#OBMK728A7D2C59FC72B3 shape="polygon" coords="74, 264, 74, 251, 109, 251, 109, 264, 74, 264"   target="_top"  title="-">
+  
+  <area  href="ff0501b65b253fdd.htm" shape="rect" coords="19, 214, 165, 949"   target="_top"  title="A&#160; Governing Team consists of a collection of individuals and resources, including personnel and committees, assembled to effectively manage and sustain an Enduring Initiative.">
+  
+  <area  href=ca353eb75fc5e9b2.htm#OBMKCA353EB75FC5E9B2 shape="polygon" coords="325, 110, 323, 110, 323, 124, 174, 124, 174, 110, 325, 110"   target="_top"  title="-">
+  
+  <area  href=ff0500605b253f1b.htm shape="polygon" coords="164, 122, 346, 122, 346, 132, 164, 132"   target="_top"  title="-">
+  
+  <area  href=209c29bb5ed23342.htm#OBMK209C29BB5ED23342 shape="polygon" coords="49, 97, 49, 86, 134, 86, 134, 97, 49, 97"   target="_top"  title="A&#160; Model Namespace is a namespace of Model Building Blocks used to describe both the architecture of the enterprise and Initiatives aimed at designing, developing, running, adapting and maintaining this architecture over time.">
+  
+  <area  href=48f682ea5953184a.htm#OBMK48F682EA5953184A shape="polygon" coords="45, 123, 45, 110, 139, 110, 139, 123, 45, 123"   target="_top"  title="-">
+  
+  <area  href="ff0500115b253e92.htm" shape="rect" coords="19, 83, 165, 158"   target="_top"  title="Container of Building Blocks used to measure, assess, monitor transformation&#160; Initiatives .">
+  
+  <area  href=#OBMK2D9A82B95B21861D shape="polygon" coords="745, 104, 606, 105, 622, 105, 622, 94, 632, 94, 745, 93"    title="-">
+  
+  <area  href=CA353E6D5FC5E8AF.htm#OBMKCA353E6D5FC5E8AF shape="polygon" coords="577, 63, 577, 52, 667, 52, 667, 63, 577, 63"   target="_top"  title="A&#160; Model Building Block is a Building Block used to describe and manage the enterprise. It comprises:">
+  
+  <area  href=2ea16d68565c3218.htm#OBMK2EA16D68565C3218 shape="polygon" coords="568, 89, 568, 76, 676, 76, 676, 89, 568, 89"   target="_top"  title="&nbsp;used in enterprise governance description.">
+  
+  <area  href="2d9a74745b2181cd.htm" shape="rect" coords="347, 50, 898, 174"   target="_top"  title="&#160;Governance Blocks include all instruments used to monitor and steer transformation Initiatives. They include incidents, assessments, Workflows, indicators and their templates.">
+  
+  <area  href=8a228c0e550a3122.htm#OBMK8A228C0E550A3122 shape="polygon" coords="543, 723, 543, 712, 641, 712, 641, 723, 543, 723"   target="_top"  title="&#160;Governance Resources include Governing Teams, Governance Activitys, Governance Events and Measures used to guide and steer Initiatives.">
+  
+  <area  href="173706265fe3f332.htm" shape="rect" coords="346, 710, 838, 795"   target="_top"  title="A&#160; Measure is a quantified aspect of the assets of the enterprise (Agents,&#160; Behaviors, Information Objects) used by organizations to guide its transformation and assurance Initiatives.">
+  
+  <area  href=1737b50b5fe27cba.htm#OBMK1737B50B5FE27CBA shape="polygon" coords="637, 581, 637, 570, 718, 570, 718, 581, 637, 581"   target="_top"  title="A&#160; Governance Event is any event that has an impact on the management and governance of an Enduring Initiative.">
+  
+  <area  href=c03fc26b60a76be5.htm#OBMKC03FC26B60A76BE5 shape="polygon" coords="643, 607, 643, 594, 713, 594, 713, 607, 643, 607"   target="_top"  title="-">
+  
+  <area  href="BCDBC016617A55BE.htm" shape="rect" coords="532, 568, 824, 676"   target="_top"  title="An&#160; Appraisal is a time bound statement expressed by stakeholders to qualify Architecture Blocks with respect to their worth.">
+  
+  <area  href=8a228c0e550a3122.htm#OBMK8A228C0E550A3122 shape="polygon" coords="639, 532, 639, 521, 736, 521, 736, 532, 639, 532"   target="_top"  title="&#160;Governance Resources include Governing Teams, Governance Activitys, Governance Events and Measures used to guide and steer Initiatives.">
+  
+  <area  href=15c050c95ffc4c53.htm#OBMK15C050C95FFC4C53 shape="polygon" coords="659, 558, 659, 545, 716, 545, 716, 558, 659, 558"   target="_top"  title="-">
+  
+  <area  href="1737b50b5fe27cba.htm" shape="rect" coords="346, 519, 1029, 693"   target="_top"  title="A&#160; Governance Event is any event that has an impact on the management and governance of an Enduring Initiative.">
+  
+  <area  href="dc0bed9d5ae95bc0.htm" shape="rect" coords="1, 0, 1260, 994"   target="_top"  title="The&#160; Teams Pattern domain defines organization structure and behavior as well as instrurments required to govern Enduring Initiatives.">
+  
+</map>
+<img  src="../images/dc0bed9d5ae95bc0_dc0bedab5ae95beb_i.png" alt="../images/dc0bed9d5ae95bc0_dc0bedab5ae95beb_i.png" usemap="#DC0BEDAB5AE95BEB" height="994" width="1259" border=0>
+
+</div>
+<div class="Relationship" id="Relationship2">
+<div id="klmm" style="width: 100vw; height: 100vh;" ></div>
+<!-- <script src="../standard/assets/js/keylines_domain.js"></script> -->
+<script >
+const data = {
+ type: 'LinkChart',
+  items: [
+  //nodes
+    {type: 'node', id:'DC0BED9D5AE95BC0', t:"Teams Pattern", sh:'box', d:"The Teams Pattern domain defines organization structure and behavior as well as instrurments required to govern Enduring Initiatives."},
+    {type: 'node', id:'FF0500115B253E92', t:"Governance Namespace", parentId:'209C29BB5ED23342', sh:'circle', d:"Container of Building Blocks used to measure, assess, monitor transformation Initiatives ."},
+    {type: 'node', id:'FF0501B65B253FDD', t:"Governing Team", parentId:'8A228C0E550A3122', sh:'circle', d:"A Governing Team consists of a collection of individuals and resources, including personnel and committees, assembled to effectively manage and sustain an Enduring Initiative."},
+    {type: 'node', id:'69346AF86005EFA9', t:"Initiative and Transformation Pattern", sh:'box', d:"The Initiative and Transformation Pattern domain defines management concepts required for transformation initiatives."},
+    {type: 'node', id:'0FFEEC41600BE08A', t:"Initiative", parentId:'69346AF86005EFA9', sh:'circle', d:"An Initiative is any piece of work that is undertaken or attempted under the responsibility of a Steering Authority."},
+    {type: 'node', id:'8A228C0E550A3122', t:"Governance Resource", parentId:'2D9A74745B2181CD', sh:'circle', d:"Governance Resources include Governing Teams, Governance Activitys, Governance Events and Measures used to guide and steer Initiatives."},
+    {type: 'node', id:'1737B50B5FE27CBA', t:"Governance Event", parentId:'8A228C0E550A3122', sh:'circle', d:"A Governance Event is any event that has an impact on the management and governance of an Enduring Initiative."},
+    {type: 'node', id:'02AF0A4B5A182417', t:"Operating Semantic", sh:'box', d:"The Operating Semantic domain is used to model how a system (Agent) operates/functions (Behavior) in its Operating Eco-System to produce Outcomes that benefit (value) to other Agents or affect (have an effect upon) these Agents."},
+    {type: 'node', id:'07CA0F015DD84EFA', t:"Functional Asset", parentId:'02AF0A4B5A182417', sh:'circle', d:"Functional Assets encompasse Architecture Blocks used to describe how an enterprise function. This includes the purposes of an enterprise (Capability) and the way the enterprise operates to fulfill these purposes (Agents and their  Behaviors)."},
+    {type: 'node', id:'173706265FE3F332', t:"Measure", parentId:'8A228C0E550A3122', sh:'circle', d:"A Measure is a quantified aspect of the assets of the enterprise (Agents,  Behaviors, Information Objects) used by organizations to guide its transformation and assurance Initiatives."},
+    {type: 'node', id:'1737B76A5FE28204', t:"Governance Activity", parentId:'8A228C0E550A3122', sh:'circle', d:"A Governance Activity is an action done by one or several Stakeholders as part of the governance of an Enduring Initiative."},
+    {type: 'node', id:'2B5863C15EEB675A', t:"Idea", parentId:'A4A5B48555585D59', sh:'circle', d:"An Idea is a potential modification which could be carried out to the architectural landscape in order to improve its capabilities."},
+    {type: 'node', id:'4993655063907D35', t:"Review Note", parentId:'1737B50B5FE27CBA', sh:'circle', d:"Review Note is a comment used by a Stakeholder  to annotate Repository objects."},
+    {type: 'node', id:'2D9A74745B2181CD', t:"Governance Block", parentId:'CA353E6D5FC5E8AF', sh:'circle', d:"Governance Blocks include all instruments used to monitor and steer transformation Initiatives. They include incidents, assessments, Workflows, indicators and their templates."},
+    {type: 'node', id:'A4A5B48555585D59', t:"Governance Resource Type", parentId:'2D9A74745B2181CD', sh:'circle', d:"Governance Resource Types are templates used to define Governance Resources such as Workflow templates, Assessment templates.."},
+    {type: 'node', id:'2CC9717155263B89', t:"Governance Committee", parentId:'BCEBD0175491272A', sh:'circle', d:"A Governance Committee is a group of Stakeholders that contributes to architecture and assurance activities and governs Enduring Initiatives."},
+    {type: 'node', id:'2CC9718655263C44', t:"Individual Stakeholder", parentId:'DC0BED9D5AE95BC0', sh:'circle', d:"An Individual Stakeholder is a person with a Stakeholder role in architecture & assurance activities."},
+    {type: 'node', id:'BCDBC52B617A5D27', t:"Team Responsibility", parentId:'8A228C0E550A3122', sh:'circle', d:"A Team Responsibility is an assignment of a Functional Asset to a Stakeholder for management or governance purposes."},
+    {type: 'node', id:'BCEBD0175491272A', t:"Stakeholder", parentId:'8A228C0E550A3122', sh:'circle', d:"A Stakeholder is an individual, team, organization, or classes thereof, having an interest in the enterprise."},
+    {type: 'node', id:'CA353E6D5FC5E8AF', t:"Model Building Block", parentId:'DC0BED9D5AE95BC0', sh:'circle', d:"A Model Building Block is a Building Block used to describe and manage the enterprise. It comprises:"},
+    {type: 'node', id:'AF4DB12D62993434', t:"Model Block Management", sh:'box', d:""},
+    {type: 'node', id:'9597D7B3620AB751', t:"Class of Model Block", parentId:'AF4DB12D62993434', sh:'circle', d:"A Class of Model Block is a Class that classifies Model Building Blocks."},
+    {type: 'node', id:'AFFEE0F15F60898A', t:"Business Document", parentId:'AF4DB12D62993434', sh:'circle', d:"A Business Document is a document whose lifecycle can be synched to the MEGA repository content: it may be attached to mega objects and a document version bound to a mega object timestamp in the Time Machine. This document can be of any given file format."},
+    {type: 'node', id:'AFFEE0765F6086D4', t:"Tag", parentId:'AF4DB12D62993434', sh:'circle', d:"A Tag is a general classification description which permits characterization of Entitys."},
+    {type: 'node', id:'209C29BB5ED23342', t:"Model Namespace", parentId:'DC0BED9D5AE95BC0', sh:'circle', d:"A Model Namespace is a namespace of Model Building Blocks used to describe both the architecture of the enterprise and Initiatives aimed at designing, developing, running, adapting and maintaining this architecture over time."},
+    {type: 'node', id:'CA353B065FC5E146', t:"Categorization Block", parentId:'AF4DB12D62993434', sh:'circle', d:"A Categorization Block is a Model Building Block used to provid classification and qualification of other Model Building Blocks."},
+  //edges
+    { type: 'link', id:'FF0500115B253E92-FF0500605B253F1B', id1:'FF0500115B253E92', id2:'2D9A74745B2181CD', t:"Owned Governance Block"},
+    { type: 'link', id:'FF0501B65B253FDD-18A81ED15EEB5D60', id1:'FF0501B65B253FDD', id2:'0FFEEC41600BE08A', t:"Governed Initiative"},
+    { type: 'link', id:'FF0501B65B253FDD-3D9074D55FFCF128', id1:'FF0501B65B253FDD', id2:'173706265FE3F332', t:"Recorded Measure"},
+    { type: 'link', id:'FF0501B65B253FDD-AC98B16E60A38CBC', id1:'FF0501B65B253FDD', id2:'FF0501B65B253FDD', t:"Sub-Team"},
+    { type: 'link', id:'FF0501B65B253FDD-B0D7B34F5EA02F2C', id1:'FF0501B65B253FDD', id2:'2CC9717155263B89', t:"Team Committee"},
+    { type: 'link', id:'FF0501B65B253FDD-1737B6025FE27EE8', id1:'FF0501B65B253FDD', id2:'1737B50B5FE27CBA', t:"Owned Team Event"},
+    { type: 'link', id:'FF0501B65B253FDD-1737B7E55FE28304', id1:'FF0501B65B253FDD', id2:'1737B76A5FE28204', t:"Owned Team Activity"},
+    { type: 'link', id:'FF0501B65B253FDD-BCDBC5A3617A5E6A', id1:'FF0501B65B253FDD', id2:'BCDBC52B617A5D27', t:"Owned Team Responsibility"},
+    { type: 'link', id:'8A228C0E550A3122-426A432A5AEB3707', id1:'8A228C0E550A3122', id2:'A4A5B48555585D59', t:"Governance Resource Type"},
+    { type: 'link', id:'1737B50B5FE27CBA-9BB4A609626A9B3B', id1:'1737B50B5FE27CBA', id2:'07CA0F015DD84EFA', t:"Event Subject"},
+    { type: 'link', id:'A4A5B48555585D59-F2AD12116236B7A5', id1:'A4A5B48555585D59', id2:'A4A5B48555585D59', t:"Specialized Governance Block"},
+    { type: 'link', id:'2CC9717155263B89-18A826A35EEB6934', id1:'2CC9717155263B89', id2:'2CC9717155263B89', t:"Sub-Committee"},
+    { type: 'link', id:'2CC9717155263B89-24AE430D5ED1F6AA', id1:'2CC9717155263B89', id2:'2CC9718655263C44', t:"Committee member"},
+    { type: 'link', id:'CA353E6D5FC5E8AF-9597D7C1620AB7A9', id1:'CA353E6D5FC5E8AF', id2:'9597D7B3620AB751', t:"Class of Model Block"},
+    { type: 'link', id:'CA353E6D5FC5E8AF-05B0DF0C6006C0D8', id1:'CA353E6D5FC5E8AF', id2:'AFFEE0F15F60898A', t:"Attached Document"},
+    { type: 'link', id:'CA353E6D5FC5E8AF-05B0DF7E6006C158', id1:'CA353E6D5FC5E8AF', id2:'AFFEE0765F6086D4', t:"Annotation Tag"},
+    { type: 'link', id:'CA353E6D5FC5E8AF-F594F72E61F736E1', id1:'CA353E6D5FC5E8AF', id2:'CA353E6D5FC5E8AF', t:"Referenced Model Block"},
+    { type: 'link', id:'209C29BB5ED23342-CA353B355FC5E1B6', id1:'209C29BB5ED23342', id2:'CA353B065FC5E146', t:"Owned Categorization Block"},
+    { type: 'link', id:'209C29BB5ED23342-CA353EB75FC5E9B2', id1:'209C29BB5ED23342', id2:'CA353E6D5FC5E8AF', t:"Owned Model Building Block"}
+  ]
+}
+</script>
+<script src="../standard/assets/js/keylines_domain.js" type="module"></script>
+</div>
+</section>
+<a class="object-section-anchor" id="des"></a>
+<section class="object-section">
+<h4>CONCEPT DESCRIPTIONS</h4> 
+<hr class="sectionbreak" />
+<h5>Concrete Concepts</h5>
+<table class="table  table-set-col-width">
+<thead>
+<tr><th>Concept</th><th>Description</th><th>HOPEX Metaclass</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="f4be37465ee1cba6.htm" target="_top">Audit</a></td>
+<td class="description-text"><div align="justify" style="margin-left:0mm; margin-right:0mm; text-indent:0mm; margin-top:1.41mm; margin-bottom:0.00mm;padding-top:0.00mm; padding-bottom:0.00mm; min-height: 10pt; ">An audit is a mission assigned to a team of internal auditors in the context of an audit plan.</div><div align="left" style="min-height: 12pt; "></div>       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="0f080f304eef2b0d.htm" target="_top">Audit</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="2cc9b5a755264db7.htm" target="_top">Driver Assessment</a></td>
+<td class="description-text">A&#160;<b> Driver Assessment</b> is a kind of <a href="3B539CBB551E4C2A.htm" target="_top"><b><u>Assessment</u></b></a> which is motivated by a Stakeholder Driver.<i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Challenge"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - Challenge</a></li></ul></i>        </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="1737b76a5fe28204.htm" target="_top">Governance Activity</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Governance Activity</b> is an action done by one or several <a href="bcebd0175491272a.htm" target="_top"><b><u>Stakeholder</u></b></a>s as part of the governance of an <a href="d321c226601262ae.htm" target="_top"><b><u>Enduring Initiative</u></b></a>.</div><div align="left" style="min-height: 12pt; "><b>&#160;Governance Activity</b>(ies) range from assessments, audit, workflows to remediation plans.</div>       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="15c050985ffc4bed.htm" target="_top">Team Activity</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="2cc9717155263b89.htm" target="_top">Governance Committee</a></td>
+<td class="description-text">A&#160;<b> Governance Committee</b> is a group of <a href="bcebd0175491272a.htm" target="_top"><b><u>Stakeholder</u></b></a>s that contributes to architecture and assurance activities and governs <a href="d321c226601262ae.htm" target="_top"><b><u>Enduring Initiative</u></b></a>s.       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="b09fc6ae56bd201e.htm" target="_top">EA Organization</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype_archgov.ico.gif"/>&nbsp;
+<a  href="2b5863c15eeb675a.htm" target="_top">Idea</a></td>
+<td class="description-text"><div align="left" style="min-height: 11pt; ">An Idea is a potential modification which could be carried out to the architectural landscape in order to improve its capabilities.</div><div align="left" style="min-height: 11pt; "></div><div align="left" style="min-height: 11pt; ">Its impact and scope can be defined through Idea Subjects; Idea subjects may concern capabilities and / or items of the architectural landscape.</div><div align="left" style="min-height: 11pt; "></div><div align="left" style="min-height: 11pt; ">Ideas may also be freely defined and not related to an identified architectural artifact within the architecture landscape (e.g. disruptive ideas do not necessarily relate to a Solution Building Block or Capability).</div><div align="left" style="min-height: 11pt; "></div><div align="left" style="min-height: 11pt; ">Ideas can be gathered as part of an Ideation Campaign (top / down approach) or submitted at any time (bottom-up approach). In both cases Ideas will feed the ideation funnel.</div><div align="left" style="min-height: 11pt; "></div><div align="left" style="min-height: 11pt; ">The Ideas are evaluated by Innovation Managers; they can give birth to formal projects requests (demands) as part of the ideation / project funnel and further evaluated by the projects demand management process.</div>       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="29E2522558D16D0E.htm" target="_top">Idea</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="2cc9718655263c44.htm" target="_top">Individual Stakeholder</a></td>
+<td class="description-text">An&#160;<b> Individual Stakeholder</b> is a person with a <a href="bcebd0175491272a.htm" target="_top"><b><u>Stakeholder</u></b></a> role in architecture &amp; assurance activities.       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="000000008000001d.htm" target="_top">Person (System)</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="7625fe5b5f6c92de.htm" target="_top">Remediation Plan</a></td>
+<td class="description-text">        </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="4993655063907d35.htm" target="_top">Review Note</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; "><b>&#160;Review Note</b> is a comment used by a <a href="bcebd0175491272a.htm" target="_top"><b><u>Stakeholder</u></b></a>&#160; to annotate Repository objects.</div><div align="left" style="min-height: 12pt; "><b>&#160;Review Note</b>s are the bases to follow a conversation between <a href="bcebd0175491272a.htm" target="_top"><b><u>Stakeholder</u></b></a> on a dedicated object.</div>       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="850C8F8258B680EC.htm" target="_top">Review Note</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="26b887fa5eea87e2.htm" target="_top">Workflow</a></td>
+<td class="description-text">        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="0A6E1C5F53D22D8F.htm" target="_top">Workflow Instance Base</a></td>
+</tr>  
+</tbody>
+</table>
+<hr class="sectionbreak" />
+<h5>Abstract Concepts</h5>
+<table class="table  table-set-col-width">
+<thead >
+<tr><th>Concept</th><th>Description</th><th>HOPEX Metaclass</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="BCDBC016617A55BE.htm" target="_top">Appraisal</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Appraisal</b> is a time bound statement expressed by stakeholders to qualify <a href="d342d88e5b121401.htm" target="_top"><b><u>Architecture Block</u></b></a>s with respect to their worth.</div><div align="left" style="min-height: 12pt; "><a href="3B539CBB551E4C2A.htm" target="_top"><b><u>Assessment</u></b></a>s and <a href="D7F9FCC95F720EE0.htm" target="_top"><b><u>Decision</u></b></a>s are two major types of&#160;<b> Appraisal</b>s provided by HOPEX.</div>       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="c03fc26b60a76be5.htm" target="_top">Team Appraisal</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="3B539CBB551E4C2A.htm" target="_top">Assessment</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Assessment</b> is the result of the act of judging or assessing an aspect of the enterprise, based on an enterprise description and on the comparison of this description with the actual state of the enterprise.</div><div align="left" style="min-height: 12pt; ">An&#160;<b> Assessment</b> is made by one or several <a href="bcebd0175491272a.htm" target="_top"><b><u>Stakeholder</u></b></a> s.</div>       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="9500e0484e37c835.htm" target="_top">Assessment Node</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="37b7a5ab602606df.htm" target="_top">Assessment Session</a></td>
+<td class="description-text">An assessment session is an assessment activity carried out over a determined time period. When an assessment session is published, an assessment questionnaire containing questions is sent to targeted assessors.       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="afa914404daf43ac.htm" target="_top">Assessment Session</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="D7F9FCC95F720EE0.htm" target="_top">Decision</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Decision</b> is time bound <a href="e073f9c161d2104a.htm" target="_top"><b><u>Resolution</u></b></a>, agreed upon by <a href="bcebd0175491272a.htm" target="_top"><b><u>Stakeholder</u></b></a>s, to state what shall or shall not be done regarding a specific <a href="07ca0f015dd84efa.htm" target="_top"><b><u>Functional Asset</u></b></a>.</div><div align="left" style="min-height: 12pt; ">Architecturally significant decisions that are been made in the organization typically includes:</div><div align="left" style="min-height: 12pt; ">a) Product selections</div><div align="left" style="min-height: 12pt; ">b) Justification for major architectural features of projects</div><div align="left" style="min-height: 12pt; ">c) Standards deviations</div><div align="left" style="min-height: 12pt; ">d) Standards lifecycle changes</div><div align="left" style="min-height: 12pt; ">e) Change Request evaluations and approvals</div><div align="left" style="min-height: 12pt; ">f) Re-use assessments</div>       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="8063C7D9609B59EA.htm" target="_top">Decision Block</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="bcebd0565491287e.htm" target="_top">Driver</a></td>
+<td class="description-text">A&#160;<b> Driver</b> is a factor which can have a significant impact on the activities, and goals of an <a href="b181b82a54891668.htm" target="_top"><b><u>Enterprise</u></b></a> or a <a href="29df3f4060084c07.htm" target="_top"><b><u>Management System</u></b></a>.<i><ul>References:<li><a href="https://www.iso.org/obp/ui/#iso:std:iso-iec-ieee:42010:ed-2:v1:enConcern"><img src="../standard/extr.ico.gif">&nbsp;ISO 42010 - Concern</a></li> <li><a href="../../../www.omg.org/spec/BMM/1.3/formal-15-05-19.pdf#page=24"><img src="../standard/extr.ico.gif">&nbsp;OMG - BMM - Influencer</a></li> <li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Driver"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - Driver</a></li> <li><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_37"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Definitions - Concern</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="06110e0d56466c02.htm" target="_top">Stakeholder Driver</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="07ca0f015dd84efa.htm" target="_top">Functional Asset</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; "><b>&#160;Functional Asset</b>s encompasse <a href="d342d88e5b121401.htm" target="_top"><b><u>Architecture Block</u></b></a>s used to describe how an enterprise function. This includes the purposes of an enterprise (<a href="b181b98c54891882.htm" target="_top"><b><u>Capability</u></b></a>) and the way the enterprise operates to fulfill these purposes (<a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s and their&#160; <a href="986cd4ec5ffca3ac.htm" target="_top"><b><u>Behavior</u></b></a>s).</div><div align="left" style="min-height: 12pt; "><b>&#160;Functional Asset</b>s include:</div><div align="left" style="min-height: 12pt; ">1. Blocks defining results of <a href="986cd4ec5ffca3ac.htm" target="_top"><b><u>Behavior</u></b></a>s of the enterprise or its sub-systems, that benefit to it internal or external customers : <a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>,</div><div align="left" style="min-height: 12pt; ">2. Blocks used to describe the capabilities of the enterprise or its sub-systems: <a href="b181b98c54891882.htm" target="_top"><b><u>Capability</u></b></a>,</div><div align="left" style="min-height: 12pt; ">3. Blocks used to describe information: <a href="e6f250185f772ee1.htm" target="_top"><b><u>Information Object</u></b></a>.</div><div align="left" style="min-height: 12pt; ">4. Blocks used to describe how the enterprise operates: <a href="a371a43b5b865817.htm" target="_top"><b><u>Operating Asset</u></b></a>s (<a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>, <a href="d682ef5e56144e77.htm" target="_top"><b><u>Process</u></b></a>, <a href="333f35ee5dde0c8c.htm" target="_top"><b><u>Interaction Scenario</u></b></a>, <a href="24ae31b55ed1c66d.htm" target="_top"><b><u>Service Interface</u></b></a>).</div><div align="left" style="min-height: 12pt; ">All&#160;<b> Functional Asset</b>s are constrained by <a href="959320325ee7fe24.htm" target="_top"><b><u>Policy</u></b></a>s and are exposed to <a href="427c1c7d64b5d4a1.htm" target="_top"><b><u>Risk Type</u></b></a>s.</div><i><ul>References:<li><a href="../../../complexsystems.mst.edu/media/conference/complexsystems/documents/de_Weck_CAS_Keynote_Nov_2015_updated.pdf#page=40"><img src="../standard/extr.ico.gif">&nbsp;de Weck - The three dimensions of complexity</a></li> <li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Asset"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - Asset</a></li> <li><a href="../resources/Ackoff-Choice-Communication-and-Conflict.pdf#FunctionalClass"><img src="../standard/extr.ico.gif">&nbsp;Russell Ackoff - Choice &amp; Communication - FunctionalClass</a></li> <li><a href="https://www.sebokwiki.org/wiki/Functional_Architecture_(glossary)"><img src="../standard/extr.ico.gif">&nbsp;SEBoK - Functional Architecture</a></li> <li><a href="https://en.wikipedia.org/wiki/Functional_software_architecture#:~:text=A%20functional%20software%20architecture%20(FSA,%2Doperative%20information%2Ddriven%20enterprise."><img src="../standard/extr.ico.gif">&nbsp;Wikipedia - Software Functional Architecture</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="c229c44e5d0c649f.htm" target="_top">Functional Building Block</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="2d9a74745b2181cd.htm" target="_top">Governance Block</a></td>
+<td class="description-text"><b>&#160;Governance Block</b>s include all instruments used to monitor and steer transformation <a href="0ffeec41600be08a.htm" target="_top"><b><u>Initiative</u></b></a>s. They include incidents, assessments, <a href="26b887fa5eea87e2.htm" target="_top"><b><u>Workflow</u></b></a>s, indicators and their templates.       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="2ea16d68565c3218.htm" target="_top">Governance Building Block</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="1737b50b5fe27cba.htm" target="_top">Governance Event</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Governance Event</b> is any event that has an impact on the management and governance of an <a href="d321c226601262ae.htm" target="_top"><b><u>Enduring Initiative</u></b></a>.</div><div align="left" style="min-height: 12pt; ">This includes the result of <a href="3B539CBB551E4C2A.htm" target="_top"><b><u>Assessment</u></b></a>s, <a href="D7F9FCC95F720EE0.htm" target="_top"><b><u>Decision</u></b></a>s, recorded <a href="d059da695ef11294.htm" target="_top"><b><u>Incident</u></b></a>s, <a href="bcebd0565491287e.htm" target="_top"><b><u>Driver</u></b></a>s, etc.</div>       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="15c050c95ffc4c53.htm" target="_top">Team Event</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="ff0500115b253e92.htm" target="_top">Governance Namespace</a></td>
+<td class="description-text"><a href="4089423855572F23.htm" target="_top"><b><u>Container</u></b></a> of <a href="ccb819645a564f12.htm" target="_top"><b><u>Building Block</u></b></a>s used to measure, assess, monitor transformation&#160;<b> Initiative</b>s .       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="48f682ea5953184a.htm" target="_top">Governance Dictionary</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="8a228c0e550a3122.htm" target="_top">Governance Resource</a></td>
+<td class="description-text"><b>&#160;Governance Resource</b>s include <a href="ff0501b65b253fdd.htm" target="_top"><b><u>Governing Team</u></b></a>s, <a href="1737b76a5fe28204.htm" target="_top"><b><u>Governance Activity</u></b></a>s, <a href="1737b50b5fe27cba.htm" target="_top"><b><u>Governance Event</u></b></a>s and <a href="173706265fe3f332.htm" target="_top"><b><u>Measure</u></b></a>s used to guide and steer <a href="0ffeec41600be08a.htm" target="_top"><b><u>Initiative</u></b></a>s.       </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype_archgov.ico.gif"/>&nbsp;
+<a  href="a4a5b48555585d59.htm" target="_top">Governance Resource Type</a></td>
+<td class="description-text"><b>&#160;Governance Resource Type</b>s are templates used to define <a href="8a228c0e550a3122.htm" target="_top"><b><u>Governance Resource</u></b></a>s such as Workflow templates, Assessment templates..       </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="ff0501b65b253fdd.htm" target="_top">Governing Team</a></td>
+<td class="description-text">A&#160;<b> Governing Team</b> consists of a collection of individuals and resources, including personnel and committees, assembled to effectively manage and sustain an <a href="d321c226601262ae.htm" target="_top"><b><u>Enduring Initiative</u></b></a>.<i><ul>References:<li><a href="https://www.iso.org/obp/ui/#iso:std:iso:37000:ed-1:v1:en"><img src="../standard/extr.ico.gif">&nbsp;ISO 37000 - 3.4.4 Governing Body</a></li> <li><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_48"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Definitions - Governance</a></li> <li><a href="http://wordnetweb.princeton.edu/perl/webwn?s=governing+body&amp;sub=Search+WordNet&amp;o2=&amp;o0=1&amp;o8=1&amp;o1=1&amp;o7=&amp;o5=&amp;o9=&amp;o6=&amp;o3=&amp;o4=&amp;h="><img src="../standard/extr.ico.gif">&nbsp;WordNet - Governing Body</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="728a7d2c59fc72b3.htm" target="_top">Team</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="d059da695ef11294.htm" target="_top">Incident</a></td>
+<td class="description-text">The common part of incidents and macro incidents concepts.       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="77b57df251da6884.htm" target="_top">Generic Incident</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="0ffeec41600be08a.htm" target="_top">Initiative</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Initiative</b> is any piece of work that is undertaken or attempted under the responsibility of a <a href="b2f2d64d5f47e364.htm" target="_top"><b><u>Steering Authority</u></b></a>.</div><div align="left" style="min-height: 12pt; "><b>&#160;Initiative</b>s range from single project to long term initiatives (<a href="d321c226601262ae.htm" target="_top"><b><u>Enduring Initiative</u></b></a>) such as Enterprises.</div><div align="left" style="min-height: 12pt; "><b>&#160;Initiative</b>s are sychronized over time using <a href="08570d835ed129a3.htm" target="_top"><b><u>Initiative Milestone</u></b></a>s.</div><i><ul>References:<li><a href="https://www.merriam-webster.com/dictionary/undertaking"><img src="../standard/extr.ico.gif">&nbsp;Merriam Webster - Undertaking</a></li> <li><a href="http://wordnetweb.princeton.edu/perl/webwn?s=undertaking&amp;sub=Search+WordNet&amp;o2=&amp;o0=1&amp;o8=1&amp;o1=1&amp;o7=&amp;o5=&amp;o9=&amp;o6=&amp;o3=&amp;o4=&amp;h=000"><img src="../standard/extr.ico.gif">&nbsp;Wordnet - Undertaking</a></li></ul></i>        </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="8F46E8EB64B7719A.htm" target="_top">Key Indicator</a></td>
+<td class="description-text">        </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="173706265fe3f332.htm" target="_top">Measure</a></td>
+<td class="description-text">A&#160;<b> Measure</b> is a quantified aspect of the assets of the enterprise (<a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s,&#160; <a href="986cd4ec5ffca3ac.htm" target="_top"><b><u>Behavior</u></b></a>s, <a href="e6f250185f772ee1.htm" target="_top"><b><u>Information Object</u></b></a>s) used by organizations to guide its transformation and assurance <a href="0ffeec41600be08a.htm" target="_top"><b><u>Initiative</u></b></a>s.<i><ul>References:<li><a href="http://wordnetweb.princeton.edu/perl/webwn?o2=&amp;o0=1&amp;o8=1&amp;o1=1&amp;o7=&amp;o5=&amp;o9=&amp;o6=&amp;o3=&amp;o4=&amp;s=measure&amp;i=1&amp;h=0000000000000#c"><img src="../standard/extr.ico.gif">&nbsp;WordNet - Measure</a></li></ul></i>        </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="bcebd0175491272a.htm" target="_top">Stakeholder</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Stakeholder</b> is an individual, team, organization, or classes thereof, having an interest in the enterprise.</div><div align="left" style="min-height: 12pt; "><b>&#160;Stakeholder</b>s have concerns with respect to the enterprise considered in relation to its environment.</div><i><ul>References:<li><a href="https://www.iso.org/obp/ui/#iso:std:iso-iec-ieee:42010:ed-2:v1:enStakeholder"><img src="../standard/extr.ico.gif">&nbsp;ISO 42010 - Terms - 3.10 - Stakeholder</a></li> <li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Stakeholder"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - Stakeholder</a></li> <li><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_75"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Definitions - Stakeholder</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="000000008000003f.htm" target="_top">Assignable Entity</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="bcdbc52b617a5d27.htm" target="_top">Team Responsibility</a></td>
+<td class="description-text">A&#160;<b> Team Responsibility</b> is an assignment of a <a href="07ca0f015dd84efa.htm" target="_top"><b><u>Functional Asset</u></b></a> to a <a href="bcebd0175491272a.htm" target="_top"><b><u>Stakeholder</u></b></a> for management or governance purposes.       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="c9a2db04605d623b.htm" target="_top">Team Responsibilities</a></td>
+</tr>  
+</tbody>
+</table>
+<section>
+
+</div>
+<button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button>
+<script>window.onscroll = function() {scrollFunction()};$(document).on('click', 'a[href^="#"]', function (event) {event.preventDefault();$('html, body').animate({scrollTop: $($.attr(this, 'href')).offset().top}, 500);});function showDiagOnClick(elem){ var x = document.getElementsByClassName('Relationship');var e = elem.getAttribute("value"); for (var i=0; i < x.length ;i++){x[i].style.display="none"; if (x[i].id == e){x[i].style.display="block";x[i].style.textAlign="left";}}}
+</script></html>

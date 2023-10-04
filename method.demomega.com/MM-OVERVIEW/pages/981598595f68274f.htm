@@ -1,0 +1,592 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="keywords" content="">
+<meta name="description" content="">    
+<LINK REL="icon" HREF="../standard/assets/img/favicon.ico">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/bootstrap.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nav.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/eaportal.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/font-awesome.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/animate.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/datatables.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/grid.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nae.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/custom.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/chosen.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/prism.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery.dataTables.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jsTreeStyle.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.theme.css" media="screen" />
+<script type="text/javascript" src="../standard/assets/js/jquery-3.2.1.min.js" ></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-ui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.columnFilter.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3-force.v2.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.gui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.search.js"></script> 
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.util.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-2.1.1.min.js"></script>
+<script src="../standard/assets/js/ws_zoomtemplate_firefox.js"></script>
+<script src="../standard/assets/js/bootstrap.min.js"></script>
+<script src="../standard/assets/js/datatables.min.js"></script>
+<script src="../standard/assets/js/moment.min.js"></script>
+<script src="../standard/assets/js/datetime-moment.js"></script>
+<script src="../standard/assets/js/chartjs.min.js"></script>
+<script src="../standard/assets/js/searchindexcontent.json"></script>
+<script src="../standard/assets/js/anls.js"></script>
+<script src="../../../cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script src="../standard/assets/js/gauge.js"></script> 
+<script src="../standard/assets/js/domesticApi.js"></script> 
+<script src="../standard/assets/js/piecelabel.js"></script>
+<script src="../standard/assets/js/popper.min.js"></script>
+<script src="../standard/assets/js/custom.js"></script>
+<script src="../standard/assets/js/chosen.jquery.js"></script>
+<script src="../standard/assets/js/prism.js"></script>
+<script src="../standard/assets/js/init-chosen.js"></script>
+<script src="../standard/assets/js/chart-data-flow.js"></script>
+<script src="../standard/assets/js/chart-data-gantt.js"></script>
+<script type="module" src="../standard/assets/js/Fuse.esm.min.js"></script>
+<script type="module">
+import Fuse from '../standard/assets/js/Fuse.esm.min.js';
+$(document).ready(function () {
+console.log('getjson');
+window.$.getJSON('../standard/assets/js/searchindexcontent.json', function (response) {
+console.log('getjson ok');
+var isIndex = "";
+var url = window.location.pathname;
+var filename = url.substring(url.lastIndexOf('/')+1);
+if( filename.includes("index") || filename === "" ){
+isIndex = "pages/";
+} else {
+isIndex = "";
+}
+const fuse = new Fuse(response, {
+keys: ['title','text'],
+shouldSort: true,
+includeMatches : true,
+findAllMatches : true
+});
+$('#search-fuse').on('keyup', function () {
+let result = fuse.search($(this).val());
+console.log(result);
+let resultdiv = $('div.searchresults-fuse');
+if (result.length === 0) {
+resultdiv.hide();
+} else {
+resultdiv.empty();
+resultdiv.append('<table class="table-search" width="100%" cellspacing="0"><thead ><tr><th>Name</th><th>Object Type</th><th>Modification date</th></tr></thead><tbody>');
+
+for (let obj in result.slice(0,10)) {
+
+let searchObj = '<tr><td><a href="./'+ isIndex + result[obj].item.url + '">' + result[obj].item.title +'</a></td><td>' + result[obj].item.ObjectType + '</td><td>' + result[obj].item.ModificationDate + '</td></tr>' ;
+
+
+resultdiv.find('tbody').append(searchObj);
+}
+resultdiv.append('</tbody></table>');
+resultdiv.show();
+}
+});
+});
+});
+</script>
+<title>HOPEX Metamodel Overview (Beta Version)</title>
+</head>
+<nav class="navbar navbar-expand-md navbar-dark  navbar-mega"><!-- Brand --><!--<a class="navbar-brand" href="#">Navbar</a>--><a class="" href="../index.htm"><img class="logo-mega" src="../standard/assets/img/logo.png"  alt="">(Beta Version)</a><!-- Toggler/collapsibe Button --><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><!-- Navbar links -->
+<div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsibleNavbar"><div class="col-sm-auto col-md-auto col-lg-5"></div>
+<div class="col-sm-auto">
+<ul class="navbar-nav">      
+<li><a class="dropdown-item" href="ad30ce115ebf7e90.htm">EA Grid</a></li> 
+<li><a class="dropdown-item" href="fdd5018459bc3c6a.htm">EA Domains</a></li> 
+<li><a class="dropdown-item" href="07e731775ecc93f4.htm">Solutions</a></li> 
+<li><a class="dropdown-item" href="c5dfc62c54810c2c.htm">Glossary</a></li> 
+<li class="nav-item dropdown mx-1">
+<a class="nav-link" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</a>
+<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<li><a class="dropdown-item" href="5446555d5f88c32e.htm">Outcome Driven Metamodel</a></li> 
+<li><a class="dropdown-item" href="e1ccfc295f8f7b90.htm">Playbooks</a></li> 
+<li><a class="dropdown-item" href="42bc992862d20ea7.htm">Framework Mappings</a></li> 
+<li><a class="dropdown-item" href="e93aebb35fa20550.htm">Metamodel Patterns</a></li> 
+<li><a class="dropdown-item" href="d599fe87602b2b85.htm">References</a></li> 
+<li><a class="dropdown-item" href="333f3a7f5dde11de.htm">Legend</a></li> 
+</ul>									                                            
+</li>
+</ul>
+</div>
+<div class="col-sm-auto"><a class="nav-link search" href="#" onclick=showHideSearch("search-section-fuse")><i class="fa fa-search mr-1 form-control-feedback"></i></a></div>
+</div>
+</nav>
+<div id="search-section-fuse" style="display:none">>
+<div class="search_header"><span class="closesearch">&times;</span>
+<nav class="breadcrumb">
+<a class="breadcrumb-item" href="../index.htm">Home </a> 
+<span class="breadcrumb-item active">Search</span> 
+</nav>
+</div>
+<input id="search-fuse" placeholder="Search..."  name="q" onfocus="this.value=''" type="search">
+<div class="searchresults-fuse"></div>
+</div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>function showHideSearch(elementId) {var contentDivs = document.getElementsByClassName('content');var footerDivs = document.getElementsByClassName('footer'); var containerDivs = document.getElementsByClassName('container');var containerfluidDivs = document.getElementsByClassName('container-fluid');var x = document.getElementById(elementId);if (x.style.display === "none") {x.style.display = "block";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "none";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "none";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "none";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "none";}} else {x.style.display = "none";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "block";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "block";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "block";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "block";}}} ;<!-- END WIDGET DRILL DOWN --></script><script>$(document).ready(function() {$(window).scroll(function() {if ($(this).scrollTop() > 100) {$('.scrollup').fadeIn();} else {$('.scrollup').fadeOut();}});$('.scrollup').click(function() {$("html, body").animate({scrollTop: 0}, 600);return false;});});</script><script>
+var modal = document.getElementById("search-section-fuse");
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = "none";
+}
+}
+$(document).on('click', '.closesearch', function() {
+showHideSearch("search-section-fuse");
+
+
+
+
+
+});</script><div class="container-fluid col-lg-11"><nav class="breadcrumb"><a class="breadcrumb-item" href="../index.htm">Home</a> <span class="breadcrumb-item active">
+<a  href="c5dfc62c54810c2c.htm" target="_top">Dictionary of HOPEX concepts</a>&nbsp;/&nbsp;Data Quality Governance</span></nav></div>
+<div class="container-fluid col-lg-11 content">
+<section class="fadeInDown animated"><a href="#idt" class="btn btn-d">DEFINITION</a> <a href="#grf" class="btn btn-d">CONCEPT GRAPH</a> <a href="#des" class="btn btn-d">CONCEPT DESCRIPTIONS</a> 
+</section>
+<a class="object-section-anchor" id="idt"></a>
+<section class="object-section">
+<h4>CONCEPT DOMAIN - Data Quality Governance</h4><hr class="sectionbreak" /><table class="table table-vertical-headers table-set-col-width"><tr><th>Description</th><td class="description-text"><div></div></td></tr><tr><th>Dictionary</th><td><img src="../standard/dicsubjectarea.ico.gif"/>&nbsp;
+<a  href="c5dfc62c54810c2c.htm" target="_top">Dictionary of HOPEX concepts</a></td></tr><tr><th>Parent Domain</th><td></td></tr></table></section>
+<a class="object-section-anchor" id="grf"></a>
+<section class="object-section">
+<h4>DOMAIN CONCEPT GRAPH</h4>
+<hr class="sectionbreak" />
+<a href="#" class="btn btn-d" value="Relationship1" onclick="showDiagOnClick(this)">Diagram</a>
+<a href="#" class="btn btn-d" value="Relationship2" onclick="showDiagOnClick(this)">Graph</a>
+<div class="Relationship" id="Relationship1">
+
+<map  name="981598775F6827F6">
+  <area  href=173706265fe3f332.htm#OBMK173706265FE3F332 shape="polygon" coords="574, 664, 574, 653, 619, 653, 619, 664, 574, 664"   target="_top"  title="A&#160; Measure is a quantified aspect of the assets of the enterprise (Agents,&#160; Behaviors, Information Objects) used by organizations to guide its transformation and assurance Initiatives.">
+  
+  <area  href="003f595c64775717.htm" shape="rect" coords="539, 651, 653, 704"   target="_top"  title="-">
+  
+  <area  href=18a81ed15eeb5d60.htm#OBMK18A81ED15EEB5D60 shape="polygon" coords="394, 127, 356, 127, 356, 141, 256, 141, 256, 127, 394, 127"   target="_top"  title="-">
+  
+  <area  href=ae7c9c45602351bc.htm shape="polygon" coords="179, 124, 439, 124, 439, 135, 179, 135"   target="_top"  title="-">
+  
+  <area  href=#OBMK2B583C505EEBD40E shape="polygon" coords="617, 125, 617, 120, 603, 120, 603, 109, 628, 109, 628, 125"    title="-">
+  
+  <area  href=ca353eb75fc5e9b2.htm#OBMKCA353EB75FC5E9B2 shape="polygon" coords="193, 201, 191, 201, 191, 215, 42, 215, 42, 201, 193, 201"   target="_top"  title="-">
+  
+  <area  href=ff0500605b253f1b.htm shape="polygon" coords="116, 161, 116, 236, 105, 236, 105, 161"   target="_top"  title="-">
+  
+  <area  href=744b935d5fbfe0f9.htm#OBMK744B935D5FBFE0F9 shape="polygon" coords="138, 100, 138, 89, 161, 89, 161, 100, 138, 100"   target="_top"  title="A&#160; Class is collection of Entitys which it classifies according to one or more criteria.">
+  
+  <area  href=ff0501b65b253fdd.htm#OBMKFF0501B65B253FDD shape="polygon" coords="73, 111, 73, 100, 147, 100, 147, 111, 73, 111"   target="_top"  title="A&#160; Governing Team consists of a collection of individuals and resources, including personnel and committees, assembled to effectively manage and sustain an Enduring Initiative.">
+  
+  <area  href=7cae244a5a739f96.htm#OBMK7CAE244A5A739F96 shape="polygon" coords="75, 137, 75, 124, 145, 124, 145, 137, 75, 137"   target="_top"  title="-">
+  
+  <area  href="05b091f46006f913.htm" shape="rect" coords="41, 86, 179, 161"   target="_top"  title="A&#160; Solution Team is a Governing Team&#160; responsible for overseeing the administration of a Management System.">
+  
+  <area  href=#OBMK02F7096B600F9FA7 shape="polygon" coords="245, 590, 226, 590, 226, 629, 215, 629, 215, 580, 245, 580"    title="-">
+  
+  <area  href=#OBMK36420B6D6008022F shape="polygon" coords="632, 341, 630, 337, 625, 331, 633, 324, 640, 333, 641, 335"    title="-">
+  
+  <area  href=b90aeac8600e619f.htm#OBMKB90AEAC8600E619F shape="polygon" coords="588, 351, 588, 340, 685, 340, 685, 351, 588, 351"   target="_top"  title="A&#160; Data Assurance Case is a structured argument, supported by evidence, intended to justify that a data is acceptably assured relative to a concern (such as quality, safety, security or privacy) in the intended operating environment.The operating environment includes:1. Policies related to the use of data in the organization (privacy policy, regulation policy, ...).2. Data quality policies defined by the organization.3. Risk to be mitigated in the use, consumption and sharing of data by the organization.4. Control directives to be followed in the use, consumption and sharing of data by the organization.">
+  
+  <area  href=5beb5d745c234fc2.htm#OBMK5BEB5D745C234FC2 shape="polygon" coords="607, 383, 607, 370, 667, 370, 667, 383, 607, 383"   target="_top"  title="Data lineage is about tracking the flow of information.">
+  
+  <area  href="23ab2e945da829b8.htm" shape="rect" coords="562, 338, 712, 402"   target="_top"  title="A&#160; Data Lineage is about tracking the flow of information from source Information Objects to final Information Objects.">
+  
+  <area  href=CA353E6D5FC5E8AF.htm#OBMKCA353E6D5FC5E8AF shape="polygon" coords="931, 490, 931, 479, 1021, 479, 1021, 490, 931, 490"   target="_top"  title="A&#160; Model Building Block is a Building Block used to describe and manage the enterprise. It comprises:">
+  
+  <area  href=c2b8cafd5d1d208f.htm#OBMKC2B8CAFD5D1D208F shape="polygon" coords="946, 522, 946, 509, 1005, 509, 1005, 522, 946, 522"   target="_top"  title="-">
+  
+  <area  href="07ca0dd75dd84e92.htm" shape="rect" coords="900, 477, 1053, 542"   target="_top"  title="A&#160; Policy Asset is any topic related to policy definitions.It ranges from the different kidns of Directives (Business Policy, Architecture principle, Business Rule, etc.),&#160; to classification of policies (Policy Category) up to an entire set of policies (Policy Dictionary).">
+  
+  <area  href=#OBMKB90AFA6A600E7177 shape="polygon" coords="846, 400, 895, 400, 895, 411, 846, 411"    title="-">
+  
+  <area  href=B90AFA69600E715C.htm shape="polygon" coords="747, 400, 895, 400, 895, 411, 747, 411"   target="_top"  title="-">
+  
+  <area  href=#OBMKB90AFA6C600E71D1 shape="polygon" coords="747, 400, 796, 400, 796, 411, 747, 411"    title="-">
+  
+  <area  href=07ca0f015dd84efa.htm#OBMK07CA0F015DD84EFA shape="polygon" coords="935, 395, 935, 384, 1012, 384, 1012, 395, 935, 395"   target="_top"  title="&#160;Functional Assets encompasse Architecture Blocks used to describe how an enterprise function. This includes the purposes of an enterprise (Capability) and the way the enterprise operates to fulfill these purposes (Agents and their&#160; Behaviors).">
+  
+  <area  href=30efa75761f367fe.htm#OBMK30EFA75761F367FE shape="polygon" coords="933, 406, 933, 395, 1014, 395, 1014, 406, 933, 406"   target="_top"  title="An&#160; Information Asset is a Model Building Block involved in the description of information.">
+  
+  <area  href=43ee620e63725a56.htm#OBMK43EE620E63725A56 shape="polygon" coords="930, 417, 930, 406, 1018, 406, 1018, 417, 930, 417"   target="_top"  title="A&#160; Value Added Object is an aspect of Architecture Block (Type)s which can be the subject of business transactions.">
+  
+  <area  href=81f48a9756f17efb.htm#OBMK81F48A9756F17EFB shape="polygon" coords="933, 449, 933, 435, 1014, 435, 1014, 449, 933, 449"   target="_top"  title="-">
+  
+  <area  href="e6f250185f772ee1.htm" shape="rect" coords="894, 381, 1055, 452"   target="_top"  title="An&#160; Information Object&#160; represents anything that can be communicated or memorized by an Agent in order to produce its Outcomes.">
+  
+  <area  href=#OBMKB90AF831600E6EB5 shape="polygon" coords="371, 581, 624, 581, 624, 421, 635, 421, 635, 591, 371, 591"    title="-">
+  
+  <area  href=#OBMKFE63131661816310 shape="polygon" coords="711, 203, 689, 203, 689, 217, 562, 217, 562, 203, 711, 203"    title="-">
+  
+  <area  href=#OBMKB90AE7DB600E5E7A shape="polygon" coords="632, 172, 632, 233, 621, 233, 621, 172"    title="-">
+  
+  <area  href=#OBMKD7F9F9405F720AAF shape="polygon" coords="397, 291, 507, 291, 507, 301, 397, 301"    title="-">
+  
+  <area  href=#OBMKD7F9F9405F720AAA shape="polygon" coords="179, 291, 507, 291, 507, 301, 179, 301"    title="-">
+  
+  <area  href=#OBMKD7F9F9415F720B05 shape="polygon" coords="179, 291, 288, 291, 288, 301, 179, 301"    title="-">
+  
+  <area  href=9815a0ec5f68300d.htm shape="polygon" coords="706, 285, 717, 285, 717, 241, 975, 241, 975, 173, 986, 173, 986, 251, 727, 251, 727, 296, 706, 296"   target="_top"  title="-">
+  
+  <area  href=44226d6561819b50.htm#OBMK44226D6561819B50 shape="polygon" coords="576, 279, 576, 268, 696, 268, 696, 279, 576, 279"   target="_top"  title="A&#160; Data Assurance Instrument is a resource or course of actions used by an Data Catalog to achieve its objectives.">
+  
+  <area  href=a1e0ab2a5f89076d.htm#OBMKA1E0AB2A5F89076D shape="polygon" coords="605, 311, 605, 298, 666, 298, 666, 311, 605, 311"   target="_top"  title="-">
+  
+  <area  href="9815a0dc5f682fa1.htm" shape="rect" coords="566, 267, 706, 316"   target="_top"  title="A&#160; Data Control is about tracking the quality of information as defined by Data Quality Policy(ies).">
+  
+  <area  href=#OBMKB90AC27D600E3A8A shape="polygon" coords="257, 663, 217, 633, 223, 624, 263, 654"    title="-">
+  
+  <area  href=#OBMKB90AC251600E3A34 shape="polygon" coords="214, 523, 214, 494, 225, 494, 225, 523"    title="-">
+  
+  <area  href="d7f90fc35f737c24.htm" shape="rect" coords="1251, 39, 1415, 91"   target="_top"  title="-">
+  
+  <area  href=d7f90f6b5f737bad.htm shape="polygon" coords="1073, 103, 1328, 103, 1328, 91, 1338, 91, 1338, 114, 1073, 114"   target="_top"  title="-">
+  
+  <area  href=d7f9fc845f720e89.htm shape="polygon" coords="313, 615, 312, 656, 301, 656, 302, 615"   target="_top"  title="-">
+  
+  <area  href=b90ac213600e39bb.htm#OBMKB90AC213600E39BB shape="polygon" coords="256, 670, 256, 659, 357, 659, 357, 670, 256, 670"   target="_top"  title="Governance Resource uses in the context of Data Governance.">
+  
+  <area  href=d059da695ef11294.htm#OBMKD059DA695EF11294 shape="polygon" coords="286, 681, 286, 670, 327, 670, 327, 681, 286, 681"   target="_top"  title="The common part of incidents and macro incidents concepts.">
+  
+  <area  href=34d6bccc3f8ad33e.htm#OBMK34D6BCCC3F8AD33E shape="polygon" coords="290, 707, 290, 694, 323, 694, 323, 707, 290, 707"   target="_top"  title="An issue is an event or difficulty encountered in the context of a business process, application or enterpise strategy. Issues are processed within the framework of projects as a function of objectives aiming at their resolution. &nbsp;">
+  
+  <area  href="d7f9fc7b5f720e1f.htm" shape="rect" coords="244, 656, 370, 731"   target="_top"  title="An issue is an event or difficulty encountered in the context of a business process, application or enterpise strategy. Issues are processed within the framework of projects as a function of objectives aiming at their resolution.&#160; ">
+  
+  <area  href=d7f9fbe75f720dcc.htm shape="polygon" coords="369, 596, 547, 655, 543, 665, 365, 605"   target="_top"  title="-">
+  
+  <area  href=b90ac213600e39bb.htm#OBMKB90AC213600E39BB shape="polygon" coords="258, 569, 258, 558, 359, 558, 359, 569, 258, 569"   target="_top"  title="Governance Resource uses in the context of Data Governance.">
+  
+  <area  href=1737b76a5fe28204.htm#OBMK1737B76A5FE28204 shape="polygon" coords="264, 580, 264, 569, 353, 569, 353, 580, 264, 580"   target="_top"  title="A&#160; Governance Activity is an action done by one or several Stakeholders as part of the governance of an Enduring Initiative.">
+  
+  <area  href="d7f9fbd45f720d19.htm" shape="rect" coords="245, 555, 371, 615"   target="_top"  title="Execution d&#39;un data control effectu&#233; dans le cadre d&#39;un data catalog.">
+  
+  <area  href=1737b76a5fe28204.htm#OBMK1737B76A5FE28204 shape="polygon" coords="95, 674, 95, 663, 183, 663, 183, 674, 95, 674"   target="_top"  title="A&#160; Governance Activity is an action done by one or several Stakeholders as part of the governance of an Enduring Initiative.">
+  
+  <area  href="7625fe5b5f6c92de.htm" shape="rect" coords="63, 660, 216, 724"   target="_top"  title="-">
+  
+  <area  href=#OBMK7625FD435F6C912B shape="polygon" coords="159, 331, 159, 344, 236, 344, 236, 355, 148, 355, 148, 331"    title="-">
+  
+  <area  href="7625fd305f6c90c0.htm" shape="rect" coords="236, 326, 359, 372"   target="_top"  title="-">
+  
+  <area  href=#OBMK76259C9C5F6C8950 shape="polygon" coords="831, 120, 887, 120, 887, 131, 831, 131"    title="-">
+  
+  <area  href=#OBMK76259C9C5F6C8949 shape="polygon" coords="721, 120, 887, 120, 887, 131, 721, 131"    title="-">
+  
+  <area  href=#OBMK76259C9D5F6C89A5 shape="polygon" coords="721, 120, 776, 120, 776, 131, 721, 131"    title="-">
+  
+  <area  href=8F46E8EB64B7719A.htm#OBMK8F46E8EB64B7719A shape="polygon" coords="85, 272, 85, 261, 146, 261, 146, 272, 85, 272"   target="_top"  title="-">
+  
+  <area  href=076f08ad5e6677cd.htm#OBMK076F08AD5E6677CD shape="polygon" coords="84, 299, 84, 285, 147, 285, 147, 299, 84, 299"   target="_top"  title="A Key Indicator can be any metric used by organizations to provide an early warning of increasing risk exposures in various areas of the enterprise, based on pre-defined thresholds.">
+  
+  <area  href="762590ae5f6c7cc1.htm" shape="rect" coords="53, 259, 179, 333"   target="_top"  title="A Key Indicator can be any metric used by organizations to provide an early warning of increasing risk exposures in various areas of the enterprise, based on pre-defined thresholds.">
+  
+  <area  href="#OBMK9815B9945F687989" shape="rect" coords="518, 591, 764, 625"    title="Using Assessment to execute and check Data Controls">
+  
+  <area  href="9815b1895f685dc3.htm" shape="rect" coords="761, 160, 882, 203"   target="_top"  title="-">
+  
+  <area  href=#OBMK9815B0F25F685D41 shape="polygon" coords="159, 331, 159, 461, 240, 461, 240, 472, 148, 472, 148, 331"    title="-">
+  
+  <area  href="9815b0ed5f685cd5.htm" shape="rect" coords="240, 443, 348, 489"   target="_top"  title="-">
+  
+  <area  href=#OBMK9815B0D95F685C8A shape="polygon" coords="159, 331, 159, 402, 238, 402, 238, 413, 148, 413, 148, 331"    title="-">
+  
+  <area  href="9815b0d45f685c1e.htm" shape="rect" coords="238, 384, 346, 430"   target="_top"  title="-">
+  
+  <area  href=07ca18d25dd85477.htm#OBMK07CA18D25DD85477 shape="polygon" coords="586, 126, 586, 115, 671, 115, 671, 126, 586, 126"   target="_top"  title="An&#160; Assurance System is a Management System aimed at ensuring enterprise resilience against internal and external constraints:">
+  
+  <area  href=21b024d55d651918.htm#OBMK21B024D55D651918 shape="polygon" coords="598, 153, 598, 139, 659, 139, 659, 153, 598, 153"   target="_top"  title="-">
+  
+  <area  href="9152d8875ed741ef.htm" shape="rect" coords="532, 112, 725, 172"   target="_top"  title="A&#160; Data Catalog is an Assurance System of Data Assets, ensuring understanding,&#160; trust, compliance and confidence of enterprise data. This includes:">
+  
+  <area  href=9815A1D25F683346.htm shape="polygon" coords="1050, 172, 1050, 185, 1247, 185, 1247, 196, 1040, 196, 1040, 172"   target="_top"  title="-">
+  
+  <area  href=e6f250185f772ee1.htm#OBMKE6F250185F772EE1 shape="polygon" coords="1292, 172, 1292, 161, 1375, 161, 1375, 172, 1292, 172"   target="_top"  title="An&#160; Information Object&#160; represents anything that can be communicated or memorized by an Agent in order to produce its Outcomes.">
+  
+  <area  href=0611097f62ab6c1e.htm#OBMK0611097F62AB6C1E shape="polygon" coords="1288, 204, 1288, 191, 1379, 191, 1379, 204, 1288, 204"   target="_top"  title="-">
+  
+  <area  href="d6cd2cea5ab98e5f.htm" shape="rect" coords="1247, 159, 1420, 224"   target="_top"  title="An&#160; Information Entity is an Information Object that is not fundamentally defined by its attributes, but rather by its continuity.">
+  
+  <area  href=9815a05a5f682e88.htm shape="polygon" coords="1054, 163, 1329, 163, 1329, 148, 1340, 148, 1340, 174, 1054, 174"   target="_top"  title="-">
+  
+  <area  href="98159fba5f682ded.htm" shape="rect" coords="1251, 102, 1418, 149"   target="_top"  title="-">
+  
+  <area  href=959320325ee7fe24.htm#OBMK959320325EE7FE24 shape="polygon" coords="964, 106, 964, 95, 997, 95, 997, 106, 964, 106"   target="_top"  title="A&#160; Policy is a Directive that is not directly enforceable whose purpose is to govern, guide or constrain the structure and behavior of Agents in the enterprise. ">
+  
+  <area  href="98159f6b5f682d1e.htm" shape="rect" coords="886, 93, 1075, 174"   target="_top"  title="-">
+  
+  <area  href=9597d7b3620ab751.htm#OBMK9597D7B3620AB751 shape="polygon" coords="314, 536, 314, 525, 397, 525, 397, 536, 314, 536"   target="_top"  title="A&#160; Class of Model Block is a Class that classifies Model Building Blocks.">
+  
+  <area  href=2d9a74745b2181cd.htm#OBMK2D9A74745B2181CD shape="polygon" coords="180, 547, 180, 536, 260, 536, 260, 547, 180, 547"   target="_top"  title="&#160;Governance Blocks include all instruments used to monitor and steer transformation Initiatives. They include incidents, assessments, Workflows, indicators and their templates.">
+  
+  <area  href="b90ac213600e39bb.htm" shape="rect" coords="42, 523, 399, 735"   target="_top"  title="Governance Resource uses in the context of Data Governance.">
+  
+  <area  href=9597d7b3620ab751.htm#OBMK9597D7B3620AB751 shape="polygon" coords="329, 249, 329, 238, 412, 238, 412, 249, 329, 249"   target="_top"  title="A&#160; Class of Model Block is a Class that classifies Model Building Blocks.">
+  
+  <area  href=2ea16d68565c3218.htm#OBMK2EA16D68565C3218 shape="polygon" coords="172, 272, 172, 262, 267, 262, 267, 272, 172, 272"   target="_top"  title="&nbsp;used in enterprise governance description.">
+  
+  <area  href="2d9a74745b2181cd.htm" shape="rect" coords="25, 236, 413, 751"   target="_top"  title="&#160;Governance Blocks include all instruments used to monitor and steer transformation Initiatives. They include incidents, assessments, Workflows, indicators and their templates.">
+  
+  <area  href=29df3f4060084c07.htm#OBMK29DF3F4060084C07 shape="polygon" coords="575, 82, 575, 71, 670, 71, 670, 82, 575, 82"   target="_top"  title="A&#160; Management System is an Enduring Initiative within an Enterprise, aimed at creating, maintaining, evaluating, evolving, and operating a collection of essential Functional Assets of the Enterprise.">
+  
+  <area  href=c229e86a5d0c6cbc.htm#OBMKC229E86A5D0C6CBC shape="polygon" coords="582, 108, 582, 95, 663, 95, 663, 108, 582, 108"   target="_top"  title="-">
+  
+  <area  href="07ca18d25dd85477.htm" shape="rect" coords="491, 69, 756, 181"   target="_top"  title="An&#160; Assurance System is a Management System aimed at ensuring enterprise resilience against internal and external constraints:">
+  
+  <area  href=#OBMKB90ACFA1600E4C46 shape="polygon" coords="843, 283, 888, 283, 888, 294, 843, 294"    title="-">
+  
+  <area  href=b90acfa1600e4c31.htm shape="polygon" coords="751, 283, 888, 283, 888, 294, 751, 294"   target="_top"  title="-">
+  
+  <area  href=#OBMKB90ACFA2600E4C85 shape="polygon" coords="751, 283, 797, 283, 797, 294, 751, 294"    title="-">
+  
+  <area  href=959320325ee7fe24.htm#OBMK959320325EE7FE24 shape="polygon" coords="956, 270, 956, 259, 989, 259, 989, 270, 956, 270"   target="_top"  title="A&#160; Policy is a Directive that is not directly enforceable whose purpose is to govern, guide or constrain the structure and behavior of Agents in the enterprise. ">
+  
+  <area  href=0ec2c1d65ea1837e.htm#OBMK0EC2C1D65EA1837E shape="polygon" coords="935, 302, 935, 289, 1011, 289, 1011, 302, 935, 302"   target="_top"  title="A control directive, once implemented, enforces any regulation article your organization has to comply with.">
+  
+  <area  href="a67dc8ae5f8eacdf.htm" shape="rect" coords="888, 257, 1058, 310"   target="_top"  title="A&#160; Control Directive is a kind of Policy that provides recommendations on how to comply with Regulation Articles.Once implemented,&#160; Control Directives enforces any Regulatory Framework your organization has to comply with.">
+  
+  <area  href=427c1c7d64b5d4a1.htm#OBMK427C1C7D64B5D4A1 shape="polygon" coords="951, 331, 951, 320, 997, 320, 997, 331, 951, 331"   target="_top"  title="A&#160; Risk Type refers to a distinct category or classification of risk based on its origin, nature, or potential impact. It helps in organizing and addressing different sources of uncertainty or potential harm that an individual, organization, or system might face. By categorizing risks into different types, entities can develop more targeted mitigation strategies and response plans. ">
+  
+  <area  href=977fc52e3d250359.htm#OBMK977FC52E3D250359 shape="polygon" coords="949, 363, 949, 349, 999, 349, 999, 363, 949, 363"   target="_top"  title="A risk type defines a standardized risk typology within the context of an organization.">
+  
+  <area  href="16e327be5bf83e3b.htm" shape="rect" coords="890, 317, 1059, 372"   target="_top"  title="An&#160; Operational Risk Type is a kind of Risk Type that refers to the potential for loss due to the enterprise&#39;s inadequate functioning.">
+  
+  <area  href=07ca19e95dd854e9.htm#OBMK07CA19E95DD854E9 shape="polygon" coords="591, 246, 591, 235, 667, 235, 667, 246, 591, 246"   target="_top"  title="An&#160; Assurance Case is a claim that a particular enterprise asset or group of assets (Resources or Activites) adequately mitigates certain identified risks by means of appropriated controls.">
+  
+  <area  href="b90aeac8600e619f.htm" shape="rect" coords="507, 233, 751, 421"   target="_top"  title="A&#160; Data Assurance Case is a structured argument, supported by evidence, intended to justify that a data is acceptably assured relative to a concern (such as quality, safety, security or privacy) in the intended operating environment.The operating environment includes:1. Policies related to the use of data in the organization (privacy policy, regulation policy, ...).2. Data quality policies defined by the organization.3. Risk to be mitigated in the use, consumption and sharing of data by the organization.4. Control directives to be followed in the use, consumption and sharing of data by the organization.">
+  
+  <area  href=744b935d5fbfe0f9.htm#OBMK744B935D5FBFE0F9 shape="polygon" coords="742, 48, 742, 37, 765, 37, 765, 48, 742, 48"   target="_top"  title="A&#160; Class is collection of Entitys which it classifies according to one or more criteria.">
+  
+  <area  href=fa47fbab5e695547.htm#OBMKFA47FBAB5E695547 shape="polygon" coords="559, 75, 559, 61, 646, 61, 646, 75, 559, 75"   target="_top"  title="-">
+  
+  <area  href="29df3f4060084c07.htm" shape="rect" coords="439, 36, 767, 187"   target="_top"  title="A&#160; Management System is an Enduring Initiative within an Enterprise, aimed at creating, maintaining, evaluating, evolving, and operating a collection of essential Functional Assets of the Enterprise.">
+  
+  <area  href="981598595f68274f.htm" shape="rect" coords="0, 0, 1418, 791"   target="_top"  title="-">
+  
+</map>
+<img  src="../images/981598595f68274f_981598775f6827f6_i.png" alt="../images/981598595f68274f_981598775f6827f6_i.png" usemap="#981598775F6827F6" height="1421" width="1420" border=0>
+
+</div>
+<div class="Relationship" id="Relationship2">
+<div id="klmm" style="width: 100vw; height: 100vh;" ></div>
+<!-- <script src="../standard/assets/js/keylines_domain.js"></script> -->
+<script >
+const data = {
+ type: 'LinkChart',
+  items: [
+  //nodes
+    {type: 'node', id:'981598595F68274F', t:"Data Quality Governance", sh:'box', d:""},
+    {type: 'node', id:'B90AC213600E39BB', t:"Data Governance Block", parentId:'981598595F68274F', sh:'circle', d:"Governance Resource uses in the context of Data Governance."},
+  //edges
+
+  ]
+}
+</script>
+<script src="../standard/assets/js/keylines_domain.js" type="module"></script>
+</div>
+</section>
+<a class="object-section-anchor" id="des"></a>
+<section class="object-section">
+<h4>CONCEPT DESCRIPTIONS</h4> 
+<hr class="sectionbreak" />
+<h5>Concrete Concepts</h5>
+<table class="table  table-set-col-width">
+<thead>
+<tr><th>Concept</th><th>Description</th><th>HOPEX Metaclass</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="../standard/dic_representation_type.ico.gif"/>&nbsp;
+<a  href="9815b1895f685dc3.htm" target="_top">Contextualized Targeted Threshold</a></td>
+<td class="description-text">        </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="a67dc8ae5f8eacdf.htm" target="_top">Control Directive</a></td>
+<td class="description-text">A&#160;<b> Control Directive</b> is a kind of <a href="959320325ee7fe24.htm" target="_top"><b><u>Policy</u></b></a> that provides recommendations on how to comply with <a href="07ca0ca15dd84ada.htm" target="_top"><b><u>Regulation Article</u></b></a>s.<br />Once implemented,&#160;<b> Control Directive</b>s enforces any <a href="744b8d735fbfcfa9.htm" target="_top"><b><u>Regulatory Framework</u></b></a> your organization has to comply with.<i><ul>References:<li><a href="https://grcschema.org/Thing/Control"><img src="../standard/extr.ico.gif">&nbsp;GRCschema.org - Control</a></li> <li><a href="https://www.unifiedcompliance.com/education/common-control/"><img src="../standard/extr.ico.gif">&nbsp;UCF - What are Common Controls</a></li> <li><a href="https://compliancedictionary.com/term/7990"><img src="../standard/extr.ico.gif">&nbsp;UCF Glossary - Common Control</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="0ec2c1d65ea1837e.htm" target="_top">Control Directive</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="9152d8875ed741ef.htm" target="_top">Data Catalog</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Data Catalog</b> is an <a href="07ca18d25dd85477.htm" target="_top"><b><u>Assurance System</u></b></a> of <a href="30efb18261f374d5.htm" target="_top"><b><u>Data Asset</u></b></a>s, ensuring understanding,&#160; trust, compliance and confidence of enterprise data. This includes:</div><div align="left" style="min-height: 12pt; ">1. Relationship with <a href="02af08f05a1821d3.htm" target="_top"><b><u>Enterprise Glossary</u></b></a> to provide business context to metadata.</div><div align="left" style="min-height: 12pt; ">2. Data policy definition and enforcement to ensure data quality.</div><div align="left" style="min-height: 12pt; ">3. <a href="23ab2e945da829b8.htm" target="_top"><b><u>Data Lineage</u></b></a> to master data provenance: where data comes from, how data is transformed, and where it is used.</div>       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="21b024d55d651918.htm" target="_top">Data Catalog</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="9815a0dc5f682fa1.htm" target="_top">Data Control</a></td>
+<td class="description-text">A&#160;<b> Data Control</b> is about tracking the quality of information as defined by <a href="98159f6b5f682d1e.htm" target="_top"><b><u>Data Quality Policy</u></b></a>(ies).       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="a1e0ab2a5f89076d.htm" target="_top">Data Control</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="d7f9fbd45f720d19.htm" target="_top">Data Control Execution</a></td>
+<td class="description-text">Execution d&#39;un data control effectu&#233; dans le cadre d&#39;un data catalog.       </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="d7f9fc7b5f720e1f.htm" target="_top">Data Issue</a></td>
+<td class="description-text">An issue is an event or difficulty encountered in the context of a business process, application or enterpise strategy. Issues are processed within the framework of projects as a function of objectives aiming at their resolution.&#160;        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="34d6bccc3f8ad33e.htm" target="_top">Issue</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="003f595c64775717.htm" target="_top">Data Quality Indicator</a></td>
+<td class="description-text">        </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="d7f90fc35f737c24.htm" target="_top">Data Quality Measure Value</a></td>
+<td class="description-text">        </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="98159f6b5f682d1e.htm" target="_top">Data Quality Policy</a></td>
+<td class="description-text">        </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_representation_type.ico.gif"/>&nbsp;
+<a  href="9815b0d45f685c1e.htm" target="_top">Higher Threshold</a></td>
+<td class="description-text">        </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_representation_type.ico.gif"/>&nbsp;
+<a  href="7625fd305f6c90c0.htm" target="_top">Key Indicator Value</a></td>
+<td class="description-text">        </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="762590ae5f6c7cc1.htm" target="_top">Key IRM Indicator</a></td>
+<td class="description-text">A Key Indicator can be any metric used by organizations to provide an early warning of increasing risk exposures in various areas of the enterprise, based on pre-defined thresholds.       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="076f08ad5e6677cd.htm" target="_top">Key Indicator</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_representation_type.ico.gif"/>&nbsp;
+<a  href="9815b0ed5f685cd5.htm" target="_top">Lower Threshold</a></td>
+<td class="description-text">        </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="98159fba5f682ded.htm" target="_top">Measurable Data Quality</a></td>
+<td class="description-text">        </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="7625fe5b5f6c92de.htm" target="_top">Remediation Plan</a></td>
+<td class="description-text">        </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="05b091f46006f913.htm" target="_top">Solution Team</a></td>
+<td class="description-text">A&#160;<b> Solution Team</b> is a <a href="ff0501b65b253fdd.htm" target="_top"><b><u>Governing Team</u></b></a>&#160; responsible for overseeing the administration of a <a href="29df3f4060084c07.htm" target="_top"><b><u>Management System</u></b></a>.       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="7cae244a5a739f96.htm" target="_top">Portfolio Team</a></td>
+</tr>  
+</tbody>
+</table>
+<hr class="sectionbreak" />
+<h5>Abstract Concepts</h5>
+<table class="table  table-set-col-width">
+<thead >
+<tr><th>Concept</th><th>Description</th><th>HOPEX Metaclass</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="07ca18d25dd85477.htm" target="_top">Assurance System</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Assurance System</b> is a <a href="29df3f4060084c07.htm" target="_top"><b><u>Management System</u></b></a> aimed at ensuring enterprise resilience against internal and external constraints:</div><div align="left" style="min-height: 12pt; ">a. Regulation constraints,</div><div align="left" style="min-height: 12pt; ">b. Internal policies and rules constraints,</div><div align="left" style="min-height: 12pt; ">c. Operational constraints: maintain operational capacities of the company (maintain ability to produce, maintain quality, ensure product development , ability to hire, to train, etc).</div>       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="c229e86a5d0c6cbc.htm" target="_top">Assurance Domain</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="b90aeac8600e619f.htm" target="_top">Data Assurance Case</a></td>
+<td class="description-text">A&#160;<b> Data Assurance Case</b> is a structured argument, supported by evidence, intended to justify that a data is acceptably assured relative to a concern (such as quality, safety, security or privacy) in the intended operating environment.<br />The operating environment includes:<br />1. Policies related to the use of data in the organization (privacy policy, regulation policy, ...).<br />2. Data quality policies defined by the organization.<br />3. Risk to be mitigated in the use, consumption and sharing of data by the organization.<br />4. Control directives to be followed in the use, consumption and sharing of data by the organization.<i><ul>References:<li><a href="https://csrc.nist.gov/glossary/term/assurance_case"><img src="../standard/extr.ico.gif">&nbsp;NIST - Assurance Case</a></li></ul></i>        </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="b90ac213600e39bb.htm" target="_top">Data Governance Block</a></td>
+<td class="description-text">Governance Resource uses in the context of Data Governance.       </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="23ab2e945da829b8.htm" target="_top">Data Lineage</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Data Lineage</b> is about tracking the flow of information from source <a href="e6f250185f772ee1.htm" target="_top"><b><u>Information Object</u></b></a>s to final <a href="e6f250185f772ee1.htm" target="_top"><b><u>Information Object</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">It is necessary to guarantee the quality, usability and security of business data.</div><div align="left" style="min-height: 12pt; ">For large organizations, it is also a key conformity legal requirement: BCBS 239, Solvency II.</div><div align="left" style="min-height: 12pt; "></div><div align="left" style="min-height: 12pt; ">Business Data Lineage is defined as a business data life cycle that describes the source of business data and where it moves over time.</div>       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="5beb5d745c234fc2.htm" target="_top">Data Lineage</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="2d9a74745b2181cd.htm" target="_top">Governance Block</a></td>
+<td class="description-text"><b>&#160;Governance Block</b>s include all instruments used to monitor and steer transformation <a href="0ffeec41600be08a.htm" target="_top"><b><u>Initiative</u></b></a>s. They include incidents, assessments, <a href="26b887fa5eea87e2.htm" target="_top"><b><u>Workflow</u></b></a>s, indicators and their templates.       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="2ea16d68565c3218.htm" target="_top">Governance Building Block</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="d6cd2cea5ab98e5f.htm" target="_top">Information Entity</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Information Entity</b> is an <a href="e6f250185f772ee1.htm" target="_top"><b><u>Information Object</u></b></a> that is not fundamentally defined by its attributes, but rather by its continuity.</div><div align="left" style="min-height: 12pt; ">An&#160;<b> Information Entity</b> evolves over time and has states.</div><div align="left" style="min-height: 12pt; ">For instance a person is an&#160;<b> Information Entity</b>. Employe is a state of a person.</div><div align="left" style="min-height: 12pt; ">An&#160;<b> Information Entity</b> has relationships to other&#160;<b> Information Entity</b>s and can </div><i><ul>References:<li><a href="https://www.google.com/search?q=site%3Ahttps%3A%2F%2Fwww.dddcommunity.org%2Fresources%2Fddd_terms%2F+Entity"><img src="../standard/extr.ico.gif">&nbsp;DDD - Glossary - Entity</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="0611097f62ab6c1e.htm" target="_top">Information Entity - E</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="e6f250185f772ee1.htm" target="_top">Information Object</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Information Object</b>&#160; represents anything that can be communicated or memorized by an <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a> in order to produce its <a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">An&#160;<b> Information Object</b> is either an <a href="d6cd2cea5ab98e5f.htm" target="_top"><b><u>Information Entity</u></b></a> or a <a href="d7f90c675f737699.htm" target="_top"><b><u>Information Property</u></b></a>.<br />The difference lies in their relationship to change and to time. <a href="d6cd2cea5ab98e5f.htm" target="_top"><b><u>Information Entity</u></b></a>(ies) can change over time and have a lifeycle while <a href="d7f90c675f737699.htm" target="_top"><b><u>Information Property</u></b></a>s are immutable characteristics.</div>       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="81f48a9756f17efb.htm" target="_top">Information Entity</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="29df3f4060084c07.htm" target="_top">Management System</a></td>
+<td class="description-text">A&#160;<b> Management System</b> is an <a href="d321c226601262ae.htm" target="_top"><b><u>Enduring Initiative</u></b></a> within an <a href="b181b82a54891668.htm" target="_top"><b><u>Enterprise</u></b></a>, aimed at creating, maintaining, evaluating, evolving, and operating a collection of essential <a href="07ca0f015dd84efa.htm" target="_top"><b><u>Functional Asset</u></b></a>s of the <a href="b181b82a54891668.htm" target="_top"><b><u>Enterprise</u></b></a>.<i><ul>References:<li><a href="https://www.iso.org/obp/ui/#iso:std:iso:22301:ed-2:v1:en"><img src="../standard/extr.ico.gif">&nbsp;ISO 22301 - Management System</a></li> <li><a href="https://pubs.opengroup.org/togaf-standard/introduction/apdxb.html#tag_06_30"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Definition - Portfolio</a></li> <li><a href="https://www.scaledagileframework.com/large-solution-safe/"><img src="../standard/extr.ico.gif">&nbsp;SAFe&copy; - Large Solution SAFe</a></li> <li><a href="https://www.scaledagileframework.com/enterprise-solution-delivery/"><img src="../standard/extr.ico.gif">&nbsp;SAFe&copy; -Enterprise Solution Delivery</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="fa47fbab5e695547.htm" target="_top">Enterprise Portfolio</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="16e327be5bf83e3b.htm" target="_top">Operational Risk Type</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Operational Risk Type</b> is a kind of <a href="427c1c7d64b5d4a1.htm" target="_top"><b><u>Risk Type</u></b></a> that refers to the potential for loss due to the enterprise&#39;s inadequate functioning.</div><div align="left" style="min-height: 12pt; ">An&#160;<b> Operational Risk Type</b> is either <a href="8f469fa664b76efc.htm" target="_top"><b><u>Compliance Risk Type</u></b></a> a or an <a href="8f462b0964ba7cc8.htm" target="_top"><b><u>Operating Risk Type</u></b></a>.</div>       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="977fc52e3d250359.htm" target="_top">Risk Type</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="07ca0dd75dd84e92.htm" target="_top">Policy Asset</a></td>
+<td class="description-text">A&#160;<b> Policy Asset</b> is any topic related to policy definitions.<br />It ranges from the different kidns of <a href="278678e95b2533d6.htm" target="_top"><b><u>Directive</u></b></a>s (<a href="fe22ffdd5c4e0bd4.htm" target="_top"><b><u>Business Policy</u></b></a>, <a href="07231aff5f4eb337.htm" target="_top"><b><u>Architecture principle</u></b></a>, <a href="278677bd5b253114.htm" target="_top"><b><u>Business Rule</u></b></a>, etc.),&#160; to classification of policies (<a href="744b8f3f5fbfd1c2.htm" target="_top"><b><u>Policy Category</u></b></a>) up to an entire set of policies (<a href="8d5e9560552e22b2.htm" target="_top"><b><u>Policy Dictionary</u></b></a>).       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="c2b8cafd5d1d208f.htm" target="_top">Policy Block</a></td>
+</tr>  
+</tbody>
+</table>
+<section>
+
+</div>
+<button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button>
+<script>window.onscroll = function() {scrollFunction()};$(document).on('click', 'a[href^="#"]', function (event) {event.preventDefault();$('html, body').animate({scrollTop: $($.attr(this, 'href')).offset().top}, 500);});function showDiagOnClick(elem){ var x = document.getElementsByClassName('Relationship');var e = elem.getAttribute("value"); for (var i=0; i < x.length ;i++){x[i].style.display="none"; if (x[i].id == e){x[i].style.display="block";x[i].style.textAlign="left";}}}
+</script></html>

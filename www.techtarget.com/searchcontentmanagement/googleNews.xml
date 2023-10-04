@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:ns2="http://www.google.com/schemas/sitemap-news/0.9">
+    <url>
+        <loc>https://www.techtarget.com/searchcontentmanagement/answer/Who-owns-AI-generated-content</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-27</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>Who owns AI-generated content?</ns2:title>
+        </ns2:news>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchcontentmanagement/tip/How-to-add-digital-signatures-to-a-PDF</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-25</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>How to add digital signatures to a PDF</ns2:title>
+        </ns2:news>
+    </url>
+</urlset>

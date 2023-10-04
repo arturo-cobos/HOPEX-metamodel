@@ -1,0 +1,24 @@
+User-agent: *
+Disallow: /index.php*
+Disallow: *.ics
+Disallow: /event/calendar/*
+
+Disallow: /svg/private/
+Disallow: /svg/not-indexed/
+Disallow: /images/private/
+Disallow: /images/not-indexed/
+Disallow: /images/logo/3rdpartylogos/
+Disallow: /images/*.doc$ # disallow access to Word documents in images directory
+Disallow: /images/*.pdf$ # disallow access to Pdf documents in images directory
+Disallow: /uploads/
+Disallow: /tv/course_videos/
+
+Disallow: /pdf/
+Disallow: /shell/
+Disallow: /static/
+
+Disallow: /cgi-bin/
+
+Sitemap: https://www.interaction-design.org/sitemap.xml
+
+Crawl-delay: 1

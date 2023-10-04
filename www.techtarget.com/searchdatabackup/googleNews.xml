@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:ns2="http://www.google.com/schemas/sitemap-news/0.9">
+    <url>
+        <loc>https://www.techtarget.com/searchdatabackup/feature/Cloud-backup-and-disaster-recovery-evolve-toward-maturity</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-26</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>Cloud backup and disaster recovery evolve toward maturity</ns2:title>
+        </ns2:news>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchdatabackup/opinion/Data-protection-and-security-A-marriage-of-necessity</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-25</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>Data protection and security: A marriage of necessity?</ns2:title>
+        </ns2:news>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchdatabackup/tip/Use-geo-redundant-backups-for-long-distance-data-protection</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-25</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>Use geo-redundant backups for long-distance data protection</ns2:title>
+        </ns2:news>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchdatabackup/news/366552363/Veeam-leads-funding-round-for-SaaS-backup-provider-Alcion</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-19</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>Veeam leads funding round for SaaS backup provider Alcion</ns2:title>
+        </ns2:news>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchdatabackup/news/366551417/150-TB-IBM-tapes-hit-the-market</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-08</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>150 TB IBM tapes hit the market</ns2:title>
+        </ns2:news>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchdatabackup/news/366551433/Cohesity-adds-AI-to-its-support-portal-for-backups</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-07</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>Cohesity adds AI to its support portal for backups</ns2:title>
+        </ns2:news>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchdatabackup/tip/Oracle-RMAN-tutorial-Get-started-with-database-backup</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-06</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>Oracle RMAN tutorial: Get started with database backup</ns2:title>
+        </ns2:news>
+    </url>
+</urlset>

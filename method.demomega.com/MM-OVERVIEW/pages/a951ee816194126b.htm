@@ -1,0 +1,671 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="keywords" content="">
+<meta name="description" content="">    
+<LINK REL="icon" HREF="../standard/assets/img/favicon.ico">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/bootstrap.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nav.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/eaportal.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/font-awesome.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/animate.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/datatables.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/grid.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nae.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/custom.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/chosen.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/prism.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery.dataTables.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jsTreeStyle.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.theme.css" media="screen" />
+<script type="text/javascript" src="../standard/assets/js/jquery-3.2.1.min.js" ></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-ui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.columnFilter.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3-force.v2.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.gui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.search.js"></script> 
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.util.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-2.1.1.min.js"></script>
+<script src="../standard/assets/js/ws_zoomtemplate_firefox.js"></script>
+<script src="../standard/assets/js/bootstrap.min.js"></script>
+<script src="../standard/assets/js/datatables.min.js"></script>
+<script src="../standard/assets/js/moment.min.js"></script>
+<script src="../standard/assets/js/datetime-moment.js"></script>
+<script src="../standard/assets/js/chartjs.min.js"></script>
+<script src="../standard/assets/js/searchindexcontent.json"></script>
+<script src="../standard/assets/js/anls.js"></script>
+<script src="../../../cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script src="../standard/assets/js/gauge.js"></script> 
+<script src="../standard/assets/js/domesticApi.js"></script> 
+<script src="../standard/assets/js/piecelabel.js"></script>
+<script src="../standard/assets/js/popper.min.js"></script>
+<script src="../standard/assets/js/custom.js"></script>
+<script src="../standard/assets/js/chosen.jquery.js"></script>
+<script src="../standard/assets/js/prism.js"></script>
+<script src="../standard/assets/js/init-chosen.js"></script>
+<script src="../standard/assets/js/chart-data-flow.js"></script>
+<script src="../standard/assets/js/chart-data-gantt.js"></script>
+<script type="module" src="../standard/assets/js/Fuse.esm.min.js"></script>
+<script type="module">
+import Fuse from '../standard/assets/js/Fuse.esm.min.js';
+$(document).ready(function () {
+console.log('getjson');
+window.$.getJSON('../standard/assets/js/searchindexcontent.json', function (response) {
+console.log('getjson ok');
+var isIndex = "";
+var url = window.location.pathname;
+var filename = url.substring(url.lastIndexOf('/')+1);
+if( filename.includes("index") || filename === "" ){
+isIndex = "pages/";
+} else {
+isIndex = "";
+}
+const fuse = new Fuse(response, {
+keys: ['title','text'],
+shouldSort: true,
+includeMatches : true,
+findAllMatches : true
+});
+$('#search-fuse').on('keyup', function () {
+let result = fuse.search($(this).val());
+console.log(result);
+let resultdiv = $('div.searchresults-fuse');
+if (result.length === 0) {
+resultdiv.hide();
+} else {
+resultdiv.empty();
+resultdiv.append('<table class="table-search" width="100%" cellspacing="0"><thead ><tr><th>Name</th><th>Object Type</th><th>Modification date</th></tr></thead><tbody>');
+
+for (let obj in result.slice(0,10)) {
+
+let searchObj = '<tr><td><a href="./'+ isIndex + result[obj].item.url + '">' + result[obj].item.title +'</a></td><td>' + result[obj].item.ObjectType + '</td><td>' + result[obj].item.ModificationDate + '</td></tr>' ;
+
+
+resultdiv.find('tbody').append(searchObj);
+}
+resultdiv.append('</tbody></table>');
+resultdiv.show();
+}
+});
+});
+});
+</script>
+<title>HOPEX Metamodel Overview (Beta Version)</title>
+</head>
+<nav class="navbar navbar-expand-md navbar-dark  navbar-mega"><!-- Brand --><!--<a class="navbar-brand" href="#">Navbar</a>--><a class="" href="../index.htm"><img class="logo-mega" src="../standard/assets/img/logo.png"  alt="">(Beta Version)</a><!-- Toggler/collapsibe Button --><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><!-- Navbar links -->
+<div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsibleNavbar"><div class="col-sm-auto col-md-auto col-lg-5"></div>
+<div class="col-sm-auto">
+<ul class="navbar-nav">      
+<li><a class="dropdown-item" href="ad30ce115ebf7e90.htm">EA Grid</a></li> 
+<li><a class="dropdown-item" href="fdd5018459bc3c6a.htm">EA Domains</a></li> 
+<li><a class="dropdown-item" href="07e731775ecc93f4.htm">Solutions</a></li> 
+<li><a class="dropdown-item" href="c5dfc62c54810c2c.htm">Glossary</a></li> 
+<li class="nav-item dropdown mx-1">
+<a class="nav-link" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</a>
+<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<li><a class="dropdown-item" href="5446555d5f88c32e.htm">Outcome Driven Metamodel</a></li> 
+<li><a class="dropdown-item" href="e1ccfc295f8f7b90.htm">Playbooks</a></li> 
+<li><a class="dropdown-item" href="42bc992862d20ea7.htm">Framework Mappings</a></li> 
+<li><a class="dropdown-item" href="e93aebb35fa20550.htm">Metamodel Patterns</a></li> 
+<li><a class="dropdown-item" href="d599fe87602b2b85.htm">References</a></li> 
+<li><a class="dropdown-item" href="333f3a7f5dde11de.htm">Legend</a></li> 
+</ul>									                                            
+</li>
+</ul>
+</div>
+<div class="col-sm-auto"><a class="nav-link search" href="#" onclick=showHideSearch("search-section-fuse")><i class="fa fa-search mr-1 form-control-feedback"></i></a></div>
+</div>
+</nav>
+<div id="search-section-fuse" style="display:none">>
+<div class="search_header"><span class="closesearch">&times;</span>
+<nav class="breadcrumb">
+<a class="breadcrumb-item" href="../index.htm">Home </a> 
+<span class="breadcrumb-item active">Search</span> 
+</nav>
+</div>
+<input id="search-fuse" placeholder="Search..."  name="q" onfocus="this.value=''" type="search">
+<div class="searchresults-fuse"></div>
+</div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>function showHideSearch(elementId) {var contentDivs = document.getElementsByClassName('content');var footerDivs = document.getElementsByClassName('footer'); var containerDivs = document.getElementsByClassName('container');var containerfluidDivs = document.getElementsByClassName('container-fluid');var x = document.getElementById(elementId);if (x.style.display === "none") {x.style.display = "block";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "none";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "none";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "none";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "none";}} else {x.style.display = "none";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "block";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "block";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "block";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "block";}}} ;<!-- END WIDGET DRILL DOWN --></script><script>$(document).ready(function() {$(window).scroll(function() {if ($(this).scrollTop() > 100) {$('.scrollup').fadeIn();} else {$('.scrollup').fadeOut();}});$('.scrollup').click(function() {$("html, body").animate({scrollTop: 0}, 600);return false;});});</script><script>
+var modal = document.getElementById("search-section-fuse");
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = "none";
+}
+}
+$(document).on('click', '.closesearch', function() {
+showHideSearch("search-section-fuse");
+
+
+
+
+
+});</script><div class="container-fluid col-lg-11"><nav class="breadcrumb"><a class="breadcrumb-item" href="../index.htm">Home</a> <span class="breadcrumb-item active">
+<a  href="c5dfc62c54810c2c.htm" target="_top">Dictionary of HOPEX concepts</a>&nbsp;/&nbsp;Facility Asset Architecture</span></nav></div>
+<div class="container-fluid col-lg-11 content">
+<section class="fadeInDown animated"><a href="#idt" class="btn btn-d">DEFINITION</a> <a href="#grf" class="btn btn-d">CONCEPT GRAPH</a> <a href="#des" class="btn btn-d">CONCEPT DESCRIPTIONS</a> 
+</section>
+<a class="object-section-anchor" id="idt"></a>
+<section class="object-section">
+<h4>CONCEPT DOMAIN - Facility Asset Architecture</h4><hr class="sectionbreak" /><table class="table table-vertical-headers table-set-col-width"><tr><th>Description</th><td class="description-text"><div></div></td></tr><tr><th>Dictionary</th><td><img src="../standard/dicsubjectarea.ico.gif"/>&nbsp;
+<a  href="c5dfc62c54810c2c.htm" target="_top">Dictionary of HOPEX concepts</a></td></tr><tr><th>Parent Domain</th><td><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="df118e555d5f62b7.htm" target="_top">Facility &amp; Platform ArcDevOps</a>&nbsp;</td></tr>
+<tr><th>Imported Domains</th><td><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="d160039d62e081a5.htm" target="_top">EA Pattern - Technology Operating Pattern</a>&nbsp;</td></tr>
+<tr><th>Domain dependencies</th><td><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="c30bf38f5a5da645.htm" target="_top">Hardware System ArcDevOps</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="1ce356355c48c0e2.htm" target="_top">People &amp; Accountability</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="c2dbe1db5b026b30.htm" target="_top">Software Technology ArcDevOps</a>&nbsp;</td></tr></table></section>
+<a class="object-section-anchor" id="grf"></a>
+<section class="object-section">
+<h4>DOMAIN CONCEPT GRAPH</h4>
+<hr class="sectionbreak" />
+<a href="#" class="btn btn-d" value="Relationship1" onclick="showDiagOnClick(this)">Diagram</a>
+<a href="#" class="btn btn-d" value="Relationship2" onclick="showDiagOnClick(this)">Graph</a>
+<div class="Relationship" id="Relationship1">
+
+<map  name="DF118E6A5D5F62E3">
+  <area  href=#OBMKF4BE0F745EE1D8AB shape="polygon" coords="880, 527, 880, 432, 915, 432, 915, 500, 904, 500, 904, 442, 891, 442, 891, 527"    title="-">
+  
+  <area  href=02f51209641c7ea4.htm#OBMK02F51209641C7EA4 shape="polygon" coords="870, 540, 870, 529, 955, 529, 955, 540, 870, 540"   target="_top"  title="&#160;Computing System is a physical or virtual computer that can host and run software code.">
+  
+  <area  href=0a860d8e58f61d23.htm#OBMK0A860D8E58F61D23 shape="polygon" coords="888, 572, 888, 559, 936, 559, 936, 572, 888, 572"   target="_top"  title="An IT Server is a computing device which provides a service to the users connected to it via an IT network. ">
+  
+  <area  href="df118f645d5f65bb.htm" shape="rect" coords="841, 528, 983, 577"   target="_top"  title="A&#160; Computer Server is a Computing System which provides processing, storage, and network connectivity services to other Computing Systems on a Computer Network.">
+  
+  <area  href=02f51209641c7ea4.htm#OBMK02F51209641C7EA4 shape="polygon" coords="867, 468, 867, 457, 952, 457, 952, 468, 867, 468"   target="_top"  title="&#160;Computing System is a physical or virtual computer that can host and run software code.">
+  
+  <area  href=c29dc44258c72098.htm#OBMKC29DC44258C72098 shape="polygon" coords="886, 500, 886, 487, 933, 487, 933, 500, 886, 500"   target="_top"  title="An IT Device is a computing device which provides a service to the end-users directly. ">
+  
+  <area  href="df118f995d5f65f1.htm" shape="rect" coords="838, 456, 982, 505"   target="_top"  title="A&#160; Computer Device is a Computing System which provides services directly to the end-user. ">
+  
+  <area  href=#OBMKF4BE0F055EE1D7B9 shape="polygon" coords="880, 455, 880, 396, 915, 396, 915, 500, 904, 500, 904, 406, 891, 406, 891, 455"    title="-">
+  
+  <area  href=278675d65b252f4d.htm#OBMK278675D65B252F4D shape="polygon" coords="871, 403, 871, 392, 949, 392, 949, 403, 871, 403"   target="_top"  title="A&#160; Business System is a man made artifact (Hardware System or Software System) which exposes Functionalityies and can produce Business Outcomes.">
+  
+  <area  href=f4be0eda5ee1d6c0.htm#OBMKF4BE0EDA5EE1D6C0 shape="polygon" coords="860, 414, 860, 403, 959, 403, 959, 414, 860, 414"   target="_top"  title="A&#160; Computational Aspect is the ability to host and run software code ( Application code or Software Technology code) and to host data.">
+  
+  <area  href=26b8384f5eeae33c.htm#OBMK26B8384F5EEAE33C shape="polygon" coords="864, 425, 864, 414, 956, 414, 956, 425, 864, 425"   target="_top"  title="&#160;Network connectivity is an aspect of Technology Operating Asset that provides networking capabilites through the use of Network Interfaces.">
+  
+  <area  href="02f51209641c7ea4.htm" shape="rect" coords="826, 390, 994, 608"   target="_top"  title="&#160;Computing System is a physical or virtual computer that can host and run software code.">
+  
+  <area  href=27a456b46407c665.htm#OBMK27A456B46407C665 shape="polygon" coords="490, 573, 490, 562, 623, 562, 623, 573, 490, 573"   target="_top"  title="A&#160; Configured Technology System a Technology System that is a combination of Networking Systems and Computational Aspects.">
+  
+  <area  href=a41ab3105b378b66.htm#OBMKA41AB3105B378B66 shape="polygon" coords="504, 584, 504, 573, 609, 573, 609, 584, 504, 584"   target="_top"  title="An&#160; IT Infrastructure System is an assembly of&#160; Computational Aspects and Network Devices required to to run Business Systems and Business Operations.">
+  
+  <area  href=127114b858da12e4.htm#OBMK127114B858DA12E4 shape="polygon" coords="520, 616, 520, 602, 592, 602, 592, 616, 520, 616"   target="_top"  title="An IT Infrastructure is composed of several connected IT Devices (IT Technical Devices or Computing Devices) and IT Networks.">
+  
+  <area  href="bcebd86d549143b4.htm" shape="rect" coords="483, 559, 630, 629"   target="_top"  title="An&#160; IT Infrastructure is a configuration of Computational Aspects and of Computer Networks that&#160; enable the operation the Business Systems of an enterprise.">
+  
+  <area  href=#OBMKE1A419D264028756 shape="polygon" coords="551, 595, 548, 584, 559, 581, 562, 593"    title="-">
+  
+  <area  href=0cbd1fa663fe18ac.htm#OBMK0CBD1FA663FE18AC shape="polygon" coords="510, 540, 510, 529, 597, 529, 597, 540, 510, 540"   target="_top"  title="A&#160; Technology System is an Agent which produces Technology Outcomes through Technology Interfaces.&#160; Technology Systems are enabler of Business Systems. They do not directly deliver Business Outcomes to internal or external customers.">
+  
+  <area  href="27a456b46407c665.htm" shape="rect" coords="466, 527, 642, 638"   target="_top"  title="A&#160; Configured Technology System a Technology System that is a combination of Networking Systems and Computational Aspects.">
+  
+  <area  href=#OBMK070B10C964012306 shape="polygon" coords="861, 842, 738, 842, 738, 823, 749, 823, 749, 832, 861, 832"    title="-">
+  
+  <area  href=#OBMK070B1093640122BA shape="polygon" coords="592, 779, 592, 818, 743, 818, 743, 828, 582, 828, 582, 779"    title="-">
+  
+  <area  href=#OBMKE1A4012B64027D18 shape="polygon" coords="919, 896, 919, 842, 860, 842, 860, 832, 930, 832, 930, 896"    title="-">
+  
+  <area  href=f4be0fba5ee1d935.htm#OBMKF4BE0FBA5EE1D935 shape="polygon" coords="889, 910, 889, 899, 960, 899, 960, 910, 889, 910"   target="_top"  title="A&#160; Network Device is any piece of physical or virtual hardware that is used to connect Computational Aspects (Computer Devices, Computer Servers) and other devices to a Computer Network.">
+  
+  <area  href=a688a88f60044e93.htm#OBMKA688A88F60044E93 shape="polygon" coords="894, 942, 894, 928, 955, 928, 955, 942, 894, 942"   target="_top"  title="-">
+  
+  <area  href="e1a4fb1b64017ad6.htm" shape="rect" coords="870, 897, 980, 946"   target="_top"  title="A&#160; Wifi Hotspot is Network Device that allows multiple devices to connect to a Wi-Fi network.">
+  
+  <area  href=#OBMKE1A4FAD464017AA2 shape="polygon" coords="875, 842, 861, 842, 861, 832, 875, 832"    title="-">
+  
+  <area  href=f4be0fba5ee1d935.htm#OBMKF4BE0FBA5EE1D935 shape="polygon" coords="889, 841, 889, 830, 960, 830, 960, 841, 889, 841"   target="_top"  title="A&#160; Network Device is any piece of physical or virtual hardware that is used to connect Computational Aspects (Computer Devices, Computer Servers) and other devices to a Computer Network.">
+  
+  <area  href=a688a87d60044e0b.htm#OBMKA688A87D60044E0B shape="polygon" coords="905, 873, 905, 860, 944, 860, 944, 873, 905, 873"   target="_top"  title="-">
+  
+  <area  href="e1a4fac764017a5a.htm" shape="rect" coords="870, 828, 980, 877"   target="_top"  title="A&#160; Router is a Network Device that connects multiple Computer Networks together and directs data traffic between them.">
+  
+  <area  href=#OBMKE1A4F45F640177B1 shape="polygon" coords="795, 896, 795, 832, 860, 832, 860, 842, 805, 842, 805, 896"    title="-">
+  
+  <area  href=f4be0fba5ee1d935.htm#OBMKF4BE0FBA5EE1D935 shape="polygon" coords="764, 910, 764, 899, 835, 899, 835, 910, 764, 910"   target="_top"  title="A&#160; Network Device is any piece of physical or virtual hardware that is used to connect Computational Aspects (Computer Devices, Computer Servers) and other devices to a Computer Network.">
+  
+  <area  href=a688a86b60044d83.htm#OBMKA688A86B60044D83 shape="polygon" coords="780, 942, 780, 928, 820, 928, 820, 942, 780, 942"   target="_top"  title="-">
+  
+  <area  href="e1a4f43e64017742.htm" shape="rect" coords="745, 897, 855, 946"   target="_top"  title="A&#160; Switch is a Network Device used to connect multiple devices within a Computer Network, enabling them to communicate with each other.">
+  
+  <area  href=#OBMKF4BE0FD85EE1DAA3 shape="polygon" coords="655, 823, 729, 823, 729, 834, 655, 834"    title="-">
+  
+  <area  href=f4be0fd85ee1da9d.htm shape="polygon" coords="562, 779, 562, 823, 729, 823, 729, 834, 551, 834, 551, 779"   target="_top"  title="Role of a Network Device in a Computer Network.">
+  
+  <area  href=#OBMKF4BE0FD85EE1DADF shape="polygon" coords="562, 779, 562, 823, 580, 823, 580, 834, 551, 834, 551, 779"    title="-">
+  
+  <area  href=#OBMK3A0EC88363CE3A53 shape="polygon" coords="562, 688, 561, 718, 551, 718, 551, 688"    title="-">
+  
+  <area  href=3a0ec88263ce3a46.htm shape="polygon" coords="562, 629, 562, 718, 551, 718, 551, 629"   target="_top"  title="-">
+  
+  <area  href=#OBMK3A0EC88563CE3A8B shape="polygon" coords="562, 629, 562, 659, 551, 659, 551, 629"    title="-">
+  
+  <area  href=#OBMKD1600D4E62E0953D shape="polygon" coords="511, 183, 509, 237, 499, 237, 501, 182"    title="-">
+  
+  <area  href=#OBMKD1600D4462E09513 shape="polygon" coords="515, 279, 515, 242, 504, 242, 504, 232, 526, 232, 526, 279"    title="-">
+  
+  <area  href=#OBMKF9D0445261AED3D6 shape="polygon" coords="846, 827, 855, 830, 862, 832, 859, 842, 846, 838, 842, 837"    title="-">
+  
+  <area  href=f4be0fba5ee1d935.htm#OBMKF4BE0FBA5EE1D935 shape="polygon" coords="764, 841, 764, 830, 835, 830, 835, 841, 764, 841"   target="_top"  title="A&#160; Network Device is any piece of physical or virtual hardware that is used to connect Computational Aspects (Computer Devices, Computer Servers) and other devices to a Computer Network.">
+  
+  <area  href=a688a88560044e4f.htm#OBMKA688A88560044E4F shape="polygon" coords="779, 873, 779, 860, 821, 860, 821, 873, 779, 873"   target="_top"  title="-">
+  
+  <area  href="f9d0444861aed37e.htm" shape="rect" coords="745, 828, 855, 877"   target="_top"  title="A&#160; Firewall is a network security device that monitors and controls incoming and outgoing network traffic based on predetermined security rules. Its primary function is to prevent unauthorized access to or from a private network by blocking or allowing network traffic.">
+  
+  <area  href=#OBMK26B8578C5EEAE1D9 shape="polygon" coords="794, 100, 837, 100, 837, 111, 794, 111"    title="-">
+  
+  <area  href=26B8578C5EEAE1C8.htm shape="polygon" coords="710, 100, 837, 100, 837, 111, 710, 111"   target="_top"  title="-">
+  
+  <area  href=#OBMK26B8578D5EEAE20B shape="polygon" coords="710, 100, 752, 100, 752, 111, 710, 111"    title="-">
+  
+  <area  href=bcebd31f5491302c.htm#OBMKBCEBD31F5491302C shape="polygon" coords="878, 92, 878, 81, 951, 81, 951, 92, 878, 92"   target="_top"  title="A&#160; Resource Agent is a Business Operating Agent which represents physical resources that produce Business Outcomes of the enterprise.">
+  
+  <area  href=f3b7f5bc58806f49.htm#OBMKF3B7F5BC58806F49 shape="polygon" coords="855, 124, 855, 110, 974, 110, 974, 124, 855, 124"   target="_top"  title="-">
+  
+  <area  href="076d15425a5e158c.htm" shape="rect" coords="837, 78, 992, 136"   target="_top"  title="A&#160; Human Resource is a Resource Agent&#160; used to describe both the Organizational Positions of people who work for an organization and the type of department (Org-Unit) responsible for running business operations.">
+  
+  <area  href=#OBMKF4BE14D95EE1EBD8 shape="polygon" coords="526, 345, 519, 344, 521, 333, 527, 334"    title="-">
+  
+  <area  href=f4be11b15ee1e0fa.htm#OBMKF4BE11B15EE1E0FA shape="polygon" coords="544, 338, 544, 327, 638, 327, 638, 338, 544, 338"   target="_top"  title="A&#160; System of Resources is a Mezzo Capability Configuration that combines Human Resources, Hardware Systems and Software Systems to provide a Business Capability.">
+  
+  <area  href=854ba6c559a65957.htm#OBMK854BA6C559A65957 shape="polygon" coords="542, 370, 542, 356, 640, 356, 640, 370, 542, 370"   target="_top"  title="A&#160; Resource Configuration is a set of physical and human resources configured to provide a Business Capability.">
+  
+  <area  href="f4be14d25ee1eaff.htm" shape="rect" coords="524, 325, 658, 382"   target="_top"  title="A Resource Configuration is a generic System of Resources that represensed System of Resources that are not Facilitys.(Data centers, Factories, Outlets).">
+  
+  <area  href=#OBMK26B837865EEAE11A shape="polygon" coords="294, 124, 359, 124, 359, 135, 294, 135"    title="-">
+  
+  <area  href=26b837865eeae115.htm shape="polygon" coords="164, 124, 359, 124, 359, 135, 164, 135"   target="_top"  title="-">
+  
+  <area  href=#OBMK26B837865EEAE14A shape="polygon" coords="164, 124, 229, 124, 229, 135, 164, 135"    title="-">
+  
+  <area  href=#OBMKF4BE14BE5EE1EAB0 shape="polygon" coords="501, 338, 583, 334, 594, 333, 594, 344, 584, 344, 502, 348"    title="-">
+  
+  <area  href=f4be11b15ee1e0fa.htm#OBMKF4BE11B15EE1E0FA shape="polygon" coords="389, 338, 389, 327, 483, 327, 483, 338, 389, 338"   target="_top"  title="A&#160; System of Resources is a Mezzo Capability Configuration that combines Human Resources, Hardware Systems and Software Systems to provide a Business Capability.">
+  
+  <area  href=8eb8944a58e307fa.htm#OBMK8EB8944A58E307FA shape="polygon" coords="416, 370, 416, 356, 456, 356, 456, 370, 416, 370"   target="_top"  title="A facility is a model of site of interest for the enterprise.">
+  
+  <area  href="f4be0e865ee1d53b.htm" shape="rect" coords="369, 325, 503, 382"   target="_top"  title="A&#160; Facility is a System of Resources used to model factories, buildings, or outdoor constructions that provides a particular Business Capability or is used for a particular industry.">
+  
+  <area  href=#OBMK26B83DD35EEAF25D shape="polygon" coords="915, 350, 915, 390, 904, 390, 904, 350"    title="-">
+  
+  <area  href=26b83dd35eeaf258.htm shape="polygon" coords="915, 268, 915, 390, 904, 390, 904, 268"   target="_top"  title="-">
+  
+  <area  href=#OBMK26B83DD35EEAF29E shape="polygon" coords="915, 268, 915, 309, 904, 309, 904, 268"    title="-">
+  
+  <area  href=#OBMKF4BE14665EE1E9A7 shape="polygon" coords="792, 230, 833, 230, 833, 241, 792, 241"    title="-">
+  
+  <area  href=F4BE14665EE1E9A0.htm shape="polygon" coords="710, 230, 833, 230, 833, 241, 710, 241"   target="_top"  title="An Hardware Asset helps to define which hardware artifact or IoT Device is used within a System of Resources">
+  
+  <area  href=#OBMKF4BE14675EE1E9DE shape="polygon" coords="710, 230, 751, 230, 751, 241, 710, 241"    title="-">
+  
+  <area  href=#OBMK26B83CCF5EEAF0C8 shape="polygon" coords="610, 247, 610, 279, 599, 279, 599, 247"    title="-">
+  
+  <area  href=26b83ccf5eeaf0c2.htm shape="polygon" coords="610, 183, 610, 279, 599, 279, 599, 183"   target="_top"  title="-">
+  
+  <area  href=#OBMK26B83CD05EEAF10B shape="polygon" coords="610, 183, 610, 215, 599, 215, 599, 183"    title="-">
+  
+  <area  href=#OBMKC334E3E75ECB9685 shape="polygon" coords="929, 173, 954, 173, 954, 204, 943, 204, 943, 183, 929, 183"    title="-">
+  
+  <area  href=c334e3e75ecb964e.htm shape="polygon" coords="860, 204, 860, 173, 954, 173, 954, 204, 943, 204, 943, 183, 871, 183, 871, 204"   target="_top"  title="-">
+  
+  <area  href=#OBMKC334E3E75ECB9652 shape="polygon" coords="860, 204, 860, 173, 884, 173, 884, 183, 871, 183, 871, 204"    title="-">
+  
+  <area  href=278675d65b252f4d.htm#OBMK278675D65B252F4D shape="polygon" coords="873, 217, 873, 206, 951, 206, 951, 217, 873, 217"   target="_top"  title="A&#160; Business System is a man made artifact (Hardware System or Software System) which exposes Functionalityies and can produce Business Outcomes.">
+  
+  <area  href=a81cbcbf58947e56.htm#OBMKA81CBCBF58947E56 shape="polygon" coords="886, 249, 886, 236, 937, 236, 937, 249, 886, 249"   target="_top"  title="Non-IT Hardware can embed Computers. Together with their embedded computers, they provide information and IS services.">
+  
+  <area  href="c30bf4015a5da72b.htm" shape="rect" coords="834, 204, 991, 268"   target="_top"  title="A&#160; Hardware System is a man made tangible artifact which exposes Hardware Capability(ies) and can produce Physical Outcomes.">
+  
+  <area  href=#OBMKF4BE18DF5EE1F192 shape="polygon" coords="564, 461, 564, 480, 553, 480, 553, 461"    title="-">
+  
+  <area  href=f4be18df5ee1f18d.htm shape="polygon" coords="564, 425, 564, 480, 553, 480, 553, 425"   target="_top"  title="An IT Infrastrucure component helps to define that an IT Infrastructure or an IT Network is used within a System of Resources (Resource Architecture or Facility)">
+  
+  <area  href=#OBMKF4BE18DF5EE1F1D3 shape="polygon" coords="564, 425, 564, 443, 553, 443, 553, 425"    title="-">
+  
+  <area  href=#OBMK26B8376C5EEAE05B shape="polygon" coords="294, 165, 360, 165, 360, 176, 294, 176"    title="-">
+  
+  <area  href=26b8376c5eeae057.htm shape="polygon" coords="164, 165, 360, 165, 360, 176, 164, 176"   target="_top"  title="-">
+  
+  <area  href=#OBMK26B8376C5EEAE099 shape="polygon" coords="164, 165, 229, 165, 229, 176, 164, 176"    title="-">
+  
+  <area  href=2b6f33a561bae7ab.htm#OBMK2B6F33A561BAE7AB shape="polygon" coords="27, 128, 27, 117, 152, 117, 152, 128, 27, 128"   target="_top"  title="A&#160; Resource Agent Environment is an operating context which defines the interactions ( Business Service Channel) of a Resource Agent with its partners (Partner Resource Agent).">
+  
+  <area  href=4ef0964756fa9002.htm#OBMK4EF0964756FA9002 shape="polygon" coords="19, 173, 19, 160, 160, 160, 160, 173, 19, 173"   target="_top"  title="Environment context for a Resource Architecture or Facility and its interacting partners.">
+  
+  <area  href="26b82a7d5eea9c4b.htm" shape="rect" coords="14, 114, 167, 190"   target="_top"  title="A&#160; System of System Environment is an operating context which defines the interactions ( Business Service Channel) of a System of Systems with its partners (Partner Resource Architecture).">
+  
+  <area  href=#OBMKF4BE19A45EE1F3C5 shape="polygon" coords="485, 207, 501, 207, 501, 183, 512, 183, 512, 218, 485, 218"    title="-">
+  
+  <area  href=f4be19a45ee1f3c0.htm shape="polygon" coords="418, 183, 418, 207, 501, 207, 501, 183, 512, 183, 512, 218, 407, 218, 407, 183"   target="_top"  title="-">
+  
+  <area  href=#OBMKF4BE19A45EE1F403 shape="polygon" coords="418, 183, 418, 207, 434, 207, 434, 218, 407, 218, 407, 183"    title="-">
+  
+  <area  href=#OBMKF4BE123F5EE1E3AB shape="polygon" coords="499, 621, 499, 628, 551, 628, 551, 638, 488, 638, 488, 621"    title="-">
+  
+  <area  href=d1600c7062e093eb.htm#OBMKD1600C7062E093EB shape="polygon" coords="468, 292, 468, 281, 572, 281, 572, 292, 468, 292"   target="_top"  title="A&#160; Capability Configuration is a Resource Agent which combines Human Resources and Business Systems along with networking capabilities in order to provide Business Capability(ies).">
+  
+  <area  href=8eb88fe458e30177.htm#OBMK8EB88FE458E30177 shape="polygon" coords="478, 318, 478, 305, 562, 305, 562, 318, 478, 318"   target="_top"  title="-">
+  
+  <area  href="f4be11b15ee1e0fa.htm" shape="rect" coords="354, 280, 686, 399"   target="_top"  title="A&#160; System of Resources is a Mezzo Capability Configuration that combines Human Resources, Hardware Systems and Software Systems to provide a Business Capability.">
+  
+  <area  href=#OBMKA41AB3225B378BB7 shape="polygon" coords="525, 718, 525, 628, 551, 628, 551, 639, 535, 639, 535, 718"    title="-">
+  
+  <area  href=d1600c7062e093eb.htm#OBMKD1600C7062E093EB shape="polygon" coords="455, 130, 455, 119, 559, 119, 559, 130, 455, 130"   target="_top"  title="A&#160; Capability Configuration is a Resource Agent which combines Human Resources and Business Systems along with networking capabilities in order to provide Business Capability(ies).">
+  
+  <area  href=6FD1704049880061.htm#OBMK6FD1704049880061 shape="polygon" coords="460, 162, 460, 149, 554, 149, 554, 162, 460, 162"   target="_top"  title="A resource architecture is a combination of physical assets and organization configured to provide a capability.">
+  
+  <area  href="46195775560d4ec0.htm" shape="rect" coords="352, 116, 663, 183"   target="_top"  title="A&#160; System of Systems is a Macro Capability Configuration that combine several System of Resources to deliver a common high level Business Capability.">
+  
+  <area  href=f4be0fba5ee1d935.htm#OBMKF4BE0FBA5EE1D935 shape="polygon" coords="829, 773, 829, 762, 900, 762, 900, 773, 829, 773"   target="_top"  title="A&#160; Network Device is any piece of physical or virtual hardware that is used to connect Computational Aspects (Computer Devices, Computer Servers) and other devices to a Computer Network.">
+  
+  <area  href=5db8633a58bd2f75.htm#OBMK5DB8633A58BD2F75 shape="polygon" coords="812, 805, 812, 792, 917, 792, 917, 805, 812, 805"   target="_top"  title="An IT Peripheral Device can host and run Software Technology. ">
+  
+  <area  href="df118fb75d5f661f.htm" shape="rect" coords="791, 760, 938, 813"   target="_top"  title="A&#160; Network Device (Generic) is a&#160; Network Device used to represent Network Devices other than those delivered by HOPEX.">
+  
+  <area  href=#OBMKF4BE108C5EE1DCFE shape="polygon" coords="867, 813, 866, 837, 855, 836, 857, 812"    title="-">
+  
+  <area  href=#OBMKF4BE0F185EE1D809 shape="polygon" coords="770, 538, 826, 538, 826, 548, 770, 548"    title="-">
+  
+  <area  href=f4be0f185ee1d804.htm shape="polygon" coords="658, 538, 826, 538, 826, 548, 658, 548"   target="_top"  title="Role of a Computational Aspect in an IT Infrastructure System.">
+  
+  <area  href=#OBMKF4BE0F185EE1D84A shape="polygon" coords="658, 538, 714, 538, 714, 548, 658, 548"    title="-">
+  
+  <area  href=a41ab3105b378b66.htm#OBMKA41AB3105B378B66 shape="polygon" coords="504, 732, 504, 721, 609, 721, 609, 732, 504, 732"   target="_top"  title="An&#160; IT Infrastructure System is an assembly of&#160; Computational Aspects and Network Devices required to to run Business Systems and Business Operations.">
+  
+  <area  href=070b0d5564011dbb.htm#OBMK070B0D5564011DBB shape="polygon" coords="513, 742, 513, 732, 599, 732, 599, 742, 513, 742"   target="_top"  title="A&#160; Networking System is a Technology System that provides networking capabilities offered through Network Interfaces.">
+  
+  <area  href=127114c158da1328.htm#OBMK127114C158DA1328 shape="polygon" coords="528, 774, 528, 761, 584, 761, 584, 774, 528, 774"   target="_top"  title="An IT Network is an assembly of IT Technical Devices (e.g. routers, switches, firewalls) enabling remote communications between IT Devices (e.g. IT Servers)">
+  
+  <area  href="a41ab2d25b378b12.htm" shape="rect" coords="483, 718, 630, 779"   target="_top"  title="A&#160; Computer Network is an assembly of Network Devices (e.g. routers, switches, firewalls) that enables communications between Computational Aspects (e.g. Computer Servers).">
+  
+  <area  href=070b0d5564011dbb.htm#OBMK070B0D5564011DBB shape="polygon" coords="818, 723, 818, 712, 904, 712, 904, 723, 818, 723"   target="_top"  title="A&#160; Networking System is a Technology System that provides networking capabilities offered through Network Interfaces.">
+  
+  <area  href=1cd61e1c59145920.htm#OBMK1CD61E1C59145920 shape="polygon" coords="819, 749, 819, 736, 902, 736, 902, 749, 819, 749"   target="_top"  title="IT Technical Hardware can host and run Software Technology. ">
+  
+  <area  href="f4be0fba5ee1d935.htm" shape="rect" coords="729, 710, 992, 964"   target="_top"  title="A&#160; Network Device is any piece of physical or virtual hardware that is used to connect Computational Aspects (Computer Devices, Computer Servers) and other devices to a Computer Network.">
+  
+  <area  href=bcebd0175491272a.htm#OBMKBCEBD0175491272A shape="polygon" coords="523, 492, 523, 481, 579, 481, 579, 492, 523, 492"   target="_top"  title="A&#160; Stakeholder is an individual, team, organization, or classes thereof, having an interest in the enterprise.">
+  
+  <area  href=127114b858da12e4.htm#OBMK127114B858DA12E4 shape="polygon" coords="516, 519, 516, 505, 585, 505, 585, 519, 516, 519"   target="_top"  title="An IT Infrastructure is composed of several connected IT Devices (IT Technical Devices or Computing Devices) and IT Networks.">
+  
+  <area  href="a41ab3105b378b66.htm" shape="rect" coords="443, 480, 658, 800"   target="_top"  title="An&#160; IT Infrastructure System is an assembly of&#160; Computational Aspects and Network Devices required to to run Business Systems and Business Operations.">
+  
+  <area  href=26b8384f5eeae33c.htm#OBMK26B8384F5EEAE33C shape="polygon" coords="458, 64, 458, 53, 550, 53, 550, 64, 458, 64"   target="_top"  title="&#160;Network connectivity is an aspect of Technology Operating Asset that provides networking capabilites through the use of Network Interfaces.">
+  
+  <area  href=bcebd31f5491302c.htm#OBMKBCEBD31F5491302C shape="polygon" coords="467, 75, 467, 64, 541, 64, 541, 75, 467, 75"   target="_top"  title="A&#160; Resource Agent is a Business Operating Agent which represents physical resources that produce Business Outcomes of the enterprise.">
+  
+  <area  href=818285fd59ae040b.htm#OBMK818285FD59AE040B shape="polygon" coords="398, 102, 398, 88, 610, 88, 610, 102, 398, 102"   target="_top"  title="-">
+  
+  <area  href="d1600c7062e093eb.htm" shape="rect" coords="298, 52, 710, 425"   target="_top"  title="A&#160; Capability Configuration is a Resource Agent which combines Human Resources and Business Systems along with networking capabilities in order to provide Business Capability(ies).">
+  
+  <area  href=26b8384f5eeae33c.htm#OBMK26B8384F5EEAE33C shape="polygon" coords="697, 678, 697, 667, 789, 667, 789, 678, 697, 678"   target="_top"  title="&#160;Network connectivity is an aspect of Technology Operating Asset that provides networking capabilites through the use of Network Interfaces.">
+  
+  <area  href=0cbd1fa663fe18ac.htm#OBMK0CBD1FA663FE18AC shape="polygon" coords="700, 689, 700, 678, 787, 678, 787, 689, 700, 689"   target="_top"  title="A&#160; Technology System is an Agent which produces Technology Outcomes through Technology Interfaces.&#160; Technology Systems are enabler of Business Systems. They do not directly deliver Business Outcomes to internal or external customers.">
+  
+  <area  href="070b0d5564011dbb.htm" shape="rect" coords="473, 665, 1013, 981"   target="_top"  title="A&#160; Networking System is a Technology System that provides networking capabilities offered through Network Interfaces.">
+  
+  <area  href="a951ee816194126b.htm" shape="rect" coords="0, 0, 1602, 1000"   target="_top"  title="-">
+  
+</map>
+<img  src="../images/a951ee816194126b_df118e6a5d5f62e3_i.png" alt="../images/a951ee816194126b_df118e6a5d5f62e3_i.png" usemap="#DF118E6A5D5F62E3" height="1000" width="1602" border=0>
+
+</div>
+<div class="Relationship" id="Relationship2">
+<div id="klmm" style="width: 100vw; height: 100vh;" ></div>
+<!-- <script src="../standard/assets/js/keylines_domain.js"></script> -->
+<script >
+const data = {
+ type: 'LinkChart',
+  items: [
+  //nodes
+    {type: 'node', id:'A951EE816194126B', t:"Facility Asset Architecture", sh:'box', d:""},
+    {type: 'node', id:'070B0D5564011DBB', t:"Networking System", parentId:'26B8384F5EEAE33C', sh:'circle', d:"A Networking System is a Technology System that provides networking capabilities offered through Network Interfaces."},
+    {type: 'node', id:'DF118FB75D5F661F', t:"Network Device (Generic)", parentId:'A951EE816194126B', sh:'circle', d:"A Network Device (Generic) is a  Network Device used to represent Network Devices other than those delivered by HOPEX."},
+    {type: 'node', id:'46195775560D4EC0', t:"System of Systems", parentId:'D1600C7062E093EB', sh:'circle', d:"A System of Systems is a Macro Capability Configuration that combine several System of Resources to deliver a common high level Business Capability."},
+    {type: 'node', id:'A41AB3105B378B66', t:"IT Infrastructure System", parentId:'26B8384F5EEAE33C', sh:'circle', d:"An IT Infrastructure System is an assembly of  Computational Aspects and Network Devices required to to run Business Systems and Business Operations."},
+    {type: 'node', id:'C2DBE1DB5B026B30', t:"Software Technology ArcDevOps", sh:'box', d:"The Software Technology ArcDevOps domain describes a set of concepts used in practices that combines Software Technology System development (Dev) and Software Technology System operations (Ops). "},
+    {type: 'node', id:'0B3013565A1875A8', t:"Software Technology Capability", parentId:'C2DBE1DB5B026B30', sh:'circle', d:"A Software Technology Capability is a Capability offered by Software Technology Systems and aimed at delivering Software Technology Outcomes."},
+    {type: 'node', id:'C30BF38F5A5DA645', t:"Hardware System ArcDevOps", sh:'box', d:"The Hardware System ArcDevOps domain describes a set of concepts used in practices that combines Hardware System development (Dev) and Hardware System operations (Ops). "},
+    {type: 'node', id:'02F51209641C7EA4', t:"Computing System", parentId:'C30BF38F5A5DA645', sh:'circle', d:"Computing System is a physical or virtual computer that can host and run software code."},
+    {type: 'node', id:'A41AB2D25B378B12', t:"Computer Network", parentId:'A41AB3105B378B66', sh:'circle', d:"A Computer Network is an assembly of Network Devices (e.g. routers, switches, firewalls) that enables communications between Computational Aspects (e.g. Computer Servers)."},
+    {type: 'node', id:'F4BE0FBA5EE1D935', t:"Network Device", parentId:'A951EE816194126B', sh:'circle', d:"A Network Device is any piece of physical or virtual hardware that is used to connect Computational Aspects (Computer Devices, Computer Servers) and other devices to a Computer Network."},
+    {type: 'node', id:'D1600C7062E093EB', t:"Capability Configuration", parentId:'BCEBD31F5491302C', sh:'circle', d:"A Capability Configuration is a Resource Agent which combines Human Resources and Business Systems along with networking capabilities in order to provide Business Capability(ies)."},
+    {type: 'node', id:'C30BF4015A5DA72B', t:"Hardware System", parentId:'C30BF38F5A5DA645', sh:'circle', d:"A Hardware System is a man made tangible artifact which exposes Hardware Capability(ies) and can produce Physical Outcomes."},
+    {type: 'node', id:'1CE356355C48C0E2', t:"People & Accountability", sh:'box', d:"The People & Accountability domain defines the roles that organizational members perform, so that everyone understands their responsibilities to the group."},
+    {type: 'node', id:'076D15425A5E158C', t:"Human Resource", parentId:'1CE356355C48C0E2', sh:'circle', d:"A Human Resource is a Resource Agent  used to describe both the Organizational Positions of people who work for an organization and the type of department (Org-Unit) responsible for running business operations."},
+    {type: 'node', id:'E1A4F43E64017742', t:"Switch", parentId:'A951EE816194126B', sh:'circle', d:"A Switch is a Network Device used to connect multiple devices within a Computer Network, enabling them to communicate with each other."},
+    {type: 'node', id:'26B82A7D5EEA9C4B', t:"System of System Environment", parentId:'2B6F33A561BAE7AB', sh:'circle', d:"A System of System Environment is an operating context which defines the interactions (Business Service Channel) of a System of Systems with its partners (Partner Resource Architecture)."},
+    {type: 'node', id:'F4BE0E865EE1D53B', t:"Facility", parentId:'F4BE11B15EE1E0FA', sh:'circle', d:"A Facility is a System of Resources used to model factories, buildings, or outdoor constructions that provides a particular Business Capability or is used for a particular industry."},
+    {type: 'node', id:'F4BE11B15EE1E0FA', t:"System of Resources", parentId:'D1600C7062E093EB', sh:'circle', d:"A System of Resources is a Mezzo Capability Configuration that combines Human Resources, Hardware Systems and Software Systems to provide a Business Capability."},
+    {type: 'node', id:'F4BE14D25EE1EAFF', t:"Resource Configuration", parentId:'F4BE11B15EE1E0FA', sh:'circle', d:"A Resource Configuration is a generic System of Resources that represensed System of Resources that are not Facilitys.(Data centers, Factories, Outlets)."},
+    {type: 'node', id:'BCEBD86D549143B4', t:"IT Infrastructure", parentId:'A41AB3105B378B66', sh:'circle', d:"An IT Infrastructure is a configuration of Computational Aspects and of Computer Networks that  enable the operation the Business Systems of an enterprise."},
+    {type: 'node', id:'2B6F33A561BAE7AB', t:"Resource Agent Environment", parentId:'A951EE816194126B', sh:'circle', d:"A Resource Agent Environment is an operating context which defines the interactions (Business Service Channel) of a Resource Agent with its partners (Partner Resource Agent)."},
+    {type: 'node', id:'19DC1A30555649D9', t:"Conceptual Operating Model", sh:'box', d:"A Conceptual Operating Model serves as a strategic framework for the enterprise, directing its functional division of labor to fulfill its missions and purposes."},
+    {type: 'node', id:'7C4097C855271C8E', t:"Conceptual Environment", parentId:'19DC1A30555649D9', sh:'circle', d:"A Conceptual Environment  is an operating context which defines the interactions (Business Interaction) of an Activity Domain with its partners (Customers)."},
+    {type: 'node', id:'26B8384F5EEAE33C', t:"Network connectivity", parentId:'A951EE816194126B', sh:'circle', d:"Network connectivity is an aspect of Technology Operating Asset that provides networking capabilites through the use of Network Interfaces."},
+    {type: 'node', id:'BCEBD31F5491302C', t:"Resource Agent", parentId:'A951EE816194126B', sh:'circle', d:"A Resource Agent is a Business Operating Agent which represents physical resources that produce Business Outcomes of the enterprise."},
+    {type: 'node', id:'7C40987055271D04', t:"Conceptual Agent", parentId:'19DC1A30555649D9', sh:'circle', d:"A Conceptual Agent is a type of Business Operating Agent that depicts a functional division of labor within an enterprise, influencing the formation of its business operating model."},
+    {type: 'node', id:'D670B6155FFE8BB1', t:"EA Pattern - Business Resource Operating Pattern", sh:'box', d:"The EA Pattern - Business Resource Operating Pattern domain defines concepts and relationships used to model how physical resources (Resource Operating Assets) operates/functions in Resource Ecosystems to deliver Business Outcomes."},
+    {type: 'node', id:'7C40C3C85527466B', t:"Resource Process", parentId:'D670B6155FFE8BB1', sh:'circle', d:"A Resource Process is a Business Operating Process which is conducted by Resource Agents (physical resources such as Human Resource, System of Resources ,Business Systems) and which describes how these entities act to deliver Business Outcomes."},
+    {type: 'node', id:'2B58A67A5EEC0662', t:"EA Pattern - Data Domain", sh:'box', d:"The EA Pattern - Data Domain comprises abstract concepts used to describe the logical and physical structure of Information Objects."},
+    {type: 'node', id:'325C32165EB02A4A', t:"Data Domain", parentId:'2B58A67A5EEC0662', sh:'circle', d:"A Data Domain is subset of the enterprises data that are meant to be manipulated together in the context of business operations."},
+  //edges
+    { type: 'link', id:'46195775560D4EC0-F4BE19A45EE1F3C0', id1:'46195775560D4EC0', id2:'46195775560D4EC0', t:"System of System Component"},
+    { type: 'link', id:'46195775560D4EC0-26B83CCF5EEAF0C2', id1:'46195775560D4EC0', id2:'F4BE11B15EE1E0FA', t:"System of Resource Component"},
+    { type: 'link', id:'A41AB3105B378B66-F3C5FA0F5FD8A09F', id1:'A41AB3105B378B66', id2:'0B3013565A1875A8', t:"Fulfilled Technical Functionality"},
+    { type: 'link', id:'A41AB3105B378B66-F4BE0F185EE1D804', id1:'A41AB3105B378B66', id2:'02F51209641C7EA4', t:"Computing Node"},
+    { type: 'link', id:'A41AB2D25B378B12-F4BE0FD85EE1DA9D', id1:'A41AB2D25B378B12', id2:'F4BE0FBA5EE1D935', t:"Network Node"},
+    { type: 'link', id:'D1600C7062E093EB-F4BE14665EE1E9A0', id1:'D1600C7062E093EB', id2:'C30BF4015A5DA72B', t:"Hardware Asset"},
+    { type: 'link', id:'D1600C7062E093EB-F4BE18DF5EE1F18D', id1:'D1600C7062E093EB', id2:'A41AB3105B378B66', t:"IT Infrastructure Component"},
+    { type: 'link', id:'D1600C7062E093EB-26B8578C5EEAE1C8', id1:'D1600C7062E093EB', id2:'076D15425A5E158C', t:"Human Resource"},
+    { type: 'link', id:'26B82A7D5EEA9C4B-26B8376C5EEAE057', id1:'26B82A7D5EEA9C4B', id2:'46195775560D4EC0', t:"Partner Resource Architecture"},
+    { type: 'link', id:'26B82A7D5EEA9C4B-26B837865EEAE115', id1:'26B82A7D5EEA9C4B', id2:'46195775560D4EC0', t:"Subject Resource Architecture"},
+    { type: 'link', id:'BCEBD86D549143B4-3A0EC88263CE3A46', id1:'BCEBD86D549143B4', id2:'A41AB2D25B378B12', t:"Network Component"},
+    { type: 'link', id:'2B6F33A561BAE7AB-E98E797D62201E46', id1:'2B6F33A561BAE7AB', id2:'2B6F33A561BAE7AB', t:"Specialized Resource Agent Environment"},
+    { type: 'link', id:'2B6F33A561BAE7AB-E98E7A126220207C', id1:'2B6F33A561BAE7AB', id2:'7C4097C855271C8E', t:"Realized Logical Environment"},
+    { type: 'link', id:'2B6F33A561BAE7AB-2B6F34C861BAE941', id1:'2B6F33A561BAE7AB', id2:'BCEBD31F5491302C', t:"Partner Resource Agent"},
+    { type: 'link', id:'2B6F33A561BAE7AB-2B6F350061BAEA62', id1:'2B6F33A561BAE7AB', id2:'BCEBD31F5491302C', t:"Subject Resource Agent"},
+    { type: 'link', id:'26B8384F5EEAE33C-26B8386E5EEAE4A4', id1:'26B8384F5EEAE33C', id2:'26B8384F5EEAE33C', t:"Networking Component"},
+    { type: 'link', id:'BCEBD31F5491302C-6DC3956361C08439', id1:'BCEBD31F5491302C', id2:'BCEBD31F5491302C', t:"Specialized Resource Agent"},
+    { type: 'link', id:'BCEBD31F5491302C-D770DADF5EF4BC20', id1:'BCEBD31F5491302C', id2:'7C40987055271D04', t:"Realized Business Function"},
+    { type: 'link', id:'BCEBD31F5491302C-24034F6D5FC79C3F', id1:'BCEBD31F5491302C', id2:'BCEBD31F5491302C', t:"Resource Agent Component"},
+    { type: 'link', id:'BCEBD31F5491302C-240353B45FC7A13F', id1:'BCEBD31F5491302C', id2:'7C40C3C85527466B', t:"Performed Resource Process"},
+    { type: 'link', id:'BCEBD31F5491302C-CA9DF5BB5FCF5A75', id1:'BCEBD31F5491302C', id2:'325C32165EB02A4A', t:"Resource Agent Store"}
+  ]
+}
+</script>
+<script src="../standard/assets/js/keylines_domain.js" type="module"></script>
+</div>
+</section>
+<a class="object-section-anchor" id="des"></a>
+<section class="object-section">
+<h4>CONCEPT DESCRIPTIONS</h4> 
+<hr class="sectionbreak" />
+<h5>Concrete Concepts</h5>
+<table class="table  table-set-col-width">
+<thead>
+<tr><th>Concept</th><th>Description</th><th>HOPEX Metaclass</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="df118f995d5f65f1.htm" target="_top">Computer Device</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Computer Device</b> is a <a href="02f51209641c7ea4.htm" target="_top"><b><u>Computing System</u></b></a> which provides services directly to the end-user. </div><div align="left" style="min-height: 12pt; "><b>&#160;Computer Device</b>s can host data stores and run <a href="bcebd8e9549144db.htm" target="_top"><b><u>Application</u></b></a> code.</div><div align="left" style="min-height: 12pt; ">Examples: workstation, laptop computer, smartphone.</div>       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="c29dc44258c72098.htm" target="_top">IT Device</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="a41ab2d25b378b12.htm" target="_top">Computer Network</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Computer Network</b> is an assembly of <a href="f4be0fba5ee1d935.htm" target="_top"><b><u>Network Device</u></b></a>s (e.g. routers, switches, firewalls) that enables communications between <a href="f4be0eda5ee1d6c0.htm" target="_top"><b><u>Computational Aspect</u></b></a>s (e.g. <a href="df118f645d5f65bb.htm" target="_top"><b><u>Computer Server</u></b></a>s).</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Computer Network</b> may breakdown into sub-networks.</div><i><ul>References:<li><a href="https://aws.amazon.com/what-is/computer-networking/#:~:text=Computer%20networking%20refers%20to%20interconnected,over%20physical%20or%20wireless%20technologies."><img src="../standard/extr.ico.gif">&nbsp;AWS - What is Computer Networking?</a></li> <li><a href="https://compliancedictionary.com/term/853"><img src="../standard/extr.ico.gif">&nbsp;UCF - Glossary - Network</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="127114c158da1328.htm" target="_top">IT Network</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="df118f645d5f65bb.htm" target="_top">Computer Server</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Computer Server</b> is a <a href="02f51209641c7ea4.htm" target="_top"><b><u>Computing System</u></b></a> which provides processing, storage, and network connectivity services to other <a href="02f51209641c7ea4.htm" target="_top"><b><u>Computing System</u></b></a>s on a <a href="a41ab2d25b378b12.htm" target="_top"><b><u>Computer Network</u></b></a>.</div><div align="left" style="min-height: 12pt; ">As a <a href="f4be0eda5ee1d6c0.htm" target="_top"><b><u>Computational Aspect</u></b></a>, it can host data and run <a href="bcebd8e9549144db.htm" target="_top"><b><u>Application</u></b></a> code..</div><i><ul>References:<li><a href="https://compliancedictionary.com/term/1610"><img src="../standard/extr.ico.gif">&nbsp;UCF Glossary - Server</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="0a860d8e58f61d23.htm" target="_top">IT Server</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="f4be0e865ee1d53b.htm" target="_top">Facility</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Facility</b> is a <a href="f4be11b15ee1e0fa.htm" target="_top"><b><u>System of Resources</u></b></a> used to model factories, buildings, or outdoor constructions that provides a particular <a href="9810abf3551135c4.htm" target="_top"><b><u>Business Capability</u></b></a> or is used for a particular industry.</div><div align="left" style="min-height: 12pt; ">Examples: </div><div align="left" style="min-height: 12pt; ">- Data Center</div><div align="left" style="min-height: 12pt; ">- Factory</div><div align="left" style="min-height: 12pt; ">- Outlet</div><i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Facility"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - Facility</a></li> <li><a href="https://pubs.opengroup.org/architecture/archimate32-doc/#_Toc112155034"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - ArchiMate - Facility</a></li> <li><a href="https://compliancedictionary.com/term/3826"><img src="../standard/extr.ico.gif">&nbsp;UCF Glossary - Facility</a></li> <li><a href="http://wordnetweb.princeton.edu/perl/webwn?o2=&amp;o0=1&amp;o8=1&amp;o1=1&amp;o7=&amp;o5=&amp;o9=&amp;o6=&amp;o3=&amp;o4=&amp;s=facility&amp;i=0&amp;h=00000#c"><img src="../standard/extr.ico.gif">&nbsp;WordNet - Facility</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="8eb8944a58e307fa.htm" target="_top">Facility</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="f9d0444861aed37e.htm" target="_top">Firewall</a></td>
+<td class="description-text">A&#160;<b> Firewall</b> is a network security device that monitors and controls incoming and outgoing network traffic based on predetermined security rules. Its primary function is to prevent unauthorized access to or from a private network by blocking or allowing network traffic.       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="a688a88560044e4f.htm" target="_top">Firewall</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="c30bf4015a5da72b.htm" target="_top">Hardware System</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Hardware System</b> is a man made tangible artifact which exposes <a href="0b3016c05a1876d2.htm" target="_top"><b><u>Hardware Capability</u></b></a>(ies) and can produce <a href="c334e2925ecb8db4.htm" target="_top"><b><u>Physical Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Hardware System</b> performs <a href="46194939560d374f.htm" target="_top"><b><u>System Process</u></b></a>es and participates to <a href="46194939560d374f.htm" target="_top"><b><u>System Process</u></b></a>es or to <a href="57dfc52d550932ef.htm" target="_top"><b><u>Business Process</u></b></a>es.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Hardware System</b> can embed <a href="f4be0eda5ee1d6c0.htm" target="_top"><b><u>Computational Aspect</u></b></a>s. Together with its embedded <a href="f4be0eda5ee1d6c0.htm" target="_top"><b><u>Computational Aspect</u></b></a>s, a&#160;<b> Hardware System</b> can also deliver <a href="302238be5ec9020a.htm" target="_top"><b><u>Information Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Hardware System</b> may be based on a set of <a href="3b364dc363d9bda7.htm" target="_top"><b><u>Hardware Technology</u></b></a>(ies).</div><div align="left" style="min-height: 12pt; ">Examples:</div><div align="left" style="min-height: 12pt; ">- Connected Drone with Online Payment App.</div><div align="left" style="min-height: 12pt; ">- 3D printer.</div><div align="left" style="min-height: 12pt; ">- Automated Guided Vehicles (AGVs)</div><div align="left" style="min-height: 12pt; ">- Connected fridge providing ordering <a href="598272e954c622f4.htm" target="_top"><b><u>Functionality</u></b></a> and of course a freezing <a href="0b3016c05a1876d2.htm" target="_top"><b><u>Hardware Capability</u></b></a>.</div><div align="left" style="min-height: 12pt; ">- Production equipment in an assembly line (metal forging machine)</div><div align="left" style="min-height: 12pt; ">- Car</div><i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#System"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - System</a></li> <li><a href="https://pubs.opengroup.org/architecture/o-aa-standard/definitions.html#_hardware"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - OAA - Hardware</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="a81cbcbf58947e56.htm" target="_top">Hardware</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="bcebd86d549143b4.htm" target="_top">IT Infrastructure</a></td>
+<td class="description-text">An&#160;<b> IT Infrastructure</b> is a configuration of <a href="f4be0eda5ee1d6c0.htm" target="_top"><b><u>Computational Aspect</u></b></a>s and of <a href="a41ab2d25b378b12.htm" target="_top"><b><u>Computer Network</u></b></a>s that&#160; enable the operation the <a href="278675d65b252f4d.htm" target="_top"><b><u>Business System</u></b></a>s of an enterprise.<i><ul>References:<li><a href="https://compliancedictionary.com/term/3127"><img src="../standard/extr.ico.gif">&nbsp;UCF - Glossary - IT Infrastructure</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="127114b858da12e4.htm" target="_top">IT Infrastructure</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="df118fb75d5f661f.htm" target="_top">Network Device (Generic)</a></td>
+<td class="description-text">A&#160;<b> Network Device (Generic)</b> is a&#160; <a href="f4be0fba5ee1d935.htm" target="_top"><b><u>Network Device</u></b></a> used to represent <a href="f4be0fba5ee1d935.htm" target="_top"><b><u>Network Device</u></b></a>s other than those delivered by HOPEX.       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="5db8633a58bd2f75.htm" target="_top">Network Device (Generic)</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="f4be14d25ee1eaff.htm" target="_top">Resource Configuration</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A <a href="854ba6c559a65957.htm" target="_top"><b><u>Resource Configuration</u></b></a> is a generic <a href="f4be11b15ee1e0fa.htm" target="_top"><b><u>System of Resources</u></b></a> that represensed <a href="f4be11b15ee1e0fa.htm" target="_top"><b><u>System of Resources</u></b></a> that are not <a href="f4be0e865ee1d53b.htm" target="_top"><b><u>Facility</u></b></a>s.(Data centers, Factories, Outlets).</div><div align="left" style="min-height: 12pt; ">Examples: </div><div align="left" style="min-height: 12pt; ">- Configured Nuclear power plant (with operating teams),&#160; </div><div align="left" style="min-height: 12pt; ">- Configured aircraft carrier (with crew), Configured rescue ship (with rescue team).</div><div align="left" style="min-height: 12pt; ">When specific characteristics need to be considered for a given type of&#160;<b> Resource Configuration</b>, it is recommended to create a new sub-type of <a href="f4be11b15ee1e0fa.htm" target="_top"><b><u>System of Resources</u></b></a> to host these characteristics.</div>       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="854ba6c559a65957.htm" target="_top">Resource Configuration</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="e1a4fac764017a5a.htm" target="_top">Router</a></td>
+<td class="description-text">A&#160;<b> Router</b> is a <a href="f4be0fba5ee1d935.htm" target="_top"><b><u>Network Device</u></b></a> that connects multiple <a href="a41ab2d25b378b12.htm" target="_top"><b><u>Computer Network</u></b></a>s together and directs data traffic between them.       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="a688a87d60044e0b.htm" target="_top">Router</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="e1a4f43e64017742.htm" target="_top">Switch</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Switch</b> is a <a href="f4be0fba5ee1d935.htm" target="_top"><b><u>Network Device</u></b></a> used to connect multiple devices within a <a href="a41ab2d25b378b12.htm" target="_top"><b><u>Computer Network</u></b></a>, enabling them to communicate with each other.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Switch</b> operates at the data link layer (Layer 2) of the OSI model, and it uses MAC (Media Access Control) addresses to forward data between <a href="070b0d5564011dbb.htm" target="_top"><b><u>Networking System</u></b></a>s.</div>       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="a688a86b60044d83.htm" target="_top">Switch</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="26b82a7d5eea9c4b.htm" target="_top">System of System Environment</a></td>
+<td class="description-text">A&#160;<b> System of System Environment</b> is an operating context which defines the interactions (<b> Business Service Channel</b>) of a <a href="46195775560d4ec0.htm" target="_top"><b><u>System of Systems</u></b></a> with its partners (<a href="26b8376c5eeae057.htm" target="_top"><b><u>Partner Resource Architecture</u></b></a>).<i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ResourceArchitecture"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - ResourceArchitecture</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="4ef0964756fa9002.htm" target="_top">Resource Architecture Environment</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="46195775560d4ec0.htm" target="_top">System of Systems</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> System of Systems</b> is a <a href="5c43886f64103e09.htm" target="_top"><b><u>Macro</u></b></a> <a href="d1600c7062e093eb.htm" target="_top"><b><u>Capability Configuration</u></b></a> that combine several <a href="f4be11b15ee1e0fa.htm" target="_top"><b><u>System of Resources</u></b></a> to deliver a common high level <a href="9810abf3551135c4.htm" target="_top"><b><u>Business Capability</u></b></a>.</div><div align="left" style="min-height: 12pt; ">Examples:</div><div align="left" style="min-height: 12pt; ">- Air traffic control system</div><div align="left" style="min-height: 12pt; ">- Smart city system</div><div align="left" style="min-height: 12pt; ">- Health Care System</div><div align="left" style="min-height: 12pt; ">- Search and Resue system (SAR)</div><div align="left" style="min-height: 12pt; ">- Naval squadron consisting of an aircraft carrier, its escort ships and its C5ISR capabilities.</div><i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#CapabilityConfiguration"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - CapabilityConfiguration</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="6FD1704049880061.htm" target="_top">Resource Architecture</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="e1a4fb1b64017ad6.htm" target="_top">Wifi Hotspot</a></td>
+<td class="description-text">A&#160;<b> Wifi Hotspot</b> is <a href="f4be0fba5ee1d935.htm" target="_top"><b><u>Network Device</u></b></a> that allows multiple devices to connect to a Wi-Fi network.       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="a688a88f60044e93.htm" target="_top">Wifi Hotspot</a></td>
+</tr>  
+</tbody>
+</table>
+<hr class="sectionbreak" />
+<h5>Abstract Concepts</h5>
+<table class="table  table-set-col-width">
+<thead >
+<tr><th>Concept</th><th>Description</th><th>HOPEX Metaclass</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="d1600c7062e093eb.htm" target="_top">Capability Configuration</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Capability Configuration</b> is a <a href="bcebd31f5491302c.htm" target="_top"><b><u>Resource Agent</u></b></a> which combines <a href="076d15425a5e158c.htm" target="_top"><b><u>Human Resource</u></b></a>s and <a href="278675d65b252f4d.htm" target="_top"><b><u>Business System</u></b></a>s along with networking capabilities in order to provide <a href="9810abf3551135c4.htm" target="_top"><b><u>Business Capability</u></b></a>(ies).</div><div align="left" style="min-height: 12pt; ">There are two levels of granularity of&#160;<b> Capability Configuration</b>s: <a href="46195775560d4ec0.htm" target="_top"><b><u>System of Systems</u></b></a> and <a href="f4be11b15ee1e0fa.htm" target="_top"><b><u>System of Resources</u></b></a>.</div><i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#CapabilityConfiguration"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - CapabilityConfiguration</a></li> <li><a href="https://pubs.opengroup.org/togaf-standard/introduction/apdxb.html#tag_06_03"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Definition - Business System</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="818285fd59ae040b.htm" target="_top">Class of Enterprise System of Resource Internal Structure</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="02f51209641c7ea4.htm" target="_top">Computing System</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; "><b>&#160;Computing System</b> is a physical or virtual computer that can host and run software code.</div><div align="left" style="min-height: 12pt; ">Together with their Deployable Application Packages, they provide Information Outcomes.</div><div align="left" style="min-height: 12pt; ">Examples: <a href="df118f995d5f65f1.htm" target="_top"><b><u>Computer Device</u></b></a>, <a href="df118f645d5f65bb.htm" target="_top"><b><u>Computer Server</u></b></a>.</div>       </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="27a456b46407c665.htm" target="_top">Configured Technology System</a></td>
+<td class="description-text">A&#160;<b> Configured Technology System</b> a <a href="0cbd1fa663fe18ac.htm" target="_top"><b><u>Technology System</u></b></a> that is a combination of <a href="070b0d5564011dbb.htm" target="_top"><b><u>Networking System</u></b></a>s and <a href="f4be0eda5ee1d6c0.htm" target="_top"><b><u>Computational Aspect</u></b></a>s.       </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="076d15425a5e158c.htm" target="_top">Human Resource</a></td>
+<td class="description-text">A&#160;<b> Human Resource</b> is a <a href="bcebd31f5491302c.htm" target="_top"><b><u>Resource Agent</u></b></a>&#160; used to describe both the <a href="076d151c5a5e1561.htm" target="_top"><b><u>Organizational Position</u></b></a>s of people who work for an organization and the type of department (<a href="7c408aa155270eea.htm" target="_top"><b><u>Org-Unit</u></b></a>) responsible for running business operations.<i><ul>References:<li><a href="https://www.humanresourcesedu.org/what-is-human-resources/"><img src="../standard/extr.ico.gif">&nbsp;Humanresourcesedu.org - Human Resource</a></li> <li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#organizationalresource"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - OrganizationalResource</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="f3b7f5bc58806f49.htm" target="_top">Class of Organizational Agent</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="a41ab3105b378b66.htm" target="_top">IT Infrastructure System</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> IT Infrastructure System</b> is an assembly of&#160; <a href="f4be0eda5ee1d6c0.htm" target="_top"><b><u>Computational Aspect</u></b></a>s and <a href="f4be0fba5ee1d935.htm" target="_top"><b><u>Network Device</u></b></a>s required to to run <a href="278675d65b252f4d.htm" target="_top"><b><u>Business System</u></b></a>s and <a href="2d1874635ac352f3.htm" target="_top"><b><u>Business Operations</u></b></a>.</div><div align="left" style="min-height: 12pt; ">An&#160;<b> IT Infrastructure System</b> is either an <a href="bcebd86d549143b4.htm" target="_top"><b><u>IT Infrastructure</u></b></a> or an <a href="a41ab2d25b378b12.htm" target="_top"><b><u>Computer Network</u></b></a>.</div><i><ul>References:<li><a href="https://pubs.opengroup.org/architecture/o-aa-standard/hardware-architecture.html"><img src="../standard/extr_htm.ico.gif">&nbsp;OpenGroup - OAA - Software Defined Infrastructure</a></li> <li><a href="https://compliancedictionary.com/term/3127"><img src="../standard/extr.ico.gif">&nbsp;UCF - Glossary - IT Infrastructure</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="127114b858da12e4.htm" target="_top">IT Infrastructure</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="f4be0fba5ee1d935.htm" target="_top">Network Device</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Network Device</b> is any piece of physical or virtual hardware that is used to connect <a href="f4be0eda5ee1d6c0.htm" target="_top"><b><u>Computational Aspect</u></b></a>s (<a href="df118f995d5f65f1.htm" target="_top"><b><u>Computer Device</u></b></a>s, <a href="df118f645d5f65bb.htm" target="_top"><b><u>Computer Server</u></b></a>s) and other devices to a <a href="a41ab2d25b378b12.htm" target="_top"><b><u>Computer Network</u></b></a>.</div><div align="left" style="min-height: 12pt; "><b>&#160;Network Device</b>s enable the transmission and exchange of data between devices in the network through <a href="d160042562e08353.htm" target="_top"><b><u>Network Interface</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">Examples: <a href="e1a4f43e64017742.htm" target="_top"><b><u>Switch</u></b></a>, <a href="e1a4fac764017a5a.htm" target="_top"><b><u>Router</u></b></a>.</div>       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="1cd61e1c59145920.htm" target="_top">IT Technical Device</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="070b0d5564011dbb.htm" target="_top">Networking System</a></td>
+<td class="description-text">A&#160;<b> Networking System</b> is a <a href="0cbd1fa663fe18ac.htm" target="_top"><b><u>Technology System</u></b></a> that provides networking capabilities offered through <a href="d160042562e08353.htm" target="_top"><b><u>Network Interface</u></b></a>s.       </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="f4be11b15ee1e0fa.htm" target="_top">System of Resources</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> System of Resources</b> is a <a href="5c43887c64103e30.htm" target="_top"><b><u>Mezzo</u></b></a> <a href="d1600c7062e093eb.htm" target="_top"><b><u>Capability Configuration</u></b></a> that combines <a href="076d15425a5e158c.htm" target="_top"><b><u>Human Resource</u></b></a>s, <a href="c30bf4015a5da72b.htm" target="_top"><b><u>Hardware System</u></b></a>s and <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a>s to provide a <a href="9810abf3551135c4.htm" target="_top"><b><u>Business Capability</u></b></a>.</div><div align="left" style="min-height: 12pt; ">Examples:</div><div align="left" style="min-height: 12pt; ">- Factory (with workers), </div><div align="left" style="min-height: 12pt; ">- Data center,</div><div align="left" style="min-height: 12pt; ">- Hospital,</div><div align="left" style="min-height: 12pt; ">- Configured aircraft carrier (with crew),</div><div align="left" style="min-height: 12pt; ">- Configured rescue ship (with rescue team).</div><i><ul>References:<li><a href="https://www.dau.edu/glossary/Pages/GlossaryContent.aspx?itemid=28604"><img src="../standard/extr.ico.gif">&nbsp;DAU - Glossary - System of Systems</a></li> <li><a href="https://www.sebokwiki.org/wikihttps://www.sebokwiki.org/wiki/Systems_of_Systems_(SoS)"><img src="../standard/extr.ico.gif">&nbsp;Systems_of_Systems_(SoS)</a></li> <li><a href="https://en.wikipedia.org/wiki/System_of_systems"><img src="../standard/extr.ico.gif">&nbsp;Wikipedia - System of systems</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="8eb88fe458e30177.htm" target="_top">System of Resource</a></td>
+</tr>  
+</tbody>
+</table>
+<section>
+
+</div>
+<button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button>
+<script>window.onscroll = function() {scrollFunction()};$(document).on('click', 'a[href^="#"]', function (event) {event.preventDefault();$('html, body').animate({scrollTop: $($.attr(this, 'href')).offset().top}, 500);});function showDiagOnClick(elem){ var x = document.getElementsByClassName('Relationship');var e = elem.getAttribute("value"); for (var i=0; i < x.length ;i++){x[i].style.display="none"; if (x[i].id == e){x[i].style.display="block";x[i].style.textAlign="left";}}}
+</script></html>

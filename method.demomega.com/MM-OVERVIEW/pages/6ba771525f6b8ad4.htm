@@ -1,0 +1,646 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="keywords" content="">
+<meta name="description" content="">    
+<LINK REL="icon" HREF="../standard/assets/img/favicon.ico">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/bootstrap.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nav.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/eaportal.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/font-awesome.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/animate.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/datatables.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/grid.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nae.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/custom.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/chosen.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/prism.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery.dataTables.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jsTreeStyle.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.theme.css" media="screen" />
+<script type="text/javascript" src="../standard/assets/js/jquery-3.2.1.min.js" ></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-ui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.columnFilter.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3-force.v2.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.gui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.search.js"></script> 
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.util.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-2.1.1.min.js"></script>
+<script src="../standard/assets/js/ws_zoomtemplate_firefox.js"></script>
+<script src="../standard/assets/js/bootstrap.min.js"></script>
+<script src="../standard/assets/js/datatables.min.js"></script>
+<script src="../standard/assets/js/moment.min.js"></script>
+<script src="../standard/assets/js/datetime-moment.js"></script>
+<script src="../standard/assets/js/chartjs.min.js"></script>
+<script src="../standard/assets/js/searchindexcontent.json"></script>
+<script src="../standard/assets/js/anls.js"></script>
+<script src="../../../cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script src="../standard/assets/js/gauge.js"></script> 
+<script src="../standard/assets/js/domesticApi.js"></script> 
+<script src="../standard/assets/js/piecelabel.js"></script>
+<script src="../standard/assets/js/popper.min.js"></script>
+<script src="../standard/assets/js/custom.js"></script>
+<script src="../standard/assets/js/chosen.jquery.js"></script>
+<script src="../standard/assets/js/prism.js"></script>
+<script src="../standard/assets/js/init-chosen.js"></script>
+<script src="../standard/assets/js/chart-data-flow.js"></script>
+<script src="../standard/assets/js/chart-data-gantt.js"></script>
+<script type="module" src="../standard/assets/js/Fuse.esm.min.js"></script>
+<script type="module">
+import Fuse from '../standard/assets/js/Fuse.esm.min.js';
+$(document).ready(function () {
+console.log('getjson');
+window.$.getJSON('../standard/assets/js/searchindexcontent.json', function (response) {
+console.log('getjson ok');
+var isIndex = "";
+var url = window.location.pathname;
+var filename = url.substring(url.lastIndexOf('/')+1);
+if( filename.includes("index") || filename === "" ){
+isIndex = "pages/";
+} else {
+isIndex = "";
+}
+const fuse = new Fuse(response, {
+keys: ['title','text'],
+shouldSort: true,
+includeMatches : true,
+findAllMatches : true
+});
+$('#search-fuse').on('keyup', function () {
+let result = fuse.search($(this).val());
+console.log(result);
+let resultdiv = $('div.searchresults-fuse');
+if (result.length === 0) {
+resultdiv.hide();
+} else {
+resultdiv.empty();
+resultdiv.append('<table class="table-search" width="100%" cellspacing="0"><thead ><tr><th>Name</th><th>Object Type</th><th>Modification date</th></tr></thead><tbody>');
+
+for (let obj in result.slice(0,10)) {
+
+let searchObj = '<tr><td><a href="./'+ isIndex + result[obj].item.url + '">' + result[obj].item.title +'</a></td><td>' + result[obj].item.ObjectType + '</td><td>' + result[obj].item.ModificationDate + '</td></tr>' ;
+
+
+resultdiv.find('tbody').append(searchObj);
+}
+resultdiv.append('</tbody></table>');
+resultdiv.show();
+}
+});
+});
+});
+</script>
+<title>HOPEX Metamodel Overview (Beta Version)</title>
+</head>
+<nav class="navbar navbar-expand-md navbar-dark  navbar-mega"><!-- Brand --><!--<a class="navbar-brand" href="#">Navbar</a>--><a class="" href="../index.htm"><img class="logo-mega" src="../standard/assets/img/logo.png"  alt="">(Beta Version)</a><!-- Toggler/collapsibe Button --><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><!-- Navbar links -->
+<div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsibleNavbar"><div class="col-sm-auto col-md-auto col-lg-5"></div>
+<div class="col-sm-auto">
+<ul class="navbar-nav">      
+<li><a class="dropdown-item" href="ad30ce115ebf7e90.htm">EA Grid</a></li> 
+<li><a class="dropdown-item" href="fdd5018459bc3c6a.htm">EA Domains</a></li> 
+<li><a class="dropdown-item" href="07e731775ecc93f4.htm">Solutions</a></li> 
+<li><a class="dropdown-item" href="c5dfc62c54810c2c.htm">Glossary</a></li> 
+<li class="nav-item dropdown mx-1">
+<a class="nav-link" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</a>
+<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<li><a class="dropdown-item" href="5446555d5f88c32e.htm">Outcome Driven Metamodel</a></li> 
+<li><a class="dropdown-item" href="e1ccfc295f8f7b90.htm">Playbooks</a></li> 
+<li><a class="dropdown-item" href="42bc992862d20ea7.htm">Framework Mappings</a></li> 
+<li><a class="dropdown-item" href="e93aebb35fa20550.htm">Metamodel Patterns</a></li> 
+<li><a class="dropdown-item" href="d599fe87602b2b85.htm">References</a></li> 
+<li><a class="dropdown-item" href="333f3a7f5dde11de.htm">Legend</a></li> 
+</ul>									                                            
+</li>
+</ul>
+</div>
+<div class="col-sm-auto"><a class="nav-link search" href="#" onclick=showHideSearch("search-section-fuse")><i class="fa fa-search mr-1 form-control-feedback"></i></a></div>
+</div>
+</nav>
+<div id="search-section-fuse" style="display:none">>
+<div class="search_header"><span class="closesearch">&times;</span>
+<nav class="breadcrumb">
+<a class="breadcrumb-item" href="../index.htm">Home </a> 
+<span class="breadcrumb-item active">Search</span> 
+</nav>
+</div>
+<input id="search-fuse" placeholder="Search..."  name="q" onfocus="this.value=''" type="search">
+<div class="searchresults-fuse"></div>
+</div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>function showHideSearch(elementId) {var contentDivs = document.getElementsByClassName('content');var footerDivs = document.getElementsByClassName('footer'); var containerDivs = document.getElementsByClassName('container');var containerfluidDivs = document.getElementsByClassName('container-fluid');var x = document.getElementById(elementId);if (x.style.display === "none") {x.style.display = "block";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "none";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "none";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "none";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "none";}} else {x.style.display = "none";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "block";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "block";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "block";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "block";}}} ;<!-- END WIDGET DRILL DOWN --></script><script>$(document).ready(function() {$(window).scroll(function() {if ($(this).scrollTop() > 100) {$('.scrollup').fadeIn();} else {$('.scrollup').fadeOut();}});$('.scrollup').click(function() {$("html, body").animate({scrollTop: 0}, 600);return false;});});</script><script>
+var modal = document.getElementById("search-section-fuse");
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = "none";
+}
+}
+$(document).on('click', '.closesearch', function() {
+showHideSearch("search-section-fuse");
+
+
+
+
+
+});</script><div class="container-fluid col-lg-11" id="top"><nav class="breadcrumb"><a class="breadcrumb-item" href="../index.htm">Home</a> <span class="breadcrumb-item active">
+<a  href="c5dfc62c54810c2c.htm" target="_top">Dictionary of HOPEX concepts</a>&nbsp;/&nbsp;Physical Data Dictionary</span></nav></div>
+<div class="container-fluid col-lg-11 content">
+<section class="fadeInDown animated"><a href="#det" class="btn btn-d">DEFINITION</a><a href="#rel" class="btn btn-d">RELATIONSHIPS</a>	 <a href="#shi" class="btn btn-d">SUPER-SUB TYPE HIERARCHY</a></section>
+<a class="object-section-anchor" id="det"></a>
+<section class="object-section">
+<h4>BUILDING BLOCK - Physical Data Dictionary</h4>
+<hr class="sectionbreak" />
+<table class="table table-vertical-headers table-set-col-width">
+<tr><th>Description</th><td class="description-text"><i>Abstract Concept</i><br/><div class="description-text">A&#160;<b> Physical Data Dictionary</b> is <a href="82c3b89c5fdcbd0f.htm" target="_top"><b><u>Data Dictionary</u></b></a> that holds the definition of <a href="75ef4ea8620fb39f.htm" target="_top"><b><u>Physical Data Asset</u></b></a>s such as <a href="028f03ff5b4f55ee.htm" target="_top"><b><u>Physical Data Domain</u></b></a> definitions, <a href="137d21b55ee2c717.htm" target="_top"><b><u>Table</u></b></a> definitions, <a href="137d21d35ee2c7f3.htm" target="_top"><b><u>Column Type</u></b></a> definitions.</div><div></div></td></tr>		
+<tr><th>Version</th><td class="description-text"><i>Under construction</i></td></tr>		
+<tr><th>Super Types</th><td class="description-text><img src="../standard/dic_concept_syntax.ico.gif">&nbsp;
+<a  href="82c3b89c5fdcbd0f.htm" target="_top">Data Dictionary</a>&nbsp;&nbsp;</td></tr>   
+<tr><th>Definition Domain</th><td class="description-text"><img src="../standard/dic_graph.ico.gif">&nbsp;
+<a  href="362f37625b3b2050.htm" target="_top">Physical Data Domain</a><br/><br/><img src="../standard/dic_graph.ico.gif">&nbsp;
+<a  href="75ef50ab620fb787.htm" target="_top">EA Pattern - Physical Data Domain</a><br/>The EA Pattern - Physical Data Domain comprises abstract concepts used to describe the physical structure of Data Objects.
+</td></tr>
+<tr><th>Dictionary</th><td><img src="../standard/dicsubjectarea.ico.gif">&nbsp;
+<a  href="c5dfc62c54810c2c.htm" target="_top">Dictionary of HOPEX concepts</a></td></tr>
+<tr><th>Conceptualization Level</th><td><img src="../standard/category_data.ico.gif">&nbsp;
+<a  href="116f1c8c64f87da8.htm" target="_top">Physical Resource Ontology</a>&nbsp;</td></tr>
+<tr><th>Managing Namespace</th><td><img src="../standard/dic_concept_syntax.ico.gif">&nbsp;
+<a  href="d342d91a5b121454.htm" target="_top">Architecture Namespace</a>&nbsp;</td></tr>
+<tr><th>Framework Mapping</th><td>
+<a  href="122aed5863853fde.htm" target="_top">UAF - Strategy</a>&nbsp;:&nbsp;InformationModel (Physical)<br/>
+<a  href="ef5d10196322a0ef.htm" target="_top">UAF - Information</a>&nbsp;:&nbsp;InformationModel (Physical)</td></tr>
+</table>
+</section>
+<section class="object-section">
+<h4>RELATIONSHIPS</h4> 
+<hr class="sectionbreak" />
+<a href="#" class="btn btn-d" value="Relationship1" onclick="showDiagOnClick(this)">Simple Graph</a>
+<a href="#" class="btn btn-d" value="Relationship2" onclick="showDiagOnClick(this)">Graph & Hierarchy</a>
+<a href="#" class="btn btn-d" value="Relationship3" onclick="showDiagOnClick(this)">Graph by Domain</a>
+<a href="#" class="btn btn-d" value="Relationship4" onclick="showDiagOnClick(this)">Table</a>
+<a class="object-section-anchor" id="rel"></a>
+<div class="Relationship" id="Relationship1">
+<h3>Simple Graph</h3>
+<svg id="6BA771525F6B8AD4" height="387" width="1630" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" overflow="hidden">
+  <defs>
+    <marker id="Simple-6BA771525F6B8AD4__RelCircle" refX="3" refY="3" markerWidth="6" markerHeight="6">
+      <circle cx="3" cy="3" r="3" fill="#A52A00"></circle>
+    </marker>
+    <marker id="Simple-6BA771525F6B8AD4__RelArrowTip" refX="3" refY="3" markerWidth="8" markerHeight="6" orient="0">
+      <path d="M0,0 L6,2 L0,4" fill="#A52A00"></path>
+    </marker>
+  </defs>
+<g   transform="translate(585,190)">
+  <rect height="30"  width="150"  id="core-6BA771525F6B8AD4-0"  rx="3"  ry="3"  x="0"  y="-10"  stroke="#F4DB6F"/>
+<foreignObject x="0" y="-10" width="150" height="30" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:12; text-align:center"><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-6BA771525F6B8AD4').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-6BA771525F6B8AD4').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="#Relationship1">Physical Data Dictionary</a>
+  <span id="Desc-6BA771525F6B8AD4" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">A Physical Data Dictionary is Data Dictionary that holds the definition of Physical Data Assets such as Physical Data Domain definitions, Table definitions, Column Type definitions.  </span>
+</div></div></foreignObject>
+</g>
+<g   transform="translate(945,117.5)">
+  <rect height="40"  width="325"  id="E7CDD1F0643F5BD8"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="E7CDD1F0643F5BD8.htm#Relationship1">&#60;Qualification&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(950,137.5)">
+  <rect height="20"  width="320"  id="CA353B065FC5E146"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-CA353B355FC5E1B6-core-6BA771525F6B8AD4-4-CA353B065FC5E146').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-CA353B355FC5E1B6-core-6BA771525F6B8AD4-4-CA353B065FC5E146').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/CA353B355FC5E1B6.htm">[Owned Categorization Block]</a>  <div id="Desc-CA353B355FC5E1B6-core-6BA771525F6B8AD4-4-CA353B065FC5E146" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-CA353B065FC5E146').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-CA353B065FC5E146').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="ca353b065fc5e146.htm#Relationship1">Categorization Block</a><div id="Desc-CA353B065FC5E146" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Categorization Block is a Model Building Block used to provid classification and qualification of other Model Building Blocks.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="CA353B355FC5E1B6-core-6BA771525F6B8AD4-4-CA353B065FC5E146" class="Simple-6BA771525F6B8AD4_Rel-line" d="M735,190 C842.5,190 842.5,137.5 950,137.5" stroke="gray" fill="none" marker-start="url(#Simple-6BA771525F6B8AD4__RelCircle" marker-end="url(#Simple-6BA771525F6B8AD4__RelArrowTip"/>
+<g   transform="translate(945,167.5)">
+  <rect height="40"  width="325"  id="3D908C805FFC642C"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="3D908C805FFC642C.htm#Relationship1">&#60;Annotation&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(950,187.5)">
+  <rect height="20"  width="320"  id="CA3538D45FC5D6F6"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-CA3539F45FC5E018-core-6BA771525F6B8AD4-4-CA3538D45FC5D6F6').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-CA3539F45FC5E018-core-6BA771525F6B8AD4-4-CA3538D45FC5D6F6').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="CA3539F45FC5E018.htm">[Owned Annotation Block]</a>  <div id="Desc-CA3539F45FC5E018-core-6BA771525F6B8AD4-4-CA3538D45FC5D6F6" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-CA3538D45FC5D6F6').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-CA3538D45FC5D6F6').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="CA3538D45FC5D6F6.htm#Relationship1">Annotation Block</a><div id="Desc-CA3538D45FC5D6F6" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">An Annotation Block is a Building Block used to provided additional characteristics such as sketching, reports, description notes.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="CA3539F45FC5E018-core-6BA771525F6B8AD4-4-CA3538D45FC5D6F6" class="Simple-6BA771525F6B8AD4_Rel-line" d="M735,190 C842.5,190 842.5,187.5 950,187.5" stroke="gray" fill="none" marker-start="url(#Simple-6BA771525F6B8AD4__RelCircle" marker-end="url(#Simple-6BA771525F6B8AD4__RelArrowTip"/>
+<g   transform="translate(50,160.5)">
+  <rect height="40"  width="325"  id="705983E063236AE9"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="705983E063236AE9.htm#Relationship1">&#60;Packaging&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(50,180.5)">
+  <rect height="20"  width="320"  id="In-2B588C2B5EF08EEF-D342D91A5B121454"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"gray"><a href="d342d91a5b121454.htm#Relationship1">Architecture Namespace</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="2b588c2b5ef08eef.htm">[Included Information Dictionary]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="2B588C2B5EF08EEF-D342D91A5B121454-D342D91A5B121454" class="Simple-6BA771525F6B8AD4_Rel-line" d="M370,180.5 C477.5,180.5 477.5,190 585,190" stroke="gray" fill="none" marker-start="url(#Simple-6BA771525F6B8AD4__RelCircle" marker-end="url(#Simple-6BA771525F6B8AD4__RelArrowTip"/>
+<g   transform="translate(945,217.5)">
+  <rect height="40"  width="325"  id="705983E063236AE9"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="705983E063236AE9.htm#Relationship1">&#60;Packaging&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(950,237.5)">
+  <rect height="20"  width="320"  id="24AE4A185ED16AAA"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-10E325FB63247D8F-core-6BA771525F6B8AD4-2-24AE4A185ED16AAA').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-10E325FB63247D8F-core-6BA771525F6B8AD4-2-24AE4A185ED16AAA').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="10e325fb63247d8f.htm">[Imported Information Dictionary]</a>  <div id="Desc-10E325FB63247D8F-core-6BA771525F6B8AD4-2-24AE4A185ED16AAA" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-24AE4A185ED16AAA').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-24AE4A185ED16AAA').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="24ae4a185ed16aaa.htm#Relationship1">Information Dictionary</a><div id="Desc-24AE4A185ED16AAA" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">An Information Dictionary is a dictionary of Information Assets used to describe an information architecture. This includes:  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="10E325FB63247D8F-core-6BA771525F6B8AD4-2-24AE4A185ED16AAA" class="Simple-6BA771525F6B8AD4_Rel-line" d="M735,190 C842.5,190 842.5,237.5 950,237.5" stroke="gray" fill="none" marker-start="url(#Simple-6BA771525F6B8AD4__RelCircle" marker-end="url(#Simple-6BA771525F6B8AD4__RelArrowTip"/>
+<g   transform="translate(50,210.5)">
+  <rect height="40"  width="325"  id="Other"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="">Other</a></div></foreignObject>
+</g>
+<g   transform="translate(50,230.5)">
+  <rect height="20"  width="320"  id="In-B13D32315EDF4481-B13D31DE5EDF42D8"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"gray"><a href="b13d31de5edf42d8.htm#Relationship1">Aggregate Entity</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="b13d32315edf4481.htm">[Contextual Entity]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="B13D32315EDF4481-B13D31DE5EDF42D8-B13D31DE5EDF42D8" class="Simple-6BA771525F6B8AD4_Rel-line" d="M370,230.5 C477.5,230.5 477.5,190 585,190" stroke="gray" fill="none" marker-start="url(#Simple-6BA771525F6B8AD4__RelCircle" marker-end="url(#Simple-6BA771525F6B8AD4__RelArrowTip"/>
+<g   transform="translate(945,267.5)">
+  <rect height="40"  width="325"  id="Other"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="">Other</a></div></foreignObject>
+</g>
+<g   transform="translate(950,287.5)">
+  <rect height="20"  width="320"  id="75EF4EA8620FB39F"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-514E51B2620F09AE-core-6BA771525F6B8AD4-0-75EF4EA8620FB39F').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-514E51B2620F09AE-core-6BA771525F6B8AD4-0-75EF4EA8620FB39F').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="514e51b2620f09ae.htm">[Owned Physical Data Asset]</a>  <div id="Desc-514E51B2620F09AE-core-6BA771525F6B8AD4-0-75EF4EA8620FB39F" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-75EF4EA8620FB39F').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-75EF4EA8620FB39F').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="75ef4ea8620fb39f.htm#Relationship1">Physical Data Asset</a><div id="Desc-75EF4EA8620FB39F" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Physical Data Asset is a Data Asset used for the physical description of data consumed and produced by Software Systems.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="514E51B2620F09AE-core-6BA771525F6B8AD4-0-75EF4EA8620FB39F" class="Simple-6BA771525F6B8AD4_Rel-line" d="M735,190 C842.5,190 842.5,287.5 950,287.5" stroke="gray" fill="none" marker-start="url(#Simple-6BA771525F6B8AD4__RelCircle" marker-end="url(#Simple-6BA771525F6B8AD4__RelArrowTip"/>
+</svg>
+
+</div>
+<div class="Relationship" id="Relationship2" style="display:none">
+<h3>Graph & Hierarchy</h3>
+<svg id="6BA771525F6B8AD4" height="387" width="1630" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" overflow="hidden">
+  <defs>
+    <marker id="Full-6BA771525F6B8AD4__RelCircle" refX="3" refY="3" markerWidth="6" markerHeight="6">
+      <circle cx="3" cy="3" r="3" fill="#A52A00"></circle>
+    </marker>
+    <marker id="Full-6BA771525F6B8AD4__RelArrowTip" refX="3" refY="3" markerWidth="8" markerHeight="6" orient="0">
+      <path d="M0,0 L6,2 L0,4" fill="#A52A00"></path>
+    </marker>
+  </defs>
+<g   transform="translate(560,165)">
+  <rect height="115"  width="200"  id="core-6BA771525F6B8AD4-5"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="200" height="115" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:center"><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-AE26F8B05ACD5185').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-AE26F8B05ACD5185').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="ae26f8b05acd5185.htm#Relationship1">Entity</a>
+  <span id="Desc-AE26F8B05ACD5185" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.  </span>
+</div></div></foreignObject>
+</g>
+<g   transform="translate(565,184)">
+  <rect height="92"  width="190"  id="core-6BA771525F6B8AD4-4"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="190" height="92" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:center"><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-209C29BB5ED23342').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-209C29BB5ED23342').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="209c29bb5ed23342.htm#Relationship1">Model Namespace</a>
+  <span id="Desc-209C29BB5ED23342" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">A Model Namespace is a namespace of Model Building Blocks used to describe both the architecture of the enterprise and Initiatives aimed at designing, developing, running, adapting and maintaining this architecture over time.  </span>
+</div></div></foreignObject>
+</g>
+<g   transform="translate(575,207)">
+  <rect height="61"  width="170"  id="core-6BA771525F6B8AD4-2"  rx="3"  ry="3"  x="0"  y="-10"  stroke="#F4DB6F"/>
+<foreignObject x="0" y="-10" width="170" height="61" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:center"><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-24AE4A185ED16AAA').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-24AE4A185ED16AAA').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="24ae4a185ed16aaa.htm#Relationship1">Information Dictionary</a>
+  <span id="Desc-24AE4A185ED16AAA" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">An Information Dictionary is a dictionary of Information Assets used to describe an information architecture. This includes:  </span>
+</div></div></foreignObject>
+</g>
+<g   transform="translate(585,230)">
+  <rect height="30"  width="150"  id="core-6BA771525F6B8AD4-0"  rx="3"  ry="3"  x="0"  y="-10"  stroke="#F4DB6F"/>
+<foreignObject x="0" y="-10" width="150" height="30" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:12; text-align:center"><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-6BA771525F6B8AD4').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-6BA771525F6B8AD4').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="#Relationship1">Physical Data Dictionary</a>
+  <span id="Desc-6BA771525F6B8AD4" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">A Physical Data Dictionary is Data Dictionary that holds the definition of Physical Data Assets such as Physical Data Domain definitions, Table definitions, Column Type definitions.  </span>
+</div></div></foreignObject>
+</g>
+<g   transform="translate(945,117.5)">
+  <rect height="40"  width="325"  id="E7CDD1F0643F5BD8"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="E7CDD1F0643F5BD8.htm#Relationship1">&#60;Qualification&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(950,137.5)">
+  <rect height="20"  width="320"  id="CA353B065FC5E146"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-CA353B355FC5E1B6-core-6BA771525F6B8AD4-4-CA353B065FC5E146').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-CA353B355FC5E1B6-core-6BA771525F6B8AD4-4-CA353B065FC5E146').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/CA353B355FC5E1B6.htm">[Owned Categorization Block]</a>  <div id="Desc-CA353B355FC5E1B6-core-6BA771525F6B8AD4-4-CA353B065FC5E146" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-CA353B065FC5E146').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-CA353B065FC5E146').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="ca353b065fc5e146.htm#Relationship1">Categorization Block</a><div id="Desc-CA353B065FC5E146" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Categorization Block is a Model Building Block used to provid classification and qualification of other Model Building Blocks.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="CA353B355FC5E1B6-core-6BA771525F6B8AD4-4-CA353B065FC5E146" class="Full-6BA771525F6B8AD4_Rel-line" d="M755,184 C852.5,184 852.5,137.5 950,137.5" stroke="gray" fill="none" marker-start="url(#Full-6BA771525F6B8AD4__RelCircle" marker-end="url(#Full-6BA771525F6B8AD4__RelArrowTip"/>
+<g   transform="translate(945,167.5)">
+  <rect height="40"  width="325"  id="3D908C805FFC642C"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="3D908C805FFC642C.htm#Relationship1">&#60;Annotation&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(950,187.5)">
+  <rect height="20"  width="320"  id="CA3538D45FC5D6F6"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-CA3539F45FC5E018-core-6BA771525F6B8AD4-4-CA3538D45FC5D6F6').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-CA3539F45FC5E018-core-6BA771525F6B8AD4-4-CA3538D45FC5D6F6').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="CA3539F45FC5E018.htm">[Owned Annotation Block]</a>  <div id="Desc-CA3539F45FC5E018-core-6BA771525F6B8AD4-4-CA3538D45FC5D6F6" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-CA3538D45FC5D6F6').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-CA3538D45FC5D6F6').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="CA3538D45FC5D6F6.htm#Relationship1">Annotation Block</a><div id="Desc-CA3538D45FC5D6F6" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">An Annotation Block is a Building Block used to provided additional characteristics such as sketching, reports, description notes.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="CA3539F45FC5E018-core-6BA771525F6B8AD4-4-CA3538D45FC5D6F6" class="Full-6BA771525F6B8AD4_Rel-line" d="M755,184 C852.5,184 852.5,187.5 950,187.5" stroke="gray" fill="none" marker-start="url(#Full-6BA771525F6B8AD4__RelCircle" marker-end="url(#Full-6BA771525F6B8AD4__RelArrowTip"/>
+<g   transform="translate(50,160.5)">
+  <rect height="40"  width="325"  id="705983E063236AE9"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="705983E063236AE9.htm#Relationship1">&#60;Packaging&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(50,180.5)">
+  <rect height="20"  width="320"  id="In-2B588C2B5EF08EEF-D342D91A5B121454"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"gray"><a href="d342d91a5b121454.htm#Relationship1">Architecture Namespace</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="2b588c2b5ef08eef.htm">[Included Information Dictionary]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="2B588C2B5EF08EEF-D342D91A5B121454-D342D91A5B121454" class="Full-6BA771525F6B8AD4_Rel-line" d="M370,180.5 C472.5,180.5 472.5,207 575,207" stroke="gray" fill="none" marker-start="url(#Full-6BA771525F6B8AD4__RelCircle" marker-end="url(#Full-6BA771525F6B8AD4__RelArrowTip"/>
+<g   transform="translate(945,217.5)">
+  <rect height="40"  width="325"  id="705983E063236AE9"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="705983E063236AE9.htm#Relationship1">&#60;Packaging&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(950,237.5)">
+  <rect height="20"  width="320"  id="24AE4A185ED16AAA"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-10E325FB63247D8F-core-6BA771525F6B8AD4-2-24AE4A185ED16AAA').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-10E325FB63247D8F-core-6BA771525F6B8AD4-2-24AE4A185ED16AAA').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="10e325fb63247d8f.htm">[Imported Information Dictionary]</a>  <div id="Desc-10E325FB63247D8F-core-6BA771525F6B8AD4-2-24AE4A185ED16AAA" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-24AE4A185ED16AAA').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-24AE4A185ED16AAA').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="24ae4a185ed16aaa.htm#Relationship1">Information Dictionary</a><div id="Desc-24AE4A185ED16AAA" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">An Information Dictionary is a dictionary of Information Assets used to describe an information architecture. This includes:  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="10E325FB63247D8F-core-6BA771525F6B8AD4-2-24AE4A185ED16AAA" class="Full-6BA771525F6B8AD4_Rel-line" d="M745,207 C847.5,207 847.5,237.5 950,237.5" stroke="gray" fill="none" marker-start="url(#Full-6BA771525F6B8AD4__RelCircle" marker-end="url(#Full-6BA771525F6B8AD4__RelArrowTip"/>
+<g   transform="translate(50,210.5)">
+  <rect height="40"  width="325"  id="Other"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="">Other</a></div></foreignObject>
+</g>
+<g   transform="translate(50,230.5)">
+  <rect height="20"  width="320"  id="In-B13D32315EDF4481-B13D31DE5EDF42D8"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"gray"><a href="b13d31de5edf42d8.htm#Relationship1">Aggregate Entity</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="b13d32315edf4481.htm">[Contextual Entity]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="B13D32315EDF4481-B13D31DE5EDF42D8-B13D31DE5EDF42D8" class="Full-6BA771525F6B8AD4_Rel-line" d="M370,230.5 C465,230.5 465,165 560,165" stroke="gray" fill="none" marker-start="url(#Full-6BA771525F6B8AD4__RelCircle" marker-end="url(#Full-6BA771525F6B8AD4__RelArrowTip"/>
+<g   transform="translate(945,267.5)">
+  <rect height="40"  width="325"  id="Other"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="">Other</a></div></foreignObject>
+</g>
+<g   transform="translate(950,287.5)">
+  <rect height="20"  width="320"  id="75EF4EA8620FB39F"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-514E51B2620F09AE-core-6BA771525F6B8AD4-0-75EF4EA8620FB39F').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-514E51B2620F09AE-core-6BA771525F6B8AD4-0-75EF4EA8620FB39F').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="514e51b2620f09ae.htm">[Owned Physical Data Asset]</a>  <div id="Desc-514E51B2620F09AE-core-6BA771525F6B8AD4-0-75EF4EA8620FB39F" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-75EF4EA8620FB39F').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-75EF4EA8620FB39F').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="75ef4ea8620fb39f.htm#Relationship1">Physical Data Asset</a><div id="Desc-75EF4EA8620FB39F" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Physical Data Asset is a Data Asset used for the physical description of data consumed and produced by Software Systems.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="514E51B2620F09AE-core-6BA771525F6B8AD4-0-75EF4EA8620FB39F" class="Full-6BA771525F6B8AD4_Rel-line" d="M735,230 C842.5,230 842.5,287.5 950,287.5" stroke="gray" fill="none" marker-start="url(#Full-6BA771525F6B8AD4__RelCircle" marker-end="url(#Full-6BA771525F6B8AD4__RelArrowTip"/>
+</svg>
+
+</div>
+<div class="Relationship" id="Relationship3" style="display:none">
+<h3>Graph by Domain</h3>
+<svg id="6BA771525F6B8AD4" height="387" width="1630" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" overflow="hidden">
+  <defs>
+    <marker id="Domain-6BA771525F6B8AD4__RelCircle" refX="3" refY="3" markerWidth="6" markerHeight="6">
+      <circle cx="3" cy="3" r="3" fill="#A52A00"></circle>
+    </marker>
+    <marker id="Domain-6BA771525F6B8AD4__RelArrowTip" refX="3" refY="3" markerWidth="8" markerHeight="6" orient="0">
+      <path d="M0,0 L6,2 L0,4" fill="#A52A00"></path>
+    </marker>
+  </defs>
+<g   transform="translate(585,190)">
+  <rect height="30"  width="150"  id="core-6BA771525F6B8AD4-0"  rx="3"  ry="3"  x="0"  y="-10"  stroke="#F4DB6F"/>
+<foreignObject x="0" y="-10" width="150" height="30" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:12; text-align:center"><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-6BA771525F6B8AD4').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-6BA771525F6B8AD4').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="#Relationship1">Physical Data Dictionary</a>
+  <span id="Desc-6BA771525F6B8AD4" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">A Physical Data Dictionary is Data Dictionary that holds the definition of Physical Data Assets such as Physical Data Domain definitions, Table definitions, Column Type definitions.  </span>
+</div></div></foreignObject>
+</g>
+<g   transform="translate(50,160.5)">
+  <rect height="40"  width="325"  id="36166B8C6157B6B4"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="36166b8c6157b6b4.htm#Relationship1">{Aggregate Syntax}</a></div></foreignObject>
+</g>
+<g   transform="translate(50,180.5)">
+  <rect height="20"  width="320"  id="In-B13D32315EDF4481-B13D31DE5EDF42D8"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"gray"><a href="b13d31de5edf42d8.htm#Relationship1">Aggregate Entity</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="b13d32315edf4481.htm">[Contextual Entity]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="B13D32315EDF4481-B13D31DE5EDF42D8-B13D31DE5EDF42D8" class="Domain-6BA771525F6B8AD4_Rel-line" d="M370,180.5 C477.5,180.5 477.5,190 585,190" stroke="gray" fill="none" marker-start="url(#Domain-6BA771525F6B8AD4__RelCircle" marker-end="url(#Domain-6BA771525F6B8AD4__RelArrowTip"/>
+<g   transform="translate(50,210.5)">
+  <rect height="40"  width="325"  id="C30BD1505A5D97F9"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="c30bd1505a5d97f9.htm#Relationship1">{Architecture Model Management}</a></div></foreignObject>
+</g>
+<g   transform="translate(50,230.5)">
+  <rect height="20"  width="320"  id="In-2B588C2B5EF08EEF-D342D91A5B121454"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"gray"><a href="d342d91a5b121454.htm#Relationship1">Architecture Namespace</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="2b588c2b5ef08eef.htm">[Included Information Dictionary]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="2B588C2B5EF08EEF-D342D91A5B121454-D342D91A5B121454" class="Domain-6BA771525F6B8AD4_Rel-line" d="M370,230.5 C477.5,230.5 477.5,190 585,190" stroke="gray" fill="none" marker-start="url(#Domain-6BA771525F6B8AD4__RelCircle" marker-end="url(#Domain-6BA771525F6B8AD4__RelArrowTip"/>
+<g   transform="translate(945,128.25)">
+  <rect height="40"  width="325"  id="75EF50AB620FB787"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="75ef50ab620fb787.htm#Relationship1">{EA Pattern - Physical Data Domain}</a></div></foreignObject>
+</g>
+<g   transform="translate(950,148.25)">
+  <rect height="20"  width="320"  id="75EF4EA8620FB39F"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-514E51B2620F09AE-core-6BA771525F6B8AD4-0-75EF4EA8620FB39F').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-514E51B2620F09AE-core-6BA771525F6B8AD4-0-75EF4EA8620FB39F').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="514e51b2620f09ae.htm">[Owned Physical Data Asset]</a>  <div id="Desc-514E51B2620F09AE-core-6BA771525F6B8AD4-0-75EF4EA8620FB39F" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-75EF4EA8620FB39F').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-75EF4EA8620FB39F').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="75ef4ea8620fb39f.htm#Relationship1">Physical Data Asset</a><div id="Desc-75EF4EA8620FB39F" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Physical Data Asset is a Data Asset used for the physical description of data consumed and produced by Software Systems.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="514E51B2620F09AE-core-6BA771525F6B8AD4-0-75EF4EA8620FB39F" class="Domain-6BA771525F6B8AD4_Rel-line" d="M735,190 C842.5,190 842.5,148.25 950,148.25" stroke="gray" fill="none" marker-start="url(#Domain-6BA771525F6B8AD4__RelCircle" marker-end="url(#Domain-6BA771525F6B8AD4__RelArrowTip"/>
+<g   transform="translate(945,178.25)">
+  <rect height="40"  width="325"  id="D6CD2C8B5AB98DA5"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="D6CD2C8B5AB98DA5.htm#Relationship1">{Information Pattern}</a></div></foreignObject>
+</g>
+<g   transform="translate(950,198.25)">
+  <rect height="20"  width="320"  id="24AE4A185ED16AAA"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-10E325FB63247D8F-core-6BA771525F6B8AD4-2-24AE4A185ED16AAA').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-10E325FB63247D8F-core-6BA771525F6B8AD4-2-24AE4A185ED16AAA').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="10e325fb63247d8f.htm">[Imported Information Dictionary]</a>  <div id="Desc-10E325FB63247D8F-core-6BA771525F6B8AD4-2-24AE4A185ED16AAA" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-24AE4A185ED16AAA').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-24AE4A185ED16AAA').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="24ae4a185ed16aaa.htm#Relationship1">Information Dictionary</a><div id="Desc-24AE4A185ED16AAA" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">An Information Dictionary is a dictionary of Information Assets used to describe an information architecture. This includes:  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="10E325FB63247D8F-core-6BA771525F6B8AD4-2-24AE4A185ED16AAA" class="Domain-6BA771525F6B8AD4_Rel-line" d="M735,190 C842.5,190 842.5,198.25 950,198.25" stroke="gray" fill="none" marker-start="url(#Domain-6BA771525F6B8AD4__RelCircle" marker-end="url(#Domain-6BA771525F6B8AD4__RelArrowTip"/>
+<g   transform="translate(945,228.25)">
+  <rect height="60"  width="325"  id="AF4DB12D62993434"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="60" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="af4db12d62993434.htm#Relationship1">{Model Block Management}</a></div></foreignObject>
+</g>
+<g   transform="translate(950,248.25)">
+  <rect height="20"  width="320"  id="CA3538D45FC5D6F6"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-CA3539F45FC5E018-core-6BA771525F6B8AD4-4-CA3538D45FC5D6F6').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-CA3539F45FC5E018-core-6BA771525F6B8AD4-4-CA3538D45FC5D6F6').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="CA3539F45FC5E018.htm">[Owned Annotation Block]</a>  <div id="Desc-CA3539F45FC5E018-core-6BA771525F6B8AD4-4-CA3538D45FC5D6F6" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-CA3538D45FC5D6F6').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-CA3538D45FC5D6F6').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="CA3538D45FC5D6F6.htm#Relationship1">Annotation Block</a><div id="Desc-CA3538D45FC5D6F6" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">An Annotation Block is a Building Block used to provided additional characteristics such as sketching, reports, description notes.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="CA3539F45FC5E018-core-6BA771525F6B8AD4-4-CA3538D45FC5D6F6" class="Domain-6BA771525F6B8AD4_Rel-line" d="M735,190 C842.5,190 842.5,248.25 950,248.25" stroke="gray" fill="none" marker-start="url(#Domain-6BA771525F6B8AD4__RelCircle" marker-end="url(#Domain-6BA771525F6B8AD4__RelArrowTip"/>
+<g   transform="translate(950,268.25)">
+  <rect height="20"  width="320"  id="CA353B065FC5E146"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-CA353B355FC5E1B6-core-6BA771525F6B8AD4-4-CA353B065FC5E146').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-CA353B355FC5E1B6-core-6BA771525F6B8AD4-4-CA353B065FC5E146').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/CA353B355FC5E1B6.htm">[Owned Categorization Block]</a>  <div id="Desc-CA353B355FC5E1B6-core-6BA771525F6B8AD4-4-CA353B065FC5E146" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-CA353B065FC5E146').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-CA353B065FC5E146').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="ca353b065fc5e146.htm#Relationship1">Categorization Block</a><div id="Desc-CA353B065FC5E146" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Categorization Block is a Model Building Block used to provid classification and qualification of other Model Building Blocks.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="CA353B355FC5E1B6-core-6BA771525F6B8AD4-4-CA353B065FC5E146" class="Domain-6BA771525F6B8AD4_Rel-line" d="M735,190 C842.5,190 842.5,268.25 950,268.25" stroke="gray" fill="none" marker-start="url(#Domain-6BA771525F6B8AD4__RelCircle" marker-end="url(#Domain-6BA771525F6B8AD4__RelArrowTip"/>
+</svg>
+
+</div>
+<div class="Relationship" id="Relationship4" style="display:none">
+<h3>Relationship Table</h3>
+<table id="sortabletable" class="table table-sm  table-bordered table-cell-resizable table-index-set-col-width-4 table-custom-style table-scrollX" width="100%" cellspacing="0">
+<tr><th>Relationship</th><th>Cardinality</th><th>Target Entity</th><th>Source Entity</th><th>Description</th><th>Implementation</th></tr>
+<tr>
+<td><img src="../standard/dic_concept_classification.ico.gif"/>&nbsp;Class</td>
+<td>[1..1]</td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="744b935d5fbfe0f9.htm" target="_top">Class</a></td>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="ae26f8b05acd5185.htm" target="_top">Entity</a></td>
+<td><i>Abstract Relationship</i><br/></td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_structuralcomponent.ico.gif"/>&nbsp;
+<a  href="10e325fb63247d8f.htm" target="_top">Imported Information Dictionary</a></td>
+<td>[0..*]</td>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="24ae4a185ed16aaa.htm" target="_top">Information Dictionary</a></td>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="24ae4a185ed16aaa.htm" target="_top">Information Dictionary</a></td>
+<td><i>Abstract Relationship</i><br/></td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_structuralcomponent.ico.gif"/>&nbsp;
+<a  href="CA3539F45FC5E018.htm" target="_top">Owned Annotation Block</a></td>
+<td>[0..*]</td>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="CA3538D45FC5D6F6.htm" target="_top">Annotation Block</a></td>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="209c29bb5ed23342.htm" target="_top">Model Namespace</a></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_powercomponent.ico.gif"/>&nbsp;Owned Categorization Block</td>
+<td>[0..*]</td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="ca353b065fc5e146.htm" target="_top">Categorization Block</a></td>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="209c29bb5ed23342.htm" target="_top">Model Namespace</a></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_structuralcomponent.ico.gif"/>&nbsp;
+<a  href="514e51b2620f09ae.htm" target="_top">Owned Physical Data Asset</a></td>
+<td>[0..*]</td>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="75ef4ea8620fb39f.htm" target="_top">Physical Data Asset</a></td>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="6ba771525f6b8ad4.htm" target="_top">Physical Data Dictionary</a></td>
+<td><i>Abstract Relationship</i><br/></td>
+<td></td>
+</tr>
+</table>
+</div>
+</section>
+<a class="object-section-anchor" id="shi"></a>
+<section class="object-section">
+<h4>SUPER TYPES HIERARCHY</h4> 
+<hr class="sectionbreak" />
+<span>Left click on a node to toggle it. Right click to navigate through its page
+</section>
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<div id="categoryHierarchy"></div>
+ <script>
+var hierarchy = JSON.parse('{"name":"Physical Data Dictionary","comment":"A Physical Data Dictionary is Data Dictionary that holds the definition of Physical Data Assets such as Physical Data Domain definitions, Table definitions, Column Type definitions.","url":"6BA771525F6B8AD4.htm","parents":[{"name":"Data Dictionary","comment":"A Data Dictionary is a dictionary of Data Assets used to describe a data architecture. This includes:","url":"82C3B89C5FDCBD0F.htm", "isparent":true,"parents":[{"name":"Information Dictionary","comment":"An Information Dictionary is a dictionary of Information Assets used to describe an information architecture. This includes:","url":"24AE4A185ED16AAA.htm", "isparent":true,"parents":[{"name":"Model Dictionary","comment":"A Model Dictionary is a Model Namespace which sole purpose is model management.","url":"506B838C6442B46C.htm", "isparent":true,"parents":[{"name":"Container Package","comment":"A Container Package is a Container which sole purpose is model management.","url":"506B81C56442B28A.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}, {"name":"<Aspects>","isparent": true,"parents":[{"name":"Container","comment":"A Container is a collection of Building Blocks whose existence and meaning are defined by the Container.","url":"4089423855572F23.htm", "isparent":true,"parents":[{"name":"<Aspects>","isparent": true,"parents":[{"name":"Block Collection","comment":"A Block Collection is a grouping of Building Blocks.","url":"E8187ED464536599.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]},{"name":"Nesting Entity","comment":"A Nesting Entity is an Entity that nests other entities as sub-entities, serving as their lexical scope. The existence, visibility, and significance of Nested Entitys are confined within the boundaries of their Nesting Entity.","url":"AE26F8D65ACD51AB.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]}]}]}]}, {"name":"<Aspects>","isparent": true,"parents":[{"name":"Model Namespace","comment":"A Model Namespace is a namespace of Model Building Blocks used to describe both the architecture of the enterprise and Initiatives aimed at designing, developing, running, adapting and maintaining this architecture over time.","url":"209C29BB5ED23342.htm", "isparent":true,"parents":[{"name":"<Aspects>","isparent": true,"parents":[{"name":"Container","comment":"A Container is a collection of Building Blocks whose existence and meaning are defined by the Container.","url":"4089423855572F23.htm", "isparent":true,"parents":[{"name":"<Aspects>","isparent": true,"parents":[{"name":"Block Collection","comment":"A Block Collection is a grouping of Building Blocks.","url":"E8187ED464536599.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]},{"name":"Nesting Entity","comment":"A Nesting Entity is an Entity that nests other entities as sub-entities, serving as their lexical scope. The existence, visibility, and significance of Nested Entitys are confined within the boundaries of their Nesting Entity.","url":"AE26F8D65ACD51AB.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]}]}]}]}]}]}]}]}],"children":[{"name":"<Concretization>","isparent": false,"children":[{"name":"Relational Dictionary","comment":"A is Relational Dictionary a Dictionary of relational entities (Tables, Keys, Indexes, etc.) and of schema referencing theses entites: relational data areas.","url":"362F3B875B3B221E.htm", "isparent":false,"children":[]},{"name":"MetaData Dictionary","comment":"","url":"C758E5BC600A31E8.htm", "isparent":false,"children":[{"name":"Deployed Data Store","comment":"A Deployed Data Store is a repository for storing, managing and distributing data sets on an enterprise level. It is a broad term that incorporates all types of data that is produced, stored and used by an organization.","url":"AFFEB2255F6051E6.htm", "isparent":false,"children":[]},{"name":"MetaData Package","comment":"","url":"C758EED8600A399F.htm", "isparent":false,"children":[]}]}]}]}');
+$(document).ready(function(event) {
+var tree = CollapsibleTree("#categoryHierarchy");
+tree.init(hierarchy);
+});
+</script>
+</div>
+<button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button>
+<script>window.onscroll = function() {scrollFunction()};$(document).on('click', 'a[href^="#"]', function (event) {event.preventDefault();$('html, body').animate({scrollTop: $($.attr(this, 'href')).offset().top}, 500);});
+function showDiagOnClick(elem){ var x = document.getElementsByClassName('Relationship');var e = elem.getAttribute("value"); for (var i=0; i < x.length ;i++){x[i].style.display="none"; if (x[i].id == e){x[i].style.display="block";x[i].style.textAlign="left";}}}
+</script></html>

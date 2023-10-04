@@ -1,0 +1,286 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="keywords" content="">
+<meta name="description" content="">    
+<LINK REL="icon" HREF="../standard/assets/img/favicon.ico">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/bootstrap.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nav.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/eaportal.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/font-awesome.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/animate.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/datatables.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/grid.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nae.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/custom.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/chosen.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/prism.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery.dataTables.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jsTreeStyle.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.theme.css" media="screen" />
+<script type="text/javascript" src="../standard/assets/js/jquery-3.2.1.min.js" ></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-ui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.columnFilter.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3-force.v2.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.gui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.search.js"></script> 
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.util.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-2.1.1.min.js"></script>
+<script src="../standard/assets/js/ws_zoomtemplate_firefox.js"></script>
+<script src="../standard/assets/js/bootstrap.min.js"></script>
+<script src="../standard/assets/js/datatables.min.js"></script>
+<script src="../standard/assets/js/moment.min.js"></script>
+<script src="../standard/assets/js/datetime-moment.js"></script>
+<script src="../standard/assets/js/chartjs.min.js"></script>
+<script src="../standard/assets/js/searchindexcontent.json"></script>
+<script src="../standard/assets/js/anls.js"></script>
+<script src="../../../cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script src="../standard/assets/js/gauge.js"></script> 
+<script src="../standard/assets/js/domesticApi.js"></script> 
+<script src="../standard/assets/js/piecelabel.js"></script>
+<script src="../standard/assets/js/popper.min.js"></script>
+<script src="../standard/assets/js/custom.js"></script>
+<script src="../standard/assets/js/chosen.jquery.js"></script>
+<script src="../standard/assets/js/prism.js"></script>
+<script src="../standard/assets/js/init-chosen.js"></script>
+<script src="../standard/assets/js/chart-data-flow.js"></script>
+<script src="../standard/assets/js/chart-data-gantt.js"></script>
+<script type="module" src="../standard/assets/js/Fuse.esm.min.js"></script>
+<script type="module">
+import Fuse from '../standard/assets/js/Fuse.esm.min.js';
+$(document).ready(function () {
+console.log('getjson');
+window.$.getJSON('../standard/assets/js/searchindexcontent.json', function (response) {
+console.log('getjson ok');
+var isIndex = "";
+var url = window.location.pathname;
+var filename = url.substring(url.lastIndexOf('/')+1);
+if( filename.includes("index") || filename === "" ){
+isIndex = "pages/";
+} else {
+isIndex = "";
+}
+const fuse = new Fuse(response, {
+keys: ['title','text'],
+shouldSort: true,
+includeMatches : true,
+findAllMatches : true
+});
+$('#search-fuse').on('keyup', function () {
+let result = fuse.search($(this).val());
+console.log(result);
+let resultdiv = $('div.searchresults-fuse');
+if (result.length === 0) {
+resultdiv.hide();
+} else {
+resultdiv.empty();
+resultdiv.append('<table class="table-search" width="100%" cellspacing="0"><thead ><tr><th>Name</th><th>Object Type</th><th>Modification date</th></tr></thead><tbody>');
+
+for (let obj in result.slice(0,10)) {
+
+let searchObj = '<tr><td><a href="./'+ isIndex + result[obj].item.url + '">' + result[obj].item.title +'</a></td><td>' + result[obj].item.ObjectType + '</td><td>' + result[obj].item.ModificationDate + '</td></tr>' ;
+
+
+resultdiv.find('tbody').append(searchObj);
+}
+resultdiv.append('</tbody></table>');
+resultdiv.show();
+}
+});
+});
+});
+</script>
+<title>HOPEX Metamodel Overview (Beta Version)</title>
+</head>
+<nav class="navbar navbar-expand-md navbar-dark  navbar-mega"><!-- Brand --><!--<a class="navbar-brand" href="#">Navbar</a>--><a class="" href="../index.htm"><img class="logo-mega" src="../standard/assets/img/logo.png"  alt="">(Beta Version)</a><!-- Toggler/collapsibe Button --><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><!-- Navbar links -->
+<div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsibleNavbar"><div class="col-sm-auto col-md-auto col-lg-5"></div>
+<div class="col-sm-auto">
+<ul class="navbar-nav">      
+<li><a class="dropdown-item" href="ad30ce115ebf7e90.htm">EA Grid</a></li> 
+<li><a class="dropdown-item" href="fdd5018459bc3c6a.htm">EA Domains</a></li> 
+<li><a class="dropdown-item" href="07e731775ecc93f4.htm">Solutions</a></li> 
+<li><a class="dropdown-item" href="c5dfc62c54810c2c.htm">Glossary</a></li> 
+<li class="nav-item dropdown mx-1">
+<a class="nav-link" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</a>
+<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<li><a class="dropdown-item" href="5446555d5f88c32e.htm">Outcome Driven Metamodel</a></li> 
+<li><a class="dropdown-item" href="e1ccfc295f8f7b90.htm">Playbooks</a></li> 
+<li><a class="dropdown-item" href="42bc992862d20ea7.htm">Framework Mappings</a></li> 
+<li><a class="dropdown-item" href="e93aebb35fa20550.htm">Metamodel Patterns</a></li> 
+<li><a class="dropdown-item" href="d599fe87602b2b85.htm">References</a></li> 
+<li><a class="dropdown-item" href="333f3a7f5dde11de.htm">Legend</a></li> 
+</ul>									                                            
+</li>
+</ul>
+</div>
+<div class="col-sm-auto"><a class="nav-link search" href="#" onclick=showHideSearch("search-section-fuse")><i class="fa fa-search mr-1 form-control-feedback"></i></a></div>
+</div>
+</nav>
+<div id="search-section-fuse" style="display:none">>
+<div class="search_header"><span class="closesearch">&times;</span>
+<nav class="breadcrumb">
+<a class="breadcrumb-item" href="../index.htm">Home </a> 
+<span class="breadcrumb-item active">Search</span> 
+</nav>
+</div>
+<input id="search-fuse" placeholder="Search..."  name="q" onfocus="this.value=''" type="search">
+<div class="searchresults-fuse"></div>
+</div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>function showHideSearch(elementId) {var contentDivs = document.getElementsByClassName('content');var footerDivs = document.getElementsByClassName('footer'); var containerDivs = document.getElementsByClassName('container');var containerfluidDivs = document.getElementsByClassName('container-fluid');var x = document.getElementById(elementId);if (x.style.display === "none") {x.style.display = "block";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "none";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "none";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "none";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "none";}} else {x.style.display = "none";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "block";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "block";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "block";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "block";}}} ;<!-- END WIDGET DRILL DOWN --></script><script>$(document).ready(function() {$(window).scroll(function() {if ($(this).scrollTop() > 100) {$('.scrollup').fadeIn();} else {$('.scrollup').fadeOut();}});$('.scrollup').click(function() {$("html, body").animate({scrollTop: 0}, 600);return false;});});</script><script>
+var modal = document.getElementById("search-section-fuse");
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = "none";
+}
+}
+$(document).on('click', '.closesearch', function() {
+showHideSearch("search-section-fuse");
+
+
+
+
+
+});</script><div class="container-fluid col-lg-11" id="top"><nav class="breadcrumb"><a class="breadcrumb-item" href="../index.htm">Home</a> <span class="breadcrumb-item active">
+<a  href="02af0a215a1823ee.htm" target="_top">Dictionary of HOPEX patterns</a>&nbsp;/&nbsp;Resource Ontology</span></nav></div>
+<div class="container-fluid col-lg-11 content">
+<section class="fadeInDown animated"><a href="#det"  class="btn btn-d">DEFINITION</a> <a href="#root" class="btn btn-d">CLASSIFIED CONCEPTS</a></section>
+<a class="object-section-anchor" id="det"></a>
+<section class="object-section">
+<h4>CATEGORY - Resource Ontology</h4>
+<hr class="sectionbreak" />
+<table class="table table-vertical-headers table-set-col-width">
+<tr><th>Description</th><td>The&#160;<b> Resource Ontology</b> classifies abstract concepts describing share characteristics of all of type resources.</td></tr>		
+<tr><th>Parent Category</th><td><img src="../standard/category_data.ico.gif">&nbsp;
+<a  href="e7eeeef6642332f0.htm" target="_top">Resource Level</a>           &nbsp;&nbsp;</td></tr>   
+</table>
+</section>
+<hr class="sectionbreak" />
+<h5>Classified Concepts</h5>
+<table class="table  table-set-col-width">
+<thead>
+<tr><th>Concept</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="278677bd5b253114.htm" target="_top">Business Rule</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Business Rule</b> is a rule that is under business jurisdiction. </div><div align="left" style="min-height: 12pt; ">A rule&rsquo;s being under &quot;business jurisdiction&quot; means that it is under the jurisdiction of the community that it governs or guides - that the community can opt to change or discard the rule. Laws of physics may be relevant to an Enterprise; legislation and regulations may be imposed on it; external standards. These things are not&#160;<b> Business Rule</b>s from the company&rsquo;s perspective, since it does not have the authority to change them. The company will decide how to react to laws and regulations, and will create&#160;<b> Business Rule</b>s to ensure compliance with them. Similarly, it will create&#160;<b> Business Rule</b>s to ensure that standards or best practices are implemented as intended.</div>       </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="c334dfca5ecb83dd.htm" target="_top">Business Scenario</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Business Scenario</b> is a story describing how Business-Entity (<a href="7c408aa155270eea.htm" target="_top"><b><u>Org-Unit</u></b></a>) interact wtiht its partners (<a href="2b7065f361ba0eda.htm" target="_top"><b><u>Partner Org-Unit</u></b></a>) to achieve <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s in a specific Eco-System (<a href="6f4b92d65fd3b49b.htm" target="_top"><b><u>Business Environment</u></b></a>).</div><div align="left" style="min-height: 12pt; ">This includes:</div><div align="left" style="min-height: 12pt; ">1) A course of events represented by&#160;<b> Business Object Flow</b>s depicting the story towards the delivery of expected <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">2) Interacting&#160; Business Entities (<a href="7c408aa155270eea.htm" target="_top"><b><u>Org-Unit</u></b></a>s)&#160; who participate to the story in the considered Eco-System.</div>       </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="6246927f61b81996.htm" target="_top">Business System Asset</a></td>
+<td class="description-text">A&#160;<b> Business System Asset</b> is man made resource that is a means to achieve <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s.       </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="2b705f2661ba04de.htm" target="_top">Business-Entity Ecosystem</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Business-Entity Ecosystem</b> is a <a href="2b6f332061bae622.htm" target="_top"><b><u>Resource Ecosystem</u></b></a> used to describe the operating context in which a Business-Entity (<a href="7c408aa155270eea.htm" target="_top"><b><u>Org-Unit</u></b></a>) exists or lives for a specific purpose. </div><div align="left" style="min-height: 12pt; ">For instance, the operating context of a company includes its customers and suppliers.</div>       </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="6f4b93a15fd3b6bf.htm" target="_top">Business-Entity Scenario</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Business-Entity Scenario</b> is a story describing how the components of a Business-Entity (<a href="7c408aa155270eea.htm" target="_top"><b><u>Org-Unit</u></b></a>s) interact to produce <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">This includes:</div><div align="left" style="min-height: 12pt; ">- A course of events represented by information flows depicting the steps towards the delivery of expected Outcomes.</div><div align="left" style="min-height: 12pt; ">- Components of an <a href="7c408aa155270eea.htm" target="_top"><b><u>Org-Unit</u></b></a> (Sub-<a href="7c408aa155270eea.htm" target="_top"><b><u>Org-Unit</u></b></a>s or <a href="076d151c5a5e1561.htm" target="_top"><b><u>Organizational Position</u></b></a>) that participate to the story.</div>       </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="30efb18261f374d5.htm" target="_top">Data Asset</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Data Asset</b> is an <a href="30efa75761f367fe.htm" target="_top"><b><u>Information Asset</u></b></a> used for the description of data consumed and produced by <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">They are defined in <a href="82c3b89c5fdcbd0f.htm" target="_top"><b><u>Data Dictionary</u></b></a>(ies) and managed in <a href="9152d8875ed741ef.htm" target="_top"><b><u>Data Catalog</u></b></a>s.</div><i><ul>References:<li><a href="https://csrc.nist.gov/glossary/term/data_asset"><img src="../standard/extr.ico.gif">&nbsp;NIST - Data Asset</a></li></ul></i>        </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="82c3b89c5fdcbd0f.htm" target="_top">Data Dictionary</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Data Dictionary</b> is a dictionary of <a href="30efb18261f374d5.htm" target="_top"><b><u>Data Asset</u></b></a>s used to describe a data architecture. This includes:</div><div align="left" style="min-height: 12pt; ">1. <a href="325C32165EB02A4A.htm" target="_top"><b><u>Data Domain</u></b></a>s,</div><div align="left" style="min-height: 12pt; ">2. <a href="325c32fc5eb02d02.htm" target="_top"><b><u>Data Entity</u></b></a>(ies),</div><div align="left" style="min-height: 12pt; ">3. <a href="6d2b7fce5fbb69c7.htm" target="_top"><b><u>Data Property</u></b></a>(ies).</div><div align="left" style="min-height: 12pt; ">Concrete implementations are <a href="7eaa87e856121db2.htm" target="_top"><b><u>Logical Data Dictionary</u></b></a>(ies), <a href="362f3b875b3b221e.htm" target="_top"><b><u>Relational Dictionary</u></b></a>(ies), <a href="c758e5bc600a31e8.htm" target="_top"><b><u>MetaData Dictionary</u></b></a>(ies).</div><i><ul>References:<li><a href="../../../www.omg.org/spec/UML/2.5.1/formal-17-12-05.pdf#page=283"><img src="../standard/extr.ico.gif">&nbsp;OMG - UML - Package</a></li></ul></i>        </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="325C32165EB02A4A.htm" target="_top">Data Domain</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Data Domain</b> is subset of the enterprise&rsquo;s data that are meant to be manipulated together in the context of business operations.</div><div align="left" style="min-height: 12pt; ">For instance, a &quot;Sales&quot;&#160;<b> Data Domain</b> contains at least the following entities: Customers, Orders, Products.</div><div align="left" style="min-height: 12pt; ">Each <a href="325c32fc5eb02d02.htm" target="_top"><b><u>Data Entity</u></b></a> in a&#160;<b> Data Domain</b> has CRUD characteristics. For instance, Products are read-only in a &quot;Sales&quot;&#160;<b> Data Domain</b>, while Customers and Orders have all CRUD characteristics.</div><div align="left" style="min-height: 12pt; "><b>&#160;Data Domain</b>s define functional data boundaries used both for Data Allocation to <a href="278675d65b252f4d.htm" target="_top"><b><u>Business System</u></b></a>s (see Data Stores) and Data Governance for data stewardship (<a href="9152d8875ed741ef.htm" target="_top"><b><u>Data Catalog</u></b></a>s).</div>       </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="325c32fc5eb02d02.htm" target="_top">Data Entity</a></td>
+<td class="description-text">A&#160;<b> Data Entity</b> is an abstract structure of an <a href="d6cd2cea5ab98e5f.htm" target="_top"><b><u>Information Entity</u></b></a>. It has an independent existence and can be uniquely identified.<br /><b> Data Entity</b> is characterized by <a href="b6e3cc7a5fbb6878.htm" target="_top"><b><u>Relationship</u></b></a>s it has with other&#160;<b> Data Entity</b>(ies) and by <a href="b6e3dcfb5fbb6d4d.htm" target="_top"><b><u>Value Property</u></b></a>(ies).<i><ul>References:<li><a href="https://www.google.com/search?q=site%3Ahttps%3A%2F%2Fwww.dddcommunity.org%2Fresources%2Fddd_terms%2F+Entity"><img src="../standard/extr.ico.gif">&nbsp;DDD - Glossary - Entity</a></li> <li><a href="https://pubs.opengroup.org/togaf-standard/introduction/apdxb.html#tag_06_10"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Definition - Data Element</a></li></ul></i>        </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="6d2b80db5fbb700b.htm" target="_top">Data Map</a></td>
+<td class="description-text">A&#160;<b> Data Map</b> is an urbanization tool for&#160;<b> Data Asset</b>. It represents a set of <a href="325C32165EB02A4A.htm" target="_top"><b><u>Data Domain</u></b></a>s in a particular context.       </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="6d2b7c935fbb6270.htm" target="_top">Data Object</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Data Object</b>&#160; represents the abstract structure of any kind of data that can be memorized by a <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a>.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Data Object</b> is either a <a href="325c32fc5eb02d02.htm" target="_top"><b><u>Data Entity</u></b></a> or a <a href="6d2b7fce5fbb69c7.htm" target="_top"><b><u>Data Property</u></b></a>.</div><div align="left" style="min-height: 12pt; ">Only <a href="325c32fc5eb02d02.htm" target="_top"><b><u>Data Entity</u></b></a>s can have identity and states. <a href="6d2b7fce5fbb69c7.htm" target="_top"><b><u>Data Property</u></b></a>s only handle raw data.</div><i><ul>References:<li><a href="https://csrc.nist.gov/glossary/term/data_asset"><img src="../standard/extr.ico.gif">&nbsp;NIST - Data Asset</a></li> <li><a href="https://compliancedictionary.com/term/270"><img src="../standard/extr.ico.gif">&nbsp;UCF Glossary - Data</a></li> <li><a href="https://compliancedictionary.com/term/2969"><img src="../standard/extr.ico.gif">&nbsp;UCF Glossary - Data Element</a></li></ul></i>        </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="6d2b7fce5fbb69c7.htm" target="_top">Data Property</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Data Property</b> is a <a href="6d2b7c935fbb6270.htm" target="_top"><b><u>Data Object</u></b></a> that is fundamentally defined by its value. It doesn&#39;t evolve over time is thereby immutable.</div><div align="left" style="min-height: 12pt; ">It represents a logical view of a data structure that stored in data stores.</div><div align="left" style="min-height: 12pt; ">For instance an address or a customer name are usually considered as&#160;<b> Data Property</b>(ies).</div><i><ul>References:<li><a href="https://www.google.com/search?q=site%3Ahttps%3A%2F%2Fwww.dddcommunity.org%2Fresources%2Fddd_terms%2F+Value+Object"><img src="../standard/extr.ico.gif">&nbsp;DDD - Glossary - Value Object</a></li> <li><a href="https://compliancedictionary.com/term/2971"><img src="../standard/extr.ico.gif">&nbsp;UCF Glossary - Data Field</a></li></ul></i>        </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="861987db6372446e.htm" target="_top">Natural Resource</a></td>
+<td class="description-text">A&#160;<b> Natural Resource</b> is a kind of <a href="62466ea661b80d09.htm" target="_top"><b><u>Resource Operating Asset</u></b></a> that occurs in nature such as oil, water, gas or coal.<i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#NaturalResource"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - NaturalResource</a></li></ul></i>        </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="bcebd31f5491302c.htm" target="_top">Resource Agent</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Resource Agent</b> is a <a href="e2ef091962147ad7.htm" target="_top"><b><u>Business Operating Agent</u></b></a> which represents physical resources that produce <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s of the enterprise.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Resource Agent</b> can be a <a href="076d15425a5e158c.htm" target="_top"><b><u>Human Resource</u></b></a> (<a href="076d151c5a5e1561.htm" target="_top"><b><u>Organizational Position</u></b></a> or <a href="7c408aa155270eea.htm" target="_top"><b><u>Org-Unit</u></b></a>), a <a href="278675d65b252f4d.htm" target="_top"><b><u>Business System</u></b></a> (<a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a> or <a href="c30bf4015a5da72b.htm" target="_top"><b><u>Hardware System</u></b></a>) or a <a href="d1600c7062e093eb.htm" target="_top"><b><u>Capability Configuration</u></b></a> (an assembly of <a href="076d15425a5e158c.htm" target="_top"><b><u>Human Resource</u></b></a>s and <a href="278675d65b252f4d.htm" target="_top"><b><u>Business System</u></b></a>s.)</div><i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#resourceperformer"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - ResourcePerformer</a></li> <li><a href="https://pubs.opengroup.org/togaf-standard/introduction/apdxb.html#tag_06_03"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Definition - Business System</a></li></ul></i>        </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="2b6f33a561bae7ab.htm" target="_top">Resource Agent Environment</a></td>
+<td class="description-text">A&#160;<b> Resource Agent Environment</b> is an operating context which defines the interactions (<b> Business Service Channel</b>) of a <a href="bcebd31f5491302c.htm" target="_top"><b><u>Resource Agent</u></b></a> with its partners (<a href="2b6f34c861bae941.htm" target="_top"><b><u>Partner Resource Agent</u></b></a>).       </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="b4ebbf3e5ffdccdf.htm" target="_top">Resource Behavior</a></td>
+<td class="description-text">A&#160;<b> Resource Behavior</b> is a <a href="62466ea661b80d09.htm" target="_top"><b><u>Resource Operating Asset</u></b></a> that describes any action or reaction of a <a href="bcebd31f5491302c.htm" target="_top"><b><u>Resource Agent</u></b></a> to external or internal circumstances. This includes <a href="7c40c3c85527466b.htm" target="_top"><b><u>Resource Process</u></b></a>es (actions), <a href="230b35b461d8884d.htm" target="_top"><b><u>Resource Interaction Scenario</u></b></a>s (stories) or service interactions (<a href="9dcea2655ec768ee.htm" target="_top"><b><u>Business Service Interface</u></b></a>).       </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="f4be14d25ee1eaff.htm" target="_top">Resource Configuration</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A <a href="854ba6c559a65957.htm" target="_top"><b><u>Resource Configuration</u></b></a> is a generic <a href="f4be11b15ee1e0fa.htm" target="_top"><b><u>System of Resources</u></b></a> that represensed <a href="f4be11b15ee1e0fa.htm" target="_top"><b><u>System of Resources</u></b></a> that are not <a href="f4be0e865ee1d53b.htm" target="_top"><b><u>Facility</u></b></a>s.(Data centers, Factories, Outlets).</div><div align="left" style="min-height: 12pt; ">Examples: </div><div align="left" style="min-height: 12pt; ">- Configured Nuclear power plant (with operating teams),&#160; </div><div align="left" style="min-height: 12pt; ">- Configured aircraft carrier (with crew), Configured rescue ship (with rescue team).</div><div align="left" style="min-height: 12pt; ">When specific characteristics need to be considered for a given type of&#160;<b> Resource Configuration</b>, it is recommended to create a new sub-type of <a href="f4be11b15ee1e0fa.htm" target="_top"><b><u>System of Resources</u></b></a> to host these characteristics.</div>       </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="2b6f332061bae622.htm" target="_top">Resource Ecosystem</a></td>
+<td class="description-text">A&#160;<b> Resource Ecosystem</b> is an <a href="ca35f48a5fc48686.htm" target="_top"><b><u>Operating Eco-System</u></b></a>&#160; that describes the operating context in which a <a href="bcebd31f5491302c.htm" target="_top"><b><u>Resource Agent</u></b></a> exists or lives for a specific purpose.       </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="2b6f337e61bae6d6.htm" target="_top">Resource Environment Scenario</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Resource Environment Scenario</b> is a story that describes how a <a href="bcebd31f5491302c.htm" target="_top"><b><u>Resource Agent</u></b></a> interacts with its partners (<a href="2b6f35bc61baecc4.htm" target="_top"><b><u>Partner Resource Agent</u></b></a>s) to achieve <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s in a specific Eco-System (<a href="2b6f33a561bae7ab.htm" target="_top"><b><u>Resource Agent Environment</u></b></a>).</div><div align="left" style="min-height: 12pt; ">This includes:</div><div align="left" style="min-height: 12pt; ">1) A course of events represented by&#160;<b> Business Object Flow</b>s depicting the story towards the delivery of expected <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">2) Interacting&#160; <a href="bcebd31f5491302c.htm" target="_top"><b><u>Resource Agent</u></b></a>s who participate to the story in the considered Eco-System.</div>       </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="62466ea661b80d09.htm" target="_top">Resource Operating Asset</a></td>
+<td class="description-text"><b>&#160;Resource Operating Asset</b>s comprise physical assets which contribute to the delivery of <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s of the enterprise. This includes <a href="bcebd31f5491302c.htm" target="_top"><b><u>Resource Agent</u></b></a>s, their behaviors (<a href="b4ebbf3e5ffdccdf.htm" target="_top"><b><u>Resource Behavior</u></b></a>:&#160; <a href="7c40c3c85527466b.htm" target="_top"><b><u>Resource Process</u></b></a>, <a href="230b35b461d8884d.htm" target="_top"><b><u>Resource Interaction Scenario</u></b></a>), and <a href="861987db6372446e.htm" target="_top"><b><u>Natural Resource</u></b></a>s.<i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#CapableElement"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - CapableElement</a></li> <li><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_73"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Definition - Solution Building Block</a></li> <li><a href="https://pubs.opengroup.org/togaf-standard/architecture-content/chap05.html#tag_05_02_04"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Guide - Solution Building Blocks</a></li></ul></i>        </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="7c40c3c85527466b.htm" target="_top">Resource Process</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Resource Process</b> is a <a href="e2ef095b62147bf9.htm" target="_top"><b><u>Business Operating Process</u></b></a> which is conducted by <a href="bcebd31f5491302c.htm" target="_top"><b><u>Resource Agent</u></b></a>s (physical resources such as <a href="076d15425a5e158c.htm" target="_top"><b><u>Human Resource</u></b></a>, <a href="f4be11b15ee1e0fa.htm" target="_top"><b><u>System of Resources</u></b></a> ,<a href="278675d65b252f4d.htm" target="_top"><b><u>Business System</u></b></a>s) and which describes how these entities act to deliver <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; "><b>&#160;Resource Process</b>es include <a href="57dfc52d550932ef.htm" target="_top"><b><u>Business Process</u></b></a>es and <a href="46194939560d374f.htm" target="_top"><b><u>System Process</u></b></a>es.</div>       </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="6dc39a5661c08c55.htm" target="_top">Resource Rule</a></td>
+<td class="description-text">A&#160;<b> Resource Rule</b> is an <a href="3be69d8c63037c0f.htm" target="_top"><b><u>Business Operating Rule</u></b></a> that is enforced by <a href="62466ea661b80d09.htm" target="_top"><b><u>Resource Operating Asset</u></b></a>s of the Enterprise.<i><ul>References:<li><a href="../../../www.omg.org/spec/BMM/1.3/formal-15-05-19.pdf#page=46"><img src="../standard/extr.ico.gif">&nbsp;OMG - BMM - Business Rule</a></li></ul></i>        </td>
+</tr>
+</tbody>
+</table></html>

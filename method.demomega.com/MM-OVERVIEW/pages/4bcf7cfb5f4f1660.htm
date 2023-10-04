@@ -1,0 +1,237 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="keywords" content="">
+<meta name="description" content="">    
+<LINK REL="icon" HREF="../standard/assets/img/favicon.ico">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/bootstrap.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nav.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/eaportal.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/font-awesome.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/animate.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/datatables.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/grid.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nae.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/custom.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/chosen.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/prism.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery.dataTables.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jsTreeStyle.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.theme.css" media="screen" />
+<script type="text/javascript" src="../standard/assets/js/jquery-3.2.1.min.js" ></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-ui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.columnFilter.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3-force.v2.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.gui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.search.js"></script> 
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.util.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-2.1.1.min.js"></script>
+<script src="../standard/assets/js/ws_zoomtemplate_firefox.js"></script>
+<script src="../standard/assets/js/bootstrap.min.js"></script>
+<script src="../standard/assets/js/datatables.min.js"></script>
+<script src="../standard/assets/js/moment.min.js"></script>
+<script src="../standard/assets/js/datetime-moment.js"></script>
+<script src="../standard/assets/js/chartjs.min.js"></script>
+<script src="../standard/assets/js/searchindexcontent.json"></script>
+<script src="../standard/assets/js/anls.js"></script>
+<script src="../../../cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script src="../standard/assets/js/gauge.js"></script> 
+<script src="../standard/assets/js/domesticApi.js"></script> 
+<script src="../standard/assets/js/piecelabel.js"></script>
+<script src="../standard/assets/js/popper.min.js"></script>
+<script src="../standard/assets/js/custom.js"></script>
+<script src="../standard/assets/js/chosen.jquery.js"></script>
+<script src="../standard/assets/js/prism.js"></script>
+<script src="../standard/assets/js/init-chosen.js"></script>
+<script src="../standard/assets/js/chart-data-flow.js"></script>
+<script src="../standard/assets/js/chart-data-gantt.js"></script>
+<script type="module" src="../standard/assets/js/Fuse.esm.min.js"></script>
+<script type="module">
+import Fuse from '../standard/assets/js/Fuse.esm.min.js';
+$(document).ready(function () {
+console.log('getjson');
+window.$.getJSON('../standard/assets/js/searchindexcontent.json', function (response) {
+console.log('getjson ok');
+var isIndex = "";
+var url = window.location.pathname;
+var filename = url.substring(url.lastIndexOf('/')+1);
+if( filename.includes("index") || filename === "" ){
+isIndex = "pages/";
+} else {
+isIndex = "";
+}
+const fuse = new Fuse(response, {
+keys: ['title','text'],
+shouldSort: true,
+includeMatches : true,
+findAllMatches : true
+});
+$('#search-fuse').on('keyup', function () {
+let result = fuse.search($(this).val());
+console.log(result);
+let resultdiv = $('div.searchresults-fuse');
+if (result.length === 0) {
+resultdiv.hide();
+} else {
+resultdiv.empty();
+resultdiv.append('<table class="table-search" width="100%" cellspacing="0"><thead ><tr><th>Name</th><th>Object Type</th><th>Modification date</th></tr></thead><tbody>');
+
+for (let obj in result.slice(0,10)) {
+
+let searchObj = '<tr><td><a href="./'+ isIndex + result[obj].item.url + '">' + result[obj].item.title +'</a></td><td>' + result[obj].item.ObjectType + '</td><td>' + result[obj].item.ModificationDate + '</td></tr>' ;
+
+
+resultdiv.find('tbody').append(searchObj);
+}
+resultdiv.append('</tbody></table>');
+resultdiv.show();
+}
+});
+});
+});
+</script>
+<title>HOPEX Metamodel Overview (Beta Version)</title>
+</head>
+<nav class="navbar navbar-expand-md navbar-dark  navbar-mega"><!-- Brand --><!--<a class="navbar-brand" href="#">Navbar</a>--><a class="" href="../index.htm"><img class="logo-mega" src="../standard/assets/img/logo.png"  alt="">(Beta Version)</a><!-- Toggler/collapsibe Button --><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><!-- Navbar links -->
+<div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsibleNavbar"><div class="col-sm-auto col-md-auto col-lg-5"></div>
+<div class="col-sm-auto">
+<ul class="navbar-nav">      
+<li><a class="dropdown-item" href="ad30ce115ebf7e90.htm">EA Grid</a></li> 
+<li><a class="dropdown-item" href="fdd5018459bc3c6a.htm">EA Domains</a></li> 
+<li><a class="dropdown-item" href="07e731775ecc93f4.htm">Solutions</a></li> 
+<li><a class="dropdown-item" href="c5dfc62c54810c2c.htm">Glossary</a></li> 
+<li class="nav-item dropdown mx-1">
+<a class="nav-link" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</a>
+<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<li><a class="dropdown-item" href="5446555d5f88c32e.htm">Outcome Driven Metamodel</a></li> 
+<li><a class="dropdown-item" href="e1ccfc295f8f7b90.htm">Playbooks</a></li> 
+<li><a class="dropdown-item" href="42bc992862d20ea7.htm">Framework Mappings</a></li> 
+<li><a class="dropdown-item" href="e93aebb35fa20550.htm">Metamodel Patterns</a></li> 
+<li><a class="dropdown-item" href="d599fe87602b2b85.htm">References</a></li> 
+<li><a class="dropdown-item" href="333f3a7f5dde11de.htm">Legend</a></li> 
+</ul>									                                            
+</li>
+</ul>
+</div>
+<div class="col-sm-auto"><a class="nav-link search" href="#" onclick=showHideSearch("search-section-fuse")><i class="fa fa-search mr-1 form-control-feedback"></i></a></div>
+</div>
+</nav>
+<div id="search-section-fuse" style="display:none">>
+<div class="search_header"><span class="closesearch">&times;</span>
+<nav class="breadcrumb">
+<a class="breadcrumb-item" href="../index.htm">Home </a> 
+<span class="breadcrumb-item active">Search</span> 
+</nav>
+</div>
+<input id="search-fuse" placeholder="Search..."  name="q" onfocus="this.value=''" type="search">
+<div class="searchresults-fuse"></div>
+</div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>function showHideSearch(elementId) {var contentDivs = document.getElementsByClassName('content');var footerDivs = document.getElementsByClassName('footer'); var containerDivs = document.getElementsByClassName('container');var containerfluidDivs = document.getElementsByClassName('container-fluid');var x = document.getElementById(elementId);if (x.style.display === "none") {x.style.display = "block";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "none";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "none";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "none";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "none";}} else {x.style.display = "none";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "block";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "block";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "block";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "block";}}} ;<!-- END WIDGET DRILL DOWN --></script><script>$(document).ready(function() {$(window).scroll(function() {if ($(this).scrollTop() > 100) {$('.scrollup').fadeIn();} else {$('.scrollup').fadeOut();}});$('.scrollup').click(function() {$("html, body").animate({scrollTop: 0}, 600);return false;});});</script><script>
+var modal = document.getElementById("search-section-fuse");
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = "none";
+}
+}
+$(document).on('click', '.closesearch', function() {
+showHideSearch("search-section-fuse");
+
+
+
+
+
+});</script><div class="container-fluid col-lg-11"><nav class="breadcrumb"><a class="breadcrumb-item" href="../index.htm">Home</a> <span class="breadcrumb-item active">
+<a  href="533b53775c916e32.htm" target="_top">HOPEX - DoDAF 2</a>&nbsp;/&nbsp;DODAF2 - CV-6: Capability to Operational Activities Mapping</span></nav></div>
+<div class="container-fluid col-lg-11 content">
+<section class="fadeInDown animated"><a href="#idt" class="btn btn-d">DEFINITION</a> <a href="#grf" class="btn btn-d">CONCEPT GRAPH</a> <a href="#des" class="btn btn-d">CONCEPT DESCRIPTIONS</a> 
+</section>
+<a class="object-section-anchor" id="idt"></a>
+<section class="object-section">
+<h4>CONCEPT DOMAIN - DODAF2 - CV-6: Capability to Operational Activities Mapping</h4><hr class="sectionbreak" /><table class="table table-vertical-headers table-set-col-width"><tr><th>Description</th><td class="description-text">A mapping between the capabilities required and the operational activities that those capabilities support.<div></div></td></tr><tr><th>Dictionary</th><td><img src="../standard/dicsubjectarea.ico.gif"/>&nbsp;
+<a  href="533b53775c916e32.htm" target="_top">HOPEX - DoDAF 2</a></td></tr><tr><th>Parent Domain</th><td><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="0e0cf5cf5f1f27fd.htm" target="_top">DODAF2 - Capability Viewpoint</a>&nbsp;</td></tr></table></section>
+<a class="object-section-anchor" id="grf"></a>
+<section class="object-section">
+<h4>DOMAIN CONCEPT GRAPH</h4>
+<hr class="sectionbreak" />
+<a href="#" class="btn btn-d" value="Relationship1" onclick="showDiagOnClick(this)">Diagram</a>
+<a href="#" class="btn btn-d" value="Relationship2" onclick="showDiagOnClick(this)">Graph</a>
+<div class="Relationship" id="Relationship1">
+
+<map  name="4BCF7D255F4F173E">
+  <area  href=7c40c3c85527466b.htm#OBMK7C40C3C85527466B shape="polygon" coords="33, 13, 33, 2, 116, 2, 116, 13, 33, 13"   target="_top"  title="A&#160; Resource Process is a Business Operating Process which is conducted by Resource Agents (physical resources such as Human Resource, System of Resources ,Business Systems) and which describes how these entities act to deliver Business Outcomes.">
+  
+  <area  href=b1edb25e2c1401bb.htm#OBMKB1EDB25E2C1401BB shape="polygon" coords="26, 45, 26, 32, 123, 32, 123, 45, 26, 45"   target="_top"  title="An organizational process is a set of operations performed by org-units within a company or organization, to produce a result. It is depicted as a sequence of operations, controlled by events and conditions. ">
+  
+  <area  href="57dfc52d550932ef.htm" shape="rect" coords="0, 0, 149, 65"   target="_top"  title="An&#160; Business Process is a set of Operations performed by Human Resources and/or by automated systems (Business Systems) to produce a Business Outcome. It is depicted as a sequence of Operations, controlled by events and conditions. ">
+  
+  <area  href=aea4936060645978.htm#OBMKAEA4936060645978 shape="polygon" coords="468, 19, 468, 8, 596, 8, 596, 19, 468, 19"   target="_top"  title="A&#160; Business Operating Capability is a Capability that benefits to Customers (internal or external) of the enterprise. It expresses an ability to deliver Business Outcomes.This includes Business Capability, Functionality, Hardware Capability and Skill.">
+  
+  <area  href=da99dae349820097.htm#OBMKDA99DAE349820097 shape="polygon" coords="491, 51, 491, 38, 573, 38, 573, 51, 491, 51"   target="_top"  title="A Business Capability is a set of features that can be made available by a system (an enterprise or an automated system).">
+  
+  <area  href="9810abf3551135c4.htm" shape="rect" coords="461, 6, 603, 71"   target="_top"  title="A&#160; Business Capability is a Capability that benefits to Customers (internal or external) of the enterprise. It expresses an ability to deliver Business Outcomes.">
+  
+</map>
+<img  src="../images/4bcf7cfb5f4f1660_4bcf7d255f4f173e_i.png" alt="../images/4bcf7cfb5f4f1660_4bcf7d255f4f173e_i.png" usemap="#4BCF7D255F4F173E" height="80" width="603" border=0>
+
+</div>
+<div class="Relationship" id="Relationship2">
+<div id="klmm" style="width: 100vw; height: 100vh;" ></div>
+<!-- <script src="../standard/assets/js/keylines_domain.js"></script> -->
+<script >
+const data = {
+ type: 'LinkChart',
+  items: [
+  //nodes
+    {type: 'node', id:'4BCF7CFB5F4F1660', t:"DODAF2 - CV-6: Capability to Operational Activities Mapping", sh:'box', d:"A mapping between the capabilities required and the operational activities that those capabilities support."},
+  //edges
+
+  ]
+}
+</script>
+<script src="../standard/assets/js/keylines_domain.js" type="module"></script>
+</div>
+</section>
+<a class="object-section-anchor" id="des"></a>
+<section class="object-section">
+<h4>CONCEPT DESCRIPTIONS</h4> 
+<hr class="sectionbreak" />
+<h5>Concrete Concepts</h5>
+<table class="table  table-set-col-width">
+<thead>
+<tr><th>Concept</th><th>Description</th><th>HOPEX Metaclass</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="9810abf3551135c4.htm" target="_top">Business Capability</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Business Capability</b> is a <a href="b181b98c54891882.htm" target="_top"><b><u>Capability</u></b></a> that benefits to Customers (internal or external) of the enterprise. It expresses an ability to deliver <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Business Capability</b> is defined by its intended <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s and the conditions (<a href="63f8870255ae1ba2.htm" target="_top"><b><u>Constraining Property</u></b></a>) under which the delivery of the <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s shall be proceeded.<br />The actual <a href="7c40a5b455272bb4.htm" target="_top"><b><u>Constraint Value</u></b></a>s for a given&#160;<b> Business Capability</b> at the different <a href="036a3de3548f229e.htm" target="_top"><b><u>Enterprise Stage</u></b></a>s is given by their exhibition (<b> Exhibited Capability</b>).</div><i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Capability"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - Capability</a></li> <li><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_28"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Definition - Business Capability</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="da99dae349820097.htm" target="_top">Business Capability</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="57dfc52d550932ef.htm" target="_top">Business Process</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Business Process</b> is a set of <a href="0f9213fd5ebc1b87.htm" target="_top"><b><u>Operation</u></b></a>s performed by <a href="076d15425a5e158c.htm" target="_top"><b><u>Human Resource</u></b></a>s and/or by automated systems (<a href="278675d65b252f4d.htm" target="_top"><b><u>Business System</u></b></a>s) to produce a <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>. It is depicted as a sequence of <a href="0f9213fd5ebc1b87.htm" target="_top"><b><u>Operation</u></b></a>s, controlled by events and conditions. </div><div align="left" style="min-height: 12pt; "><a href="0f9213fd5ebc1b87.htm" target="_top"><b><u>Operation</u></b></a>s are carried out by the involvment of <a href="076d15425a5e158c.htm" target="_top"><b><u>Human Resource</u></b></a>s and system resources (<a href="bcebd8e9549144db.htm" target="_top"><b><u>Application</u></b></a>) as participants in the process (<a href="b4ebbe325ffdca40.htm" target="_top"><u>Participant Resource Agent</u></a>).</div><div align="left" style="min-height: 12pt; ">During its course of action, an&#160;<b> Business Process</b> consumes or produces <a href="6d2b7c935fbb6270.htm" target="_top"><b><u>Data Object</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">1) It may read or write <a href="6d2b7c935fbb6270.htm" target="_top"><b><u>Data Object</u></b></a>s in its Process Store.</div><div align="left" style="min-height: 12pt; ">2) It may receive <a href="6d2b7c935fbb6270.htm" target="_top"><b><u>Data Object</u></b></a>s at its boundary:&#160;<b> Triggering Business Outcome</b>.</div><div align="left" style="min-height: 12pt; ">3) It may produce <a href="6d2b7c935fbb6270.htm" target="_top"><b><u>Data Object</u></b></a>s at its boundary:&#160;<b> Published Business Outcome</b>.</div><div align="left" style="min-height: 12pt; ">The course of actions of an&#160;<b> Business Process</b> is constrained by the application of rules (<a href="0f9215805ebc1d2a.htm" target="_top"><b><u>Business Rule Enforcement</u></b></a>) that define what is allowed and not allowed to do.</div><i><ul>References:<li><a href="https://www.iso.org/obp/ui/#iso:std:iso:9000:ed-4:v1:en"><img src="../standard/extr.ico.gif">&nbsp;ISO 9000 - 3.4 - Process</a></li> <li><a href="https://www.lean.org/lexicon-terms/value-stream/"><img src="../standard/extr.ico.gif">&nbsp;Lean.org - Value Stream</a></li> <li><a href="https://www.lean.org/lexicon-terms/value-stream-mapping/"><img src="../standard/extr.ico.gif">&nbsp;Lean.org - Value Stream Mapping</a></li> <li><a href="../../../www.omg.org/spec/BMM/1.3/formal-15-05-19.pdf#page=64"><img src="../standard/extr.ico.gif">&nbsp;OMG - BMM - Business Process</a></li> <li><a href="../../../www.omg.org/spec/BPMN/2.0.2/formal-13-12-09.pdf#page=173"><img src="../standard/extr.ico.gif">&nbsp;OMG - BPMN - Process</a></li> <li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Function"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - Function</a></li> <li><a href="https://pubs.opengroup.org/architecture/o-aa-standard/definitions.html#_process"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - OAA - Process</a></li> <li><a href="https://pubs.opengroup.org/togaf-standard/architecture-content/chap02.html"><img src="../standard/extr_htm.ico.gif">&nbsp;OpenGroup - TOGAF - Content Metamodel</a></li> <li><a href="https://pubs.opengroup.org/architecture/togaf9-doc/m/apdxa.html#tag_47_48"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF 9 - Definition - Process</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="b1edb25e2c1401bb.htm" target="_top">Organizational Process</a></td>
+</tr>  
+</tbody>
+</table>
+<section>
+
+</div>
+<button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button>
+<script>window.onscroll = function() {scrollFunction()};$(document).on('click', 'a[href^="#"]', function (event) {event.preventDefault();$('html, body').animate({scrollTop: $($.attr(this, 'href')).offset().top}, 500);});function showDiagOnClick(elem){ var x = document.getElementsByClassName('Relationship');var e = elem.getAttribute("value"); for (var i=0; i < x.length ;i++){x[i].style.display="none"; if (x[i].id == e){x[i].style.display="block";x[i].style.textAlign="left";}}}
+</script></html>

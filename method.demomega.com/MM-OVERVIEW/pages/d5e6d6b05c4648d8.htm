@@ -1,0 +1,790 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="keywords" content="">
+<meta name="description" content="">    
+<LINK REL="icon" HREF="../standard/assets/img/favicon.ico">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/bootstrap.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nav.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/eaportal.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/font-awesome.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/animate.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/datatables.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/grid.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nae.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/custom.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/chosen.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/prism.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery.dataTables.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jsTreeStyle.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.theme.css" media="screen" />
+<script type="text/javascript" src="../standard/assets/js/jquery-3.2.1.min.js" ></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-ui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.columnFilter.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3-force.v2.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.gui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.search.js"></script> 
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.util.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-2.1.1.min.js"></script>
+<script src="../standard/assets/js/ws_zoomtemplate_firefox.js"></script>
+<script src="../standard/assets/js/bootstrap.min.js"></script>
+<script src="../standard/assets/js/datatables.min.js"></script>
+<script src="../standard/assets/js/moment.min.js"></script>
+<script src="../standard/assets/js/datetime-moment.js"></script>
+<script src="../standard/assets/js/chartjs.min.js"></script>
+<script src="../standard/assets/js/searchindexcontent.json"></script>
+<script src="../standard/assets/js/anls.js"></script>
+<script src="../../../cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script src="../standard/assets/js/gauge.js"></script> 
+<script src="../standard/assets/js/domesticApi.js"></script> 
+<script src="../standard/assets/js/piecelabel.js"></script>
+<script src="../standard/assets/js/popper.min.js"></script>
+<script src="../standard/assets/js/custom.js"></script>
+<script src="../standard/assets/js/chosen.jquery.js"></script>
+<script src="../standard/assets/js/prism.js"></script>
+<script src="../standard/assets/js/init-chosen.js"></script>
+<script src="../standard/assets/js/chart-data-flow.js"></script>
+<script src="../standard/assets/js/chart-data-gantt.js"></script>
+<script type="module" src="../standard/assets/js/Fuse.esm.min.js"></script>
+<script type="module">
+import Fuse from '../standard/assets/js/Fuse.esm.min.js';
+$(document).ready(function () {
+console.log('getjson');
+window.$.getJSON('../standard/assets/js/searchindexcontent.json', function (response) {
+console.log('getjson ok');
+var isIndex = "";
+var url = window.location.pathname;
+var filename = url.substring(url.lastIndexOf('/')+1);
+if( filename.includes("index") || filename === "" ){
+isIndex = "pages/";
+} else {
+isIndex = "";
+}
+const fuse = new Fuse(response, {
+keys: ['title','text'],
+shouldSort: true,
+includeMatches : true,
+findAllMatches : true
+});
+$('#search-fuse').on('keyup', function () {
+let result = fuse.search($(this).val());
+console.log(result);
+let resultdiv = $('div.searchresults-fuse');
+if (result.length === 0) {
+resultdiv.hide();
+} else {
+resultdiv.empty();
+resultdiv.append('<table class="table-search" width="100%" cellspacing="0"><thead ><tr><th>Name</th><th>Object Type</th><th>Modification date</th></tr></thead><tbody>');
+
+for (let obj in result.slice(0,10)) {
+
+let searchObj = '<tr><td><a href="./'+ isIndex + result[obj].item.url + '">' + result[obj].item.title +'</a></td><td>' + result[obj].item.ObjectType + '</td><td>' + result[obj].item.ModificationDate + '</td></tr>' ;
+
+
+resultdiv.find('tbody').append(searchObj);
+}
+resultdiv.append('</tbody></table>');
+resultdiv.show();
+}
+});
+});
+});
+</script>
+<title>HOPEX Metamodel Overview (Beta Version)</title>
+</head>
+<nav class="navbar navbar-expand-md navbar-dark  navbar-mega"><!-- Brand --><!--<a class="navbar-brand" href="#">Navbar</a>--><a class="" href="../index.htm"><img class="logo-mega" src="../standard/assets/img/logo.png"  alt="">(Beta Version)</a><!-- Toggler/collapsibe Button --><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><!-- Navbar links -->
+<div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsibleNavbar"><div class="col-sm-auto col-md-auto col-lg-5"></div>
+<div class="col-sm-auto">
+<ul class="navbar-nav">      
+<li><a class="dropdown-item" href="ad30ce115ebf7e90.htm">EA Grid</a></li> 
+<li><a class="dropdown-item" href="fdd5018459bc3c6a.htm">EA Domains</a></li> 
+<li><a class="dropdown-item" href="07e731775ecc93f4.htm">Solutions</a></li> 
+<li><a class="dropdown-item" href="c5dfc62c54810c2c.htm">Glossary</a></li> 
+<li class="nav-item dropdown mx-1">
+<a class="nav-link" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</a>
+<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<li><a class="dropdown-item" href="5446555d5f88c32e.htm">Outcome Driven Metamodel</a></li> 
+<li><a class="dropdown-item" href="e1ccfc295f8f7b90.htm">Playbooks</a></li> 
+<li><a class="dropdown-item" href="42bc992862d20ea7.htm">Framework Mappings</a></li> 
+<li><a class="dropdown-item" href="e93aebb35fa20550.htm">Metamodel Patterns</a></li> 
+<li><a class="dropdown-item" href="d599fe87602b2b85.htm">References</a></li> 
+<li><a class="dropdown-item" href="333f3a7f5dde11de.htm">Legend</a></li> 
+</ul>									                                            
+</li>
+</ul>
+</div>
+<div class="col-sm-auto"><a class="nav-link search" href="#" onclick=showHideSearch("search-section-fuse")><i class="fa fa-search mr-1 form-control-feedback"></i></a></div>
+</div>
+</nav>
+<div id="search-section-fuse" style="display:none">>
+<div class="search_header"><span class="closesearch">&times;</span>
+<nav class="breadcrumb">
+<a class="breadcrumb-item" href="../index.htm">Home </a> 
+<span class="breadcrumb-item active">Search</span> 
+</nav>
+</div>
+<input id="search-fuse" placeholder="Search..."  name="q" onfocus="this.value=''" type="search">
+<div class="searchresults-fuse"></div>
+</div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>function showHideSearch(elementId) {var contentDivs = document.getElementsByClassName('content');var footerDivs = document.getElementsByClassName('footer'); var containerDivs = document.getElementsByClassName('container');var containerfluidDivs = document.getElementsByClassName('container-fluid');var x = document.getElementById(elementId);if (x.style.display === "none") {x.style.display = "block";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "none";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "none";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "none";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "none";}} else {x.style.display = "none";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "block";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "block";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "block";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "block";}}} ;<!-- END WIDGET DRILL DOWN --></script><script>$(document).ready(function() {$(window).scroll(function() {if ($(this).scrollTop() > 100) {$('.scrollup').fadeIn();} else {$('.scrollup').fadeOut();}});$('.scrollup').click(function() {$("html, body").animate({scrollTop: 0}, 600);return false;});});</script><script>
+var modal = document.getElementById("search-section-fuse");
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = "none";
+}
+}
+$(document).on('click', '.closesearch', function() {
+showHideSearch("search-section-fuse");
+
+
+
+
+
+});</script><div class="container-fluid col-lg-11"><nav class="breadcrumb"><a class="breadcrumb-item" href="../index.htm">Home</a> <span class="breadcrumb-item active">
+<a  href="c5dfc62c54810c2c.htm" target="_top">Dictionary of HOPEX concepts</a>&nbsp;/&nbsp;Application Functional Architecture</span></nav></div>
+<div class="container-fluid col-lg-11 content">
+<section class="fadeInDown animated"><a href="#idt" class="btn btn-d">DEFINITION</a> <a href="#grf" class="btn btn-d">CONCEPT GRAPH</a> <a href="#des" class="btn btn-d">CONCEPT DESCRIPTIONS</a> 
+</section>
+<a class="object-section-anchor" id="idt"></a>
+<section class="object-section">
+<h4>CONCEPT DOMAIN - Application Functional Architecture</h4><hr class="sectionbreak" /><table class="table table-vertical-headers table-set-col-width"><tr><th>Description</th><td class="description-text"><div align="left" style="min-height: 12pt; ">The&#160;<b> Application Functional Architecture</b> domain is used to describe the functional structure and behavior of <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">HOPEX provides three level of granularity to represent software systems:</div><div align="left" style="min-height: 12pt; ">1) Macro <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a>s are represented by <a href="46194ca7560d3a45.htm" target="_top"><b><u>Application System</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">2) Mezzo <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a>s are represented by <a href="bcebd8e9549144db.htm" target="_top"><b><u>Application</u></b></a>s, which compose <a href="46194ca7560d3a45.htm" target="_top"><b><u>Application System</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">3) Micro <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a>s are represented by <a href="46194ce9560d3ab8.htm" target="_top"><b><u>IT Service</u></b></a>s and <a href="d6a956495a395d28.htm" target="_top"><b><u>MicroService</u></b></a>s which compose <a href="bcebd8e9549144db.htm" target="_top"><b><u>Application</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">All <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a>s provide <a href="598272e954c622f4.htm" target="_top"><b><u>Functionality</u></b></a>s, expose APIs by means of <a href="9dce9f8d5ec76311.htm" target="_top"><b><u>Application Interface</u></b></a>s, have a data scope defined by <a href="028f03ff5b4f55ee.htm" target="_top"><b><u>Physical Data Domain</u></b></a>s, perform <a href="46194939560d374f.htm" target="_top"><b><u>System Process</u></b></a>es and have their interactions described by <a href="25c09cb461e2efd3.htm" target="_top"><b><u>Software System Scenario</u></b></a>s.</div><div><br/><i>References:</i><br/><a href="https://c4model.com/#SystemContextDiagram" target="_blank">C4 Model - Level 1 - System Context Diagram</a><br/><a href="https://www.gartner.com/en/information-technology/glossary/application-architecture-aa" target="_blank">Gartner - Application Architecture</a><br/><a href="https://martinfowler.com/tags/application%20architecture.html" target="_blank">Martin Fowler - Application Architecture</a><br/><a href="https://martinfowler.com/microservices" target="_blank">Martin Fowler - Micro-Service Guide</a></div></td></tr><tr><th>Dictionary</th><td><img src="../standard/dicsubjectarea.ico.gif"/>&nbsp;
+<a  href="c5dfc62c54810c2c.htm" target="_top">Dictionary of HOPEX concepts</a></td></tr><tr><th>Parent Domain</th><td><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="7c408515552706ae.htm" target="_top">Sotware System ArcDevOps</a>&nbsp;</td></tr>
+<tr><th>Imported Domains</th><td><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="25c09f1b61e2f2a0.htm" target="_top">EA Pattern - Business Software System Pattern</a>&nbsp;</td></tr>
+<tr><th>Domain dependencies</th><td><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="1ce356355c48c0e2.htm" target="_top">People &amp; Accountability</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="c2dbe1db5b026b30.htm" target="_top">Software Technology ArcDevOps</a>&nbsp;</td></tr>
+<tr><th>Consuming Method</th><td><img src="../standard/bpmn_subprocessfun.ico.gif"/>&nbsp;
+<a  href="cbd98c4b5fb6af25.htm" target="_top">Analyze data lineage</a>&nbsp;</td></tr>
+<tr><th>Implementing Metamodel</th><td><img src="../standard/metapack.ico.gif"/>&nbsp;
+<a  href="a255a5ec4d6ea350.htm" target="_top">Application Metamodel</a>&nbsp;</td></tr></table></section>
+<a class="object-section-anchor" id="grf"></a>
+<section class="object-section">
+<h4>DOMAIN CONCEPT GRAPH</h4>
+<hr class="sectionbreak" />
+<a href="#" class="btn btn-d" value="Relationship1" onclick="showDiagOnClick(this)">Diagram</a>
+<a href="#" class="btn btn-d" value="Relationship2" onclick="showDiagOnClick(this)">Graph</a>
+<div class="Relationship" id="Relationship1">
+
+<map  name="D6A9552C5A395C37">
+  <area  href=#OBMK48D4F34363B6A580 shape="polygon" coords="307, 714, 363, 714, 363, 725, 307, 725"    title="-">
+  
+  <area  href=48d4f34363b6a573.htm shape="polygon" coords="194, 714, 363, 714, 363, 725, 194, 725"   target="_top"  title="-">
+  
+  <area  href=#OBMK48D4F34763B6A5B7 shape="polygon" coords="194, 714, 251, 714, 251, 725, 194, 725"    title="-">
+  
+  <area  href=#OBMK48D4F27C63B6A473 shape="polygon" coords="307, 682, 363, 682, 363, 693, 307, 693"    title="-">
+  
+  <area  href=48d4f27b63b6a466.htm shape="polygon" coords="194, 682, 363, 682, 363, 693, 194, 693"   target="_top"  title="-">
+  
+  <area  href=#OBMK48D4F28063B6A4AB shape="polygon" coords="194, 682, 251, 682, 251, 693, 194, 693"    title="-">
+  
+  <area  href=25c0a10061e2fc12.htm#OBMK25C0A10061E2FC12 shape="polygon" coords="22, 674, 22, 663, 188, 663, 188, 674, 22, 674"   target="_top"  title="A&#160; Software System Environment Scenario is a story involving the partners of a Software System (Partner System), interacting in order to produce Information Outcomes in a specific Eco-System (Software System Environment).">
+  
+  <area  href=49b74d9859132705.htm#OBMK49B74D9859132705 shape="polygon" coords="18, 719, 18, 706, 192, 706, 192, 719, 115, 719, 115, 729, 94, 729, 94, 719, 18, 719"   target="_top"  title="An application system flow environment presents globally the flows exchanged between this application system and other application systems, applications, micro-services or org-units.">
+  
+  <area  href="7a0afca35dde94f5.htm" shape="rect" coords="14, 661, 197, 748"   target="_top"  title="A&#160; Scenario of Application System Environment presents the flow exchanged between the IT services or the micro-services used by this application. A scenario can represent a specific use case of this application or, globally, the set of all flows exchanged inside this application.">
+  
+  <area  href=25c1a3fc61e201e4.htm#OBMK25C1A3FC61E201E4 shape="polygon" coords="1030, 933, 1061, 933, 1061, 946, 1021, 946, 1021, 960, 956, 960, 956, 946, 917, 946, 917, 933, 1030, 933"   target="_top"  title="-">
+  
+  <area  href=48d4f0f163b6a249.htm shape="polygon" coords="1076, 933, 892, 933, 892, 922, 1076, 922"   target="_top"  title="-">
+  
+  <area  href=#OBMK2DCEA8705FC4828D shape="polygon" coords="319, 218, 345, 218, 345, 229, 319, 229"    title="-">
+  
+  <area  href=2dcea8705fc4827c.htm shape="polygon" coords="267, 218, 345, 218, 345, 229, 267, 229"   target="_top"  title="An&#160; End User is a Human Resource who actually uses a particular Software System.">
+  
+  <area  href=#OBMK2DCEA8735FC482E8 shape="polygon" coords="267, 218, 293, 218, 293, 229, 267, 229"    title="-">
+  
+  <area  href=#OBMKD6CD266F5AB988AF shape="polygon" coords="143, 235, 143, 229, 153, 229, 153, 235"    title="-">
+  
+  <area  href=#OBMKAE2430E26039035D shape="polygon" coords="928, 351, 928, 330, 938, 330, 938, 351"    title="-">
+  
+  <area  href=77318c6c62167dd7.htm#OBMK77318C6C62167DD7 shape="polygon" coords="905, 365, 905, 354, 980, 354, 980, 365, 905, 365"   target="_top"  title="A&#160; MetaData Asset is a Physical Data Asset used for the physical description of data consumed and produced by Software Systems.">
+  
+  <area  href=028f03ff5b4f55ee.htm#OBMK028F03FF5B4F55EE shape="polygon" coords="894, 376, 894, 365, 991, 365, 991, 376, 894, 376"   target="_top"  title="A&#160; Physical Data Domain is subset of the metadata of an enterprise&rsquo;s data store.">
+  
+  <area  href=ae8fbc9e5f7d7648.htm#OBMKAE8FBC9E5F7D7648 shape="polygon" coords="896, 408, 896, 395, 988, 395, 988, 408, 896, 408"   target="_top"  title="-">
+  
+  <area  href="254e4d265f7f857a.htm" shape="rect" coords="865, 352, 1019, 411"   target="_top"  title="-">
+  
+  <area  href=#OBMKC450D8C761DE6C1E shape="polygon" coords="755, 855, 755, 829, 766, 829, 766, 855"    title="-">
+  
+  <area  href=c450d8c761de6c03.htm shape="polygon" coords="755, 905, 755, 829, 766, 829, 766, 905"   target="_top"  title="-">
+  
+  <area  href=#OBMKC450D8C961DE6C78 shape="polygon" coords="755, 905, 755, 880, 766, 880, 766, 905"    title="-">
+  
+  <area  href=#OBMKC450D88061DE6B19 shape="polygon" coords="837, 855, 837, 829, 847, 829, 847, 855"    title="-">
+  
+  <area  href=c450d88061de6afe.htm shape="polygon" coords="837, 905, 837, 829, 847, 829, 847, 905"   target="_top"  title="-">
+  
+  <area  href=#OBMKC450D88261DE6B73 shape="polygon" coords="837, 905, 837, 880, 847, 880, 847, 905"    title="-">
+  
+  <area  href=25c0a25061e2fd5a.htm#OBMK25C0A25061E2FD5A shape="polygon" coords="738, 918, 738, 907, 867, 907, 867, 918, 738, 918"   target="_top"  title="A&#160; Software System Environment is an operating context in which a Software System defines its interactions with its partners (Partner System) in the form of API connections ( Software Interaction Channel).">
+  
+  <area  href=d86edd0b58520c1d.htm#OBMKD86EDD0B58520C1D shape="polygon" coords="752, 950, 752, 937, 853, 937, 853, 950, 752, 950"   target="_top"  title="An application environment allows presenting the other application systems, applications or micro-services with which this application can interact.">
+  
+  <area  href="c450d47c61de5dbc.htm" shape="rect" coords="713, 905, 894, 969"   target="_top"  title="An&#160; Application Environment is an operating context in which an Application defines its interactions with its partners (Partner Application) in the form of&#160; API connections ( Software Interaction Channel).">
+  
+  <area  href=f82b9ded6042fc4b.htm shape="polygon" coords="367, 523, 367, 460, 378, 460, 378, 523"   target="_top"  title="-">
+  
+  <area  href=#OBMK6246173761BA2EEF shape="polygon" coords="946, 710, 871, 710, 871, 699, 946, 699"    title="-">
+  
+  <area  href=6246173661ba2ed4.htm shape="polygon" coords="1097, 710, 871, 710, 871, 699, 1097, 699"   target="_top"  title="-">
+  
+  <area  href=#OBMK6246173961BA2F4A shape="polygon" coords="1097, 710, 1021, 710, 1021, 699, 1097, 699"    title="-">
+  
+  <area  href=25c09cb461e2efd3.htm#OBMK25C09CB461E2EFD3 shape="polygon" coords="1126, 692, 1126, 681, 1240, 681, 1240, 692, 1126, 692"   target="_top"  title="A&#160; Software System Scenario is a story involving the components of a Software System, interacting in order to produce Information Outcomes.">
+  
+  <area  href=690b6ead58b93f89.htm#OBMK690B6EAD58B93F89 shape="polygon" coords="1122, 724, 1122, 710, 1243, 710, 1243, 724, 1122, 724"   target="_top"  title="A scenario of application flows presents the flow exchanged between the IT services or the micro-services used by this application. A scenario can represent a specific use case of this application or, globally, the set of all flows exchanged inside this application.">
+  
+  <area  href="6246167661ba2d05.htm" shape="rect" coords="1097, 678, 1269, 733"   target="_top"  title="An&#160; Application Scenario is a story involving the components of an Application (IT Service or MicroService), interacting in order to produce Information Outcomes.">
+  
+  <area  href=#OBMK45DE6D1F618EFB9A shape="polygon" coords="787, 746, 787, 733, 797, 733, 798, 745"    title="-">
+  
+  <area  href=45de6d1e618efb7f.htm shape="polygon" coords="787, 770, 787, 733, 797, 733, 798, 770"   target="_top"  title="The embbding of MicroService a into an Application.">
+  
+  <area  href=#OBMK45DE6D20618EFBF4 shape="polygon" coords="787, 770, 787, 758, 798, 758, 798, 770"    title="-">
+  
+  <area  href=d6cd02865ab966e8.htm#OBMKD6CD02865AB966E8 shape="polygon" coords="338, 420, 338, 409, 415, 409, 415, 420, 338, 420"   target="_top"  title="A&#160; Software System is a Business System used by Business Operations, that represents all granularities of software - ranging from MicroServices to enterprise wide Application Systems - used by Business Operations.">
+  
+  <area  href="2558338d5c6d1d1b.htm" shape="rect" coords="313, 407, 440, 460"   target="_top"  title="A&#160; Logical Software System is logical specification of a Software System, which is independant from the Software System physical implementation.">
+  
+  <area  href=#OBMK173F4AD25EB8C201 shape="polygon" coords="220, 586, 220, 593, 363, 593, 363, 603, 209, 603, 209, 586"    title="-">
+  
+  <area  href=173f4ad15eb8c1f5.htm shape="polygon" coords="220, 265, 220, 593, 363, 593, 363, 603, 209, 603, 209, 265"   target="_top"  title="-">
+  
+  <area  href=#OBMK173F4AD35EB8C233 shape="polygon" coords="220, 265, 220, 426, 209, 426, 209, 265"    title="-">
+  
+  <area  href=#OBMK173F4A805EB8C15A shape="polygon" coords="181, 645, 181, 642, 363, 642, 363, 653, 170, 653, 170, 645"    title="-">
+  
+  <area  href=173f4a805eb8c14e.htm shape="polygon" coords="181, 265, 181, 642, 363, 642, 363, 653, 170, 653, 170, 265"   target="_top"  title="-">
+  
+  <area  href=#OBMK173F4A815EB8C18C shape="polygon" coords="181, 265, 181, 455, 170, 455, 170, 265"    title="-">
+  
+  <area  href=#OBMK1E6D589A61792263 shape="polygon" coords="219, 131, 187, 131, 187, 145, 104, 145, 104, 131, 219, 131"    title="-">
+  
+  <area  href=#OBMK82AF91565EE335EC shape="polygon" coords="149, 103, 149, 204, 138, 204, 138, 103"    title="-">
+  
+  <area  href=d342d91a5b121454.htm#OBMKD342D91A5B121454 shape="polygon" coords="81, 47, 81, 37, 191, 37, 191, 47, 81, 47"   target="_top"  title="An&#160; Architecture Namespace is a Model Namespace&#160; that packages Architecture Blocks used to describe the architecture of the enterprise.">
+  
+  <area  href=d321c226601262ae.htm#OBMKD321C226601262AE shape="polygon" coords="96, 58, 96, 47, 175, 47, 175, 58, 96, 58"   target="_top"  title="An&#160; Enduring Initiative is a long term Initiative which involves roadmapping and governance. Enterprises and their Management Systems are typical&#160; Enduring Initiatives.">
+  
+  <area  href=50666200529c2b9a.htm#OBMK50666200529C2B9A shape="polygon" coords="110, 85, 110, 71, 161, 71, 161, 85, 110, 85"   target="_top"  title="An Enterprise is a purposeful undertaking, conducted by one or more organizations, aiming at delivering goods and services, in accordance with the enterprise mission in its changing environment.">
+  
+  <area  href="b181b82a54891668.htm" shape="rect" coords="44, 34, 228, 103"   target="_top"  title="An&#160; Enterprise is an Enduring Initiative that delivers added-value Products (goods &amp; services) to its target Customers.">
+  
+  <area  href=#OBMKC334DC6B5ECB6EF1 shape="polygon" coords="1026, 785, 864, 785, 864, 774, 1026, 774"    title="-">
+  
+  <area  href=c334dc6b5ecb6eec.htm shape="polygon" coords="1228, 897, 1228, 785, 864, 785, 864, 774, 1238, 774, 1238, 897"   target="_top"  title="An application partner in an application environment represents the appearance of an application in the environment of another application.">
+  
+  <area  href=#OBMKC334DC6B5ECB6F21 shape="polygon" coords="1228, 897, 1228, 785, 1188, 785, 1188, 774, 1238, 774, 1238, 897"    title="-">
+  
+  <area  href=#OBMKC334DC6E5ECB6F65 shape="polygon" coords="982, 823, 866, 823, 866, 812, 982, 812"    title="-">
+  
+  <area  href=c334dc6e5ecb6f61.htm shape="polygon" coords="1129, 897, 1129, 823, 866, 823, 866, 812, 1140, 812, 1140, 897"   target="_top"  title="An application flow environment subject represents the application whose environment is illustrated by the application flow environment.">
+  
+  <area  href=#OBMKC334DC6F5ECB6F9F shape="polygon" coords="1129, 897, 1129, 823, 1098, 823, 1098, 812, 1140, 812, 1140, 897"    title="-">
+  
+  <area  href=#OBMKE4C0E7985ED064D8 shape="polygon" coords="467, 836, 467, 803, 478, 803, 478, 836"    title="-">
+  
+  <area  href=e4c0e7985ed064d2.htm shape="polygon" coords="467, 902, 467, 803, 478, 803, 478, 902"   target="_top"  title="-">
+  
+  <area  href=#OBMKE4C0E7985ED064FF shape="polygon" coords="467, 902, 467, 869, 478, 869, 478, 902"    title="-">
+  
+  <area  href=#OBMKE4C0E8515ED06793 shape="polygon" coords="397, 836, 397, 803, 408, 803, 408, 836"    title="-">
+  
+  <area  href=e4c0e8515ed0678e.htm shape="polygon" coords="397, 902, 397, 803, 408, 803, 408, 902"   target="_top"  title="-">
+  
+  <area  href=#OBMKE4C0E8515ED067C5 shape="polygon" coords="397, 902, 397, 869, 408, 869, 408, 902"    title="-">
+  
+  <area  href=#OBMK8109F9BE5EB8BD6A shape="polygon" coords="912, 645, 868, 645, 868, 634, 912, 634"    title="-">
+  
+  <area  href=8109f9be5eb8bd66.htm shape="polygon" coords="906, 609, 945, 609, 945, 645, 868, 645, 868, 634, 934, 634, 934, 619, 906, 619"   target="_top"  title="Embbeding of an IT Service in an Application or in another IT Service.">
+  
+  <area  href=#OBMK8109F9BE5EB8BD91 shape="polygon" coords="906, 609, 945, 609, 945, 624, 934, 624, 934, 619, 906, 619"    title="-">
+  
+  <area  href=#OBMK7B877C395EB813D4 shape="polygon" coords="644, 787, 715, 787, 715, 797, 644, 797"    title="-">
+  
+  <area  href=7b877c395eb813cf.htm shape="polygon" coords="502, 787, 715, 787, 715, 797, 502, 797"   target="_top"  title="Role of an application in a composition relationship that links it to a parent application or a parent application architecture. ">
+  
+  <area  href=#OBMK7B877C395EB8140D shape="polygon" coords="502, 787, 573, 787, 573, 797, 502, 797"    title="-">
+  
+  <area  href=#OBMK8109FC685EB8C568 shape="polygon" coords="644, 705, 714, 705, 714, 715, 644, 715"    title="-">
+  
+  <area  href=8109fc685eb8c563.htm shape="polygon" coords="505, 705, 714, 705, 714, 715, 505, 715"   target="_top"  title="A micro-service component represents the use of a micro-service in the structure of another software component (application, IT Service, micro-service) or in the environment of an application.">
+  
+  <area  href=#OBMK8109FC695EB8C592 shape="polygon" coords="505, 705, 575, 705, 575, 715, 505, 715"    title="-">
+  
+  <area  href=#OBMK02FE03B05EB953A0 shape="polygon" coords="455, 546, 481, 546, 481, 572, 470, 572, 470, 557, 455, 557"    title="-">
+  
+  <area  href=02fe03b05eb9539c.htm shape="polygon" coords="387, 572, 387, 546, 481, 546, 481, 572, 470, 572, 470, 557, 398, 557, 398, 572"   target="_top"  title="Role of an application system in a composition relationship that links it to a parent application system. ">
+  
+  <area  href=#OBMK02FE03B05EB953C6 shape="polygon" coords="387, 572, 387, 546, 413, 546, 413, 557, 398, 557, 398, 572"    title="-">
+  
+  <area  href=25c09cb461e2efd3.htm#OBMK25C09CB461E2EFD3 shape="polygon" coords="385, 916, 385, 905, 499, 905, 499, 916, 385, 916"   target="_top"  title="A&#160; Software System Scenario is a story involving the components of a Software System, interacting in order to produce Information Outcomes.">
+  
+  <area  href=0b981b6358cc7879.htm#OBMK0B981B6358CC7879 shape="polygon" coords="358, 948, 358, 934, 526, 934, 526, 948, 358, 948"   target="_top"  title="Scenario of Application Environment Flows presents globally the flows exchanged between this application and other application systems, applications or micro-services.">
+  
+  <area  href="e4c0e7285ed0625d.htm" shape="rect" coords="337, 902, 547, 965"   target="_top"  title="An&#160; Application System Scenario is a story involving the components of an Application System (Applications), interacting in order to produce Information Outcomes.">
+  
+  <area  href=25c0a10061e2fc12.htm#OBMK25C0A10061E2FC12 shape="polygon" coords="1105, 911, 1105, 900, 1271, 900, 1271, 911, 1105, 911"   target="_top"  title="A&#160; Software System Environment Scenario is a story involving the partners of a Software System (Partner System), interacting in order to produce Information Outcomes in a specific Eco-System (Software System Environment).">
+  
+  <area  href=49b74d9859132705.htm#OBMK49B74D9859132705 shape="polygon" coords="1089, 943, 1089, 929, 1286, 929, 1286, 943, 1089, 943"   target="_top"  title="An application system flow environment presents globally the flows exchanged between this application system and other application systems, applications, micro-services or org-units.">
+  
+  <area  href="7a0a96b05ddfb9f5.htm" shape="rect" coords="1076, 897, 1300, 959"   target="_top"  title="An&#160; Application Environment Scenario is a story involving the partners of an Application (Partner Application) interacting in order to achieve Information Outcomes in a specific Eco-System (Application Environment).">
+  
+  <area  href=d5e6eac35c4665f3.htm shape="polygon" coords="906, 595, 1095, 595, 1095, 606, 906, 606"   target="_top"  title="Set of Software Technology(ies) on which a Software Module is based.">
+  
+  <area  href=0463ea9a63fd8b6c.htm#OBMK0463EA9A63FD8B6C shape="polygon" coords="1118, 581, 1118, 570, 1243, 570, 1243, 581, 1118, 581"   target="_top"  title="A&#160; Software Technology System is a Technology System that provides Software Technology Capabilitys to other Software Systems by delivering Software Technology Outcome.">
+  
+  <area  href=2885299152a85717.htm#OBMK2885299152A85717 shape="polygon" coords="1135, 613, 1135, 600, 1226, 600, 1226, 613, 1135, 613"   target="_top"  title="A software technology is a basic component necessary for operation of business applications.">
+  
+  <area  href="d5e6ddd05c46547c.htm" shape="rect" coords="1095, 568, 1268, 623"   target="_top"  title="A&#160; Software Technology is an elementary Software Technology System&#160; used as an enabler by Software Modules.">
+  
+  <area  href=#OBMK076D154B5A5E15B0 shape="polygon" coords="413, 272, 413, 228, 413, 218, 423, 218, 423, 255, 423, 272"    title="-">
+  
+  <area  href=076d15425a5e158c.htm#OBMK076D15425A5E158C shape="polygon" coords="379, 286, 379, 275, 457, 275, 457, 286, 379, 286"   target="_top"  title="A&#160; Human Resource is a Resource Agent&#160; used to describe both the Organizational Positions of people who work for an organization and the type of department (Org-Unit) responsible for running business operations.">
+  
+  <area  href=fb5f6ff8587e40e3.htm#OBMKFB5F6FF8587E40E3 shape="polygon" coords="386, 318, 386, 305, 450, 305, 450, 318, 386, 318"   target="_top"  title="Type of status assigned to an individual of group of individuals which defines a job&#160; in an organization or hierarchy.">
+  
+  <area  href="076d151c5a5e1561.htm" shape="rect" coords="357, 273, 480, 324"   target="_top"  title="An&#160; Organizational Position is a type of position held by people when part of an Org-Unit. ">
+  
+  <area  href=#OBMK076D15EB5A5E173F shape="polygon" coords="423, 228, 423, 228, 423, 253, 413, 253, 413, 242, 413, 228"    title="-">
+  
+  <area  href=076d15425a5e158c.htm#OBMK076D15425A5E158C shape="polygon" coords="379, 220, 379, 209, 457, 209, 457, 220, 379, 220"   target="_top"  title="A&#160; Human Resource is a Resource Agent&#160; used to describe both the Organizational Positions of people who work for an organization and the type of department (Org-Unit) responsible for running business operations.">
+  
+  <area  href=b1edb2562c140173.htm#OBMKB1EDB2562C140173 shape="polygon" coords="396, 252, 396, 238, 440, 238, 440, 252, 396, 252"   target="_top"  title="An org-unit represents a person or a group of persons that intervenes in the enterprise business processes or information system. An org-unit can be internal or external to the enterprise.">
+  
+  <area  href="7c408aa155270eea.htm" shape="rect" coords="357, 206, 480, 254"   target="_top"  title="An&#160; Org-Unit is a type of administrative unit in government or business that is a template of Organization .">
+  
+  <area  href=bcebd31f5491302c.htm#OBMKBCEBD31F5491302C shape="polygon" coords="381, 170, 381, 159, 454, 159, 454, 170, 381, 170"   target="_top"  title="A&#160; Resource Agent is a Business Operating Agent which represents physical resources that produce Business Outcomes of the enterprise.">
+  
+  <area  href=f3b7f5bc58806f49.htm#OBMKF3B7F5BC58806F49 shape="polygon" coords="360, 196, 360, 183, 476, 183, 476, 196, 360, 196"   target="_top"  title="-">
+  
+  <area  href="076d15425a5e158c.htm" shape="rect" coords="345, 158, 491, 349"   target="_top"  title="A&#160; Human Resource is a Resource Agent&#160; used to describe both the Organizational Positions of people who work for an organization and the type of department (Org-Unit) responsible for running business operations.">
+  
+  <area  href=25c0a25061e2fd5a.htm#OBMK25C0A25061E2FD5A shape="polygon" coords="81, 218, 81, 207, 210, 207, 210, 218, 81, 218"   target="_top"  title="A&#160; Software System Environment is an operating context in which a Software System defines its interactions with its partners (Partner System) in the form of API connections ( Software Interaction Channel).">
+  
+  <area  href=66dc758456f18de7.htm#OBMK66DC758456F18DE7 shape="polygon" coords="80, 250, 80, 237, 210, 237, 210, 250, 80, 250"   target="_top"  title="An application system environment allows presenting the other application systems, applications or micro-services with which this application system can interact.">
+  
+  <area  href="d6cd260b5ab9886c.htm" shape="rect" coords="42, 205, 248, 266"   target="_top"  title="An&#160; Application System Environment is an operating context in which an Application System defines its interactions with its partners (Partner System) in the form of API connections ( Software Interaction Channel).">
+  
+  <area  href=#OBMKC30BDCE95A5D9F65 shape="polygon" coords="817, 698, 817, 706, 792, 706, 792, 695, 806, 695, 806, 698"    title="-">
+  
+  <area  href=#OBMKC30BDCE05A5D9F53 shape="polygon" coords="788, 800, 787, 793, 787, 782, 797, 782, 797, 792, 798, 799"    title="-">
+  
+  <area  href=c30bdac25a5d9eaf.htm#OBMKC30BDAC25A5D9EAF shape="polygon" coords="754, 784, 754, 773, 831, 773, 831, 784, 754, 784"   target="_top"  title="A&#160; Software Module is a Software System that is part of an application system. ">
+  
+  <area  href=b1edb2562c14016f.htm#OBMKB1EDB2562C14016F shape="polygon" coords="765, 816, 765, 802, 820, 802, 820, 816, 765, 816"   target="_top"  title="An application is a software component that can be deployed and provides users with a set of functionalities.">
+  
+  <area  href="bcebd8e9549144db.htm" shape="rect" coords="714, 771, 872, 830"   target="_top"  title="An Application is a Software System that provides a set of Functionality(ies) that End Users see as a single unit.">
+  
+  <area  href=4c7883cd5fca4d5b.htm#OBMK4C7883CD5FCA4D5B shape="polygon" coords="747, 689, 747, 678, 837, 678, 837, 689, 747, 689"   target="_top"  title="A&#160; Deployable Package is a split of Application code and data according to deployment and runtime purposes. ">
+  
+  <area  href=c30bdac25a5d9eaf.htm#OBMKC30BDAC25A5D9EAF shape="polygon" coords="753, 699, 753, 689, 830, 689, 830, 699, 753, 699"   target="_top"  title="A&#160; Software Module is a Software System that is part of an application system. ">
+  
+  <area  href=b4bab68b596f05a2.htm#OBMKB4BAB68B596F05A2 shape="polygon" coords="760, 731, 760, 718, 824, 718, 824, 731, 760, 731"   target="_top"  title="Software component that can be deployed autonomously and weakly coupled with the rest of the IS.">
+  
+  <area  href="d6a956495a395d28.htm" shape="rect" coords="713, 675, 871, 733"   target="_top"  title="A&#160; MicroService is a small autonomous unit of software, emphasizing self-management and lightweightness as the means to improve software agility, scalability, and autonomy.">
+  
+  <area  href=c30bdac25a5d9eaf.htm#OBMKC30BDAC25A5D9EAF shape="polygon" coords="752, 621, 752, 610, 829, 610, 829, 621, 752, 621"   target="_top"  title="A&#160; Software Module is a Software System that is part of an application system. ">
+  
+  <area  href=b1edb25d2c1401af.htm#OBMKB1EDB25D2C1401AF shape="polygon" coords="765, 653, 765, 640, 816, 640, 816, 653, 765, 653"   target="_top"  title="An IT service is a software component of an application, that can&rsquo;t be deployed alone and that realizes a sub-set of the functionalities of this application either for end users of this application or inside the application (or another application). This includes batch programs.">
+  
+  <area  href="46194ce9560d3ab8.htm" shape="rect" coords="713, 608, 870, 661"   target="_top"  title="An&#160; IT Service is a functionnal unit of software (java class, COBOL Program, Batch) that is&#160; a consistent, indivisible unit of processing of an Application delivering its Information Outcomes though APIs (Application Interface).">
+  
+  <area  href=d6cd02865ab966e8.htm#OBMKD6CD02865AB966E8 shape="polygon" coords="396, 586, 396, 575, 473, 575, 473, 586, 396, 586"   target="_top"  title="A&#160; Software System is a Business System used by Business Operations, that represents all granularities of software - ranging from MicroServices to enterprise wide Application Systems - used by Business Operations.">
+  
+  <area  href=1c5d2aca4f8d3e09.htm#OBMK1C5D2ACA4F8D3E09 shape="polygon" coords="393, 615, 393, 601, 476, 601, 476, 615, 393, 615"   target="_top"  title="An application system is an assembly of other application systems, applications and end users, in order to realize one or more functionalities. ">
+  
+  <area  href="46194ca7560d3a45.htm" shape="rect" coords="363, 572, 505, 803"   target="_top"  title="An&#160; Application System is Software System which is an assembly of multiple Applications or other&#160; Application Systems that, together, fulfill a set of Macro Functionality(ies) delivered to Business Operations.">
+  
+  <area  href=d6cd02865ab966e8.htm#OBMKD6CD02865AB966E8 shape="polygon" coords="754, 575, 754, 564, 831, 564, 831, 575, 754, 575"   target="_top"  title="A&#160; Software System is a Business System used by Business Operations, that represents all granularities of software - ranging from MicroServices to enterprise wide Application Systems - used by Business Operations.">
+  
+  <area  href=066709bf4ec52b65.htm#OBMK066709BF4EC52B65 shape="polygon" coords="737, 601, 737, 588, 847, 588, 847, 601, 737, 601"   target="_top"  title="Common abstraction for IT Service and IT Service architecture ">
+  
+  <area  href="c30bdac25a5d9eaf.htm" shape="rect" coords="678, 562, 906, 839"   target="_top"  title="A&#160; Software Module is a Software System that is part of an application system. ">
+  
+  <area  href=bc5bd98b61fbc4bc.htm#OBMKBC5BD98B61FBC4BC shape="polygon" coords="756, 121, 781, 121, 781, 135, 608, 135, 608, 121, 756, 121"   target="_top"  title="-">
+  
+  <area  href=d670c7a55ffeac74.htm shape="polygon" coords="507, 523, 507, 112, 831, 112, 831, 123, 518, 123, 518, 523"   target="_top"  title="Functionality delivered by a&#160; Business System Asset (Business System or System Process)">
+  
+  <area  href=#OBMK7B8780615EB81B87 shape="polygon" coords="684, 325, 833, 325, 833, 335, 684, 335"    title="-">
+  
+  <area  href=7b8780615eb81b83.htm shape="polygon" coords="571, 523, 571, 325, 833, 325, 833, 335, 582, 335, 582, 523"   target="_top"  title="-">
+  
+  <area  href=#OBMK7B8780615EB81BA8 shape="polygon" coords="571, 523, 571, 373, 582, 373, 582, 523"    title="-">
+  
+  <area  href=#OBMKB4EBC8825FFDDDD3 shape="polygon" coords="631, 183, 839, 183, 839, 194, 631, 194"    title="-">
+  
+  <area  href=B4EBC8825FFDDDBF.htm shape="polygon" coords="544, 523, 544, 183, 839, 183, 839, 194, 555, 194, 555, 523"   target="_top"  title="An application process performance establishes the relationship between an application and the some dynamic behaviors described as BPMN processes. ">
+  
+  <area  href=#OBMKB4EBC8835FFDDE13 shape="polygon" coords="544, 523, 544, 315, 555, 315, 555, 523"    title="-">
+  
+  <area  href=#OBMK9DCE9FB45EC763B9 shape="polygon" coords="810, 491, 810, 478, 883, 478, 883, 491, 810, 491"    title="-">
+  
+  <area  href=#OBMK9DCEA0CF5EC765EE shape="polygon" coords="839, 523, 839, 449, 794, 449, 794, 439, 850, 439, 850, 523"    title="-">
+  
+  <area  href=#OBMK9DCEA0095EC76406 shape="polygon" coords="593, 496, 593, 483, 656, 483, 656, 496, 593, 496"    title="-">
+  
+  <area  href=#OBMK9DCEA0B85EC765B8 shape="polygon" coords="622, 523, 622, 438, 664, 438, 664, 449, 633, 449, 633, 523"    title="-">
+  
+  <area  href=#OBMK0C9B0E3E5EBD8653 shape="polygon" coords="1128, 179, 1185, 178, 1185, 189, 1128, 189"    title="-">
+  
+  <area  href=0c9b0e3e5ebd864f.htm shape="polygon" coords="1016, 179, 1185, 178, 1185, 189, 1016, 189"   target="_top"  title="-">
+  
+  <area  href=#OBMK0C9B0E3E5EBD866F shape="polygon" coords="1016, 179, 1072, 179, 1072, 189, 1016, 189"    title="-">
+  
+  <area  href=6dc39a5661c08c55.htm#OBMK6DC39A5661C08C55 shape="polygon" coords="1211, 165, 1211, 154, 1277, 154, 1277, 165, 1211, 165"   target="_top"  title="A&#160; Resource Rule is an Business Operating Rule that is enforced by Resource Operating Assets of the Enterprise.">
+  
+  <area  href=9897a9a858b62d83.htm#OBMK9897A9A858B62D83 shape="polygon" coords="1214, 197, 1214, 184, 1273, 184, 1273, 197, 1214, 197"   target="_top"  title="-">
+  
+  <area  href="83bb9d2e5b378a5d.htm" shape="rect" coords="1186, 152, 1303, 217"   target="_top"  title="A&#160; System Rule is a kind of Resource Rule that governs the structure and behavior of Business System Assets.">
+  
+  <area  href=ee0cee7f3919000d.htm#OBMKEE0CEE7F3919000D shape="polygon" coords="684, 463, 684, 449, 775, 449, 775, 463, 684, 463"   target="_top"  title="A exchange contract is a template of a contract between organizational entities.">
+  
+  <area  href=9dcea2655ec768ee.htm#OBMK9DCEA2655EC768EE shape="polygon" coords="672, 436, 672, 425, 787, 425, 787, 436, 672, 436"   target="_top"  title="A&#160; Business Service Interface is a communication behavior that describes a typical course of interactions intended to produce Business Outcomes, through the involvement of Business Operating Agents.">
+  
+  <area  href="9dce9f8d5ec76311.htm" shape="rect" coords="664, 390, 794, 498"   target="_top"  title="An&#160; Application Interface is a Business Service Interface that occurs between Software Systems.">
+  
+  <area  href=eb39f82b55301079.htm#OBMKEB39F82B55301079 shape="polygon" coords="903, 336, 903, 322, 983, 322, 983, 336, 903, 336"   target="_top"  title="A relational data area represents a set of data stored in a relational database management system and used in the technical architecture of an application.">
+  
+  <area  href="362f3c7e5b3b22f8.htm" shape="rect" coords="865, 301, 1021, 336"   target="_top"  title="A&#160; Relational Schema is a set of relational Table , keys, indexes and associated items that represent the structure of a relational database. A relational database can have multiple schemas.">
+  
+  <area  href=#OBMK028F04325B4F56B8 shape="polygon" coords="948, 320, 948, 321, 945, 331, 935, 329, 937, 318, 938, 317"    title="-">
+  
+  <area  href=325C32165EB02A4A.htm#OBMK325C32165EB02A4A shape="polygon" coords="910, 253, 910, 242, 971, 242, 971, 253, 910, 253"   target="_top"  title="A&#160; Data Domain is subset of the enterprise&rsquo;s data that are meant to be manipulated together in the context of business operations.">
+  
+  <area  href=75ef4ea8620fb39f.htm#OBMK75EF4EA8620FB39F shape="polygon" coords="895, 264, 895, 253, 985, 253, 985, 264, 895, 264"   target="_top"  title="A&#160; Physical Data Asset is a Data Asset used for the physical description of data consumed and produced by Software Systems.">
+  
+  <area  href=246c375a55313a68.htm#OBMK246C375A55313A68 shape="polygon" coords="900, 290, 900, 277, 980, 277, 980, 290, 900, 290"   target="_top"  title="-">
+  
+  <area  href="028f03ff5b4f55ee.htm" shape="rect" coords="833, 240, 1047, 420"   target="_top"  title="A&#160; Physical Data Domain is subset of the metadata of an enterprise&rsquo;s data store.">
+  
+  <area  href=aea4936060645978.htm#OBMKAEA4936060645978 shape="polygon" coords="858, 106, 858, 95, 986, 95, 986, 106, 858, 106"   target="_top"  title="A&#160; Business Operating Capability is a Capability that benefits to Customers (internal or external) of the enterprise. It expresses an ability to deliver Business Outcomes.This includes Business Capability, Functionality, Hardware Capability and Skill.">
+  
+  <area  href=e939e9cf2c140236.htm#OBMKE939E9CF2C140236 shape="polygon" coords="892, 138, 892, 125, 952, 125, 952, 138, 892, 138"   target="_top"  title="A functionality is a service required by an org-unit in order to perform its work. This functionality is generally necessary within an activity in order to execute a specific operation. If it is a software functionality, it can be provided by an application.">
+  
+  <area  href="598272e954c622f4.htm" shape="rect" coords="832, 93, 1013, 142"   target="_top"  title="A&#160; Functionality is a Business Operating Capability offered by Business Systems (software or hardware) and aimed at delivering Information Outcomes.">
+  
+  <area  href=6246927f61b81996.htm#OBMK6246927F61B81996 shape="polygon" coords="876, 173, 876, 162, 980, 162, 980, 173, 876, 173"   target="_top"  title="A&#160; Business System Asset is man made resource that is a means to achieve Business Outcomes.">
+  
+  <area  href=7c40c3c85527466b.htm#OBMK7C40C3C85527466B shape="polygon" coords="886, 183, 886, 173, 969, 173, 969, 183, 886, 183"   target="_top"  title="A&#160; Resource Process is a Business Operating Process which is conducted by Resource Agents (physical resources such as Human Resource, System of Resources ,Business Systems) and which describes how these entities act to deliver Business Outcomes.">
+  
+  <area  href=ea52ea613aac008b.htm#OBMKEA52EA613AAC008B shape="polygon" coords="891, 215, 891, 202, 964, 202, 964, 215, 891, 215"   target="_top"  title="A system process is the executable representation of a process. A System Process is formally described by the workflow Events, the Tasks to be carried out during the processing, the sequence of the Tasks and the information exchanged between the participants. ">
+  
+  <area  href="46194939560d374f.htm" shape="rect" coords="840, 160, 1017, 219"   target="_top"  title="A&#160; System Process is a Process that occurs inside Business Systems (software systems or hardware systems). Its performers can only be Software Systems or Hardware Systems.">
+  
+  <area  href=278675d65b252f4d.htm#OBMK278675D65B252F4D shape="polygon" coords="611, 536, 611, 525, 689, 525, 689, 536, 611, 536"   target="_top"  title="A&#160; Business System is a man made artifact (Hardware System or Software System) which exposes Functionalityies and can produce Business Outcomes.">
+  
+  <area  href=fd7f9e474e76235c.htm#OBMKFD7F9E474E76235C shape="polygon" coords="613, 562, 613, 549, 686, 549, 686, 562, 613, 562"   target="_top"  title="Common abstraction for all software agent types. ">
+  
+  <area  href="d6cd02865ab966e8.htm" shape="rect" coords="284, 524, 1015, 855"   target="_top"  title="A&#160; Software System is a Business System used by Business Operations, that represents all granularities of software - ranging from MicroServices to enterprise wide Application Systems - used by Business Operations.">
+  
+  <area  href=c450d4c261de5f07.htm#OBMKC450D4C261DE5F07 shape="polygon" coords="83, 177, 83, 166, 213, 166, 213, 177, 83, 177"   target="_top"  title="A&#160; Business System Environment is an operating context in which a Business System defines its interactions ( Business Service Channel) with its partners (Partner System), to produce and deliver its Business Outcomes.">
+  
+  <area  href="25c0a25061e2fd5a.htm" shape="rect" coords="29, 165, 267, 294"   target="_top"  title="A&#160; Software System Environment is an operating context in which a Software System defines its interactions with its partners (Partner System) in the form of API connections ( Software Interaction Channel).">
+  
+  <area  href="d5e6d6b05c4648d8.htm" shape="rect" coords="0, 0, 1310, 998"   target="_top"  title="The&#160; Application Functional Architecture domain is used to describe the functional structure and behavior of Software Systems.">
+  
+</map>
+<img  src="../images/d5e6d6b05c4648d8_d6a9552c5a395c37_i.png" alt="../images/d5e6d6b05c4648d8_d6a9552c5a395c37_i.png" usemap="#D6A9552C5A395C37" height="998" width="1310" border=0>
+
+</div>
+<div class="Relationship" id="Relationship2">
+<div id="klmm" style="width: 100vw; height: 100vh;" ></div>
+<!-- <script src="../standard/assets/js/keylines_domain.js"></script> -->
+<script >
+const data = {
+ type: 'LinkChart',
+  items: [
+  //nodes
+    {type: 'node', id:'D5E6D6B05C4648D8', t:"Application Functional Architecture", sh:'box', d:"The Application Functional Architecture domain is used to describe the functional structure and behavior of Software Systems."},
+    {type: 'node', id:'7A0AFCA35DDE94F5', t:"Scenario of Application System Environment", parentId:'25C0A10061E2FC12', sh:'circle', d:"A Scenario of Application System Environment presents the flow exchanged between the IT services or the micro-services used by this application. A scenario can represent a specific use case of this application or, globally, the set of all flows exchanged inside this application."},
+    {type: 'node', id:'7A0A96B05DDFB9F5', t:"Application Environment Scenario", parentId:'25C0A10061E2FC12', sh:'circle', d:"An Application Environment Scenario is a story involving the partners of an Application (Partner Application) interacting in order to achieve Information Outcomes in a specific Eco-System (Application Environment)."},
+    {type: 'node', id:'C30BDAC25A5D9EAF', t:"Software Module", parentId:'D6CD02865AB966E8', sh:'circle', d:"A Software Module is a Software System that is part of an application system. "},
+    {type: 'node', id:'C2DBE1DB5B026B30', t:"Software Technology ArcDevOps", sh:'box', d:"The Software Technology ArcDevOps domain describes a set of concepts used in practices that combines Software Technology System development (Dev) and Software Technology System operations (Ops). "},
+    {type: 'node', id:'D5E6DDD05C46547C', t:"Software Technology", parentId:'C2DBE1DB5B026B30', sh:'circle', d:"A Software Technology is an elementary Software Technology System  used as an enabler by Software Modules."},
+    {type: 'node', id:'46194CA7560D3A45', t:"Application System", parentId:'D6CD02865AB966E8', sh:'circle', d:"An Application System is Software System which is an assembly of multiple Applications or other Application Systems that, together, fulfill a set of Macro Functionality(ies) delivered to Business Operations."},
+    {type: 'node', id:'1CE356355C48C0E2', t:"People & Accountability", sh:'box', d:"The People & Accountability domain defines the roles that organizational members perform, so that everyone understands their responsibilities to the group."},
+    {type: 'node', id:'076D15425A5E158C', t:"Human Resource", parentId:'1CE356355C48C0E2', sh:'circle', d:"A Human Resource is a Resource Agent  used to describe both the Organizational Positions of people who work for an organization and the type of department (Org-Unit) responsible for running business operations."},
+    {type: 'node', id:'46194CE9560D3AB8', t:"IT Service", parentId:'C30BDAC25A5D9EAF', sh:'circle', d:"An IT Service is a functionnal unit of software (java class, COBOL Program, Batch) that is  a consistent, indivisible unit of processing of an Application delivering its Information Outcomes though APIs (Application Interface)."},
+    {type: 'node', id:'6246167661BA2D05', t:"Application Scenario", parentId:'25C09CB461E2EFD3', sh:'circle', d:"An Application Scenario is a story involving the components of an Application (IT Service or MicroService), interacting in order to produce Information Outcomes."},
+    {type: 'node', id:'C450D47C61DE5DBC', t:"Application Environment", parentId:'25C0A25061E2FD5A', sh:'circle', d:"An Application Environment is an operating context in which an Application defines its interactions with its partners (Partner Application) in the form of  API connections (Software Interaction Channel)."},
+    {type: 'node', id:'D6A956495A395D28', t:"MicroService", parentId:'C30BDAC25A5D9EAF', sh:'circle', d:"A MicroService is a small autonomous unit of software, emphasizing self-management and lightweightness as the means to improve software agility, scalability, and autonomy."},
+    {type: 'node', id:'E4C0E7285ED0625D', t:"Application System Scenario", parentId:'25C09CB461E2EFD3', sh:'circle', d:"An Application System Scenario is a story involving the components of an Application System (Applications), interacting in order to produce Information Outcomes."},
+    {type: 'node', id:'D6CD260B5AB9886C', t:"Application System Environment", parentId:'25C0A25061E2FD5A', sh:'circle', d:"An Application System Environment is an operating context in which an Application System defines its interactions with its partners (Partner System) in the form of API connections (Software Interaction Channel)."},
+    {type: 'node', id:'BCEBD8E9549144DB', t:"Application", parentId:'C30BDAC25A5D9EAF', sh:'circle', d:"An Application is a Software System that provides a set of Functionality(ies) that End Users see as a single unit."},
+    {type: 'node', id:'4C7883CD5FCA4D5B', t:"Deployable Package", parentId:'D5E6D6B05C4648D8', sh:'circle', d:"A Deployable Package is a split of Application code and data according to deployment and runtime purposes. "},
+    {type: 'node', id:'25C0A10061E2FC12', t:"Software System Environment Scenario", parentId:'D5E6D6B05C4648D8', sh:'circle', d:"A Software System Environment Scenario is a story involving the partners of a Software System (Partner System), interacting in order to produce Information Outcomes in a specific Eco-System (Software System Environment)."},
+    {type: 'node', id:'25C0A25061E2FD5A', t:"Software System Environment", parentId:'D5E6D6B05C4648D8', sh:'circle', d:"A Software System Environment is an operating context in which a Software System defines its interactions with its partners (Partner System) in the form of API connections (Software Interaction Channel)."},
+    {type: 'node', id:'25C09CB461E2EFD3', t:"Software System Scenario", parentId:'D5E6D6B05C4648D8', sh:'circle', d:"A Software System Scenario is a story involving the components of a Software System, interacting in order to produce Information Outcomes."},
+    {type: 'node', id:'D6CD02865AB966E8', t:"Software System", parentId:'D5E6D6B05C4648D8', sh:'circle', d:"A Software System is a Business System used by Business Operations, that represents all granularities of software - ranging from MicroServices to enterprise wide Application Systems - used by Business Operations."},
+    {type: 'node', id:'325C30135EB0227E', t:"Logical Application Architecture", sh:'box', d:"The Logical Application Architecture domain provides means of describing the logical structure and behavior of Software Systems of the enterprise. "},
+    {type: 'node', id:'2558338D5C6D1D1B', t:"Logical Software System", parentId:'325C30135EB0227E', sh:'circle', d:"A Logical Software System is logical specification of a Software System, which is independant from the Software System physical implementation."},
+    {type: 'node', id:'75EF50AB620FB787', t:"EA Pattern - Physical Data Domain", sh:'box', d:"The EA Pattern - Physical Data Domain comprises abstract concepts used to describe the physical structure of Data Objects."},
+    {type: 'node', id:'028F03FF5B4F55EE', t:"Physical Data Domain", parentId:'75EF50AB620FB787', sh:'circle', d:"A Physical Data Domain is subset of the metadata of an enterprises data store."},
+  //edges
+    { type: 'link', id:'7A0AFCA35DDE94F5-48D4F27B63B6A466', id1:'7A0AFCA35DDE94F5', id2:'46194CA7560D3A45', t:"Subject Application System"},
+    { type: 'link', id:'7A0AFCA35DDE94F5-48D4F34363B6A573', id1:'7A0AFCA35DDE94F5', id2:'46194CA7560D3A45', t:"Participant Application System"},
+    { type: 'link', id:'7A0A96B05DDFB9F5-48D4F0F163B6A249', id1:'7A0A96B05DDFB9F5', id2:'C450D47C61DE5DBC', t:"Scenarized Application Environment"},
+    { type: 'link', id:'7A0A96B05DDFB9F5-C334DC6B5ECB6EEC', id1:'7A0A96B05DDFB9F5', id2:'BCEBD8E9549144DB', t:"Partner Application"},
+    { type: 'link', id:'7A0A96B05DDFB9F5-C334DC6E5ECB6F61', id1:'7A0A96B05DDFB9F5', id2:'BCEBD8E9549144DB', t:"Subject Application"},
+    { type: 'link', id:'C30BDAC25A5D9EAF-D5E6EAC35C4665F3', id1:'C30BDAC25A5D9EAF', id2:'D5E6DDD05C46547C', t:"Required software technology"},
+    { type: 'link', id:'C30BDAC25A5D9EAF-8109F9BE5EB8BD66', id1:'C30BDAC25A5D9EAF', id2:'46194CE9560D3AB8', t:"IT service component"},
+    { type: 'link', id:'46194CA7560D3A45-02FE03B05EB9539C', id1:'46194CA7560D3A45', id2:'46194CA7560D3A45', t:"Application System Component"},
+    { type: 'link', id:'46194CA7560D3A45-7B877C395EB813CF', id1:'46194CA7560D3A45', id2:'BCEBD8E9549144DB', t:"Application component"},
+    { type: 'link', id:'46194CA7560D3A45-7B877E095EB81A21', id1:'46194CA7560D3A45', id2:'076D15425A5E158C', t:"operator"},
+    { type: 'link', id:'46194CA7560D3A45-8109FC685EB8C563', id1:'46194CA7560D3A45', id2:'D6A956495A395D28', t:"Micro-Service Component"},
+    { type: 'link', id:'6246167661BA2D05-6246173661BA2ED4', id1:'6246167661BA2D05', id2:'D6A956495A395D28', t:"Participant IT Service"},
+    { type: 'link', id:'6246167661BA2D05-25C1BAC961E23189', id1:'6246167661BA2D05', id2:'BCEBD8E9549144DB', t:"Described Application"},
+    { type: 'link', id:'C450D47C61DE5DBC-C450D8C761DE6C03', id1:'C450D47C61DE5DBC', id2:'BCEBD8E9549144DB', t:"Partner Application"},
+    { type: 'link', id:'E4C0E7285ED0625D-E4C0E7985ED064D2', id1:'E4C0E7285ED0625D', id2:'46194CA7560D3A45', t:"Partner Application System"},
+    { type: 'link', id:'E4C0E7285ED0625D-E4C0E8515ED0678E', id1:'E4C0E7285ED0625D', id2:'46194CA7560D3A45', t:"Application System Subject"},
+    { type: 'link', id:'D6CD260B5AB9886C-1C3B096C601D865A', id1:'D6CD260B5AB9886C', id2:'D6CD260B5AB9886C', t:"Specialized System Environment"},
+    { type: 'link', id:'D6CD260B5AB9886C-173F4A805EB8C14E', id1:'D6CD260B5AB9886C', id2:'46194CA7560D3A45', t:"Subject System"},
+    { type: 'link', id:'D6CD260B5AB9886C-173F4AD15EB8C1F5', id1:'D6CD260B5AB9886C', id2:'46194CA7560D3A45', t:"Partner System"},
+    { type: 'link', id:'BCEBD8E9549144DB-45683AF25F9B060B', id1:'BCEBD8E9549144DB', id2:'BCEBD8E9549144DB', t:"Specialized Application"},
+    { type: 'link', id:'BCEBD8E9549144DB-45DE6D1E618EFB7F', id1:'BCEBD8E9549144DB', id2:'D6A956495A395D28', t:"Micro-Service Component"},
+    { type: 'link', id:'4C7883CD5FCA4D5B-A44B25C85FCF5977', id1:'4C7883CD5FCA4D5B', id2:'BCEBD8E9549144DB', t:"Packaged Application"},
+    { type: 'link', id:'4C7883CD5FCA4D5B-A44B27535FCF5B68', id1:'4C7883CD5FCA4D5B', id2:'4C7883CD5FCA4D5B', t:"Specialized Package"},
+    { type: 'link', id:'4C7883CD5FCA4D5B-1CE3554E5C48BFA6', id1:'4C7883CD5FCA4D5B', id2:'D5E6DDD05C46547C', t:"Required Software Technology"},
+    { type: 'link', id:'25C0A10061E2FC12-25C1A3FC61E201E4', id1:'25C0A10061E2FC12', id2:'25C0A25061E2FD5A', t:"Scenarized Software System Environment"},
+    { type: 'link', id:'25C0A10061E2FC12-25C1A32461E200B5', id1:'25C0A10061E2FC12', id2:'D6CD02865AB966E8', t:"Participant Software System"},
+    { type: 'link', id:'25C0A10061E2FC12-25C1A53F61E20355', id1:'25C0A10061E2FC12', id2:'D6CD02865AB966E8', t:"Partner Software System"},
+    { type: 'link', id:'25C0A10061E2FC12-25C1A55461E20430', id1:'25C0A10061E2FC12', id2:'D6CD02865AB966E8', t:"Subject Software System"},
+    { type: 'link', id:'25C0A25061E2FD5A-25C1A63D61E206D7', id1:'25C0A25061E2FD5A', id2:'D6CD02865AB966E8', t:"Participant Software System"},
+    { type: 'link', id:'25C0A25061E2FD5A-25C1A65861E2077A', id1:'25C0A25061E2FD5A', id2:'D6CD02865AB966E8', t:"Subject Software System"},
+    { type: 'link', id:'25C0A25061E2FD5A-25C1A6BC61E20826', id1:'25C0A25061E2FD5A', id2:'D6CD02865AB966E8', t:"Partner Software System"},
+    { type: 'link', id:'25C0A25061E2FD5A-2DCEA8705FC4827C', id1:'25C0A25061E2FD5A', id2:'076D15425A5E158C', t:"End User"},
+    { type: 'link', id:'25C09CB461E2EFD3-25C1B19061E21ED1', id1:'25C09CB461E2EFD3', id2:'D6CD02865AB966E8', t:"Participant Software System"},
+    { type: 'link', id:'25C09CB461E2EFD3-25C1B2D361E22368', id1:'25C09CB461E2EFD3', id2:'D6CD02865AB966E8', t:"Described Software System"},
+    { type: 'link', id:'D6CD02865AB966E8-CD7A3C6B5FF3D453', id1:'D6CD02865AB966E8', id2:'D6CD02865AB966E8', t:"Specialized Software System"},
+    { type: 'link', id:'D6CD02865AB966E8-F82B9DED6042FC4B', id1:'D6CD02865AB966E8', id2:'2558338D5C6D1D1B', t:"Realized Logical System"},
+    { type: 'link', id:'D6CD02865AB966E8-173F4D015EB8C686', id1:'D6CD02865AB966E8', id2:'D6CD02865AB966E8', t:"Software System Component"},
+    { type: 'link', id:'D6CD02865AB966E8-7B8780615EB81B83', id1:'D6CD02865AB966E8', id2:'028F03FF5B4F55EE', t:"Physical data store"}
+  ]
+}
+</script>
+<script src="../standard/assets/js/keylines_domain.js" type="module"></script>
+</div>
+</section>
+<a class="object-section-anchor" id="des"></a>
+<section class="object-section">
+<h4>CONCEPT DESCRIPTIONS</h4> 
+<hr class="sectionbreak" />
+<h5>Concrete Concepts</h5>
+<table class="table  table-set-col-width">
+<thead>
+<tr><th>Concept</th><th>Description</th><th>HOPEX Metaclass</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="bcebd8e9549144db.htm" target="_top">Application</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An <a href="b1edb2562c14016f.htm" target="_top"><b><u>Application</u></b></a> is a <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a> that provides a set of <a href="598272e954c622f4.htm" target="_top"><b><u>Functionality</u></b></a>(ies) that <a href="2dcea8705fc4827c.htm" target="_top"><b><u>End User</u></b></a>s see as a single unit.</div><div align="left" style="min-height: 12pt; ">Essentially&#160;<b> Application</b>s are architectural constructions resulting from the combinaison of the following four criteria:</div><div align="left" style="min-height: 12pt; ">1) A group of <a href="598272e954c622f4.htm" target="_top"><b><u>Functionality</u></b></a> that <a href="2dcea8705fc4827c.htm" target="_top"><b><u>End User</u></b></a>s see as a single unit.</div><div align="left" style="min-height: 12pt; ">2) A managed asset (<b> Managed Application</b>) associated with a budget line in the context of an <a href="1ce3429d5c48982e.htm" target="_top"><b><u>Application Portfolio</u></b></a>.</div><div align="left" style="min-height: 12pt; ">3) A body of code that is seen by developers as a single unit.</div><div align="left" style="min-height: 12pt; ">4) A group of deployable software units (<a href="d5e6d7eb5c464b21.htm" target="_top"><b><u>Deployable Application Package</u></b></a>s) that must be installed together on one or multiple execution nodes (<a href="f4be0eda5ee1d6c0.htm" target="_top"><b><u>Computational Aspect</u></b></a>).</div><div align="left" style="min-height: 12pt; "><b>&#160;Application</b> is a <a href="5c43887c64103e30.htm" target="_top"><b><u>Mezzo</u></b></a> enterprise asset&#160; that sits between <a href="46194ca7560d3a45.htm" target="_top"><b><u>Application System</u></b></a> and <a href="46194ce9560d3ab8.htm" target="_top"><b><u>IT Service</u></b></a> in the decomposition of <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">Example: &quot;Payroll&quot; is an&#160;<b> Application</b> that is part an &quot;HR system&quot; which is an <a href="46194ca7560d3a45.htm" target="_top"><b><u>Application System</u></b></a>.</div><div align="left" style="min-height: 12pt; ">The &quot;Payroll&quot;&#160;<b> Application</b> includes, among other things, the &quot;Salary and Wage Calculation&quot; <a href="46194ce9560d3ab8.htm" target="_top"><b><u>IT Service</u></b></a>.</div><i><ul>References:<li><a href="https://c4model.com/#Abstractions"><img src="../standard/extr.ico.gif">&nbsp;C4 Model - Software System</a></li> <li><a href="https://martinfowler.com/bliki/ApplicationBoundary.html"><img src="../standard/extr_htm.ico.gif">&nbsp;Martin Fowler - Application Boundary</a></li> <li><a href="https://learn.microsoft.com/en-us/azure/architecture/guide/architecture-styles"><img src="../standard/extr.ico.gif">&nbsp;Microsoft - Architecture Design - Architecture Styles</a></li> <li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Software"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - Software</a></li> <li><a href="https://pubs.opengroup.org/architecture/archimate32-doc/#_Toc112154993"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - ArchiMate - Application Component</a></li> <li><a href="https://method.demomega.com/MM-OVERVIEW/pages/architecture-content/chap02.html#tag_02_04"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Content MetaModel - Physical Application Component</a></li> <li><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_04"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Definition - Application Component</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="b1edb2562c14016f.htm" target="_top">Application</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="c450d47c61de5dbc.htm" target="_top">Application Environment</a></td>
+<td class="description-text">An&#160;<b> Application Environment</b> is an operating context in which an <a href="bcebd8e9549144db.htm" target="_top"><b><u>Application</u></b></a> defines its interactions with its partners (<a href="c450d8c761de6c03.htm" target="_top"><b><u>Partner Application</u></b></a>) in the form of&#160; API connections (<b> Software Interaction Channel</b>).<i><ul>References:<li><a href="https://c4model.com/#SystemContextDiagram"><img src="../standard/extr.ico.gif">&nbsp;C4 Model - Level 1 - System Context Diagram</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="d86edd0b58520c1d.htm" target="_top">Application Environment</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="7a0a96b05ddfb9f5.htm" target="_top">Application Environment Scenario</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Application Environment Scenario</b> is a story involving the partners of an <a href="bcebd8e9549144db.htm" target="_top"><b><u>Application</u></b></a> (<a href="c334dc6b5ecb6eec.htm" target="_top"><b><u>Partner Application</u></b></a>) interacting in order to achieve <a href="302238be5ec9020a.htm" target="_top"><b><u>Information Outcome</u></b></a>s in a specific Eco-System (<a href="c450d47c61de5dbc.htm" target="_top"><b><u>Application Environment</u></b></a>).</div><div align="left" style="min-height: 12pt; ">This includes:</div><div align="left" style="min-height: 12pt; ">- A course of events represented by&#160;<b> Application Flow</b>s depicting the story towards the delivery of expected <a href="302238be5ec9020a.htm" target="_top"><b><u>Information Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">- Interacting <a href="c334dc6b5ecb6eec.htm" target="_top"><b><u>Partner Application</u></b></a>s who participate to the story in the considered <a href="c450d47c61de5dbc.htm" target="_top"><b><u>Application Environment</u></b></a>.</div><i><ul>References:<li><a href="https://c4model.com/#DynamicDiagram"><img src="../standard/extr.ico.gif">&nbsp;C4 Model - Supplementary diagrams -Dynamic Diagram</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="49b74d9859132705.htm" target="_top">Scenario of Application System Environment Flows</a></td>
+</tr>
+<tr>
+<td><img src="../standard/relationship-concepttype.ico.gif"/>&nbsp;
+<a  href="9dce9f8d5ec76311.htm" target="_top">Application Interface</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Application Interface</b> is a <a href="9dcea2655ec768ee.htm" target="_top"><b><u>Business Service Interface</u></b></a> that occurs between <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">The interface is described by messages exchanged between endpoints (provider, consumer..).</div><i><ul>References:<li><a href="https://www.enterpriseintegrationpatterns.com/patterns/messaging"><img src="../standard/extr.ico.gif">&nbsp;EIP - messaging</a></li> <li><a href="https://martinfowler.com/tags/API%20design.html"><img src="../standard/extr_htm.ico.gif">&nbsp;Martin Fowler - API Design</a></li> <li><a href="https://martinfowler.com/articles/richardsonMaturityModel.html"><img src="../standard/extr_htm.ico.gif">&nbsp;Martin Fowler - Richardson Maturity Model</a></li> <li><a href="https://learn.microsoft.com/en-us/azure/architecture/best-practices/api-design"><img src="../standard/extr.ico.gif">&nbsp;Microsoft - Architecture Design - RESTful web API design</a></li> <li><a href="https://publications.opengroup.org/w161"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - IT4IT - Defining Service Reference Architecture</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="ee0cee7f3919000d.htm" target="_top">Exchange Contract</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="6246167661ba2d05.htm" target="_top">Application Scenario</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Application Scenario</b> is a story involving the components of an <a href="bcebd8e9549144db.htm" target="_top"><b><u>Application</u></b></a> (<a href="46194ce9560d3ab8.htm" target="_top"><b><u>IT Service</u></b></a> or <a href="d6a956495a395d28.htm" target="_top"><b><u>MicroService</u></b></a>), interacting in order to produce <a href="302238be5ec9020a.htm" target="_top"><b><u>Information Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">This includes:</div><div align="left" style="min-height: 12pt; ">1) A course of events represented by&#160;<b> Application Flow</b>s depicting the story towards the delivery of expected <a href="302238be5ec9020a.htm" target="_top"><b><u>Information Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">2) Interacting <a href="46194ce9560d3ab8.htm" target="_top"><b><u>IT Service</u></b></a>s who participate to the story.</div><i><ul>References:<li><a href="https://c4model.com/#DynamicDiagram"><img src="../standard/extr.ico.gif">&nbsp;C4 Model - Supplementary diagrams -Dynamic Diagram</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="690b6ead58b93f89.htm" target="_top">Scenario of Application Flows</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="46194ca7560d3a45.htm" target="_top">Application System</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Application System</b> is <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a> which is an assembly of multiple <a href="bcebd8e9549144db.htm" target="_top"><b><u>Application</u></b></a>s or other&#160;<b> Application System</b>s that, together, fulfill a set of <a href="5c43886f64103e09.htm" target="_top"><b><u>Macro</u></b></a> <a href="598272e954c622f4.htm" target="_top"><b><u>Functionality</u></b></a>(ies) delivered to <a href="2d1874635ac352f3.htm" target="_top"><b><u>Business Operations</u></b></a>.</div><div align="left" style="min-height: 12pt; "><b>&#160;Application System</b>s are used in the context of IT Strategic planning to define and evolve other time the hight level structure of the enterprise IT Architecture.</div><div align="left" style="min-height: 12pt; "><b>&#160;Application System</b> is a <a href="5c43886f64103e09.htm" target="_top"><b><u>Macro</u></b></a> enterprise asset that sit at the top of <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a> decomposition.</div><div align="left" style="min-height: 12pt; ">Example: &quot;HR System&quot; is an&#160;<b> Application System</b> whereas &quot;Payroll&quot; is an <a href="bcebd8e9549144db.htm" target="_top"><b><u>Application</u></b></a> that is part of the &quot;HR system&quot;.</div><i><ul>References:<li><a href="https://c4model.com/#SystemLandscapeDiagram"><img src="../standard/extr.ico.gif">&nbsp;C4 Model - Supplementary diagrams - System Landscape diagram</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="1c5d2aca4f8d3e09.htm" target="_top">Application System</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="d6cd260b5ab9886c.htm" target="_top">Application System Environment</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Application System Environment</b> is an operating context in which an <a href="46194ca7560d3a45.htm" target="_top"><b><u>Application System</u></b></a> defines its interactions with its partners (<a href="173f4ad15eb8c1f5.htm" target="_top"><b><u>Partner System</u></b></a>) in the form of API connections (<b> Software Interaction Channel</b>).</div><div align="left" style="min-height: 12pt; ">It also represents <a href="2dcea8705fc4827c.htm" target="_top"><b><u>End User</u></b></a>s that interact with the system.</div>       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="66dc758456f18de7.htm" target="_top">Application System Environment</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="e4c0e7285ed0625d.htm" target="_top">Application System Scenario</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Application System Scenario</b> is a story involving the components of an <a href="46194ca7560d3a45.htm" target="_top"><b><u>Application System</u></b></a> (<a href="bcebd8e9549144db.htm" target="_top"><b><u>Application</u></b></a>s), interacting in order to produce <a href="302238be5ec9020a.htm" target="_top"><b><u>Information Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">This includes:</div><div align="left" style="min-height: 12pt; ">1) A course of events represented by&#160;<b> Application Flow</b>s depicting the story towards the delivery of expected <a href="302238be5ec9020a.htm" target="_top"><b><u>Information Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">2) Interacting <a href="bcebd8e9549144db.htm" target="_top"><b><u>Application</u></b></a>s who participate to the story.</div>       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="0b981b6358cc7879.htm" target="_top">Scenario of Application Environment Flows</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="b181b82a54891668.htm" target="_top">Enterprise</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Enterprise</b> is an <a href="d321c226601262ae.htm" target="_top"><b><u>Enduring Initiative</u></b></a> that delivers added-value <a href="215cceda606c35c6.htm" target="_top"><b><u>Product</u></b></a>s (goods &amp; services) to its target <a href="d6cdfdbc5ab86331.htm" target="_top"><b><u>Customer</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">It requires a formal organization of groups of people and resources to achieve its purposes.</div><i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#WholeLifeEnterprise"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - WholeLifeEnterprise</a></li> <li><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_42"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Definition - Enterprise</a></li> <li><a href="https://www.scaledagileframework.com/enterprise/"><img src="../standard/extr.ico.gif">&nbsp;SAFe&copy; - Enterprise</a></li> <li><a href="https://www.scaledagileframework.com/portfolio-safe/"><img src="../standard/extr.ico.gif">&nbsp;SAFe&copy; - Portfolio SAFe</a></li> <li><a href="http://wordnetweb.princeton.edu/perl/webwn?o2=&amp;o0=1&amp;o8=1&amp;o1=1&amp;o7=&amp;o5=&amp;o9=&amp;o6=&amp;o3=&amp;o4=&amp;r=1&amp;s=enterprise&amp;i=2&amp;h=100000#c"><img src="../standard/extr.ico.gif">&nbsp;WordNet - Enterprise</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="50666200529c2b9a.htm" target="_top">Enterprise</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="598272e954c622f4.htm" target="_top">Functionality</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Functionality</b> is a <a href="aea4936060645978.htm" target="_top"><b><u>Business Operating Capability</u></b></a> offered by <a href="278675d65b252f4d.htm" target="_top"><b><u>Business System</u></b></a>s (software or hardware) and aimed at delivering <a href="302238be5ec9020a.htm" target="_top"><b><u>Information Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Functionality</b> describes WHAT a software or hardware system can provide.</div><div align="left" style="min-height: 12pt; "><b>&#160;Functionality</b>(ies) are used to express the features required by people when performing their job.</div><div align="left" style="min-height: 12pt; ">For internal customers, these jobs correspond to <a href="0f9213fd5ebc1b87.htm" target="_top"><b><u>Operation</u></b></a>s described in <a href="57dfc52d550932ef.htm" target="_top"><b><u>Business Process</u></b></a> (see <a href="0f9213345ebc1a67.htm" target="_top"><b><u>Instrument</u></b></a>)</div><div align="left" style="min-height: 12pt; ">For enterprise <a href="d6cdfdbc5ab86331.htm" target="_top"><b><u>Customer</u></b></a>s, these jobs correspond to <a href="d17034875be85304.htm" target="_top"><b><u>Job-to-be-done</u></b></a> in the context of <a href="d170d6a25be734ed.htm" target="_top"><b><u>Customer Journey</u></b></a>s.</div><i><ul>References:<li><a href="https://www.scaledagileframework.com/glossary/#goto-letter-F"><img src="../standard/extr.ico.gif">&nbsp;SAFe&copy; - Feature</a></li> <li><a href="https://www.scaledagileframework.com/features-and-capabilities/"><img src="../standard/extr.ico.gif">&nbsp;SAFe&copy; - Features and Capabilities</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="e939e9cf2c140236.htm" target="_top">Functionality</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="46194ce9560d3ab8.htm" target="_top">IT Service</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> IT Service</b> is a functionnal unit of software (java class, COBOL Program, Batch) that is&#160; a consistent, indivisible unit of processing of an <a href="bcebd8e9549144db.htm" target="_top"><b><u>Application</u></b></a> delivering its <a href="302238be5ec9020a.htm" target="_top"><b><u>Information Outcome</u></b></a>s though APIs (<a href="9dce9f8d5ec76311.htm" target="_top"><b><u>Application Interface</u></b></a>).</div><div align="left" style="min-height: 12pt; ">a)&#160;<b> IT Service</b>s are assembled and orchestrated in <a href="bcebd8e9549144db.htm" target="_top"><b><u>Application</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">b)&#160;<b> IT Service</b>s cannot be directly deployed to <a href="f4be0eda5ee1d6c0.htm" target="_top"><b><u>Computational Aspect</u></b></a>s: they need to be organized in <a href="d5e6d7eb5c464b21.htm" target="_top"><b><u>Deployable Application Package</u></b></a>s.</div><div align="left" style="min-height: 12pt; "><b>&#160;IT Service</b> is a <a href="5c43888764103e54.htm" target="_top"><b><u>Micro</u></b></a> enterprise asset that sits at the lowest level of <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a> decomposition.</div><div align="left" style="min-height: 12pt; ">Example: the &quot;Salary and Wage Calculation&quot; component is an&#160;<b> IT Service</b> that is part of the &quot;Payroll&quot; <a href="bcebd8e9549144db.htm" target="_top"><b><u>Application</u></b></a>.</div><i><ul>References:<li><a href="https://c4model.com/#ComponentDiagram"><img src="../standard/extr.ico.gif">&nbsp;C4 Model - Level 3 - Component Diagram</a></li> <li><a href="https://c4model.com/#Metamodel"><img src="../standard/extr.ico.gif">&nbsp;C4 Model - Metamodel</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="b1edb25d2c1401af.htm" target="_top">IT Service</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="254e4d265f7f857a.htm" target="_top">MetaData Schema</a></td>
+<td class="description-text">        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="ae8fbc9e5f7d7648.htm" target="_top">Meta Dataset Schema</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="d6a956495a395d28.htm" target="_top">MicroService</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> MicroService</b> is a small autonomous unit of software, emphasizing self-management and lightweightness as the means to improve software agility, scalability, and autonomy.</div><div align="left" style="min-height: 12pt; ">1)&#160;<b> MicroService</b>s are automous or assembled and orchestrated as components of <a href="bcebd8e9549144db.htm" target="_top"><b><u>Application</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">2)&#160;<b> MicroService</b>s can be directly deployed to <a href="f4be0eda5ee1d6c0.htm" target="_top"><b><u>Computational Aspect</u></b></a>s.&#160;<b> MicroService</b>s are both a logical unit of software and a <a href="4c7883cd5fca4d5b.htm" target="_top"><b><u>Deployable Package</u></b></a>.</div><div align="left" style="min-height: 12pt; ">3)&#160;<b> MicroService</b>s owns their own data store and dot not have any shared stores with other components.</div><div align="left" style="min-height: 12pt; "><b>&#160;MicroService</b> is <a href="5c43888764103e54.htm" target="_top"><b><u>Micro</u></b></a> a enterprise asset that sits at the lower level of <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a> decomposition.</div><i><ul>References:<li><a href="https://c4model.com/#ContainerDiagram"><img src="../standard/extr.ico.gif">&nbsp;C4 Model - Level 2 - Container Diagram</a></li> <li><a href="https://c4model.com/#ComponentDiagram"><img src="../standard/extr.ico.gif">&nbsp;C4 Model - Level 3 - Component Diagram</a></li> <li><a href="https://martinfowler.com/articles/microservices.html"><img src="../standard/extr_htm.ico.gif">&nbsp;Martin Fowler - Micro-Service</a></li> <li><a href="https://learn.microsoft.com/en-us/azure/architecture/guide/architecture-styles/microservices"><img src="../standard/extr.ico.gif">&nbsp;Microsoft - Architecture Design - Microservice architecture style</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="b4bab68b596f05a2.htm" target="_top">Micro-Service</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="7c408aa155270eea.htm" target="_top">Org-Unit</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Org-Unit</b> is a type of administrative unit in government or business that is a template of <a href="910196ca550a2ec2.htm" target="_top"><b><u>Organization</u></b></a> .</div><div align="left" style="min-height: 12pt; ">Example : Sales Department, Finance Department, Logistics Deparment.</div><i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Organization"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - Organization</a></li> <li><a href="https://method.demomega.com/MM-OVERVIEW/pages/architecture-content/chap02.html#tag_02_04"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Content Metamodel - Organization Unit</a></li> <li><a href="../resources/Ackoff-Towards-a-system-of-systems-concepts.pdf#FunctionalDivisionOfLabor"><img src="../standard/extr.ico.gif">&nbsp;Russell Ackoff - System of concepts - FunctionalDivisionOfLabor</a></li> <li><a href="../resources/Ackoff-Towards-a-system-of-systems-concepts.pdf#Organizations"><img src="../standard/extr.ico.gif">&nbsp;Russell Ackoff - System of Concepts - Organizations</a></li> <li><a href="https://compliancedictionary.com/term/1463"><img src="../standard/extr.ico.gif">&nbsp;UCF Glossary - Department</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="b1edb2562c140173.htm" target="_top">Org-Unit</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="076d151c5a5e1561.htm" target="_top">Organizational Position</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Organizational Position</b> is a type of position held by people when part of an <a href="7c408aa155270eea.htm" target="_top"><b><u>Org-Unit</u></b></a>. </div><div align="left" style="min-height: 12pt; ">Examples: </div><div align="left" style="min-height: 13pt; ">- Sales representative</div><div align="left" style="min-height: 13pt; ">- Developer</div><div align="left" style="min-height: 13pt; ">- Storekeeper</div><div align="left" style="min-height: 13pt; ">- Architect</div><i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Post"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - Post</a></li> <li><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_66"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Definition - Role</a></li> <li><a href="https://compliancedictionary.com/term/252897"><img src="../standard/extr.ico.gif">&nbsp;UCF Glossary - Position Description</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="fb5f6ff8587e40e3.htm" target="_top">Position Type</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="362f3c7e5b3b22f8.htm" target="_top">Relational Schema</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Relational Schema</b> is a set of relational <a href="137d21b55ee2c717.htm" target="_top"><b><u>Table</u></b></a> , keys, indexes and associated items that represent the structure of a relational database. A relational database can have multiple schemas.</div><div align="left" style="min-height: 12pt; "></div>       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="eb39f82b55301079.htm" target="_top">Relational Schema</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="7a0afca35dde94f5.htm" target="_top">Scenario of Application System Environment</a></td>
+<td class="description-text">A&#160;<b> Scenario of Application System Environment</b> presents the flow exchanged between the IT services or the micro-services used by this application. A scenario can represent a specific use case of this application or, globally, the set of all flows exchanged inside this application.       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="49b74d9859132705.htm" target="_top">Scenario of Application System Environment Flows</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="d5e6ddd05c46547c.htm" target="_top">Software Technology</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Software Technology</b> is an elementary <a href="0463ea9a63fd8b6c.htm" target="_top"><b><u>Software Technology System</u></b></a>&#160; used as an enabler by <a href="c30bdac25a5d9eaf.htm" target="_top"><b><u>Software Module</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">Examples : </div><div align="left" style="min-height: 12pt; ">- Application server, </div><div align="left" style="min-height: 12pt; ">- Message server, </div><div align="left" style="min-height: 12pt; ">- Storage, </div><div align="left" style="min-height: 12pt; ">- Business information sharing, </div><div align="left" style="min-height: 12pt; ">- Operating systems, </div><div align="left" style="min-height: 12pt; ">- Navigators, etc</div><i><ul>References:<li><a href="https://method.demomega.com/MM-OVERVIEW/pages/architecture-content/chap02.html#tag_02_04"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Content MetaModel - Technology Component</a></li> <li><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_81"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Definition - Technology Component</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="2885299152a85717.htm" target="_top">Software Technology</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="46194939560d374f.htm" target="_top">System Process</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> System Process</b> is a <a href="d682ef5e56144e77.htm" target="_top"><b><u>Process</u></b></a> that occurs inside <a href="278675d65b252f4d.htm" target="_top"><b><u>Business System</u></b></a>s (software systems or hardware systems). Its performers can only be <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a>s or <a href="c30bf4015a5da72b.htm" target="_top"><b><u>Hardware System</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">During its course of action, a&#160;<b> System Process</b> consumes or produces <a href="6d2b7c935fbb6270.htm" target="_top"><b><u>Data Object</u></b></a>s:</div><div align="left" style="min-height: 12pt; ">1) It may read or write <a href="6d2b7c935fbb6270.htm" target="_top"><b><u>Data Object</u></b></a>s in its Process Store.</div><div align="left" style="min-height: 12pt; ">2) It may receive <a href="6d2b7c935fbb6270.htm" target="_top"><b><u>Data Object</u></b></a>s at its boundary: Consumed Outcome.</div><div align="left" style="min-height: 12pt; ">3) It may produce <a href="6d2b7c935fbb6270.htm" target="_top"><b><u>Data Object</u></b></a>s at its boundary: Delivered Outcome.</div><div align="left" style="min-height: 12pt; ">The course of actions of a&#160;<b> System Process</b> is constrained by the application of rules (<a href="0c9b0e3e5ebd864f.htm" target="_top"><b><u>System Rule Enforcement</u></b></a>) that define what is allowed and not allowed to do.</div><i><ul>References:<li><a href="../../../www.omg.org/spec/BPMN/2.0.2/formal-13-12-09.pdf#page=173"><img src="../standard/extr.ico.gif">&nbsp;OMG - BPMN - Process</a></li> <li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Function"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - Function</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="ea52ea613aac008b.htm" target="_top">System Process</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="83bb9d2e5b378a5d.htm" target="_top">System Rule</a></td>
+<td class="description-text">A&#160;<b> System Rule</b> is a kind of <a href="6dc39a5661c08c55.htm" target="_top"><b><u>Resource Rule</u></b></a> that governs the structure and behavior of <a href="6246927f61b81996.htm" target="_top"><b><u>Business System Asset</u></b></a>s.       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="9897a9a858b62d83.htm" target="_top">System Rule</a></td>
+</tr>  
+</tbody>
+</table>
+<hr class="sectionbreak" />
+<h5>Abstract Concepts</h5>
+<table class="table  table-set-col-width">
+<thead >
+<tr><th>Concept</th><th>Description</th><th>HOPEX Metaclass</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="076d15425a5e158c.htm" target="_top">Human Resource</a></td>
+<td class="description-text">A&#160;<b> Human Resource</b> is a <a href="bcebd31f5491302c.htm" target="_top"><b><u>Resource Agent</u></b></a>&#160; used to describe both the <a href="076d151c5a5e1561.htm" target="_top"><b><u>Organizational Position</u></b></a>s of people who work for an organization and the type of department (<a href="7c408aa155270eea.htm" target="_top"><b><u>Org-Unit</u></b></a>) responsible for running business operations.<i><ul>References:<li><a href="https://www.humanresourcesedu.org/what-is-human-resources/"><img src="../standard/extr.ico.gif">&nbsp;Humanresourcesedu.org - Human Resource</a></li> <li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#organizationalresource"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - OrganizationalResource</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="f3b7f5bc58806f49.htm" target="_top">Class of Organizational Agent</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="2558338d5c6d1d1b.htm" target="_top">Logical Software System</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Logical Software System</b> is logical specification of a <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a>, which is independant from the <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a> physical implementation.</div><div align="left" style="min-height: 12pt; ">For instance, &quot;Human Resource ERP System&quot; is a <a href="255833cb5c6d1d64.htm" target="_top"><b><u>Logical Application System</u></b></a>, while &quot;SAP HR System&quot;, &quot;Sage HR System&quot;, &quot;Kronos HR System&quot; are <a href="46194ca7560d3a45.htm" target="_top"><b><u>Application System</u></b></a>s.</div>       </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="028f03ff5b4f55ee.htm" target="_top">Physical Data Domain</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Physical Data Domain</b> is subset of the metadata of an enterprise&rsquo;s data store.</div><div align="left" style="min-height: 12pt; ">For instance, a &quot;Sales&quot;&#160;<b> Physical Data Domain</b> contains a &quot;Client&quot; <a href="137d21b55ee2c717.htm" target="_top"><b><u>Table</u></b></a> and a &quot;Order&quot; <a href="137d21b55ee2c717.htm" target="_top"><b><u>Table</u></b></a>.</div><div align="left" style="min-height: 12pt; ">Each <a href="762582bb5f6bd659.htm" target="_top"><b><u>Physical Data Entity</u></b></a> in a&#160;<b> Physical Data Domain</b> has CRUD characteristics. For instance, the &quot;Client&quot; Table in the &quot;Sales&quot;&#160;<b> Physical Data Domain</b>, has all CRUD characteristics.</div><div align="left" style="min-height: 12pt; "><b>&#160;Physical Data Domain</b>s define functional data boundaries used both for Data Allocation to <a href="278675d65b252f4d.htm" target="_top"><b><u>Business System</u></b></a>s (see <a href="CA9DF5BB5FCF5A75.htm" target="_top"><b><u>Resource Agent Store</u></b></a>) and data governance for data stewardship (see <a href="9152d8875ed741ef.htm" target="_top"><b><u>Data Catalog</u></b></a>).</div>       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="246c375a55313a68.htm" target="_top">Physical Data Area</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="c30bdac25a5d9eaf.htm" target="_top">Software Module</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Software Module</b> is a <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a> that is part of an application system. </div><div align="left" style="min-height: 12pt; ">A&#160;<b> Software Module</b> is either an <a href="bcebd8e9549144db.htm" target="_top"><b><u>Application</u></b></a>, <a href="46194ce9560d3ab8.htm" target="_top"><b><u>IT Service</u></b></a> or a <a href="d6a956495a395d28.htm" target="_top"><b><u>MicroService</u></b></a>. </div><div align="left" style="min-height: 12pt; ">All share the ability to be composed of sub-<a href="46194ce9560d3ab8.htm" target="_top"><b><u>IT Service</u></b></a>s and have dependencies to enabling <a href="d5e6ddd05c46547c.htm" target="_top"><b><u>Software Technology</u></b></a>(ies).</div><i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Software"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - Software</a></li> <li><a href="https://pubs.opengroup.org/togaf-standard/introduction/apdxb.html#tag_06"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Definition - Application Software</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="066709bf4ec52b65.htm" target="_top">Physical Business Software</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="d6cd02865ab966e8.htm" target="_top">Software System</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Software System</b> is a <a href="278675d65b252f4d.htm" target="_top"><b><u>Business System</u></b></a> used by <a href="2d1874635ac352f3.htm" target="_top"><b><u>Business Operations</u></b></a>, that represents all granularities of software - ranging from <a href="d6a956495a395d28.htm" target="_top"><b><u>MicroService</u></b></a>s to enterprise wide <a href="46194ca7560d3a45.htm" target="_top"><b><u>Application System</u></b></a>s - used by <a href="2d1874635ac352f3.htm" target="_top"><b><u>Business Operations</u></b></a>.</div><div align="left" style="min-height: 12pt; ">All&#160;<b> Software System</b>s share the following characteristics:</div><div align="left" style="min-height: 12pt; ">1) They provide <a href="598272e954c622f4.htm" target="_top"><b><u>Functionality</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">2) They expose APIs (<a href="9dce9f8d5ec76311.htm" target="_top"><b><u>Application Interface</u></b></a>s) through which they deliver <a href="302238be5ec9020a.htm" target="_top"><b><u>Information Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">3) They handle datastores defined by <a href="028f03ff5b4f55ee.htm" target="_top"><b><u>Physical Data Domain</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">4) They perform and participate to <a href="46194939560d374f.htm" target="_top"><b><u>System Process</u></b></a>es.</div><i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Software"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - Software</a></li> <li><a href="https://compliancedictionary.com/term/1588"><img src="../standard/extr.ico.gif">&nbsp;UCF Glossary - Software Asset</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="fd7f9e474e76235c.htm" target="_top">Software System</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="25c0a25061e2fd5a.htm" target="_top">Software System Environment</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Software System Environment</b> is an operating context in which a <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a> defines its interactions with its partners (Partner System) in the form of API connections (<b> Software Interaction Channel</b>).</div><div align="left" style="min-height: 12pt; ">It also represents <a href="2dcea8705fc4827c.htm" target="_top"><b><u>End User</u></b></a>s that interact with the system.</div>       </td>
+<td></td>
+</tr>  
+</tbody>
+</table>
+<section>
+
+</div>
+<button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button>
+<script>window.onscroll = function() {scrollFunction()};$(document).on('click', 'a[href^="#"]', function (event) {event.preventDefault();$('html, body').animate({scrollTop: $($.attr(this, 'href')).offset().top}, 500);});function showDiagOnClick(elem){ var x = document.getElementsByClassName('Relationship');var e = elem.getAttribute("value"); for (var i=0; i < x.length ;i++){x[i].style.display="none"; if (x[i].id == e){x[i].style.display="block";x[i].style.textAlign="left";}}}
+</script></html>

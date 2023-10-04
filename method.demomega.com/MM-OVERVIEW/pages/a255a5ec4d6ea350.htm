@@ -1,0 +1,560 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="keywords" content="">
+<meta name="description" content="">    
+<LINK REL="icon" HREF="../standard/assets/img/favicon.ico">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/bootstrap.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nav.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/eaportal.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/font-awesome.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/animate.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/datatables.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/grid.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nae.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/custom.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/chosen.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/prism.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery.dataTables.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jsTreeStyle.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.theme.css" media="screen" />
+<script type="text/javascript" src="../standard/assets/js/jquery-3.2.1.min.js" ></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-ui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.columnFilter.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3-force.v2.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.gui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.search.js"></script> 
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.util.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-2.1.1.min.js"></script>
+<script src="../standard/assets/js/ws_zoomtemplate_firefox.js"></script>
+<script src="../standard/assets/js/bootstrap.min.js"></script>
+<script src="../standard/assets/js/datatables.min.js"></script>
+<script src="../standard/assets/js/moment.min.js"></script>
+<script src="../standard/assets/js/datetime-moment.js"></script>
+<script src="../standard/assets/js/chartjs.min.js"></script>
+<script src="../standard/assets/js/searchindexcontent.json"></script>
+<script src="../standard/assets/js/anls.js"></script>
+<script src="../../../cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script src="../standard/assets/js/gauge.js"></script> 
+<script src="../standard/assets/js/domesticApi.js"></script> 
+<script src="../standard/assets/js/piecelabel.js"></script>
+<script src="../standard/assets/js/popper.min.js"></script>
+<script src="../standard/assets/js/custom.js"></script>
+<script src="../standard/assets/js/chosen.jquery.js"></script>
+<script src="../standard/assets/js/prism.js"></script>
+<script src="../standard/assets/js/init-chosen.js"></script>
+<script src="../standard/assets/js/chart-data-flow.js"></script>
+<script src="../standard/assets/js/chart-data-gantt.js"></script>
+<script type="module" src="../standard/assets/js/Fuse.esm.min.js"></script>
+<script type="module">
+import Fuse from '../standard/assets/js/Fuse.esm.min.js';
+$(document).ready(function () {
+console.log('getjson');
+window.$.getJSON('../standard/assets/js/searchindexcontent.json', function (response) {
+console.log('getjson ok');
+var isIndex = "";
+var url = window.location.pathname;
+var filename = url.substring(url.lastIndexOf('/')+1);
+if( filename.includes("index") || filename === "" ){
+isIndex = "pages/";
+} else {
+isIndex = "";
+}
+const fuse = new Fuse(response, {
+keys: ['title','text'],
+shouldSort: true,
+includeMatches : true,
+findAllMatches : true
+});
+$('#search-fuse').on('keyup', function () {
+let result = fuse.search($(this).val());
+console.log(result);
+let resultdiv = $('div.searchresults-fuse');
+if (result.length === 0) {
+resultdiv.hide();
+} else {
+resultdiv.empty();
+resultdiv.append('<table class="table-search" width="100%" cellspacing="0"><thead ><tr><th>Name</th><th>Object Type</th><th>Modification date</th></tr></thead><tbody>');
+
+for (let obj in result.slice(0,10)) {
+
+let searchObj = '<tr><td><a href="./'+ isIndex + result[obj].item.url + '">' + result[obj].item.title +'</a></td><td>' + result[obj].item.ObjectType + '</td><td>' + result[obj].item.ModificationDate + '</td></tr>' ;
+
+
+resultdiv.find('tbody').append(searchObj);
+}
+resultdiv.append('</tbody></table>');
+resultdiv.show();
+}
+});
+});
+});
+</script>
+<title>HOPEX Metamodel Overview (Beta Version)</title>
+</head>
+<nav class="navbar navbar-expand-md navbar-dark  navbar-mega"><!-- Brand --><!--<a class="navbar-brand" href="#">Navbar</a>--><a class="" href="../index.htm"><img class="logo-mega" src="../standard/assets/img/logo.png"  alt="">(Beta Version)</a><!-- Toggler/collapsibe Button --><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><!-- Navbar links -->
+<div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsibleNavbar"><div class="col-sm-auto col-md-auto col-lg-5"></div>
+<div class="col-sm-auto">
+<ul class="navbar-nav">      
+<li><a class="dropdown-item" href="ad30ce115ebf7e90.htm">EA Grid</a></li> 
+<li><a class="dropdown-item" href="fdd5018459bc3c6a.htm">EA Domains</a></li> 
+<li><a class="dropdown-item" href="07e731775ecc93f4.htm">Solutions</a></li> 
+<li><a class="dropdown-item" href="c5dfc62c54810c2c.htm">Glossary</a></li> 
+<li class="nav-item dropdown mx-1">
+<a class="nav-link" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</a>
+<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<li><a class="dropdown-item" href="5446555d5f88c32e.htm">Outcome Driven Metamodel</a></li> 
+<li><a class="dropdown-item" href="e1ccfc295f8f7b90.htm">Playbooks</a></li> 
+<li><a class="dropdown-item" href="42bc992862d20ea7.htm">Framework Mappings</a></li> 
+<li><a class="dropdown-item" href="e93aebb35fa20550.htm">Metamodel Patterns</a></li> 
+<li><a class="dropdown-item" href="d599fe87602b2b85.htm">References</a></li> 
+<li><a class="dropdown-item" href="333f3a7f5dde11de.htm">Legend</a></li> 
+</ul>									                                            
+</li>
+</ul>
+</div>
+<div class="col-sm-auto"><a class="nav-link search" href="#" onclick=showHideSearch("search-section-fuse")><i class="fa fa-search mr-1 form-control-feedback"></i></a></div>
+</div>
+</nav>
+<div id="search-section-fuse" style="display:none">>
+<div class="search_header"><span class="closesearch">&times;</span>
+<nav class="breadcrumb">
+<a class="breadcrumb-item" href="../index.htm">Home </a> 
+<span class="breadcrumb-item active">Search</span> 
+</nav>
+</div>
+<input id="search-fuse" placeholder="Search..."  name="q" onfocus="this.value=''" type="search">
+<div class="searchresults-fuse"></div>
+</div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>function showHideSearch(elementId) {var contentDivs = document.getElementsByClassName('content');var footerDivs = document.getElementsByClassName('footer'); var containerDivs = document.getElementsByClassName('container');var containerfluidDivs = document.getElementsByClassName('container-fluid');var x = document.getElementById(elementId);if (x.style.display === "none") {x.style.display = "block";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "none";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "none";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "none";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "none";}} else {x.style.display = "none";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "block";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "block";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "block";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "block";}}} ;<!-- END WIDGET DRILL DOWN --></script><script>$(document).ready(function() {$(window).scroll(function() {if ($(this).scrollTop() > 100) {$('.scrollup').fadeIn();} else {$('.scrollup').fadeOut();}});$('.scrollup').click(function() {$("html, body").animate({scrollTop: 0}, 600);return false;});});</script><script>
+var modal = document.getElementById("search-section-fuse");
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = "none";
+}
+}
+$(document).on('click', '.closesearch', function() {
+showHideSearch("search-section-fuse");
+
+
+
+
+
+});</script><div class="container-fluid col-lg-11"><nav class="breadcrumb"><a class="breadcrumb-item" href="../index.htm">Home </a> <span class="breadcrumb-item active"> MetaModel / Application Metamodel</span> </nav></div>
+<div class="container-fluid col-lg-11 content">
+<section class="fadeInDown animated">
+<a href="#det" class="btn btn-d">IDENTITY</a> 
+<a href="#des" class="btn btn-d">METAMODEL DESCRIPTION</a> 
+<a href="#core" class="btn btn-d">CORE METACLASSES</a> 
+<a href="#ctx" class="btn btn-d">CONTEXTUAL METACLASSES</a</section>
+<a class="object-section-anchor" id="det"></a>
+<section class="object-section">
+<h4>IDENTITY - Application Metamodel</h4> 
+<hr class="sectionbreak" />
+<table class="table table-vertical-headers table-set-col-width">
+<tr><th>Description</th><td></td></tr>       
+<tr><th>Represented Concept Domain</th><td><img src="../standard/dic_graph.ico.gif">&nbsp;
+<a  href="d5e6d6b05c4648d8.htm" target="_top">Application Functional Architecture</a></td></tr>
+</table>
+</section>
+<h4>METAMODEL DESCRIPTION</h4>
+<hr class="sectionbreak" />
+<section> 
+<a href="#" class="btn btn-d" value="Diag1" onclick="showDiagOnClick(this)">(1) Application Metamodel Diagram</a>  
+<div class="diag" id="Diag1" style="display:block; text-align:left"><p></p><div id="ZoomTable" class="Zoom" style="text-align:left">
+<a href="../images/A255A5EC4D6EA350_A255A63B4D6EA3DE_i.png" target="_blank" download><span class="fa fa-download" style="cursor: pointer;color:#000" id="ZoomButton" class="ZoomButton" title="Export Diagram"></span></a>&nbsp&nbsp<img style="display:none" src="../standard/ws_fitheight.gif" onclick="SizeToHeight(1);"id="ZoomButton" class="ZoomButton" title="Fit to height"></img>
+<span class="fa fa-arrows-alt-v" style="cursor: pointer;" onclick="SizeToHeight(1);"  id="ZoomButton" class="ZoomButton" title="Fit to height"></span>&nbsp&nbsp<img style="display:none" src="../standard/ws_fitwidth.gif" onclick="SizeToWidth(1);"  id="ZoomButton" class="ZoomButton" title="Fit to width"></img>
+<span class="fa fa-arrows-alt-h" style="cursor: pointer;" onclick="SizeToWidth(1);"  id="ZoomButton" class="ZoomButton" title="Fit to width"></span>&nbsp&nbsp<img style="display:none" src="../standard/ws_actual.gif" onclick="OriginalSize(1);" id="ZoomButton" class="ZoomButton" title=""></img>
+<span class="fa fa-arrows-alt" style="cursor: pointer;" onclick="OriginalSize(1);" id="ZoomButton" class="ZoomButton" title=""></span>&nbsp&nbsp<img style="display:none;" src="../standard/ws_zoomin.gif" onclick="ZoomIn(1)" id="ZoomButton" class="ZoomButton" title="Zoom in"></img>
+<span class="fa fa-plus-circle" style="cursor: pointer;" onclick="ZoomIn(1)" id="ZoomButton" class="ZoomButton" title="Zoom in"></span>&nbsp&nbsp<img style="display:none" src="../standard/ws_zoomout.gif" onclick="ZoomOut(1)" id="ZoomButton" class="ZoomButton" title="Zoom out"></img>
+<span class="fa fa-minus-circle" style="cursor: pointer;" onclick="ZoomOut(1)" id="ZoomButton" class="ZoomButton" title="Zoom out"></span>&nbsp&nbsp</div> <br>
+<map  name="A255A63B4D6EA3DE">
+  <area  href=#OBMK246C37B055313ABB shape="polygon" coords="783, 629, 783, 616, 931, 616, 931, 629, 783, 629"    title="-">
+  
+  <area  href=#OBMK654F763859716FD4 shape="polygon" coords="886, 643, 958, 643, 958, 653, 886, 653"    title="-">
+  
+  <area  href=#OBMK654F763859716FD2 shape="polygon" coords="741, 643, 958, 643, 958, 653, 741, 653"    title="-">
+  
+  <area  href=#OBMK246C37B055313ABA shape="polygon" coords="752, 681, 752, 668, 898, 668, 898, 681, 752, 681"    title="-">
+  
+  <area  href=#OBMK654F763859716FD3 shape="polygon" coords="741, 643, 814, 643, 814, 653, 741, 653"    title="-">
+  
+  <area  href="57A292AD55028B5C.htm" shape="rect" coords="453, 636, 589, 662"   target="_self"  title="-">
+  
+  <area  href="246c375a55313a68.htm" shape="rect" coords="958, 635, 1087, 660"   target="_self"  title="-">
+  
+  <area  href="c014c9b855301f01.htm" shape="rect" coords="595, 636, 741, 664"   target="_self"  title="-">
+  
+  <area  href=#OBMK0DFB196859492EA3 shape="polygon" coords="344, 674, 344, 661, 501, 661, 501, 674, 344, 674"    title="-">
+  
+  <area  href=#OBMK66FE6C0452B8334F shape="polygon" coords="358, 687, 358, 674, 486, 674, 486, 687, 358, 687"    title="-">
+  
+  <area  href=#OBMK0E7E10BA56F04DFE shape="polygon" coords="362, 700, 362, 687, 482, 687, 482, 700, 362, 700"    title="-">
+  
+  <area  href=#OBMKEB39FA015530118D shape="polygon" coords="404, 703, 503, 703, 503, 713, 404, 713"    title="-">
+  
+  <area  href=#OBMKEB39FA015530118B shape="polygon" coords="206, 703, 503, 703, 503, 713, 206, 713"    title="-">
+  
+  <area  href=#OBMK0E7E10BA56F04DFD shape="polygon" coords="238, 732, 238, 719, 356, 719, 356, 732, 238, 732"    title="-">
+  
+  <area  href=#OBMK0DFB196859492EA2 shape="polygon" coords="232, 745, 232, 732, 362, 732, 362, 745, 232, 745"    title="-">
+  
+  <area  href=#OBMK66FE6C0452B8334E shape="polygon" coords="210, 759, 210, 745, 384, 745, 384, 759, 210, 759"    title="-">
+  
+  <area  href=#OBMKEB39FA015530118C shape="polygon" coords="206, 703, 305, 703, 305, 713, 206, 713"    title="-">
+  
+  <area  href=#OBMK0D4C206B489B02C3 shape="polygon" coords="505, 713, 505, 700, 681, 700, 681, 713, 505, 713"   target="_self"  title="-">
+  
+  <area  href="EB39F74F55300FFC.htm" shape="rect" coords="503, 681, 683, 720"   target="_self"  title="-">
+  
+  <area  href="c4100f404b4506b2.htm" shape="rect" coords="40, 686, 206, 754"   target="_self"  title="An Application System Type is an abstraction shared by application architectures and applications that is composed of application components and their interactions. ">
+  
+  <area  href="90759f5559472c5e.htm" shape="rect" coords="939, 1, 1076, 26"   target="_self"  title="-">
+  
+  <area  href="90759E4259472B3C.htm" shape="rect" coords="497, 4, 683, 38"   target="_self"  title="-">
+  
+  <area  href=#OBMK87141E87559E7F2A shape="polygon" coords="289, 51, 289, 38, 496, 38, 496, 51, 289, 51"    title="-">
+  
+  <area  href=#OBMK90759E9459472BB0 shape="polygon" coords="315, 64, 315, 51, 496, 51, 496, 64, 315, 64"    title="-">
+  
+  <area  href=#OBMK9DB99EBB4E1A6458 shape="polygon" coords="400, 74, 498, 74, 498, 85, 400, 85"    title="-">
+  
+  <area  href=#OBMK9DB99EBB4E1A6455 shape="polygon" coords="206, 74, 498, 74, 498, 85, 206, 85"    title="-">
+  
+  <area  href=#OBMK87141E87559E7F29 shape="polygon" coords="225, 116, 225, 103, 333, 103, 333, 116, 225, 116"    title="-">
+  
+  <area  href=#OBMK90759E9459472BAF shape="polygon" coords="225, 129, 225, 116, 342, 116, 342, 129, 225, 129"    title="-">
+  
+  <area  href=#OBMK9DB99EBB4E1A6457 shape="polygon" coords="206, 74, 303, 74, 303, 85, 206, 85"    title="-">
+  
+  <area  href=#OBMK90759F9559472CC3 shape="polygon" coords="799, 51, 799, 38, 932, 38, 932, 51, 799, 51"    title="-">
+  
+  <area  href=#OBMK549968864B27069F shape="polygon" coords="856, 69, 941, 69, 941, 80, 856, 80"    title="-">
+  
+  <area  href=#OBMK549968864B27069C shape="polygon" coords="686, 69, 941, 69, 941, 80, 686, 80"    title="-">
+  
+  <area  href=#OBMK90759F9559472CC2 shape="polygon" coords="699, 112, 699, 99, 843, 99, 843, 112, 699, 112"    title="-">
+  
+  <area  href=#OBMK549968864B27069E shape="polygon" coords="686, 69, 771, 69, 771, 80, 686, 80"    title="-">
+  
+  <area  href="549967164b2704ec.htm" shape="rect" coords="498, 53, 686, 99"   target="_self"  title="A Business Capability Realization defines the physical agent (e.g. an Application System) or the logical agent (e.g. a Business Function) that realizes the capability.">
+  
+  <area  href="da99dae349820097.htm" shape="rect" coords="941, 39, 1070, 96"   target="_self"  title="A Business Capability is a set of features that can be made available by a system (an enterprise or an automated system).">
+  
+  <area  href="4B70D1DE4B6F038E.htm" shape="rect" coords="0, 53, 206, 101"   target="_self"  title="An Agent Type is a class of entity capable of actively participating in processes and capable of consuming and delivering services.">
+  
+  <area  href="f0fa10795a144710.htm" shape="rect" coords="948, 171, 1089, 209"   target="_self"  title="-">
+  
+  <area  href="F0FA103B5A1446B0.htm" shape="rect" coords="510, 173, 685, 213"   target="_self"  title="-">
+  
+  <area  href="C410CA544B44020D.htm" shape="rect" coords="2, 122, 173, 161"   target="_self"  title="Type of physical item, man-made or otherwise, which may also include types of human resource and software.">
+  
+  <area  href=#OBMKF0FA11F55A1447B4 shape="polygon" coords="307, 242, 307, 229, 493, 229, 493, 242, 307, 242"    title="-">
+  
+  <area  href=#OBMKA81CB6D858947A9A shape="polygon" coords="407, 259, 508, 259, 508, 269, 407, 269"    title="-">
+  
+  <area  href=#OBMKA81CB6D858947A98 shape="polygon" coords="206, 259, 508, 259, 508, 269, 206, 269"    title="-">
+  
+  <area  href=#OBMKF0FA11F55A1447B3 shape="polygon" coords="227, 301, 227, 288, 365, 288, 365, 301, 227, 301"    title="-">
+  
+  <area  href=#OBMKA81CB6D858947A99 shape="polygon" coords="206, 259, 307, 259, 307, 269, 206, 269"    title="-">
+  
+  <area  href=#OBMKF0FA12785A144838 shape="polygon" coords="739, 247, 739, 233, 941, 233, 941, 247, 739, 247"    title="-">
+  
+  <area  href=#OBMKF6F1B70D4F06246B shape="polygon" coords="865, 262, 955, 262, 955, 273, 865, 273"    title="-">
+  
+  <area  href=#OBMKF6F1B70D4F062468 shape="polygon" coords="686, 262, 955, 262, 955, 273, 686, 273"    title="-">
+  
+  <area  href=#OBMKF0FA12785A144837 shape="polygon" coords="689, 302, 689, 289, 905, 289, 905, 302, 689, 302"    title="-">
+  
+  <area  href=#OBMKF6F1B70D4F06246A shape="polygon" coords="686, 262, 775, 262, 775, 273, 686, 273"    title="-">
+  
+  <area  href="e939e9cf2c140236.htm" shape="rect" coords="955, 233, 1084, 300"   target="_self"  title="A functionality is a service required by an org-unit in order to perform its work. This functionality is generally necessary within an activity in order to execute a specific operation. If it is a software functionality, it can be provided by an application.">
+  
+  <area  href="F6F1B61A4F062394.htm" shape="rect" coords="508, 239, 686, 289"   target="_self"  title="Carrying out a functionality represents the software agent (applications and software technologies) that implements the functionality.">
+  
+  <area  href="3868470c589372da.htm" shape="rect" coords="0, 228, 206, 285"   target="_self"  title="-">
+  
+  <area  href="386844ea58937112.htm" shape="rect" coords="46, 175, 213, 213"   target="_self"  title="-">
+  
+  <area  href=#OBMK246C37B055313ABB shape="polygon" coords="804, 506, 804, 493, 952, 493, 952, 506, 804, 506"    title="-">
+  
+  <area  href=#OBMK654F763859716FD4 shape="polygon" coords="896, 521, 963, 521, 963, 532, 896, 532"    title="-">
+  
+  <area  href=#OBMK654F763859716FD2 shape="polygon" coords="761, 521, 963, 521, 963, 532, 761, 532"    title="-">
+  
+  <area  href=#OBMK246C37B055313ABA shape="polygon" coords="771, 560, 771, 547, 917, 547, 917, 560, 771, 560"    title="-">
+  
+  <area  href=#OBMK654F763859716FD3 shape="polygon" coords="761, 521, 828, 521, 828, 532, 761, 532"    title="-">
+  
+  <area  href="E4DCE77B48B7008D.htm" shape="rect" coords="110, 360, 250, 385"   target="_self"  title="This abstract metaclass has the subclasses applications and IT services. It is used to constrain the realization of a use case with an application or an IT service, but not both.">
+  
+  <area  href="7c3b847456e108ff.htm" shape="rect" coords="0, 311, 167, 349"   target="_self"  title="-">
+  
+  <area  href="246c375a55313a68.htm" shape="rect" coords="963, 508, 1092, 545"   target="_self"  title="-">
+  
+  <area  href="c014c9b855301f01.htm" shape="rect" coords="614, 515, 761, 543"   target="_self"  title="-">
+  
+  <area  href="57A2E3BC55018ADC.htm" shape="rect" coords="491, 517, 612, 546"   target="_self"  title="-">
+  
+  <area  href=#OBMKE012FA4F56E6150A shape="polygon" coords="366, 574, 366, 561, 499, 561, 499, 574, 366, 574"    title="-">
+  
+  <area  href=#OBMK71EC7919566071AC shape="polygon" coords="407, 586, 508, 586, 508, 597, 407, 597"    title="-">
+  
+  <area  href=#OBMK71EC7919566071AA shape="polygon" coords="206, 586, 508, 586, 508, 597, 206, 597"    title="-">
+  
+  <area  href=#OBMKE012FA4F56E61509 shape="polygon" coords="222, 628, 222, 615, 353, 615, 353, 628, 222, 628"    title="-">
+  
+  <area  href=#OBMK71EC7919566071AB shape="polygon" coords="206, 586, 307, 586, 307, 597, 206, 597"    title="-">
+  
+  <area  href="04A51B40574416FE.htm" shape="rect" coords="964, 346, 1093, 390"   target="_self"  title="-">
+  
+  <area  href=#OBMK0A2D6B444B2A05B6 shape="polygon" coords="817, 427, 817, 414, 977, 414, 977, 427, 817, 427"    title="-">
+  
+  <area  href=#OBMKB4B47340517F5091 shape="polygon" coords="871, 439, 963, 439, 963, 449, 871, 449"    title="-">
+  
+  <area  href=#OBMKB4B47340517F508E shape="polygon" coords="686, 439, 963, 439, 963, 449, 686, 449"    title="-">
+  
+  <area  href=#OBMK0A2D6B444B2A05B5 shape="polygon" coords="707, 479, 707, 466, 792, 466, 792, 479, 707, 479"    title="-">
+  
+  <area  href=#OBMKB4B47340517F5090 shape="polygon" coords="686, 439, 778, 439, 778, 449, 686, 449"    title="-">
+  
+  <area  href="b4b46935517f49ae.htm" shape="rect" coords="963, 409, 1092, 459"   target="_self"  title="-">
+  
+  <area  href="0A2D69F54B2A04B9.htm" shape="rect" coords="510, 357, 709, 388"   target="_self"  title="A component element that makes the component classifier real.">
+  
+  <area  href=#OBMK634968E64E154B35 shape="polygon" coords="404, 423, 404, 410, 496, 410, 496, 423, 404, 423"    title="-">
+  
+  <area  href=#OBMKB4B473AE517F50EA shape="polygon" coords="407, 439, 508, 439, 508, 449, 407, 449"    title="-">
+  
+  <area  href=#OBMKB4B473AE517F50E7 shape="polygon" coords="206, 439, 508, 439, 508, 449, 206, 449"    title="-">
+  
+  <area  href=#OBMK634968E64E154B34 shape="polygon" coords="235, 461, 235, 448, 314, 448, 314, 461, 235, 461"    title="-">
+  
+  <area  href=#OBMKB4B473AE517F50E9 shape="polygon" coords="206, 439, 307, 439, 307, 449, 206, 449"    title="-">
+  
+  <area  href=#OBMK0D4C206B489B02C3 shape="polygon" coords="510, 601, 510, 588, 684, 588, 684, 601, 510, 601"   target="_self"  title="-">
+  
+  <area  href="EB39F76E55301031.htm" shape="rect" coords="508, 570, 686, 609"   target="_self"  title="-">
+  
+  <area  href=#OBMK17EC969B588751BA shape="polygon" coords="510, 440, 510, 427, 684, 427, 684, 440, 510, 440"   target="_self"  title="-">
+  
+  <area  href="B4B46FDA517F504F.htm" shape="rect" coords="508, 408, 686, 483"   target="_self"  title="Realization of a Logical Application by a (Physical) Application">
+  
+  <area  href="B4B47373517F50C3.htm" shape="rect" coords="0, 402, 206, 644"   target="_self"  title="-">
+  
+  <area  href="066709bf4ec52b65.htm" shape="rect" coords="965, 880, 1093, 918"   target="_self"  title="Common abstraction for IT Service and IT Service architecture ">
+  
+  <area  href=#OBMK70477F6E56E96CDA shape="polygon" coords="772, 959, 772, 946, 969, 946, 969, 959, 772, 959"    title="-">
+  
+  <area  href=#OBMKA3F9C34159757BAB shape="polygon" coords="871, 971, 965, 971, 965, 981, 871, 981"    title="-">
+  
+  <area  href=#OBMKA3F9C34159757BA9 shape="polygon" coords="686, 971, 965, 971, 965, 981, 686, 981"    title="-">
+  
+  <area  href=#OBMK70477F6E56E96CD9 shape="polygon" coords="717, 1009, 717, 996, 854, 996, 854, 1009, 717, 1009"    title="-">
+  
+  <area  href=#OBMKA3F9C34159757BAA shape="polygon" coords="686, 971, 779, 971, 779, 981, 686, 981"    title="-">
+  
+  <area  href=#OBMK7047827456E970C6 shape="polygon" coords="254, 961, 254, 948, 502, 948, 502, 961, 254, 961"    title="-">
+  
+  <area  href=#OBMKA3F9C23359757B2F shape="polygon" coords="407, 969, 508, 969, 508, 980, 407, 980"    title="-">
+  
+  <area  href=#OBMKA3F9C23359757B2D shape="polygon" coords="206, 969, 508, 969, 508, 980, 206, 980"    title="-">
+  
+  <area  href=#OBMK7047827456E970C5 shape="polygon" coords="222, 1015, 222, 1002, 404, 1002, 404, 1015, 222, 1015"    title="-">
+  
+  <area  href=#OBMKA3F9C23359757B2E shape="polygon" coords="206, 969, 307, 969, 307, 980, 206, 980"    title="-">
+  
+  <area  href=#OBMK0D4C206B489B02C3 shape="polygon" coords="510, 980, 510, 967, 684, 967, 684, 980, 510, 980"   target="_self"  title="-">
+  
+  <area  href="5d68eacb5970493e.htm" shape="rect" coords="508, 948, 686, 997"   target="_self"  title="A micro-service component represents the use of a micro-service in the structure of another software component (application, IT Service, micro-service) or in the environment of an application.">
+  
+  <area  href="ef194298534d73db.htm" shape="rect" coords="515, 891, 688, 930"   target="_self"  title="-">
+  
+  <area  href="b4bab68b596f05a2.htm" shape="rect" coords="965, 938, 1093, 1014"   target="_self"  title="Software component that can be deployed autonomously and weakly coupled with the rest of the IS.">
+  
+  <area  href="A766AEC058B97153.htm" shape="rect" coords="519, 1012, 677, 1052"   target="_self"  title="-">
+  
+  <area  href=#OBMKA766AF9458B97223 shape="polygon" coords="801, 1067, 801, 1054, 947, 1054, 947, 1067, 801, 1067"    title="-">
+  
+  <area  href=#OBMK561269B64EA84C53 shape="polygon" coords="871, 1084, 965, 1084, 965, 1094, 871, 1094"    title="-">
+  
+  <area  href=#OBMK561269B64EA84C50 shape="polygon" coords="686, 1084, 965, 1084, 965, 1094, 686, 1094"    title="-">
+  
+  <area  href=#OBMKA766AF9458B97222 shape="polygon" coords="695, 1123, 695, 1110, 854, 1110, 854, 1123, 695, 1123"    title="-">
+  
+  <area  href=#OBMK561269B64EA84C52 shape="polygon" coords="686, 1084, 779, 1084, 779, 1094, 686, 1094"    title="-">
+  
+  <area  href="ea52ea613aac008b.htm" shape="rect" coords="965, 1068, 1093, 1127"   target="_self"  title="A system process is the executable representation of a process. A System Process is formally described by the workflow Events, the Tasks to be carried out during the processing, the sequence of the Tasks and the information exchanged between the participants. ">
+  
+  <area  href=#OBMKA766AF8758B971DD shape="polygon" coords="318, 1070, 318, 1057, 514, 1057, 514, 1070, 318, 1070"    title="-">
+  
+  <area  href=#OBMKDEB71F494FBD1A23 shape="polygon" coords="407, 1090, 508, 1090, 508, 1101, 407, 1101"    title="-">
+  
+  <area  href=#OBMKDEB71F494FBD1A20 shape="polygon" coords="206, 1090, 508, 1090, 508, 1101, 206, 1101"    title="-">
+  
+  <area  href=#OBMKA766AF8758B971DC shape="polygon" coords="235, 1131, 235, 1118, 403, 1118, 403, 1131, 235, 1131"    title="-">
+  
+  <area  href=#OBMKDEB71F494FBD1A22 shape="polygon" coords="206, 1090, 307, 1090, 307, 1101, 206, 1101"    title="-">
+  
+  <area  href=#OBMK0D4C206B489B02C3 shape="polygon" coords="510, 1102, 510, 1089, 684, 1089, 684, 1102, 510, 1102"   target="_self"  title="-">
+  
+  <area  href="36EE752A4E8B4492.htm" shape="rect" coords="508, 1070, 686, 1132"   target="_self"  title="Relationship between a Software Agent Type and a Process that it conducts.">
+  
+  <area  href=#OBMK70477F6E56E96CDA shape="polygon" coords="771, 805, 771, 792, 968, 792, 968, 805, 771, 805"    title="-">
+  
+  <area  href=#OBMK818882224E773C7E shape="polygon" coords="890, 819, 890, 805, 968, 805, 968, 819, 890, 819"    title="-">
+  
+  <area  href=#OBMK72FE779056FA2F71 shape="polygon" coords="871, 832, 965, 832, 965, 842, 871, 842"    title="-">
+  
+  <area  href=#OBMK72FE779056FA2F6F shape="polygon" coords="686, 832, 965, 832, 965, 842, 686, 842"    title="-">
+  
+  <area  href=#OBMK70477F6E56E96CD9 shape="polygon" coords="710, 870, 710, 857, 847, 857, 847, 870, 710, 870"    title="-">
+  
+  <area  href=#OBMK818882224E773C7D shape="polygon" coords="710, 883, 710, 870, 794, 870, 794, 883, 710, 883"    title="-">
+  
+  <area  href=#OBMK72FE779056FA2F70 shape="polygon" coords="686, 832, 779, 832, 779, 842, 686, 842"    title="-">
+  
+  <area  href=#OBMK7047827456E970C6 shape="polygon" coords="247, 827, 247, 814, 495, 814, 495, 827, 247, 827"    title="-">
+  
+  <area  href=#OBMK1D6C7D3E4F7050E0 shape="polygon" coords="407, 837, 508, 837, 508, 848, 407, 848"    title="-">
+  
+  <area  href=#OBMK1D6C7D3E4F7050DD shape="polygon" coords="206, 837, 508, 837, 508, 848, 206, 848"    title="-">
+  
+  <area  href=#OBMK7047827456E970C5 shape="polygon" coords="221, 879, 221, 866, 403, 866, 403, 879, 221, 879"    title="-">
+  
+  <area  href=#OBMK1D6C7D3E4F7050DF shape="polygon" coords="206, 837, 307, 837, 307, 848, 206, 848"    title="-">
+  
+  <area  href="066709bf4ec52b65.htm" shape="rect" coords="965, 747, 1093, 785"   target="_self"  title="Common abstraction for IT Service and IT Service architecture ">
+  
+  <area  href="b1edb25d2c1401af.htm" shape="rect" coords="965, 800, 1093, 853"   target="_self"  title="An IT service is a software component of an application, that can&rsquo;t be deployed alone and that realizes a sub-set of the functionalities of this application either for end users of this application or inside the application (or another application). This includes batch programs.">
+  
+  <area  href="ef194298534d73db.htm" shape="rect" coords="513, 757, 686, 797"   target="_self"  title="-">
+  
+  <area  href=#OBMK0D4C206B489B02C3 shape="polygon" coords="510, 847, 510, 834, 684, 834, 684, 847, 510, 847"   target="_self"  title="-">
+  
+  <area  href="fd7f9b954e762195.htm" shape="rect" coords="508, 815, 686, 856"   target="_self"  title="Part of an IT Service representing the role that a sub-IT service plays in the context of a parent IT service.&#160; ">
+  
+  <area  href="066709bf4ec52b65.htm" shape="rect" coords="78, 815, 206, 1132"   target="_self"  title="Common abstraction for IT Service and IT Service architecture ">
+  
+  <area  href=#OBMK17C018575F692208 shape="polygon" coords="849, 1165, 849, 1152, 1010, 1152, 1010, 1165, 849, 1165"    title="-">
+  
+  <area  href=#OBMK3AD040D152A84EBF shape="polygon" coords="714, 1178, 965, 1178, 965, 1189, 714, 1189"    title="-">
+  
+  <area  href=#OBMK3AD040D152A84EBD shape="polygon" coords="214, 1178, 965, 1178, 965, 1189, 214, 1189"    title="-">
+  
+  <area  href=#OBMK17C018575F692207 shape="polygon" coords="180, 1214, 180, 1201, 328, 1201, 328, 1214, 180, 1214"    title="-">
+  
+  <area  href=#OBMK3AD040D152A84EBE shape="polygon" coords="214, 1178, 464, 1178, 464, 1189, 214, 1189"    title="-">
+  
+  <area  href="2885299152a85717.htm" shape="rect" coords="965, 1163, 1093, 1213"   target="_self"  title="A software technology is a basic component necessary for operation of business applications.">
+  
+  <area  href="3ad0408b52a84e76.htm" shape="rect" coords="120, 1169, 215, 1207"   target="_self"  title="-">
+  
+  <area  href=#OBMK000000004000006A shape="polygon" coords="11, 1262, 11, 1249, 212, 1249, 212, 1262, 11, 1262"   target="_self"  title="-">
+  
+  <area  href="b1edb2562c14016f.htm" shape="rect" coords="10, 1230, 214, 1279"   target="_self"  title="An application is a software component that can be deployed and provides users with a set of functionalities.">
+  
+</map>
+<img  src="../images/A255A5EC4D6EA350_A255A63B4D6EA3DE_i.png" alt="../images/a255a5ec4d6ea350_a255a63b4d6ea3de_i.png" usemap="#A255A63B4D6EA3DE" height="1289" width="1093" border=0>
+
+<script>var cont=true; while (cont) {cont=zoomOutUntilFitToWindow(1); if (cont) {ZoomOut(1);}}</script>
+<p>
+<br/>
+<h4>CORE METACLASSES</h4>
+<table class="table  table-set-col-width">
+<thead>
+<tr><th>MetaClass	</th><th>Represented Concept</th><th style="white-space: nowrap">Categories</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="b1edb2562c14016f.htm" target="_top">Application</a></td>
+<td style="white-space: nowrap"><ul><li><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="bcebd8e9549144db.htm" target="_top">Application</a></li></ul>  </td>
+<td style="white-space: nowrap">
+<ul>
+<li>Agent</li>
+<li>MetaModel-Overview - Exclusion</li>
+<li>Physical Software Resource</li>
+</ul>  </td>
+<td><div align="left" style="min-height: 12pt; ">An application is a software component that can be deployed and provides users with a set of functionalities.</div><div align="left" style="min-height: 12pt; "></div><div align="left" style="min-height: 12pt; "></div><div align="left" style="min-height: 12pt; "></div><div align="left" style="min-height: 12pt; "></div></td>
+</tr>
+<tr>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="b1edb25d2c1401af.htm" target="_top">IT Service</a></td>
+<td style="white-space: nowrap"><ul><li><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="46194ce9560d3ab8.htm" target="_top">IT Service</a></li></ul>  </td>
+<td style="white-space: nowrap">
+<ul>
+<li>Agent</li>
+<li>Physical Software Resource</li>
+</ul>  </td>
+<td><div align="left" style="min-height: 12pt; ">An IT service is a software component of an application, that can&rsquo;t be deployed alone and that realizes a sub-set of the functionalities of this application either for end users of this application or inside the application (or another application). This includes batch programs.</div><div align="left" style="min-height: 12pt; "></div><div align="left" style="min-height: 12pt; "></div></td>
+</tr>
+<tr>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="ea52ea613aac008b.htm" target="_top">System Process</a></td>
+<td style="white-space: nowrap"><ul><li><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="46194939560d374f.htm" target="_top">System Process</a></li></ul>  </td>
+<td style="white-space: nowrap">
+<ul>
+<li>Content Repository Object</li>
+<li>MetaModel-Overview - Exclusion</li>
+</ul>  </td>
+<td><div align="left" style="min-height: 12pt; ">A system process is the executable representation of a process. A System Process is formally described by the workflow Events, the Tasks to be carried out during the processing, the sequence of the Tasks and the information exchanged between the participants. </div><div align="left" style="min-height: 12pt; ">In the BPMN notation, the system process represents a sub-process from the system point of view.</div></td>
+</tr>
+</tbody>
+</table>
+<br/>
+<h4>CONTEXTUALIZATION METACLASSES</h4>
+<table class="table  table-set-col-width">
+<thead>
+<tr><th>MetaClass	</th><th>Represented Concept</th><th style="white-space: nowrap">Categories</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="../standard/metaclasspart_concrete.ico.gif"/>&nbsp;
+<a  href="a255a5ec4d6ea350.htm" target="_top">Application Metamodel</a></td>
+<td style="white-space: nowrap">  </td>
+<td style="white-space: nowrap">
+<ul>
+<li>Content Repository Object</li>
+<li>MetaModel-Overview - Exclusion</li>
+</ul>  </td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<br/>
+<table class="table  table-set-col-width">
+<thead>
+<h4>Composition-MetaClasses</h4>
+<tr><th>MetaClass	</th><th>Represented Concept</th><th style="white-space: nowrap">Categories</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="../standard/metaclasspart_abstract.ico.gif"/>&nbsp;
+<a  href="a255a5ec4d6ea350.htm" target="_top">Application Metamodel</a></td>
+<td style="white-space: nowrap">  </td>
+<td style="white-space: nowrap">
+<ul>
+<li>Content Repository Object</li>
+<li>Structured Object</li>
+</ul>  </td>
+<td></td>
+</tr>
+</tbody>
+</table></p></div>
+</section> </div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>window.onscroll = function() {scrollFunction()};$(document).on('click', 'a[href^="#"]', function (event) {event.preventDefault();$('html, body').animate({scrollTop: $($.attr(this, 'href')).offset().top}, 500);});</script></html>

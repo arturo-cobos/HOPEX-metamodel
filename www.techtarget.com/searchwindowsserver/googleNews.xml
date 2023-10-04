@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:ns2="http://www.google.com/schemas/sitemap-news/0.9">
+    <url>
+        <loc>https://www.techtarget.com/searchwindowsserver/tip/Whats-new-in-Microsoft-Graph-PowerShell-v2</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-18</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>What's new in Microsoft Graph PowerShell v2?</ns2:title>
+        </ns2:news>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchwindowsserver/news/366551918/Microsoft-neutralizes-two-zero-days-for-September-Patch-Tuesday</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-12</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>Microsoft solves two zero-days for September Patch Tuesday</ns2:title>
+        </ns2:news>
+    </url>
+</urlset>

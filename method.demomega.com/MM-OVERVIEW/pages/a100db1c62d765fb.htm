@@ -1,0 +1,362 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="keywords" content="">
+<meta name="description" content="">    
+<LINK REL="icon" HREF="../standard/assets/img/favicon.ico">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/bootstrap.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nav.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/eaportal.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/font-awesome.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/animate.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/datatables.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/grid.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nae.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/custom.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/chosen.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/prism.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery.dataTables.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jsTreeStyle.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.theme.css" media="screen" />
+<script type="text/javascript" src="../standard/assets/js/jquery-3.2.1.min.js" ></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-ui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.columnFilter.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3-force.v2.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.gui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.search.js"></script> 
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.util.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-2.1.1.min.js"></script>
+<script src="../standard/assets/js/ws_zoomtemplate_firefox.js"></script>
+<script src="../standard/assets/js/bootstrap.min.js"></script>
+<script src="../standard/assets/js/datatables.min.js"></script>
+<script src="../standard/assets/js/moment.min.js"></script>
+<script src="../standard/assets/js/datetime-moment.js"></script>
+<script src="../standard/assets/js/chartjs.min.js"></script>
+<script src="../standard/assets/js/searchindexcontent.json"></script>
+<script src="../standard/assets/js/anls.js"></script>
+<script src="../../../cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script src="../standard/assets/js/gauge.js"></script> 
+<script src="../standard/assets/js/domesticApi.js"></script> 
+<script src="../standard/assets/js/piecelabel.js"></script>
+<script src="../standard/assets/js/popper.min.js"></script>
+<script src="../standard/assets/js/custom.js"></script>
+<script src="../standard/assets/js/chosen.jquery.js"></script>
+<script src="../standard/assets/js/prism.js"></script>
+<script src="../standard/assets/js/init-chosen.js"></script>
+<script src="../standard/assets/js/chart-data-flow.js"></script>
+<script src="../standard/assets/js/chart-data-gantt.js"></script>
+<script type="module" src="../standard/assets/js/Fuse.esm.min.js"></script>
+<script type="module">
+import Fuse from '../standard/assets/js/Fuse.esm.min.js';
+$(document).ready(function () {
+console.log('getjson');
+window.$.getJSON('../standard/assets/js/searchindexcontent.json', function (response) {
+console.log('getjson ok');
+var isIndex = "";
+var url = window.location.pathname;
+var filename = url.substring(url.lastIndexOf('/')+1);
+if( filename.includes("index") || filename === "" ){
+isIndex = "pages/";
+} else {
+isIndex = "";
+}
+const fuse = new Fuse(response, {
+keys: ['title','text'],
+shouldSort: true,
+includeMatches : true,
+findAllMatches : true
+});
+$('#search-fuse').on('keyup', function () {
+let result = fuse.search($(this).val());
+console.log(result);
+let resultdiv = $('div.searchresults-fuse');
+if (result.length === 0) {
+resultdiv.hide();
+} else {
+resultdiv.empty();
+resultdiv.append('<table class="table-search" width="100%" cellspacing="0"><thead ><tr><th>Name</th><th>Object Type</th><th>Modification date</th></tr></thead><tbody>');
+
+for (let obj in result.slice(0,10)) {
+
+let searchObj = '<tr><td><a href="./'+ isIndex + result[obj].item.url + '">' + result[obj].item.title +'</a></td><td>' + result[obj].item.ObjectType + '</td><td>' + result[obj].item.ModificationDate + '</td></tr>' ;
+
+
+resultdiv.find('tbody').append(searchObj);
+}
+resultdiv.append('</tbody></table>');
+resultdiv.show();
+}
+});
+});
+});
+</script>
+<title>HOPEX Metamodel Overview (Beta Version)</title>
+</head>
+<nav class="navbar navbar-expand-md navbar-dark  navbar-mega"><!-- Brand --><!--<a class="navbar-brand" href="#">Navbar</a>--><a class="" href="../index.htm"><img class="logo-mega" src="../standard/assets/img/logo.png"  alt="">(Beta Version)</a><!-- Toggler/collapsibe Button --><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><!-- Navbar links -->
+<div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsibleNavbar"><div class="col-sm-auto col-md-auto col-lg-5"></div>
+<div class="col-sm-auto">
+<ul class="navbar-nav">      
+<li><a class="dropdown-item" href="ad30ce115ebf7e90.htm">EA Grid</a></li> 
+<li><a class="dropdown-item" href="fdd5018459bc3c6a.htm">EA Domains</a></li> 
+<li><a class="dropdown-item" href="07e731775ecc93f4.htm">Solutions</a></li> 
+<li><a class="dropdown-item" href="c5dfc62c54810c2c.htm">Glossary</a></li> 
+<li class="nav-item dropdown mx-1">
+<a class="nav-link" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</a>
+<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<li><a class="dropdown-item" href="5446555d5f88c32e.htm">Outcome Driven Metamodel</a></li> 
+<li><a class="dropdown-item" href="e1ccfc295f8f7b90.htm">Playbooks</a></li> 
+<li><a class="dropdown-item" href="42bc992862d20ea7.htm">Framework Mappings</a></li> 
+<li><a class="dropdown-item" href="e93aebb35fa20550.htm">Metamodel Patterns</a></li> 
+<li><a class="dropdown-item" href="d599fe87602b2b85.htm">References</a></li> 
+<li><a class="dropdown-item" href="333f3a7f5dde11de.htm">Legend</a></li> 
+</ul>									                                            
+</li>
+</ul>
+</div>
+<div class="col-sm-auto"><a class="nav-link search" href="#" onclick=showHideSearch("search-section-fuse")><i class="fa fa-search mr-1 form-control-feedback"></i></a></div>
+</div>
+</nav>
+<div id="search-section-fuse" style="display:none">>
+<div class="search_header"><span class="closesearch">&times;</span>
+<nav class="breadcrumb">
+<a class="breadcrumb-item" href="../index.htm">Home </a> 
+<span class="breadcrumb-item active">Search</span> 
+</nav>
+</div>
+<input id="search-fuse" placeholder="Search..."  name="q" onfocus="this.value=''" type="search">
+<div class="searchresults-fuse"></div>
+</div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>function showHideSearch(elementId) {var contentDivs = document.getElementsByClassName('content');var footerDivs = document.getElementsByClassName('footer'); var containerDivs = document.getElementsByClassName('container');var containerfluidDivs = document.getElementsByClassName('container-fluid');var x = document.getElementById(elementId);if (x.style.display === "none") {x.style.display = "block";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "none";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "none";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "none";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "none";}} else {x.style.display = "none";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "block";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "block";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "block";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "block";}}} ;<!-- END WIDGET DRILL DOWN --></script><script>$(document).ready(function() {$(window).scroll(function() {if ($(this).scrollTop() > 100) {$('.scrollup').fadeIn();} else {$('.scrollup').fadeOut();}});$('.scrollup').click(function() {$("html, body").animate({scrollTop: 0}, 600);return false;});});</script><script>
+var modal = document.getElementById("search-section-fuse");
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = "none";
+}
+}
+$(document).on('click', '.closesearch', function() {
+showHideSearch("search-section-fuse");
+
+
+
+
+
+});</script><div class="container-fluid col-lg-11"><nav class="breadcrumb"><a class="breadcrumb-item" href="../index.htm">Home </a> <span class="breadcrumb-item active">Framework Mapping/C4 Model Mappings</span> </nav></div>
+<div class="container-fluid col-lg-11 content">
+<section class="fadeInDown animated"><a href="#det" class="btn btn-d">IDENTITY</a><a href="#dia" class="btn btn-d">DIAGRAM</a> <a href="#map" class="btn btn-d">MAPPING</a> <a href="#ext" class="btn btn-d">EXTERNAL REFERENCES</a> 
+</section>
+<a class="object-section-anchor" id="det"></a>
+<section class="object-section">
+<h4>IDENTITY - C4 Model Mappings</h4> 
+<hr class="sectionbreak" />
+<table class="table table-vertical-headers table-set-col-width">
+<tr><th>Description</th><td class="description-text">The C4 model graphical notation technique for modelling the architecture of software systems. created by the software architect Simon Brown.<br />C4 model provides a way for software development teams to efficiently and effectively communicate their software architecture, at different levels of detail, telling different stories to different types of audience, when doing up front design or retrospectively documenting an existing codebase.</td></tr>
+<tr><th>References</th><td>
+<a  href="7abf86a66308cea9.htm" target="_top">C4 Model - Website</a>
+<a  href="a941d40c6321ac0d.htm" target="_top">Wikipedia - 4+1 architectural view model</a>
+<a  href="a941d4296321ae4f.htm" target="_top">Wikipedia - C4 Model</a></td></tr>            
+</table>
+</section>
+<a class="object-section-anchor" id="dia"></a>
+<section class="object-section">
+<hr class="sectionbreak" />
+<map  name="A100DB2462D7661D">
+  <area  href=46194ce9560d3ab8.htm#OBMK46194CE9560D3AB8 shape="polygon" coords="287, 765, 287, 749, 300, 749, 300, 765, 287, 765"   target="_self"  title="An&#160; IT Service is a functionnal unit of software (java class, COBOL Program, Batch) that is&#160; a consistent, indivisible unit of processing of an Application delivering its Information Outcomes though APIs (Application Interface).">
+  
+  <area  href="#OBMKA943E9996321768A" shape="rect" coords="235, 710, 417, 804"   target="_self"  title="The word &quot;component&quot; is a hugely overloaded term in the software development industry, but in this context a component is a grouping of related functionality encapsulated behind a well-defined interface. If you&#39;re using a language like Java or C#, the simplest way to think of a component is that it&#39;s a collection of implementation classes behind an interface. Aspects such as how those components are packaged (e.g. one component vs many components per JAR file, DLL, shared library, etc) is a separate and orthogonal concern.">
+  
+  <area  href="#OBMKA941D7AA6321F81E" shape="rect" coords="251, 130, 393, 183"   target="_self"  title="A person represents one of the human users of your software system (e.g. actors, roles, personas, etc">
+  
+  <area  href=d5e6d7eb5c464b21.htm#OBMKD5E6D7EB5C464B21 shape="polygon" coords="870, 784, 870, 768, 883, 768, 883, 784, 870, 784"   target="_self"  title="A&#160; Deployable Application Package&#160; is a split of application code according to deployment criteria at runtime. For example, it may be Front End/Back End or GUI/Business Logic etc.. ">
+  
+  <area  href="#OBMKA941C32F63218B71" shape="rect" coords="867, 765, 1011, 803"   target="_self"  title="A container that represent client front end of an application.">
+  
+  <area  href=d5e6dc425c46518a.htm#OBMKD5E6DC425C46518A shape="polygon" coords="463, 777, 463, 761, 477, 761, 477, 777, 463, 777"   target="_self"  title="A&#160; Deployable Data Package&#160; represents a data part of an Application that must be hosted and accessed by application services (code) to run. ">
+  
+  <area  href="#OBMKA941D17D632197BE" shape="rect" coords="454, 745, 601, 793"   target="_self"  title="A container that represents a data store.">
+  
+  <area  href=d5e6d7eb5c464b21.htm#OBMKD5E6D7EB5C464B21 shape="polygon" coords="665, 783, 665, 767, 678, 767, 678, 783, 665, 783"   target="_self"  title="A&#160; Deployable Application Package&#160; is a split of application code according to deployment criteria at runtime. For example, it may be Front End/Back End or GUI/Business Logic etc.. ">
+  
+  <area  href="#OBMKA941C32F63218B71" shape="rect" coords="663, 761, 807, 806"   target="_self"  title="A container that represent client front end of an application.">
+  
+  <area  href=d5e6d7eb5c464b21.htm#OBMKD5E6D7EB5C464B21 shape="polygon" coords="863, 407, 863, 391, 876, 391, 876, 407, 863, 407"   target="_self"  title="A&#160; Deployable Application Package&#160; is a split of application code according to deployment criteria at runtime. For example, it may be Front End/Back End or GUI/Business Logic etc.. ">
+  
+  <area  href="#OBMKA941C32F63218B71" shape="rect" coords="860, 388, 1004, 427"   target="_self"  title="A container that represent client front end of an application.">
+  
+  <area  href=d5e6dc425c46518a.htm#OBMKD5E6DC425C46518A shape="polygon" coords="456, 400, 456, 384, 470, 384, 470, 400, 456, 400"   target="_self"  title="A&#160; Deployable Data Package&#160; represents a data part of an Application that must be hosted and accessed by application services (code) to run. ">
+  
+  <area  href="#OBMKA941D17D632197BE" shape="rect" coords="446, 368, 593, 416"   target="_self"  title="A container that represents a data store.">
+  
+  <area  href=4c7883cd5fca4d5b.htm#OBMK4C7883CD5FCA4D5B shape="polygon" coords="288, 391, 288, 375, 301, 375, 301, 391, 288, 391"   target="_self"  title="A&#160; Deployable Package is a split of Application code and data according to deployment and runtime purposes. ">
+  
+  <area  href="#OBMKA941C48D63218D1C" shape="rect" coords="231, 334, 416, 432"   target="_self"  title="Not Docker! In the C4 model, a container represents an application or a data store. A container is something that needs to be running in order for the overall software system to work. ">
+  
+  <area  href=d5e6d7eb5c464b21.htm#OBMKD5E6D7EB5C464B21 shape="polygon" coords="658, 406, 658, 390, 671, 390, 671, 406, 658, 406"   target="_self"  title="A&#160; Deployable Application Package&#160; is a split of application code according to deployment criteria at runtime. For example, it may be Front End/Back End or GUI/Business Logic etc.. ">
+  
+  <area  href="#OBMKA941C32F63218B71" shape="rect" coords="655, 384, 799, 428"   target="_self"  title="A container that represent client front end of an application.">
+  
+  <area  href=bcebd8e9549144db.htm#OBMKBCEBD8E9549144DB shape="polygon" coords="473, 137, 473, 121, 487, 121, 487, 137, 473, 137"   target="_self"  title="An Application is a Software System that provides a set of Functionality(ies) that End Users see as a single unit.">
+  
+  <area  href="#OBMKE2890D83631A5B98" shape="rect" coords="436, 75, 624, 184"   target="_self"  title="A software system is the highest level of abstraction and describes something that delivers value to its users, whether they are human or not. This includes the software system you are modelling, and the other software systems upon which your software system depends (or vice versa). In many cases, a software system is &quot;owned by&quot; a single software development team.">
+  
+  <area  href=c450d47c61de5dbc.htm#OBMKC450D47C61DE5DBC shape="polygon" coords="86, 137, 86, 121, 99, 121, 99, 137, 86, 137"   target="_self"  title="An&#160; Application Environment is an operating context in which an Application defines its interactions with its partners (Partner Application) in the form of&#160; API connections ( Software Interaction Channel).">
+  
+  <area  href="#OBMK7ABF8AB36308D054" shape="rect" coords="40, 84, 204, 174"   target="_self"  title="-">
+  
+  <area  href=c450d47c61de5dbc.htm#OBMKC450D47C61DE5DBC shape="polygon" coords="707, 24, 707, 0, 720, 0, 720, 24, 707, 24"   target="_self"  title="An&#160; Application Environment is an operating context in which an Application defines its interactions with its partners (Partner Application) in the form of&#160; API connections ( Software Interaction Channel).">
+  
+  <area  href="#OBMKA941D4F26321BEA6" shape="rect" coords="0, 0, 1056, 226"   target="_self"  title="A System Context diagram provides a starting point, showing how the software system in scope fits into the world around it.">
+  
+  <area  href=d5e6d7de5c464b02.htm#OBMKD5E6D7DE5C464B02 shape="polygon" coords="765, 288, 765, 264, 779, 264, 779, 288, 765, 288"   target="_self"  title="An&#160; Application Deployment Environment&#160; describes one possible integration context for an Application Deployment Architecture. It contains the subject application deployment architecture and the partner deployment architectures it must be integrated with, meaning it must communicates with via technical connections (with communication protocols, port numbers...).">
+  
+  <area  href="#OBMKA941D70B6321EA9C" shape="rect" coords="0, 264, 1052, 634"   target="_self"  title="&#160;A Container diagram zooms into the software system in scope, showing the high-level technical building blocks.">
+  
+  <area  href=d5e6d7c65c464ae3.htm#OBMKD5E6D7C65C464AE3 shape="polygon" coords="730, 667, 730, 643, 743, 643, 743, 667, 730, 667"   target="_self"  title="An&#160; Application Deployment Architecture describes one possible deployment configuration of an Application. ">
+  
+  <area  href="#OBMK25E5CF8563223F41" shape="rect" coords="4, 644, 1050, 1009"   target="_self"  title="A Component diagram zooms into an individual container, showing the components inside it.">
+  
+</map>
+<img  src="../images/a100db1c62d765fb_a100db2462d7661d_i.png" alt="../images/a100db1c62d765fb_a100db2462d7661d_i.png" usemap="#A100DB2462D7661D" height="1008" width="1056" border=0>
+
+</section>
+<a class="object-section-anchor" id="map"></a>
+<section class="object-section">
+<h4>MAPPED ENTITIES</h4> 
+<hr class="sectionbreak" />
+<table id="sortabletable" class="table table-sm  table-bordered table-cell-resizable table-index-set-col-width-4 table-custom-style table-scrollX" width="100%" cellspacing="0">
+<tr><th>Framework Concept</th><th>Framework Definition</th><th>HOPEX Concept</th><th>HOPEX Definition</th></tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMKA943E9996321768A"/>Component</td>
+<td><div align="left" style="min-height: 12pt; ">The word &quot;component&quot; is a hugely overloaded term in the software development industry, but in this context a component is a grouping of related functionality encapsulated behind a well-defined interface. If you&#39;re using a language like Java or C#, the simplest way to think of a component is that it&#39;s a collection of implementation classes behind an interface. Aspects such as how those components are packaged (e.g. one component vs many components per JAR file, DLL, shared library, etc) is a separate and orthogonal concern.</div><div align="left" style="min-height: 12pt; "></div><div align="left" style="min-height: 12pt; ">An important point to note here is that all components inside a container typically execute in the same process space. <b>In the C4 model, components are not separately deployable units</b>.</div></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="46194ce9560d3ab8.htm" target="_top">IT Service</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="b1edb25d2c1401af.htm" target="_top">IT Service</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> IT Service</b> is a functionnal unit of software (java class, COBOL Program, Batch) that is&#160; a consistent, indivisible unit of processing of an <a href="bcebd8e9549144db.htm" target="_top"><b><u>Application</u></b></a> delivering its <a href="302238be5ec9020a.htm" target="_top"><b><u>Information Outcome</u></b></a>s though APIs (<a href="9dce9f8d5ec76311.htm" target="_top"><b><u>Application Interface</u></b></a>).</div><div align="left" style="min-height: 12pt; ">a)&#160;<b> IT Service</b>s are assembled and orchestrated in <a href="bcebd8e9549144db.htm" target="_top"><b><u>Application</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">b)&#160;<b> IT Service</b>s cannot be directly deployed to <a href="f4be0eda5ee1d6c0.htm" target="_top"><b><u>Computational Aspect</u></b></a>s: they need to be organized in <a href="d5e6d7eb5c464b21.htm" target="_top"><b><u>Deployable Application Package</u></b></a>s.</div><div align="left" style="min-height: 12pt; "><b>&#160;IT Service</b> is a <a href="5c43888764103e54.htm" target="_top"><b><u>Micro</u></b></a> enterprise asset that sits at the lowest level of <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a> decomposition.</div><div align="left" style="min-height: 12pt; ">Example: the &quot;Salary and Wage Calculation&quot; component is an&#160;<b> IT Service</b> that is part of the &quot;Payroll&quot; <a href="bcebd8e9549144db.htm" target="_top"><b><u>Application</u></b></a>.</div><i><br/>References:<br/><a href="https://c4model.com/#ComponentDiagram" target="_blank">C4 Model - Level 3 - Component Diagram</a><br/><a href="https://c4model.com/#Metamodel" target="_blank">C4 Model - Metamodel</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMKA941C48D63218D1C"/>Container</td>
+<td>Not Docker! In the C4 model, a container represents an application or a data store. A container is something that needs to be running in order for the overall software system to work. </td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="4c7883cd5fca4d5b.htm" target="_top">Deployable Package</a></td>
+<td class="description-text">A&#160;<b> Deployable Package</b> is a split of <a href="bcebd8e9549144db.htm" target="_top"><b><u>Application</u></b></a> code and data according to deployment and runtime purposes. <i><br/>References:<br/><a href="https://c4model.com/#ContainerDiagram" target="_blank">C4 Model - Level 2 - Container Diagram</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMKA941D17D632197BE"/>Container Database</td>
+<td>A container that represents a data store.</td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="d5e6dc425c46518a.htm" target="_top">Deployable Data Package</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="b4e5e47d59225b04.htm" target="_top">Deployable Data Package</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Deployable Data Package</b>&#160; represents a data part of an <a href="bcebd8e9549144db.htm" target="_top"><b><u>Application</u></b></a> that must be hosted and accessed by application services (code) to run. </div><div align="left" style="min-height: 12pt; ">Each&#160;<b> Deployable Data Package</b> is associated to <a href="1ce3554e5c48bfa6.htm" target="_top"><b><u>Required Software Technology</u></b></a>s (for data hosting and access) and can host several data structures. </div><div align="left" style="min-height: 12pt; ">Architect can also prescribes a kind of hosting artefact (IaaS/PaaS cloud service or IT server model).</div><i><br/>References:<br/><a href="https://c4model.com/#ContainerDiagram" target="_blank">C4 Model - Level 2 - Container Diagram</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMKA941C32F63218B71"/>Container Mobile App, Web Browser</td>
+<td>A container that represent client front end of an application.</td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="d5e6d7eb5c464b21.htm" target="_top">Deployable Application Package</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="80fccac358806663.htm" target="_top">Deployable Application Package</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Deployable Application Package</b>&#160; is a split of application code according to deployment criteria at runtime. For example, it may be Front End/Back End or GUI/Business Logic etc.. </div><div align="left" style="min-height: 12pt; ">Each&#160;<b> Deployable Application Package</b> is associated to required <a href="d5e6ddd05c46547c.htm" target="_top"><b><u>Software Technology</u></b></a>(ies) (for running) and can host code of several <a href="46194ce9560d3ab8.htm" target="_top"><b><u>IT Service</u></b></a>. </div><div align="left" style="min-height: 12pt; ">Architects can also prescribe a kind of hosting artefact (IaaS/PaaS cloud service or IT server model).</div><i><br/>References:<br/><a href="https://c4model.com/#ContainerDiagram" target="_blank">C4 Model - Level 2 - Container Diagram</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK7ABF8AB36308D054"/>Enterprise</td>
+<td></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="c450d47c61de5dbc.htm" target="_top">Application Environment</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="d86edd0b58520c1d.htm" target="_top">Application Environment</a></td>
+<td class="description-text">An&#160;<b> Application Environment</b> is an operating context in which an <a href="bcebd8e9549144db.htm" target="_top"><b><u>Application</u></b></a> defines its interactions with its partners (<a href="c450d8c761de6c03.htm" target="_top"><b><u>Partner Application</u></b></a>) in the form of&#160; API connections (<b> Software Interaction Channel</b>).<i><br/>References:<br/><a href="https://c4model.com/#SystemContextDiagram" target="_blank">C4 Model - Level 1 - System Context Diagram</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMKA941D4F26321BEA6"/>Level 1- System Context Diagram</td>
+<td>A System Context diagram provides a starting point, showing how the software system in scope fits into the world around it.<i><br/>References:<br/><a href="https://c4model.com/#SystemContextDiagram" target="_blank">C4 Model - Level 1 - System Context Diagram</a></i></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="c450d47c61de5dbc.htm" target="_top">Application Environment</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="d86edd0b58520c1d.htm" target="_top">Application Environment</a></td>
+<td class="description-text">An&#160;<b> Application Environment</b> is an operating context in which an <a href="bcebd8e9549144db.htm" target="_top"><b><u>Application</u></b></a> defines its interactions with its partners (<a href="c450d8c761de6c03.htm" target="_top"><b><u>Partner Application</u></b></a>) in the form of&#160; API connections (<b> Software Interaction Channel</b>).<i><br/>References:<br/><a href="https://c4model.com/#SystemContextDiagram" target="_blank">C4 Model - Level 1 - System Context Diagram</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMKA941D70B6321EA9C"/>Level 2- Container Diagram</td>
+<td>&#160;A Container diagram zooms into the software system in scope, showing the high-level technical building blocks.<i><br/>References:<br/><a href="https://c4model.com/#ContainerDiagram" target="_blank">C4 Model - Level 2 - Container Diagram</a></i></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="d5e6d7de5c464b02.htm" target="_top">Application Deployment Environment</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="7dfb827159150e33.htm" target="_top">Application System Deployment Architecture</a></td>
+<td class="description-text">An&#160;<b> Application Deployment Environment</b>&#160; describes one possible integration context for an <a href="d5e6d7c65c464ae3.htm" target="_top"><b><u>Application Deployment Architecture</u></b></a>. It contains the subject application deployment architecture and the partner deployment architectures it must be integrated with, meaning it must communicates with via technical connections (with communication protocols, port numbers...).<i><br/>References:<br/><a href="https://c4model.com/#SystemContextDiagram" target="_blank">C4 Model - Level 1 - System Context Diagram</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK25E5CF8563223F41"/>Level 3 - Component Diagram</td>
+<td>A Component diagram zooms into an individual container, showing the components inside it.<i><br/>References:<br/><a href="https://c4model.com/#ComponentDiagram" target="_blank">C4 Model - Level 3 - Component Diagram</a></i></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="d5e6d7c65c464ae3.htm" target="_top">Application Deployment Architecture</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="80fccaa45880661f.htm" target="_top">Application Deployment Architecture</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Application Deployment Architecture</b> describes one possible deployment configuration of an <a href="bcebd8e9549144db.htm" target="_top"><b><u>Application</u></b></a>. </div><div align="left" style="min-height: 12pt; ">It contains <a href="4c7883cd5fca4d5b.htm" target="_top"><b><u>Deployable Package</u></b></a>s to host, prescribed type of hosting and required&#160;<b> Software Physical Channel</b>s (with communication protocols, port numbers...) to communicate with each other.</div></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMKA941D7AA6321F81E"/>Person</td>
+<td>A person represents one of the human users of your software system (e.g. actors, roles, personas, etc</td>
+<td><img src="../standard/ctx-concepttype.ico.gif"/>&nbsp;
+<a  href="2dcea8705fc4827c.htm" target="_top">End User</a></td>
+<td class="description-text">An&#160;<b> End User</b> is a <a href="076d15425a5e158c.htm" target="_top"><b><u>Human Resource</u></b></a> who actually uses a particular <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a>.</td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMKE2890D83631A5B98"/>Software System</td>
+<td>A software system is the highest level of abstraction and describes something that delivers value to its users, whether they are human or not. This includes the software system you are modelling, and the other software systems upon which your software system depends (or vice versa). In many cases, a software system is &quot;owned by&quot; a single software development team.<i><br/>References:<br/><a href="https://c4model.com/#Abstractions" target="_blank">C4 Model - Software System</a></i></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="bcebd8e9549144db.htm" target="_top">Application</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="b1edb2562c14016f.htm" target="_top">Application</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An <a href="b1edb2562c14016f.htm" target="_top"><b><u>Application</u></b></a> is a <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a> that provides a set of <a href="598272e954c622f4.htm" target="_top"><b><u>Functionality</u></b></a>(ies) that <a href="2dcea8705fc4827c.htm" target="_top"><b><u>End User</u></b></a>s see as a single unit.</div><div align="left" style="min-height: 12pt; ">Essentially&#160;<b> Application</b>s are architectural constructions resulting from the combinaison of the following four criteria:</div><div align="left" style="min-height: 12pt; ">1) A group of <a href="598272e954c622f4.htm" target="_top"><b><u>Functionality</u></b></a> that <a href="2dcea8705fc4827c.htm" target="_top"><b><u>End User</u></b></a>s see as a single unit.</div><div align="left" style="min-height: 12pt; ">2) A managed asset (<b> Managed Application</b>) associated with a budget line in the context of an <a href="1ce3429d5c48982e.htm" target="_top"><b><u>Application Portfolio</u></b></a>.</div><div align="left" style="min-height: 12pt; ">3) A body of code that is seen by developers as a single unit.</div><div align="left" style="min-height: 12pt; ">4) A group of deployable software units (<a href="d5e6d7eb5c464b21.htm" target="_top"><b><u>Deployable Application Package</u></b></a>s) that must be installed together on one or multiple execution nodes (<a href="f4be0eda5ee1d6c0.htm" target="_top"><b><u>Computational Aspect</u></b></a>).</div><div align="left" style="min-height: 12pt; "><b>&#160;Application</b> is a <a href="5c43887c64103e30.htm" target="_top"><b><u>Mezzo</u></b></a> enterprise asset&#160; that sits between <a href="46194ca7560d3a45.htm" target="_top"><b><u>Application System</u></b></a> and <a href="46194ce9560d3ab8.htm" target="_top"><b><u>IT Service</u></b></a> in the decomposition of <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">Example: &quot;Payroll&quot; is an&#160;<b> Application</b> that is part an &quot;HR system&quot; which is an <a href="46194ca7560d3a45.htm" target="_top"><b><u>Application System</u></b></a>.</div><div align="left" style="min-height: 12pt; ">The &quot;Payroll&quot;&#160;<b> Application</b> includes, among other things, the &quot;Salary and Wage Calculation&quot; <a href="46194ce9560d3ab8.htm" target="_top"><b><u>IT Service</u></b></a>.</div><i><br/>References:<br/><a href="https://c4model.com/#Abstractions" target="_blank">C4 Model - Software System</a><br/><a href="https://martinfowler.com/bliki/ApplicationBoundary.html" target="_blank">Martin Fowler - Application Boundary</a><br/><a href="https://learn.microsoft.com/en-us/azure/architecture/guide/architecture-styles" target="_blank">Microsoft - Architecture Design - Architecture Styles</a><br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Software" target="_blank">OMG - UAF - Software</a><br/><a href="https://pubs.opengroup.org/architecture/archimate32-doc/#_Toc112154993" target="_blank">OpenGroup - ArchiMate - Application Component</a><br/><a href="https://method.demomega.com/MM-OVERVIEW/pages/architecture-content/chap02.html#tag_02_04" target="_blank">OpenGroup - TOGAF - Content MetaModel - Physical Application Component</a><br/><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_04" target="_blank">OpenGroup - TOGAF - Definition - Application Component</a></i></td>
+</tr>
+</table>
+</section>
+<a class="object-section-anchor" id="ext"></a>
+<section class="object-section">
+<h4>EXTERNAL REFERENCES</h4> 
+<hr class="sectionbreak" />
+<table id="sortabletable" class="table table-sm  table-bordered table-cell-resizable table-index-set-col-width-4 table-custom-style table-scrollX" width="100%" cellspacing="0">
+<tr><th>Framework reference</th><th>HOPEX Description</th></tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMK4C3A4E5861DB40FE"/><a href="https://c4model.com/#SystemContextDiagram">C4 Model - Level 1 - System Context Diagram</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="d5e6d7de5c464b02.htm" target="_top">Application Deployment Environment</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="7dfb827159150e33.htm" target="_top">Application System Deployment Architecture</a><br/> An&#160;<b> Application Deployment Environment</b>&#160; describes one possible integration context for an <a href="d5e6d7c65c464ae3.htm" target="_top"><b><u>Application Deployment Architecture</u></b></a>. It contains the subject application deployment architecture and the partner deployment architectures it must be integrated with, meaning it must communicates with via technical connections (with communication protocols, port numbers...).<br/><br/><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="c450d47c61de5dbc.htm" target="_top">Application Environment</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="d86edd0b58520c1d.htm" target="_top">Application Environment</a><br/> An&#160;<b> Application Environment</b> is an operating context in which an <a href="bcebd8e9549144db.htm" target="_top"><b><u>Application</u></b></a> defines its interactions with its partners (<a href="c450d8c761de6c03.htm" target="_top"><b><u>Partner Application</u></b></a>) in the form of&#160; API connections (<b> Software Interaction Channel</b>).<br/><br/><br/> <div align="left" style="min-height: 12pt; ">The&#160;<b> Application Functional Architecture</b> domain is used to describe the functional structure and behavior of <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">HOPEX provides three level of granularity to represent software systems:</div><div align="left" style="min-height: 12pt; ">1) Macro <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a>s are represented by <a href="46194ca7560d3a45.htm" target="_top"><b><u>Application System</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">2) Mezzo <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a>s are represented by <a href="bcebd8e9549144db.htm" target="_top"><b><u>Application</u></b></a>s, which compose <a href="46194ca7560d3a45.htm" target="_top"><b><u>Application System</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">3) Micro <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a>s are represented by <a href="46194ce9560d3ab8.htm" target="_top"><b><u>IT Service</u></b></a>s and <a href="d6a956495a395d28.htm" target="_top"><b><u>MicroService</u></b></a>s which compose <a href="bcebd8e9549144db.htm" target="_top"><b><u>Application</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">All <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a>s provide <a href="598272e954c622f4.htm" target="_top"><b><u>Functionality</u></b></a>s, expose APIs by means of <a href="9dce9f8d5ec76311.htm" target="_top"><b><u>Application Interface</u></b></a>s, have a data scope defined by <a href="028f03ff5b4f55ee.htm" target="_top"><b><u>Physical Data Domain</u></b></a>s, perform <a href="46194939560d374f.htm" target="_top"><b><u>System Process</u></b></a>es and have their interactions described by <a href="25c09cb461e2efd3.htm" target="_top"><b><u>Software System Scenario</u></b></a>s.</div><br/><br/><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="1084480e5fce4ccb.htm" target="_top">Application System Deployment Architecture</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="7dfb827159150e33.htm" target="_top">Application System Deployment Architecture</a><br/> <div align="left" style="min-height: 12pt; ">An&#160;<b> Application System Deployment Architecture</b> describes one possible deployment configuration of an <a href="46194ca7560d3a45.htm" target="_top"><b><u>Application System</u></b></a>. </div><div align="left" style="min-height: 12pt; ">It contains chosen deployment architectures for component applications and identifies communication protocols (and port numbers) they use to communicate with each other.</div><br/><br/><br/> A System Context diagram provides a starting point, showing how the software system in scope fits into the world around it.<br/><br/><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="10844c325fce4e80.htm" target="_top">Software Deployment Architecture</a><br/> </td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMK4A314A7E61DB672E"/><a href="https://c4model.com/#ContainerDiagram">C4 Model - Level 2 - Container Diagram</a></td>
+<td><br/> <div align="left" style="min-height: 12pt; ">The&#160;<b> Application Deployment Architecture</b> domain defines concepts used to organize <a href="bcebd8e9549144db.htm" target="_top"><b><u>Application</u></b></a>s in <a href="4c7883cd5fca4d5b.htm" target="_top"><b><u>Deployable Package</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">It comprises:</div><div align="left" style="min-height: 12pt; ">1) software code packages (<a href="d5e6d7eb5c464b21.htm" target="_top"><b><u>Deployable Application Package</u></b></a>s) </div><div align="left" style="min-height: 12pt; ">2) Data packages (<a href="d5e6dc425c46518a.htm" target="_top"><b><u>Deployable Data Package</u></b></a>s).</div><div align="left" style="min-height: 12pt; ">3) Prescribed type of hosting</div><div align="left" style="min-height: 12pt; ">4) required technical connections (with communication protocols, port numbers...)&#160; to communicate with each other.</div><br/><br/><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="d5e6d7eb5c464b21.htm" target="_top">Deployable Application Package</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="80fccac358806663.htm" target="_top">Deployable Application Package</a><br/> <div align="left" style="min-height: 12pt; ">A&#160;<b> Deployable Application Package</b>&#160; is a split of application code according to deployment criteria at runtime. For example, it may be Front End/Back End or GUI/Business Logic etc.. </div><div align="left" style="min-height: 12pt; ">Each&#160;<b> Deployable Application Package</b> is associated to required <a href="d5e6ddd05c46547c.htm" target="_top"><b><u>Software Technology</u></b></a>(ies) (for running) and can host code of several <a href="46194ce9560d3ab8.htm" target="_top"><b><u>IT Service</u></b></a>. </div><div align="left" style="min-height: 12pt; ">Architects can also prescribe a kind of hosting artefact (IaaS/PaaS cloud service or IT server model).</div><br/><br/><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="d5e6dc425c46518a.htm" target="_top">Deployable Data Package</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="b4e5e47d59225b04.htm" target="_top">Deployable Data Package</a><br/> <div align="left" style="min-height: 12pt; ">A&#160;<b> Deployable Data Package</b>&#160; represents a data part of an <a href="bcebd8e9549144db.htm" target="_top"><b><u>Application</u></b></a> that must be hosted and accessed by application services (code) to run. </div><div align="left" style="min-height: 12pt; ">Each&#160;<b> Deployable Data Package</b> is associated to <a href="1ce3554e5c48bfa6.htm" target="_top"><b><u>Required Software Technology</u></b></a>s (for data hosting and access) and can host several data structures. </div><div align="left" style="min-height: 12pt; ">Architect can also prescribes a kind of hosting artefact (IaaS/PaaS cloud service or IT server model).</div><br/><br/><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="4c7883cd5fca4d5b.htm" target="_top">Deployable Package</a><br/> A&#160;<b> Deployable Package</b> is a split of <a href="bcebd8e9549144db.htm" target="_top"><b><u>Application</u></b></a> code and data according to deployment and runtime purposes. <br/><br/><br/> &#160;A Container diagram zooms into the software system in scope, showing the high-level technical building blocks.<br/><br/><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="d6a956495a395d28.htm" target="_top">MicroService</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="b4bab68b596f05a2.htm" target="_top">Micro-Service</a><br/> <div align="left" style="min-height: 12pt; ">A&#160;<b> MicroService</b> is a small autonomous unit of software, emphasizing self-management and lightweightness as the means to improve software agility, scalability, and autonomy.</div><div align="left" style="min-height: 12pt; ">1)&#160;<b> MicroService</b>s are automous or assembled and orchestrated as components of <a href="bcebd8e9549144db.htm" target="_top"><b><u>Application</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">2)&#160;<b> MicroService</b>s can be directly deployed to <a href="f4be0eda5ee1d6c0.htm" target="_top"><b><u>Computational Aspect</u></b></a>s.&#160;<b> MicroService</b>s are both a logical unit of software and a <a href="4c7883cd5fca4d5b.htm" target="_top"><b><u>Deployable Package</u></b></a>.</div><div align="left" style="min-height: 12pt; ">3)&#160;<b> MicroService</b>s owns their own data store and dot not have any shared stores with other components.</div><div align="left" style="min-height: 12pt; "><b>&#160;MicroService</b> is <a href="5c43888764103e54.htm" target="_top"><b><u>Micro</u></b></a> a enterprise asset that sits at the lower level of <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a> decomposition.</div></td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMK4A314BD761DB688C"/><a href="https://c4model.com/#ComponentDiagram">C4 Model - Level 3 - Component Diagram</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="46194ce9560d3ab8.htm" target="_top">IT Service</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="b1edb25d2c1401af.htm" target="_top">IT Service</a><br/> <div align="left" style="min-height: 12pt; ">An&#160;<b> IT Service</b> is a functionnal unit of software (java class, COBOL Program, Batch) that is&#160; a consistent, indivisible unit of processing of an <a href="bcebd8e9549144db.htm" target="_top"><b><u>Application</u></b></a> delivering its <a href="302238be5ec9020a.htm" target="_top"><b><u>Information Outcome</u></b></a>s though APIs (<a href="9dce9f8d5ec76311.htm" target="_top"><b><u>Application Interface</u></b></a>).</div><div align="left" style="min-height: 12pt; ">a)&#160;<b> IT Service</b>s are assembled and orchestrated in <a href="bcebd8e9549144db.htm" target="_top"><b><u>Application</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">b)&#160;<b> IT Service</b>s cannot be directly deployed to <a href="f4be0eda5ee1d6c0.htm" target="_top"><b><u>Computational Aspect</u></b></a>s: they need to be organized in <a href="d5e6d7eb5c464b21.htm" target="_top"><b><u>Deployable Application Package</u></b></a>s.</div><div align="left" style="min-height: 12pt; "><b>&#160;IT Service</b> is a <a href="5c43888764103e54.htm" target="_top"><b><u>Micro</u></b></a> enterprise asset that sits at the lowest level of <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a> decomposition.</div><div align="left" style="min-height: 12pt; ">Example: the &quot;Salary and Wage Calculation&quot; component is an&#160;<b> IT Service</b> that is part of the &quot;Payroll&quot; <a href="bcebd8e9549144db.htm" target="_top"><b><u>Application</u></b></a>.</div><br/><br/><br/> A Component diagram zooms into an individual container, showing the components inside it.<br/><br/><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="d6a956495a395d28.htm" target="_top">MicroService</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="b4bab68b596f05a2.htm" target="_top">Micro-Service</a><br/> <div align="left" style="min-height: 12pt; ">A&#160;<b> MicroService</b> is a small autonomous unit of software, emphasizing self-management and lightweightness as the means to improve software agility, scalability, and autonomy.</div><div align="left" style="min-height: 12pt; ">1)&#160;<b> MicroService</b>s are automous or assembled and orchestrated as components of <a href="bcebd8e9549144db.htm" target="_top"><b><u>Application</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">2)&#160;<b> MicroService</b>s can be directly deployed to <a href="f4be0eda5ee1d6c0.htm" target="_top"><b><u>Computational Aspect</u></b></a>s.&#160;<b> MicroService</b>s are both a logical unit of software and a <a href="4c7883cd5fca4d5b.htm" target="_top"><b><u>Deployable Package</u></b></a>.</div><div align="left" style="min-height: 12pt; ">3)&#160;<b> MicroService</b>s owns their own data store and dot not have any shared stores with other components.</div><div align="left" style="min-height: 12pt; "><b>&#160;MicroService</b> is <a href="5c43888764103e54.htm" target="_top"><b><u>Micro</u></b></a> a enterprise asset that sits at the lower level of <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a> decomposition.</div></td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMKF8D1F7F462A204B4"/><a href="https://c4model.com/#Abstractions">C4 Model - Software System</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="bcebd8e9549144db.htm" target="_top">Application</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="b1edb2562c14016f.htm" target="_top">Application</a><br/> <div align="left" style="min-height: 12pt; ">An <a href="b1edb2562c14016f.htm" target="_top"><b><u>Application</u></b></a> is a <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a> that provides a set of <a href="598272e954c622f4.htm" target="_top"><b><u>Functionality</u></b></a>(ies) that <a href="2dcea8705fc4827c.htm" target="_top"><b><u>End User</u></b></a>s see as a single unit.</div><div align="left" style="min-height: 12pt; ">Essentially&#160;<b> Application</b>s are architectural constructions resulting from the combinaison of the following four criteria:</div><div align="left" style="min-height: 12pt; ">1) A group of <a href="598272e954c622f4.htm" target="_top"><b><u>Functionality</u></b></a> that <a href="2dcea8705fc4827c.htm" target="_top"><b><u>End User</u></b></a>s see as a single unit.</div><div align="left" style="min-height: 12pt; ">2) A managed asset (<b> Managed Application</b>) associated with a budget line in the context of an <a href="1ce3429d5c48982e.htm" target="_top"><b><u>Application Portfolio</u></b></a>.</div><div align="left" style="min-height: 12pt; ">3) A body of code that is seen by developers as a single unit.</div><div align="left" style="min-height: 12pt; ">4) A group of deployable software units (<a href="d5e6d7eb5c464b21.htm" target="_top"><b><u>Deployable Application Package</u></b></a>s) that must be installed together on one or multiple execution nodes (<a href="f4be0eda5ee1d6c0.htm" target="_top"><b><u>Computational Aspect</u></b></a>).</div><div align="left" style="min-height: 12pt; "><b>&#160;Application</b> is a <a href="5c43887c64103e30.htm" target="_top"><b><u>Mezzo</u></b></a> enterprise asset&#160; that sits between <a href="46194ca7560d3a45.htm" target="_top"><b><u>Application System</u></b></a> and <a href="46194ce9560d3ab8.htm" target="_top"><b><u>IT Service</u></b></a> in the decomposition of <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">Example: &quot;Payroll&quot; is an&#160;<b> Application</b> that is part an &quot;HR system&quot; which is an <a href="46194ca7560d3a45.htm" target="_top"><b><u>Application System</u></b></a>.</div><div align="left" style="min-height: 12pt; ">The &quot;Payroll&quot;&#160;<b> Application</b> includes, among other things, the &quot;Salary and Wage Calculation&quot; <a href="46194ce9560d3ab8.htm" target="_top"><b><u>IT Service</u></b></a>.</div><br/><br/><br/> A software system is the highest level of abstraction and describes something that delivers value to its users, whether they are human or not. This includes the software system you are modelling, and the other software systems upon which your software system depends (or vice versa). In many cases, a software system is &quot;owned by&quot; a single software development team.</td>
+</tr>
+</table>
+</section>
+</div></html>

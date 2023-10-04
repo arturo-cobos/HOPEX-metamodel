@@ -1,0 +1,384 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="keywords" content="">
+<meta name="description" content="">    
+<LINK REL="icon" HREF="../standard/assets/img/favicon.ico">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/bootstrap.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nav.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/eaportal.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/font-awesome.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/animate.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/datatables.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/grid.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nae.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/custom.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/chosen.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/prism.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery.dataTables.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jsTreeStyle.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.theme.css" media="screen" />
+<script type="text/javascript" src="../standard/assets/js/jquery-3.2.1.min.js" ></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-ui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.columnFilter.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3-force.v2.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.gui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.search.js"></script> 
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.util.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-2.1.1.min.js"></script>
+<script src="../standard/assets/js/ws_zoomtemplate_firefox.js"></script>
+<script src="../standard/assets/js/bootstrap.min.js"></script>
+<script src="../standard/assets/js/datatables.min.js"></script>
+<script src="../standard/assets/js/moment.min.js"></script>
+<script src="../standard/assets/js/datetime-moment.js"></script>
+<script src="../standard/assets/js/chartjs.min.js"></script>
+<script src="../standard/assets/js/searchindexcontent.json"></script>
+<script src="../standard/assets/js/anls.js"></script>
+<script src="../../../cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script src="../standard/assets/js/gauge.js"></script> 
+<script src="../standard/assets/js/domesticApi.js"></script> 
+<script src="../standard/assets/js/piecelabel.js"></script>
+<script src="../standard/assets/js/popper.min.js"></script>
+<script src="../standard/assets/js/custom.js"></script>
+<script src="../standard/assets/js/chosen.jquery.js"></script>
+<script src="../standard/assets/js/prism.js"></script>
+<script src="../standard/assets/js/init-chosen.js"></script>
+<script src="../standard/assets/js/chart-data-flow.js"></script>
+<script src="../standard/assets/js/chart-data-gantt.js"></script>
+<script type="module" src="../standard/assets/js/Fuse.esm.min.js"></script>
+<script type="module">
+import Fuse from '../standard/assets/js/Fuse.esm.min.js';
+$(document).ready(function () {
+console.log('getjson');
+window.$.getJSON('../standard/assets/js/searchindexcontent.json', function (response) {
+console.log('getjson ok');
+var isIndex = "";
+var url = window.location.pathname;
+var filename = url.substring(url.lastIndexOf('/')+1);
+if( filename.includes("index") || filename === "" ){
+isIndex = "pages/";
+} else {
+isIndex = "";
+}
+const fuse = new Fuse(response, {
+keys: ['title','text'],
+shouldSort: true,
+includeMatches : true,
+findAllMatches : true
+});
+$('#search-fuse').on('keyup', function () {
+let result = fuse.search($(this).val());
+console.log(result);
+let resultdiv = $('div.searchresults-fuse');
+if (result.length === 0) {
+resultdiv.hide();
+} else {
+resultdiv.empty();
+resultdiv.append('<table class="table-search" width="100%" cellspacing="0"><thead ><tr><th>Name</th><th>Object Type</th><th>Modification date</th></tr></thead><tbody>');
+
+for (let obj in result.slice(0,10)) {
+
+let searchObj = '<tr><td><a href="./'+ isIndex + result[obj].item.url + '">' + result[obj].item.title +'</a></td><td>' + result[obj].item.ObjectType + '</td><td>' + result[obj].item.ModificationDate + '</td></tr>' ;
+
+
+resultdiv.find('tbody').append(searchObj);
+}
+resultdiv.append('</tbody></table>');
+resultdiv.show();
+}
+});
+});
+});
+</script>
+<title>HOPEX Metamodel Overview (Beta Version)</title>
+</head>
+<nav class="navbar navbar-expand-md navbar-dark  navbar-mega"><!-- Brand --><!--<a class="navbar-brand" href="#">Navbar</a>--><a class="" href="../index.htm"><img class="logo-mega" src="../standard/assets/img/logo.png"  alt="">(Beta Version)</a><!-- Toggler/collapsibe Button --><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><!-- Navbar links -->
+<div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsibleNavbar"><div class="col-sm-auto col-md-auto col-lg-5"></div>
+<div class="col-sm-auto">
+<ul class="navbar-nav">      
+<li><a class="dropdown-item" href="ad30ce115ebf7e90.htm">EA Grid</a></li> 
+<li><a class="dropdown-item" href="fdd5018459bc3c6a.htm">EA Domains</a></li> 
+<li><a class="dropdown-item" href="07e731775ecc93f4.htm">Solutions</a></li> 
+<li><a class="dropdown-item" href="c5dfc62c54810c2c.htm">Glossary</a></li> 
+<li class="nav-item dropdown mx-1">
+<a class="nav-link" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</a>
+<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<li><a class="dropdown-item" href="5446555d5f88c32e.htm">Outcome Driven Metamodel</a></li> 
+<li><a class="dropdown-item" href="e1ccfc295f8f7b90.htm">Playbooks</a></li> 
+<li><a class="dropdown-item" href="42bc992862d20ea7.htm">Framework Mappings</a></li> 
+<li><a class="dropdown-item" href="e93aebb35fa20550.htm">Metamodel Patterns</a></li> 
+<li><a class="dropdown-item" href="d599fe87602b2b85.htm">References</a></li> 
+<li><a class="dropdown-item" href="333f3a7f5dde11de.htm">Legend</a></li> 
+</ul>									                                            
+</li>
+</ul>
+</div>
+<div class="col-sm-auto"><a class="nav-link search" href="#" onclick=showHideSearch("search-section-fuse")><i class="fa fa-search mr-1 form-control-feedback"></i></a></div>
+</div>
+</nav>
+<div id="search-section-fuse" style="display:none">>
+<div class="search_header"><span class="closesearch">&times;</span>
+<nav class="breadcrumb">
+<a class="breadcrumb-item" href="../index.htm">Home </a> 
+<span class="breadcrumb-item active">Search</span> 
+</nav>
+</div>
+<input id="search-fuse" placeholder="Search..."  name="q" onfocus="this.value=''" type="search">
+<div class="searchresults-fuse"></div>
+</div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>function showHideSearch(elementId) {var contentDivs = document.getElementsByClassName('content');var footerDivs = document.getElementsByClassName('footer'); var containerDivs = document.getElementsByClassName('container');var containerfluidDivs = document.getElementsByClassName('container-fluid');var x = document.getElementById(elementId);if (x.style.display === "none") {x.style.display = "block";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "none";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "none";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "none";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "none";}} else {x.style.display = "none";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "block";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "block";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "block";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "block";}}} ;<!-- END WIDGET DRILL DOWN --></script><script>$(document).ready(function() {$(window).scroll(function() {if ($(this).scrollTop() > 100) {$('.scrollup').fadeIn();} else {$('.scrollup').fadeOut();}});$('.scrollup').click(function() {$("html, body").animate({scrollTop: 0}, 600);return false;});});</script><script>
+var modal = document.getElementById("search-section-fuse");
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = "none";
+}
+}
+$(document).on('click', '.closesearch', function() {
+showHideSearch("search-section-fuse");
+
+
+
+
+
+});</script><div class="container-fluid col-lg-11"><nav class="breadcrumb"><a class="breadcrumb-item" href="../index.htm">Home</a> <span class="breadcrumb-item active">&nbsp;&nbsp;
+<a  href="8a9fd5c15ee0be33.htm" target="_top">HOPEX Solutions</a>&nbsp;/&nbsp;HOPEX Solutions</span></nav></div><div class="container-fluid col-lg-11 content">
+<section class="fadeInDown animated"><a href="#det" class="btn btn-d">IDENTITY</a> <a href="#dia" class="btn btn-d">DIAGRAM</a> <a href="#dom" class="btn btn-d">DOMAINS</a> </section>
+<a class="object-section-anchor" id="det"></a>
+<section class="object-section">
+<h4>IDENTITY - HOPEX Solutions</h4> 
+<hr class="sectionbreak" />
+<table class="table table-vertical-headers table-set-col-width">
+<tr><th>Description</th><td class="description-text"><div align="left" style="min-height: 12pt; ">HOPEX solutions help companies better analyze how they can operate and make the right decisions. The HOPEX Platform connects business, IT, data, and risks perspectives in a single place that integrates across an entire company&rsquo;s ecosystem. Our Services team partners with customers to deliver projects with a pragmatic approach.</div><div align="left" style="min-height: 12pt; ">Customers can better visualize and understand their assets, align on business objectives, and effectively create business value. </div></td></tr>
+<tr><th>Dictionary</th><td><img src="../standard/dicsubjectarea.ico.gif"/>&nbsp;
+<a  href="8a9fd5c15ee0be33.htm" target="_top">HOPEX Solutions</a></td></tr>
+<tr><th>Framework Mapping</th><td>
+<a  href="02733a015f8728c1.htm" target="_top">HOPEX Solution Map</a></td></tr>
+</table>
+</section>	<a class="object-section-anchor" id="dia"></a><section class="object-section"><h4>DIAGRAM</h4> <hr class="sectionbreak" />
+<map  name="07E7318D5ECC948C">
+  <area  href=#OBMKC10CC7D85E941DE3 shape="polygon" coords="657, 847, 657, 833, 670, 833, 670, 847, 657, 847"   target="_top"  title="-">
+  
+  <area  href=07230f465f4e5524.htm#OBMK07230F465F4E5524 shape="polygon" coords="670, 847, 670, 833, 827, 833, 827, 847, 670, 847"   target="_top"  title="-">
+  
+  <area  href=#OBMKC10CC7D85E941DE3 shape="polygon" coords="657, 860, 657, 847, 670, 847, 670, 860, 657, 860"   target="_top"  title="-">
+  
+  <area  href=07230ebb5f4e5300.htm#OBMK07230EBB5F4E5300 shape="polygon" coords="670, 860, 670, 847, 848, 847, 848, 860, 670, 860"   target="_top"  title="-">
+  
+  <area  href=#OBMKC10CC7D85E941DE3 shape="polygon" coords="657, 873, 657, 860, 670, 860, 670, 873, 657, 873"   target="_top"  title="-">
+  
+  <area  href=07230f095f4e543b.htm#OBMK07230F095F4E543B shape="polygon" coords="670, 873, 670, 860, 895, 860, 895, 873, 670, 873"   target="_top"  title="-">
+  
+  <area  href=#OBMKC10CC7D85E941DE3 shape="polygon" coords="657, 887, 657, 873, 670, 873, 670, 887, 657, 887"   target="_top"  title="-">
+  
+  <area  href=07230f635f4e560d.htm#OBMK07230F635F4E560D shape="polygon" coords="670, 887, 670, 873, 853, 873, 853, 887, 670, 887"   target="_top"  title="-">
+  
+  <area  href=#OBMKC10CC7D85E941DE3 shape="polygon" coords="657, 900, 657, 887, 670, 887, 670, 900, 657, 900"   target="_top"  title="-">
+  
+  <area  href=07230f855f4e56ef.htm#OBMK07230F855F4E56EF shape="polygon" coords="670, 900, 670, 887, 869, 887, 869, 900, 670, 900"   target="_top"  title="-">
+  
+  <area  href=#OBMKC10CC7D85E941DE3 shape="polygon" coords="657, 913, 657, 900, 670, 900, 670, 913, 657, 913"   target="_top"  title="-">
+  
+  <area  href=07230fb95f4e57d9.htm#OBMK07230FB95F4E57D9 shape="polygon" coords="670, 913, 670, 900, 824, 900, 824, 913, 670, 913"   target="_top"  title="-">
+  
+  <area  href=#OBMKC10CC7D85E941DE3 shape="polygon" coords="657, 927, 657, 913, 670, 913, 670, 927, 657, 927"   target="_top"  title="-">
+  
+  <area  href=07230fd15f4e58bb.htm#OBMK07230FD15F4E58BB shape="polygon" coords="670, 927, 670, 913, 873, 913, 873, 927, 670, 927"   target="_top"  title="-">
+  
+  <area  href=#OBMKC10CC7D85E941DE3 shape="polygon" coords="657, 940, 657, 927, 670, 927, 670, 940, 657, 940"   target="_top"  title="-">
+  
+  <area  href=07230fe75f4e599d.htm#OBMK07230FE75F4E599D shape="polygon" coords="670, 940, 670, 927, 903, 927, 903, 940, 670, 940"   target="_top"  title="-">
+  
+  <area  href=#OBMKC10CC7D85E941DE3 shape="polygon" coords="657, 953, 657, 940, 670, 940, 670, 953, 657, 953"   target="_top"  title="-">
+  
+  <area  href=072310125f4e5a7f.htm#OBMK072310125F4E5A7F shape="polygon" coords="670, 953, 670, 940, 782, 940, 782, 953, 670, 953"   target="_top"  title="-">
+  
+  <area  href="072319315f4eb2bb.htm" shape="rect" coords="647, 804, 918, 970"   target="_top"  title="-">
+  
+  <area  href=#OBMKC10CC7D85E941DE3 shape="polygon" coords="223, 843, 223, 829, 237, 829, 237, 843, 223, 843"   target="_top"  title="-">
+  
+  <area  href=82b583055f431693.htm#OBMK82B583055F431693 shape="polygon" coords="237, 843, 237, 829, 355, 829, 355, 843, 237, 843"   target="_top"  title="-">
+  
+  <area  href=#OBMKC10CC7D85E941DE3 shape="polygon" coords="223, 856, 223, 843, 237, 843, 237, 856, 223, 856"   target="_top"  title="-">
+  
+  <area  href=82b582fe5f431663.htm#OBMK82B582FE5F431663 shape="polygon" coords="237, 856, 237, 843, 391, 843, 391, 856, 237, 856"   target="_top"  title="-">
+  
+  <area  href=#OBMKC10CC7D85E941DE3 shape="polygon" coords="223, 869, 223, 856, 237, 856, 237, 869, 223, 869"   target="_top"  title="-">
+  
+  <area  href=82b583455f4316ec.htm#OBMK82B583455F4316EC shape="polygon" coords="237, 869, 237, 856, 447, 856, 447, 869, 237, 869"   target="_top"  title="-">
+  
+  <area  href=#OBMKC10CC7D85E941DE3 shape="polygon" coords="223, 883, 223, 869, 237, 869, 237, 883, 223, 883"   target="_top"  title="-">
+  
+  <area  href=82b5833f5f4316c1.htm#OBMK82B5833F5F4316C1 shape="polygon" coords="237, 883, 237, 869, 400, 869, 400, 883, 237, 883"   target="_top"  title="-">
+  
+  <area  href=#OBMKC10CC7D85E941DE3 shape="polygon" coords="223, 896, 223, 883, 237, 883, 237, 896, 223, 896"   target="_top"  title="-">
+  
+  <area  href=82b5835a5f431745.htm#OBMK82B5835A5F431745 shape="polygon" coords="237, 896, 237, 883, 378, 883, 378, 896, 237, 896"   target="_top"  title="-">
+  
+  <area  href=#OBMKC10CC7D85E941DE3 shape="polygon" coords="223, 909, 223, 896, 237, 896, 237, 909, 223, 909"   target="_top"  title="-">
+  
+  <area  href=82b583535f431717.htm#OBMK82B583535F431717 shape="polygon" coords="237, 909, 237, 896, 380, 896, 380, 909, 237, 909"   target="_top"  title="-">
+  
+  <area  href="82b58afb5f4327e9.htm" shape="rect" coords="213, 800, 483, 966"   target="_top"  title="-">
+  
+  <area  href=#OBMKC10CC7D85E941DE3 shape="polygon" coords="876, 617, 876, 603, 889, 603, 889, 617, 876, 617"   target="_top"  title="-">
+  
+  <area  href=f3dbfe176180b2f4.htm#OBMKF3DBFE176180B2F4 shape="polygon" coords="889, 617, 889, 603, 977, 603, 977, 617, 889, 617"   target="_top"  title="-">
+  
+  <area  href="8a9fa3145ee0ad05.htm" shape="rect" coords="866, 574, 1123, 690"   target="_top"  title="-">
+  
+  <area  href=#OBMKC10CC7D85E941DE3 shape="polygon" coords="45, 617, 45, 603, 58, 603, 58, 617, 45, 617"   target="_top"  title="-">
+  
+  <area  href=1297d799619b4f86.htm#OBMK1297D799619B4F86 shape="polygon" coords="58, 617, 58, 603, 178, 603, 178, 617, 58, 617"   target="_top"  title="-">
+  
+  <area  href=#OBMKC10CC7D85E941DE3 shape="polygon" coords="45, 630, 45, 617, 58, 617, 58, 630, 45, 630"   target="_top"  title="-">
+  
+  <area  href=b51eb5b860373d6a.htm#OBMKB51EB5B860373D6A shape="polygon" coords="58, 630, 58, 617, 172, 617, 172, 630, 58, 630"   target="_top"  title="-">
+  
+  <area  href="2cff2dc85eda7726.htm" shape="rect" coords="35, 574, 292, 690"   target="_top"  title="-">
+  
+  <area  href=#OBMK8C468EC7577252DF shape="polygon" coords="325, 714, 325, 701, 338, 701, 338, 714, 325, 714"   target="_top"  title="-">
+  
+  <area  href=#OBMK2CFF2F755EDA812A shape="polygon" coords="338, 714, 338, 701, 429, 701, 429, 714, 338, 714"   target="_top"  title="-">
+  
+  <area  href="245c29b25eda4132.htm" shape="rect" coords="314, 672, 561, 771"   target="_top"  title="-">
+  
+  <area  href=#OBMKC10CC7D85E941DE3 shape="polygon" coords="876, 356, 876, 342, 889, 342, 889, 356, 876, 356"   target="_top"  title="-">
+  
+  <area  href=4026c928618a180b.htm#OBMK4026C928618A180B shape="polygon" coords="889, 356, 889, 342, 990, 342, 990, 356, 889, 356"   target="_top"  title="-">
+  
+  <area  href="624e63305ed954bf.htm" shape="rect" coords="866, 313, 1123, 429"   target="_top"  title="-">
+  
+  <area  href=#OBMKC10CC7D85E941DE3 shape="polygon" coords="45, 356, 45, 342, 58, 342, 58, 356, 45, 356"   target="_top"  title="-">
+  
+  <area  href=f4f42edc618e0344.htm#OBMKF4F42EDC618E0344 shape="polygon" coords="58, 356, 58, 342, 178, 342, 178, 356, 58, 356"   target="_top"  title="-">
+  
+  <area  href=#OBMKC10CC7D85E941DE3 shape="polygon" coords="45, 369, 45, 356, 58, 356, 58, 369, 45, 369"   target="_top"  title="-">
+  
+  <area  href=f4f42ee2618e036f.htm#OBMKF4F42EE2618E036F shape="polygon" coords="58, 369, 58, 356, 179, 356, 179, 369, 58, 369"   target="_top"  title="-">
+  
+  <area  href=#OBMKC10CC7D85E941DE3 shape="polygon" coords="45, 382, 45, 369, 58, 369, 58, 382, 45, 382"   target="_top"  title="-">
+  
+  <area  href=230b4f5d61d8f1e3.htm#OBMK230B4F5D61D8F1E3 shape="polygon" coords="58, 382, 58, 369, 208, 369, 208, 382, 58, 382"   target="_top"  title="-">
+  
+  <area  href=#OBMKC10CC7D85E941DE3 shape="polygon" coords="45, 396, 45, 382, 58, 382, 58, 396, 45, 396"   target="_top"  title="-">
+  
+  <area  href=ff9d65f9604154b4.htm#OBMKFF9D65F9604154B4 shape="polygon" coords="58, 396, 58, 382, 201, 382, 201, 396, 58, 396"   target="_top"  title="-">
+  
+  <area  href="624e630d5ed953de.htm" shape="rect" coords="35, 313, 292, 429"   target="_top"  title="-">
+  
+  <area  href=#OBMKC10CC7D85E941DE3 shape="polygon" coords="455, 108, 455, 95, 469, 95, 469, 108, 455, 108"   target="_top"  title="-">
+  
+  <area  href=f4f4304a618e04ed.htm#OBMKF4F4304A618E04ED shape="polygon" coords="469, 108, 469, 95, 586, 95, 586, 108, 469, 108"   target="_top"  title="-">
+  
+  <area  href=#OBMKC10CC7D85E941DE3 shape="polygon" coords="455, 121, 455, 108, 469, 108, 469, 121, 455, 121"   target="_top"  title="-">
+  
+  <area  href=f4f42f88618e0417.htm#OBMKF4F42F88618E0417 shape="polygon" coords="469, 121, 469, 108, 574, 108, 574, 121, 469, 121"   target="_top"  title="-">
+  
+  <area  href=#OBMKC10CC7D85E941DE3 shape="polygon" coords="455, 135, 455, 121, 469, 121, 469, 135, 455, 135"   target="_top"  title="-">
+  
+  <area  href=4026c97d618a1967.htm#OBMK4026C97D618A1967 shape="polygon" coords="469, 135, 469, 121, 614, 121, 614, 135, 469, 135"   target="_top"  title="-">
+  
+  <area  href=#OBMKC10CC7D85E941DE3 shape="polygon" coords="455, 148, 455, 135, 469, 135, 469, 148, 455, 148"   target="_top"  title="-">
+  
+  <area  href=4026c9a1618a19b8.htm#OBMK4026C9A1618A19B8 shape="polygon" coords="469, 148, 469, 135, 649, 135, 649, 148, 469, 148"   target="_top"  title="-">
+  
+  <area  href=#OBMKC10CC7D85E941DE3 shape="polygon" coords="455, 161, 455, 148, 469, 148, 469, 161, 455, 161"   target="_top"  title="-">
+  
+  <area  href=4026c9c4618a1a04.htm#OBMK4026C9C4618A1A04 shape="polygon" coords="469, 161, 469, 148, 633, 148, 633, 161, 469, 161"   target="_top"  title="-">
+  
+  <area  href="624e62fc5ed952fa.htm" shape="rect" coords="445, 67, 702, 182"   target="_top"  title="-">
+  
+  <area  href=#OBMKC10CC7D85E941DE3 shape="polygon" coords="597, 710, 597, 697, 611, 697, 611, 710, 597, 710"   target="_top"  title="-">
+  
+  <area  href=b9bdbc94603713ba.htm#OBMKB9BDBC94603713BA shape="polygon" coords="611, 710, 611, 697, 753, 697, 753, 710, 611, 710"   target="_top"  title="-">
+  
+  <area  href="07e733205eccae00.htm" shape="rect" coords="587, 668, 833, 767"   target="_top"  title="-">
+  
+  <area  href=#OBMKC10CC7D85E941DE3 shape="polygon" coords="446, 356, 446, 342, 460, 342, 460, 356, 446, 356"   target="_top"  title="-">
+  
+  <area  href=f4f42fc1618e047c.htm#OBMKF4F42FC1618E047C shape="polygon" coords="460, 356, 460, 342, 570, 342, 570, 356, 460, 356"   target="_top"  title="-">
+  
+  <area  href=#OBMKC10CC7D85E941DE3 shape="polygon" coords="446, 369, 446, 356, 460, 356, 460, 369, 446, 369"   target="_top"  title="-">
+  
+  <area  href=230b4ded61d8f03d.htm#OBMK230B4DED61D8F03D shape="polygon" coords="460, 369, 460, 356, 592, 356, 592, 369, 460, 369"   target="_top"  title="-">
+  
+  <area  href=#OBMKC10CC7D85E941DE3 shape="polygon" coords="446, 382, 446, 369, 460, 369, 460, 382, 446, 382"   target="_top"  title="-">
+  
+  <area  href=230b4e0161d8f08a.htm#OBMK230B4E0161D8F08A shape="polygon" coords="460, 382, 460, 369, 581, 369, 581, 382, 460, 382"   target="_top"  title="-">
+  
+  <area  href="07e733125eccad1d.htm" shape="rect" coords="436, 313, 698, 429"   target="_top"  title="-">
+  
+  <area  href="07e731775ecc93f4.htm" shape="rect" coords="1, -1, 1180, 995"   target="_top"  title="HOPEX solutions help companies better analyze how they can operate and make the right decisions. The HOPEX Platform connects business, IT, data, and risks perspectives in a single place that integrates across an entire company&rsquo;s ecosystem. Our Services team partners with customers to deliver projects with a pragmatic approach.">
+  
+</map>
+<img  src="../images/07e7318d5ecc948c_i.png" alt="../images/07e7318d5ecc948c_i.png" usemap="#07E7318D5ECC948C" height="996" width="1179" border=0>
+	</section><a class="object-section-anchor" id="dom"></a><section class="object-section"><h4>DOMAINS</h4> <hr class="sectionbreak" />
+<table class="table  table-set-col-width">
+<thead >
+<tr><th>Domain</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="07e7330f5eccac86.htm" target="_top">HOPEX - BPA</a></td>
+<td>Understand and improve the efficiency and effectiveness of your operations. Map customer journeys and identify how your processes impact your overall customer experience. Ensure your processes support your digital business transformation.</td>
+</tr>
+<tr>
+<td><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="624e62fb5ed95260.htm" target="_top">HOPEX - Business Architecture / ITBM</a></td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="8a9fa3115ee0ac6e.htm" target="_top">HOPEX - Data Intelligence</a></td>
+<td>Assess and comply with global data privacy laws such as GDPR and CCPA.</td>
+</tr>
+<tr>
+<td><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="0a760c215f2974ca.htm" target="_top">HOPEX - DoDAF 2</a></td>
+<td>The Department of Defense Architecture Framework (DoDAF), Version 2.0 is the overarching, comprehensive framework and conceptual model enabling the development of architectures to facilitate the ability of Department of Defense (DoD) managers at all levels to make key decisions more effectively through organized information sharing across the Department, Joint Capability Areas (JCAs), Mission, Component, and Program boundaries. </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="624e632f5ed9542a.htm" target="_top">HOPEX - Information Architecture</a></td>
+<td>Turn your enterprise data into a trusted asset. Create a data dictionary, build and share business glossaries. Design data with conceptual, logical and physical data models. Map data lineage. Manage rules to comply with regulations such as BCBS 239 and Solvency II.</td>
+</tr>
+<tr>
+<td><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="245c29ae5eda409a.htm" target="_top">HOPEX - Internal Audit</a></td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="07e7331e5eccad69.htm" target="_top">HOPEX - IRM</a></td>
+<td>Get an integrated view of risks, controls, incidents, and compliance with business operations, so that risk is treated as a whole and not in silos. Identify risks, implement related controls, declare incidents in a structured library and map regulatory requirements to processes and IT assets.</td>
+</tr>
+<tr>
+<td><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="624e630c5ed95347.htm" target="_top">HOPEX - IT Architecture</a></td>
+<td>Model reference architecture to increase the effectiveness of your IT systems. Design current and future application architecture. Map application deployments. Model infrastructure to support deployed applications. Design system processes describing how applications operate.&#160; </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="2cff2dc65eda768f.htm" target="_top">HOPEX - ITPM</a></td>
+<td>Get insight into the fitness of your IT landscape. Build a complete inventory of your applications and technology components. Assess and rationalize your application portfolio. Monitor technology obsolescence. Create and prioritize IT transformation projects.</td>
+</tr>
+<tr>
+<td><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="07230e3a5f4e5003.htm" target="_top">HOPEX - TOGAF</a></td>
+<td>Description of TOGAF Architecture Concepts &amp; Domains and the way they are support by HOPEX Concepts &amp; Domains.</td>
+</tr>    
+</tbody>
+</table>
+</section></div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>window.onscroll = function() {scrollFunction()};$(document).on('click', 'a[href^="#"]', function (event) {event.preventDefault();$('html, body').animate({scrollTop: $($.attr(this, 'href')).offset().top}, 500);});</script></body></html></html>

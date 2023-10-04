@@ -1,0 +1,421 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="keywords" content="">
+<meta name="description" content="">    
+<LINK REL="icon" HREF="../standard/assets/img/favicon.ico">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/bootstrap.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nav.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/eaportal.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/font-awesome.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/animate.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/datatables.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/grid.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nae.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/custom.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/chosen.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/prism.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery.dataTables.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jsTreeStyle.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.theme.css" media="screen" />
+<script type="text/javascript" src="../standard/assets/js/jquery-3.2.1.min.js" ></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-ui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.columnFilter.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3-force.v2.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.gui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.search.js"></script> 
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.util.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-2.1.1.min.js"></script>
+<script src="../standard/assets/js/ws_zoomtemplate_firefox.js"></script>
+<script src="../standard/assets/js/bootstrap.min.js"></script>
+<script src="../standard/assets/js/datatables.min.js"></script>
+<script src="../standard/assets/js/moment.min.js"></script>
+<script src="../standard/assets/js/datetime-moment.js"></script>
+<script src="../standard/assets/js/chartjs.min.js"></script>
+<script src="../standard/assets/js/searchindexcontent.json"></script>
+<script src="../standard/assets/js/anls.js"></script>
+<script src="../../../cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script src="../standard/assets/js/gauge.js"></script> 
+<script src="../standard/assets/js/domesticApi.js"></script> 
+<script src="../standard/assets/js/piecelabel.js"></script>
+<script src="../standard/assets/js/popper.min.js"></script>
+<script src="../standard/assets/js/custom.js"></script>
+<script src="../standard/assets/js/chosen.jquery.js"></script>
+<script src="../standard/assets/js/prism.js"></script>
+<script src="../standard/assets/js/init-chosen.js"></script>
+<script src="../standard/assets/js/chart-data-flow.js"></script>
+<script src="../standard/assets/js/chart-data-gantt.js"></script>
+<script type="module" src="../standard/assets/js/Fuse.esm.min.js"></script>
+<script type="module">
+import Fuse from '../standard/assets/js/Fuse.esm.min.js';
+$(document).ready(function () {
+console.log('getjson');
+window.$.getJSON('../standard/assets/js/searchindexcontent.json', function (response) {
+console.log('getjson ok');
+var isIndex = "";
+var url = window.location.pathname;
+var filename = url.substring(url.lastIndexOf('/')+1);
+if( filename.includes("index") || filename === "" ){
+isIndex = "pages/";
+} else {
+isIndex = "";
+}
+const fuse = new Fuse(response, {
+keys: ['title','text'],
+shouldSort: true,
+includeMatches : true,
+findAllMatches : true
+});
+$('#search-fuse').on('keyup', function () {
+let result = fuse.search($(this).val());
+console.log(result);
+let resultdiv = $('div.searchresults-fuse');
+if (result.length === 0) {
+resultdiv.hide();
+} else {
+resultdiv.empty();
+resultdiv.append('<table class="table-search" width="100%" cellspacing="0"><thead ><tr><th>Name</th><th>Object Type</th><th>Modification date</th></tr></thead><tbody>');
+
+for (let obj in result.slice(0,10)) {
+
+let searchObj = '<tr><td><a href="./'+ isIndex + result[obj].item.url + '">' + result[obj].item.title +'</a></td><td>' + result[obj].item.ObjectType + '</td><td>' + result[obj].item.ModificationDate + '</td></tr>' ;
+
+
+resultdiv.find('tbody').append(searchObj);
+}
+resultdiv.append('</tbody></table>');
+resultdiv.show();
+}
+});
+});
+});
+</script>
+<title>HOPEX Metamodel Overview (Beta Version)</title>
+</head>
+<nav class="navbar navbar-expand-md navbar-dark  navbar-mega"><!-- Brand --><!--<a class="navbar-brand" href="#">Navbar</a>--><a class="" href="../index.htm"><img class="logo-mega" src="../standard/assets/img/logo.png"  alt="">(Beta Version)</a><!-- Toggler/collapsibe Button --><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><!-- Navbar links -->
+<div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsibleNavbar"><div class="col-sm-auto col-md-auto col-lg-5"></div>
+<div class="col-sm-auto">
+<ul class="navbar-nav">      
+<li><a class="dropdown-item" href="ad30ce115ebf7e90.htm">EA Grid</a></li> 
+<li><a class="dropdown-item" href="fdd5018459bc3c6a.htm">EA Domains</a></li> 
+<li><a class="dropdown-item" href="07e731775ecc93f4.htm">Solutions</a></li> 
+<li><a class="dropdown-item" href="c5dfc62c54810c2c.htm">Glossary</a></li> 
+<li class="nav-item dropdown mx-1">
+<a class="nav-link" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</a>
+<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<li><a class="dropdown-item" href="5446555d5f88c32e.htm">Outcome Driven Metamodel</a></li> 
+<li><a class="dropdown-item" href="e1ccfc295f8f7b90.htm">Playbooks</a></li> 
+<li><a class="dropdown-item" href="42bc992862d20ea7.htm">Framework Mappings</a></li> 
+<li><a class="dropdown-item" href="e93aebb35fa20550.htm">Metamodel Patterns</a></li> 
+<li><a class="dropdown-item" href="d599fe87602b2b85.htm">References</a></li> 
+<li><a class="dropdown-item" href="333f3a7f5dde11de.htm">Legend</a></li> 
+</ul>									                                            
+</li>
+</ul>
+</div>
+<div class="col-sm-auto"><a class="nav-link search" href="#" onclick=showHideSearch("search-section-fuse")><i class="fa fa-search mr-1 form-control-feedback"></i></a></div>
+</div>
+</nav>
+<div id="search-section-fuse" style="display:none">>
+<div class="search_header"><span class="closesearch">&times;</span>
+<nav class="breadcrumb">
+<a class="breadcrumb-item" href="../index.htm">Home </a> 
+<span class="breadcrumb-item active">Search</span> 
+</nav>
+</div>
+<input id="search-fuse" placeholder="Search..."  name="q" onfocus="this.value=''" type="search">
+<div class="searchresults-fuse"></div>
+</div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>function showHideSearch(elementId) {var contentDivs = document.getElementsByClassName('content');var footerDivs = document.getElementsByClassName('footer'); var containerDivs = document.getElementsByClassName('container');var containerfluidDivs = document.getElementsByClassName('container-fluid');var x = document.getElementById(elementId);if (x.style.display === "none") {x.style.display = "block";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "none";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "none";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "none";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "none";}} else {x.style.display = "none";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "block";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "block";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "block";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "block";}}} ;<!-- END WIDGET DRILL DOWN --></script><script>$(document).ready(function() {$(window).scroll(function() {if ($(this).scrollTop() > 100) {$('.scrollup').fadeIn();} else {$('.scrollup').fadeOut();}});$('.scrollup').click(function() {$("html, body").animate({scrollTop: 0}, 600);return false;});});</script><script>
+var modal = document.getElementById("search-section-fuse");
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = "none";
+}
+}
+$(document).on('click', '.closesearch', function() {
+showHideSearch("search-section-fuse");
+
+
+
+
+
+});</script><div class="container-fluid col-lg-11"><nav class="breadcrumb"><a class="breadcrumb-item" href="../index.htm">Home</a> <span class="breadcrumb-item active">
+<a  href="8a9fd5c15ee0be33.htm" target="_top">HOPEX Solutions</a>&nbsp;/&nbsp;HOPEX - IRM</span></nav></div>
+<div class="container-fluid col-lg-11 content">
+<section class="fadeInDown animated"><a href="#idt" class="btn btn-d">DEFINITION</a> <a href="#grf" class="btn btn-d">CONCEPT GRAPH</a> <a href="#sub" class="btn btn-d">SUB-DOMAINS</a> <a href="#des" class="btn btn-d">CONCEPT DESCRIPTIONS</a> 
+</section>
+<a class="object-section-anchor" id="idt"></a>
+<section class="object-section">
+<h4>CONCEPT DOMAIN - HOPEX - IRM</h4><hr class="sectionbreak" /><table class="table table-vertical-headers table-set-col-width"><tr><th>Description</th><td class="description-text">Get an integrated view of risks, controls, incidents, and compliance with business operations, so that risk is treated as a whole and not in silos. Identify risks, implement related controls, declare incidents in a structured library and map regulatory requirements to processes and IT assets.<div><br/><i>References:</i><br/><a href="https://www.mega.com/en/product-governance-risk-and-compliance-tool" target="_blank">HOPEX - IRM</a></div></td></tr><tr><th>Dictionary</th><td><img src="../standard/dicsubjectarea.ico.gif"/>&nbsp;
+<a  href="8a9fd5c15ee0be33.htm" target="_top">HOPEX Solutions</a></td></tr><tr><th>Parent Domain</th><td><img src="../standard/business%20information%20environment.ico.gif"/>&nbsp;
+<a  href="07e731775ecc93f4.htm" target="_top">HOPEX Solutions</a>&nbsp;</td></tr>
+<tr><th>Domain dependencies</th><td><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="fe663dd261817752.htm" target="_top">Assurance System Pattern</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="e2ef086d62147802.htm" target="_top">EA Pattern - Business Operating Pattern</a>&nbsp;</td></tr></table></section>
+<a class="object-section-anchor" id="grf"></a>
+<section class="object-section">
+<h4>DOMAIN CONCEPT GRAPH</h4>
+<hr class="sectionbreak" />
+<a href="#" class="btn btn-d" value="Relationship1" onclick="showDiagOnClick(this)">Diagram</a>
+<a href="#" class="btn btn-d" value="Relationship2" onclick="showDiagOnClick(this)">Graph</a>
+<div class="Relationship" id="Relationship1">
+
+<map  name="B9BDBC8B6037131D">
+  <area  href=#OBMKE413E82A5F8E3030 shape="polygon" coords="72, 85, 72, 72, 234, 72, 234, 85, 72, 85"   target="_top"  title="-">
+  
+  <area  href=#OBMK14799C9A603FE81B shape="polygon" coords="72, 98, 72, 85, 234, 85, 234, 98, 72, 98"   target="_top"  title="-">
+  
+  <area  href=#OBMK7A0ACB7D5DDE4F43 shape="polygon" coords="72, 112, 72, 98, 234, 98, 234, 112, 72, 112"   target="_top"  title="-">
+  
+  <area  href=#OBMK043034DD6003DBDF shape="polygon" coords="72, 125, 72, 112, 234, 112, 234, 125, 72, 125"   target="_top"  title="-">
+  
+  <area  href=#OBMK043034F56003DC23 shape="polygon" coords="72, 138, 72, 125, 234, 125, 234, 138, 72, 138"   target="_top"  title="-">
+  
+  <area  href="b9bdbc94603713ba.htm" shape="rect" coords="61, 44, 245, 197"   target="_top"  title="-">
+  
+  <area  href="07e7331e5eccad69.htm" shape="rect" coords="0, -1, 305, 237"   target="_top"  title="Get an integrated view of risks, controls, incidents, and compliance with business operations, so that risk is treated as a whole and not in silos. Identify risks, implement related controls, declare incidents in a structured library and map regulatory requirements to processes and IT assets.">
+  
+</map>
+<img  src="../images/07e7331e5eccad69_b9bdbc8b6037131d_i.png" alt="../images/07e7331e5eccad69_b9bdbc8b6037131d_i.png" usemap="#B9BDBC8B6037131D" height="238" width="305" border=0>
+
+</div>
+<hr class="sectionbreak" />
+<table class="table  table-set-col-width">
+<tr><th>Name</th> <th>Description</th> </tr>
+<tr>
+<td><img src="../standard/dic_graph.ico.gif"> 
+<a  href="7a0ac65f5dde3e8a.htm" target="_top">Operational Risk Assurance</a></td>
+<td></td>
+</tr>  
+</table>
+</section>
+<div class="Relationship" id="Relationship1">
+
+<map  name="915261895ED9B982">
+  <area  href=a67ddc905f8ec789.htm shape="polygon" coords="375, 560, 375, 604, 616, 604, 616, 615, 365, 615, 365, 560"   target="_top"  title="-">
+  
+  <area  href=959320325ee7fe24.htm#OBMK959320325EE7FE24 shape="polygon" coords="654, 591, 654, 580, 688, 580, 688, 591, 654, 591"   target="_top"  title="A&#160; Policy is a Directive that is not directly enforceable whose purpose is to govern, guide or constrain the structure and behavior of Agents in the enterprise. ">
+  
+  <area  href=0ec2c1d65ea1837e.htm#OBMK0EC2C1D65EA1837E shape="polygon" coords="633, 623, 633, 610, 709, 610, 709, 623, 633, 623"   target="_top"  title="A control directive, once implemented, enforces any regulation article your organization has to comply with.">
+  
+  <area  href="a67dc8ae5f8eacdf.htm" shape="rect" coords="616, 578, 726, 642"   target="_top"  title="A&#160; Control Directive is a kind of Policy that provides recommendations on how to comply with Regulation Articles.Once implemented,&#160; Control Directives enforces any Regulatory Framework your organization has to comply with.">
+  
+  <area  href=d059da695ef11294.htm#OBMKD059DA695EF11294 shape="polygon" coords="565, 50, 565, 39, 606, 39, 606, 50, 565, 50"   target="_top"  title="The common part of incidents and macro incidents concepts.">
+  
+  <area  href=77b57cbb51da6737.htm#OBMK77B57CBB51DA6737 shape="polygon" coords="564, 76, 564, 63, 608, 63, 608, 76, 564, 76"   target="_top"  title="The incident impacted elements are a subpart of the risk&rsquo;s scope. The incident causes and consequences are a subpart of the risk&rsquo;s ones. But the incident scope (processes, entities etc.) are not filtered within the scope of the risk connected to the incident, because the link between risk and incident isn&rsquo;t always done. ">
+  
+  <area  href="0430341c6003d9c9.htm" shape="rect" coords="507, 37, 666, 112"   target="_top"  title="The incident impacted elements are a subpart of the risk&rsquo;s scope. The incident causes and consequences are a subpart of the risk&rsquo;s ones. But the incident scope (processes, entities etc.) are not filtered within the scope of the risk connected to the incident, because the link between risk and incident isn&rsquo;t always done. ">
+  
+  <area  href=48d2c3a263b56f27.htm#OBMK48D2C3A263B56F27 shape="polygon" coords="819, 352, 819, 341, 935, 341, 935, 352, 819, 352"   target="_top"  title="A&#160; Qualifying Value (Abstract) is a possible value of a Measurable Property (Abstract) such as a delivery time of 30 minutes, a weight of 20 kg, a high level of confidentiality.">
+  
+  <area  href=109f3c9a4505018d.htm#OBMK109F3C9A4505018D shape="polygon" coords="850, 384, 850, 371, 905, 371, 905, 384, 850, 384"   target="_top"  title="A risk factor is an element which contributes to the occurrence of a risk or which triggers a risk. Several risks can originate from a same risk factor. Examples: the use of a hazardous chemical product, the complexity of an application, the size of a project, the number of involved parties, the use of a new technology, the lack of quality insurance, the lack of rigor in requirements definition, etc.">
+  
+  <area  href="2cff30bf5eda8e7c.htm" shape="rect" coords="817, 339, 938, 386"   target="_top"  title="A risk factor is an element which contributes to the occurrence of a risk or which triggers a risk. Several risks can originate from a same risk factor. Examples: the use of a hazardous chemical product, the complexity of an application, the size of a project, the number of involved parties, the use of a new technology, the lack of quality insurance, the lack of rigor in requirements definition, etc.">
+  
+  <area  href=f4be39755ee1d718.htm shape="polygon" coords="423, 523, 622, 523, 621, 534, 423, 533"   target="_top"  title="-">
+  
+  <area  href=0bf60d3d5ddc36ed.htm#OBMK0BF60D3D5DDC36ED shape="polygon" coords="624, 510, 624, 499, 738, 499, 738, 510, 624, 510"   target="_top"  title="A category of measure aming at controlling conformity of asset associated to the Assurance Case.">
+  
+  <area  href=3a0b4069447c008b.htm#OBMK3A0B4069447C008B shape="polygon" coords="650, 542, 650, 528, 712, 528, 712, 542, 650, 542"   target="_top"  title="Control types allow classification of controls implemented in a company in accordance with regulatory or domain specific standards (Cobit, etc.).">
+  
+  <area  href="245c2b315eda4918.htm" shape="rect" coords="622, 496, 741, 561"   target="_top"  title="Control types allow classification of controls implemented in a company in accordance with regulatory or domain specific standards (Cobit, etc.).">
+  
+  <area  href=#OBMK744B9A0C5FBFEDD1 shape="polygon" coords="407, 220, 405, 220, 406, 224, 408, 235, 397, 236, 396, 226, 393, 209, 407, 209"    title="-">
+  
+  <area  href=8d5e9560552e22b2.htm#OBMK8D5E9560552E22B2 shape="polygon" coords="370, 227, 370, 216, 445, 216, 445, 227, 370, 227"   target="_top"  title="A&#160; Policy Dictionary is a set of Policy(ies), defined in laws published by governements or in policy frameworks defined by the enterprise.">
+  
+  <area  href=c229f0665d0c6f7a.htm#OBMKC229F0665D0C6F7A shape="polygon" coords="359, 259, 359, 246, 455, 246, 455, 259, 359, 259"   target="_top"  title="A regulatory framework is an authority document falling under any of following categories: regulations (rules of law that, if not followed, can result in penalties), guidelines, standards, best practices.">
+  
+  <area  href="744b8d735fbfcfa9.htm" shape="rect" coords="328, 214, 486, 263"   target="_top"  title="&#160;Regulatory Framework is a set of Regulation Articles issued by a Regulator (government, international body) to rule the structure and behavior of entities participating to a specific activity domain.">
+  
+  <area  href=0dc20f4d5e9b5ca9.htm#OBMK0DC20F4D5E9B5CA9 shape="polygon" coords="630, 416, 630, 406, 727, 406, 727, 416, 630, 416"   target="_top"  title="An&#160; Architecture Category is a Categorization Block used to classify Architecture Blocks. Examples are Data Category, Business Line.">
+  
+  <area  href=abfbac3533250094.htm#OBMKABFBAC3533250094 shape="polygon" coords="640, 448, 640, 435, 717, 435, 717, 448, 640, 448"   target="_top"  title="A business process represents a system that offers products or services to an internal or external client of the company or organization.">
+  
+  <area  href="2cff31375eda90bd.htm" shape="rect" coords="621, 403, 735, 456"   target="_top"  title="A&#160;&#160; Process Family is a category of Process.">
+  
+  <area  href=#OBMK7A22A5CD5FDBB6BF shape="polygon" coords="793, 108, 793, 146, 856, 146, 856, 156, 782, 156, 782, 108"    title="-">
+  
+  <area  href="7a22a5c95fdbb655.htm" shape="rect" coords="858, 186, 968, 231"   target="_top"  title="-">
+  
+  <area  href="7a22a5a85fdbb5e9.htm" shape="rect" coords="856, 114, 966, 160"   target="_top"  title="-">
+  
+  <area  href=3B539CBB551E4C2A.htm#OBMK3B539CBB551E4C2A shape="polygon" coords="715, 50, 715, 39, 776, 39, 776, 50, 715, 50"   target="_top"  title="An&#160; Assessment is the result of the act of judging or assessing an aspect of the enterprise, based on an enterprise description and on the comparison of this description with the actual state of the enterprise.">
+  
+  <area  href=9500e0484e37c835.htm#OBMK9500E0484E37C835 shape="polygon" coords="705, 76, 705, 63, 786, 63, 786, 76, 705, 76"   target="_top"  title="Objects of this type are created either at assessment session deployment or at aggregation. Objects created at deployment are owned by the session and enable determination of the object that will be evaluated, by whom and where. It is also associated with values calculated from answers given in the assessor questionnaire for each of the assessed characteristics. ">
+  
+  <area  href="d059db765ef118fc.htm" shape="rect" coords="678, 37, 813, 112"   target="_top"  title="An assessment session is an assessment carried out over a determined time period. When an assessment session is published, an assessment questionnaire containing questions is sent to targeted assessors.">
+  
+  <area  href=f3d722cf44210694.htm#OBMKF3D722CF44210694 shape="polygon" coords="347, 531, 347, 517, 389, 517, 389, 531, 347, 531"   target="_top"  title="A control is a set of rules and means enabling assurance that a legal, regulatory, internal or strategic requirement is respected.">
+  
+  <area  href="2cff30205eda86d9.htm" shape="rect" coords="313, 496, 423, 560"   target="_top"  title="A control is a set of rules and means enabling assurance that a legal, regulatory, internal or strategic requirement is respected.">
+  
+  <area  href=07ca18d25dd85477.htm#OBMK07CA18D25DD85477 shape="polygon" coords="47, 178, 47, 167, 132, 167, 132, 178, 47, 178"   target="_top"  title="An&#160; Assurance System is a Management System aimed at ensuring enterprise resilience against internal and external constraints:">
+  
+  <area  href=f3d7f585441e0033.htm#OBMKF3D7F585441E0033 shape="polygon" coords="54, 204, 54, 191, 125, 191, 125, 204, 54, 204"   target="_top"  title="A control system is a set of controls that ensure risk prevention and management, application of internal operating rules, respect a law or regulation, or work towards achievement of an objective as defined by company strategy. Examples: quality control system, control system relating to IT and Privacy, management control system, internal audit system.">
+  
+  <area  href="7a0ac89b5dde4df4.htm" shape="rect" coords="23, 165, 158, 551"   target="_top"  title="A control system is a set of controls that ensure risk prevention and management, application of internal operating rules, respect a law or regulation, or work towards achievement of an objective as defined by company strategy. Examples: quality control system, control system relating to IT and Privacy, management control system, internal audit system.">
+  
+  <area  href=427c1c7d64b5d4a1.htm#OBMK427C1C7D64B5D4A1 shape="polygon" coords="655, 354, 655, 343, 701, 343, 701, 354, 655, 354"   target="_top"  title="A&#160; Risk Type refers to a distinct category or classification of risk based on its origin, nature, or potential impact. It helps in organizing and addressing different sources of uncertainty or potential harm that an individual, organization, or system might face. By categorizing risks into different types, entities can develop more targeted mitigation strategies and response plans. ">
+  
+  <area  href=977fc52e3d250359.htm#OBMK977FC52E3D250359 shape="polygon" coords="653, 386, 653, 372, 702, 372, 702, 386, 653, 386"   target="_top"  title="A risk type defines a standardized risk typology within the context of an organization.">
+  
+  <area  href="16e327be5bf83e3b.htm" shape="rect" coords="619, 340, 738, 390"   target="_top"  title="An&#160; Operational Risk Type is a kind of Risk Type that refers to the potential for loss due to the enterprise&#39;s inadequate functioning.">
+  
+  <area  href=a67dc9f45f8eb2a9.htm#OBMKA67DC9F45F8EB2A9 shape="polygon" coords="356, 181, 356, 170, 448, 170, 448, 181, 356, 181"   target="_top"  title="A&#160; Reference Dictionary is an aspect of Model Namespace that are used as reference libraries used to hold reference materials used to develop architectures.">
+  
+  <area  href=083d120d5d6d84a3.htm#OBMK083D120D5D6D84A3 shape="polygon" coords="369, 207, 369, 194, 436, 194, 436, 207, 369, 207"   target="_top"  title="-">
+  
+  <area  href="8d5e9560552e22b2.htm" shape="rect" coords="310, 168, 494, 280"   target="_top"  title="A&#160; Policy Dictionary is a set of Policy(ies), defined in laws published by governements or in policy frameworks defined by the enterprise.">
+  
+  <area  href="07e7331e5eccad69.htm" shape="rect" coords="0, 0, 992, 657"   target="_top"  title="Get an integrated view of risks, controls, incidents, and compliance with business operations, so that risk is treated as a whole and not in silos. Identify risks, implement related controls, declare incidents in a structured library and map regulatory requirements to processes and IT assets.">
+  
+</map>
+<img  src="../images/07e7331e5eccad69_915261895ed9b982_i.png" alt="../images/07e7331e5eccad69_915261895ed9b982_i.png" usemap="#915261895ED9B982" height="667" width="992" border=0>
+
+</div>
+<div class="Relationship" id="Relationship2">
+<div id="klmm" style="width: 100vw; height: 100vh;" ></div>
+<!-- <script src="../standard/assets/js/keylines_domain.js"></script> -->
+<script >
+const data = {
+ type: 'LinkChart',
+  items: [
+  //nodes
+    {type: 'node', id:'07E7331E5ECCAD69', t:"HOPEX - IRM", sh:'box', d:"Get an integrated view of risks, controls, incidents, and compliance with business operations, so that risk is treated as a whole and not in silos. Identify risks, implement related controls, declare incidents in a structured library and map regulatory requirements to processes and IT assets."},
+  //edges
+
+  ]
+}
+</script>
+<script src="../standard/assets/js/keylines_domain.js" type="module"></script>
+</div>
+</section>
+<a class="object-section-anchor" id="des"></a>
+<section class="object-section">
+<h4>CONCEPT DESCRIPTIONS</h4> 
+<hr class="sectionbreak" />
+<h5>Concrete Concepts</h5>
+<table class="table  table-set-col-width">
+<thead>
+<tr><th>Concept</th><th>Description</th><th>HOPEX Metaclass</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="2cff30205eda86d9.htm" target="_top">Control</a></td>
+<td class="description-text">A control is a set of rules and means enabling assurance that a legal, regulatory, internal or strategic requirement is respected.<i><ul>References:<li><a href="https://pubs.opengroup.org/togaf-standard/architecture-content/chap02.html#tag_02_04"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Content MetaModel - Control</a></li> <li><a href="https://compliancedictionary.com/term/5788"><img src="../standard/extr.ico.gif">&nbsp;UCF Glossary - Control</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="f3d722cf44210694.htm" target="_top">Control</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="a67dc8ae5f8eacdf.htm" target="_top">Control Directive</a></td>
+<td class="description-text">A&#160;<b> Control Directive</b> is a kind of <a href="959320325ee7fe24.htm" target="_top"><b><u>Policy</u></b></a> that provides recommendations on how to comply with <a href="07ca0ca15dd84ada.htm" target="_top"><b><u>Regulation Article</u></b></a>s.<br />Once implemented,&#160;<b> Control Directive</b>s enforces any <a href="744b8d735fbfcfa9.htm" target="_top"><b><u>Regulatory Framework</u></b></a> your organization has to comply with.<i><ul>References:<li><a href="https://grcschema.org/Thing/Control"><img src="../standard/extr.ico.gif">&nbsp;GRCschema.org - Control</a></li> <li><a href="https://www.unifiedcompliance.com/education/common-control/"><img src="../standard/extr.ico.gif">&nbsp;UCF - What are Common Controls</a></li> <li><a href="https://compliancedictionary.com/term/7990"><img src="../standard/extr.ico.gif">&nbsp;UCF Glossary - Common Control</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="0ec2c1d65ea1837e.htm" target="_top">Control Directive</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="7a0ac89b5dde4df4.htm" target="_top">Control System</a></td>
+<td class="description-text">A control system is a set of controls that ensure risk prevention and management, application of internal operating rules, respect a law or regulation, or work towards achievement of an objective as defined by company strategy. Examples: quality control system, control system relating to IT and Privacy, management control system, internal audit system.       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="f3d7f585441e0033.htm" target="_top">Control System</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="245c2b315eda4918.htm" target="_top">Control Type</a></td>
+<td class="description-text">Control types allow classification of controls implemented in a company in accordance with regulatory or domain specific standards (Cobit, etc.).       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="3a0b4069447c008b.htm" target="_top">Control Type</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="0430341c6003d9c9.htm" target="_top">Operational Incident</a></td>
+<td class="description-text">The incident impacted elements are a subpart of the risk&rsquo;s scope. The incident causes and consequences are a subpart of the risk&rsquo;s ones. But the incident scope (processes, entities etc.) are not filtered within the scope of the risk connected to the incident, because the link between risk and incident isn&rsquo;t always done.        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="77b57cbb51da6737.htm" target="_top">Incident</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="2cff31375eda90bd.htm" target="_top">Process Family</a></td>
+<td class="description-text">A&#160;&#160;<b> Process Family</b> is a category of <a href="d682ef5e56144e77.htm" target="_top"><b><u>Process</u></b></a>.       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="abfbac3533250094.htm" target="_top">Business Process</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="744b8d735fbfcfa9.htm" target="_top">Regulatory Framework</a></td>
+<td class="description-text"><b>&#160;Regulatory Framework</b> is a set of <a href="07ca0ca15dd84ada.htm" target="_top"><b><u>Regulation Article</u></b></a>s issued by a <a href="167124af6008e9d3.htm" target="_top"><b><u>Regulator</u></b></a> (government, international body) to rule the structure and behavior of entities participating to a specific activity domain.<i><ul>References:<li><a href="https://compliancedictionary.com/term/386219"><img src="../standard/extr.ico.gif">&nbsp;UCF Glossary - Regulatory Framework</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="c229f0665d0c6f7a.htm" target="_top">Regulatory Framework</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="d059db765ef118fc.htm" target="_top">Risk Assessment</a></td>
+<td class="description-text">An assessment session is an assessment carried out over a determined time period. When an assessment session is published, an assessment questionnaire containing questions is sent to targeted assessors.       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="9500e0484e37c835.htm" target="_top">Assessment Node</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="2cff30bf5eda8e7c.htm" target="_top">Risk Factor</a></td>
+<td class="description-text">A risk factor is an element which contributes to the occurrence of a risk or which triggers a risk. Several risks can originate from a same risk factor. Examples: the use of a hazardous chemical product, the complexity of an application, the size of a project, the number of involved parties, the use of a new technology, the lack of quality insurance, the lack of rigor in requirements definition, etc.       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="109f3c9a4505018d.htm" target="_top">Risk Factor</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_representation_type.ico.gif"/>&nbsp;
+<a  href="7a22a5c95fdbb655.htm" target="_top">Risk Likelihood</a></td>
+<td class="description-text">        </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_representation_type.ico.gif"/>&nbsp;
+<a  href="7a22a5a85fdbb5e9.htm" target="_top">Risk Severity</a></td>
+<td class="description-text">        </td>
+<td></td>
+</tr>  
+</tbody>
+</table>
+<hr class="sectionbreak" />
+<h5>Abstract Concepts</h5>
+<table class="table  table-set-col-width">
+<thead >
+<tr><th>Concept</th><th>Description</th><th>HOPEX Metaclass</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="16e327be5bf83e3b.htm" target="_top">Operational Risk Type</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Operational Risk Type</b> is a kind of <a href="427c1c7d64b5d4a1.htm" target="_top"><b><u>Risk Type</u></b></a> that refers to the potential for loss due to the enterprise&#39;s inadequate functioning.</div><div align="left" style="min-height: 12pt; ">An&#160;<b> Operational Risk Type</b> is either <a href="8f469fa664b76efc.htm" target="_top"><b><u>Compliance Risk Type</u></b></a> a or an <a href="8f462b0964ba7cc8.htm" target="_top"><b><u>Operating Risk Type</u></b></a>.</div>       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="977fc52e3d250359.htm" target="_top">Risk Type</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="8d5e9560552e22b2.htm" target="_top">Policy Dictionary</a></td>
+<td class="description-text">A&#160;<b> Policy Dictionary</b> is a set of <a href="959320325ee7fe24.htm" target="_top"><b><u>Policy</u></b></a>(ies), defined in laws published by governements or in policy frameworks defined by the enterprise.<br />Both <a href="283131a65da81fbd.htm" target="_top"><b><u>Policy Framework</u></b></a>s and <a href="744b8d735fbfcfa9.htm" target="_top"><b><u>Regulatory Framework</u></b></a>s are&#160;<b> Policy Dictionary</b>(ies).<i><ul>References:<li><a href="https://compliancedictionary.com/term/572"><img src="../standard/extr.ico.gif">&nbsp;UCF Glossary - Framework</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="083d120d5d6d84a3.htm" target="_top">Policy Schema</a></td>
+</tr>  
+</tbody>
+</table>
+<section>
+
+</div>
+<button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button>
+<script>window.onscroll = function() {scrollFunction()};$(document).on('click', 'a[href^="#"]', function (event) {event.preventDefault();$('html, body').animate({scrollTop: $($.attr(this, 'href')).offset().top}, 500);});function showDiagOnClick(elem){ var x = document.getElementsByClassName('Relationship');var e = elem.getAttribute("value"); for (var i=0; i < x.length ;i++){x[i].style.display="none"; if (x[i].id == e){x[i].style.display="block";x[i].style.textAlign="left";}}}
+</script></html>

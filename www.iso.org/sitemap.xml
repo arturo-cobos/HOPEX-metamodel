@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <!-- Dedicated sitemap entries for language: en -->
+            <sitemap>
+                    <loc>https://www.iso.org/cms/render/live/en/sites/isoorg/sitemap-lang.xml</loc>
+                </sitemap>
+            <!-- Dedicated sitemap entries for language: fr -->
+            <sitemap>
+                    <loc>https://www.iso.org/cms/render/live/fr/sites/isoorg/sitemap-lang.xml</loc>
+                </sitemap>
+            <!-- Dedicated sitemap entries for language: ru -->
+            <sitemap>
+                    <loc>https://www.iso.org/cms/render/live/ru/sites/isoorg/sitemap-lang.xml</loc>
+                </sitemap>
+            <!-- Dedicated sitemap entries for language: es -->
+            </sitemapindex>

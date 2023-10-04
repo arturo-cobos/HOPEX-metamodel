@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
+    <url>
+        <loc>https://www.techtarget.com/searchsecurity/video/AI-security-concerns-keeping-infosec-leaders-up-at-night</loc>
+        <video:video>
+            <video:title>AI security concerns keeping infosec leaders up at night</video:title>
+            <video:publication_date>2020-08-26T12:51:00-04:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/O8rRMeCtVmE/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=O8rRMeCtVmE</video:player_loc>
+            <video:duration>166</video:duration>
+            <video:description>Conversations about 'AI as a solution' may overlook potentially grave AI security issues. Explore the potential infosec implications of the emerging technology in this video.</video:description>
+        </video:video>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchsecurity/video/Where-does-security-fit-into-SDLC-phases</loc>
+        <video:video>
+            <video:title>Where does security fit into SDLC phases?</video:title>
+            <video:publication_date>2018-02-19T10:48:00-05:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/kT77wimTXnw/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=kT77wimTXnw</video:player_loc>
+            <video:duration>911</video:duration>
+            <video:description>In each phase of the software development life cycle, there is an opportunity for infosec pros to add value. Learn more in this video with expert Adam Gordon.</video:description>
+        </video:video>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchsecurity/video/Security-behavioral-analytics-The-impact-of-real-time-BTA</loc>
+        <video:video>
+            <video:title>Security behavioral analytics: The impact of real-time BTA</video:title>
+            <video:publication_date>2018-01-11T00:00:00-05:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/oBjNQUutp_c/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=oBjNQUutp_c</video:player_loc>
+            <video:duration>1691</video:duration>
+            <video:description>Johna Till Johnson, CEO and founder of Nemertes Research, explains real-time threat analysis in terms of BTA and its next-generation security architecture.</video:description>
+        </video:video>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchsecurity/video/As-privacy-requirements-evolve-CISSPs-must-stay-informed</loc>
+        <video:video>
+            <video:title>As privacy requirements evolve, CISSPs must stay informed</video:title>
+            <video:publication_date>2017-07-17T00:00:00-04:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/pkIE2I5oR3Y/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=pkIE2I5oR3Y</video:player_loc>
+            <video:duration>735</video:duration>
+            <video:description>Just as technology constantly changes, so too do the laws and regulations that govern data privacy. CISSPs must remain aware of their organization's individual requirements.</video:description>
+        </video:video>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchsecurity/video/Adjusting-your-network-perimeter-security</loc>
+        <video:video>
+            <video:title>Adjusting your network perimeter security</video:title>
+            <video:publication_date>2015-11-20T00:00:00-05:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/CBw3L7Fnpy8/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=CBw3L7Fnpy8</video:player_loc>
+            <video:duration>1049</video:duration>
+            <video:description>Expert Johna Till Johnson explains how the enterprise perimeter became obsolete, and how to replace network perimeter security with an approach to perimeterless security.</video:description>
+        </video:video>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchsecurity/video/NIST-cybersecurity-framework-Assessing-the-strengths-and-weaknesses</loc>
+        <video:video>
+            <video:title>NIST cybersecurity framework: Assessing the strengths and weaknesses</video:title>
+            <video:publication_date>2014-05-13T00:00:00-04:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/ET2C0rY_b9o/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=ET2C0rY_b9o</video:player_loc>
+            <video:duration>736</video:duration>
+            <video:description>Video: Securicon executive consultant Ernie Hayden discusses what the NIST cybersecurity framework got right, and how the document can be improved.</video:description>
+        </video:video>
+    </url>
+</urlset>

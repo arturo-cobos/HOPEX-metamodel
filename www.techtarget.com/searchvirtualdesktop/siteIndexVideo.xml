@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
+    <url>
+        <loc>https://www.techtarget.com/searchvirtualdesktop/video/A-Windows-Virtual-Desktop-demo-on-management-tools-for-IT</loc>
+        <video:video>
+            <video:title>A Windows Virtual Desktop demo on management tools for IT</video:title>
+            <video:publication_date>2020-01-16T13:22:00-05:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/wcgLHiPSVEY/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=wcgLHiPSVEY</video:player_loc>
+            <video:duration>632</video:duration>
+            <video:description>In this Windows Virtual Desktop demo, IT pros can learn how to manage Microsoft's DaaS offering and what tools are available to help them take control of WVD.</video:description>
+        </video:video>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchvirtualdesktop/video/How-to-use-Liquidware-FlexApp-for-virtual-app-layering</loc>
+        <video:video>
+            <video:title>How to use Liquidware FlexApp for virtual app layering</video:title>
+            <video:publication_date>2020-01-13T14:11:00-05:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/v3NUpm3YrE8/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=v3NUpm3YrE8</video:player_loc>
+            <video:duration>817</video:duration>
+            <video:description>The Liquidware FlexApp tool allows IT to manage virtual apps more effectively, including fewer master desktop images and pushing out updates to in-use layered virtual apps.</video:description>
+        </video:video>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchvirtualdesktop/video/How-to-automate-software-installation-for-Windows-VDI</loc>
+        <video:video>
+            <video:title>How to automate software installation for Windows VDI</video:title>
+            <video:publication_date>2019-10-30T10:57:00-04:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/jLPdEPQMHHw/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=jLPdEPQMHHw</video:player_loc>
+            <video:duration>846</video:duration>
+            <video:description>Software installation can be mind-numbingly tedious. Here's how to use Chocolatey, a package manager, to automate the process for virtual desktops running Windows.</video:description>
+        </video:video>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchvirtualdesktop/video/How-to-perform-per-machine-install-of-Microsoft-OneDrive-Teams-for-VDI</loc>
+        <video:video>
+            <video:title>How to perform per-machine install of Microsoft OneDrive, Teams for VDI</video:title>
+            <video:publication_date>2019-09-24T10:00:00-04:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/CtYNYfPMMsE/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=CtYNYfPMMsE</video:player_loc>
+            <video:duration>449</video:duration>
+            <video:description>Microsoft OneDrive and Teams can be challenging for VDI, but a per-machine installer can make the process much easier. Watch this video to find out the details.</video:description>
+        </video:video>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchvirtualdesktop/video/How-to-save-FSLogix-profile-containers-to-Azure-Blob-Storage</loc>
+        <video:video>
+            <video:title>How to save FSLogix profile containers to Azure Blob Storage</video:title>
+            <video:publication_date>2019-08-01T11:40:00-04:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/b-0qSFk-6nE/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=b-0qSFk-6nE</video:player_loc>
+            <video:duration>688</video:duration>
+            <video:description>FSLogix profiles are a great way to take full advantage of Windows Virtual Desktop. IT can save time and money with this step-by-step process to save FSLogix profile containers to Azure Blob Storage.</video:description>
+        </video:video>
+    </url>
+</urlset>

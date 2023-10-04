@@ -1,0 +1,781 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="keywords" content="">
+<meta name="description" content="">    
+<LINK REL="icon" HREF="../standard/assets/img/favicon.ico">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/bootstrap.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nav.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/eaportal.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/font-awesome.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/animate.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/datatables.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/grid.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nae.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/custom.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/chosen.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/prism.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery.dataTables.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jsTreeStyle.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.theme.css" media="screen" />
+<script type="text/javascript" src="../standard/assets/js/jquery-3.2.1.min.js" ></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-ui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.columnFilter.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3-force.v2.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.gui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.search.js"></script> 
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.util.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-2.1.1.min.js"></script>
+<script src="../standard/assets/js/ws_zoomtemplate_firefox.js"></script>
+<script src="../standard/assets/js/bootstrap.min.js"></script>
+<script src="../standard/assets/js/datatables.min.js"></script>
+<script src="../standard/assets/js/moment.min.js"></script>
+<script src="../standard/assets/js/datetime-moment.js"></script>
+<script src="../standard/assets/js/chartjs.min.js"></script>
+<script src="../standard/assets/js/searchindexcontent.json"></script>
+<script src="../standard/assets/js/anls.js"></script>
+<script src="../../../cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script src="../standard/assets/js/gauge.js"></script> 
+<script src="../standard/assets/js/domesticApi.js"></script> 
+<script src="../standard/assets/js/piecelabel.js"></script>
+<script src="../standard/assets/js/popper.min.js"></script>
+<script src="../standard/assets/js/custom.js"></script>
+<script src="../standard/assets/js/chosen.jquery.js"></script>
+<script src="../standard/assets/js/prism.js"></script>
+<script src="../standard/assets/js/init-chosen.js"></script>
+<script src="../standard/assets/js/chart-data-flow.js"></script>
+<script src="../standard/assets/js/chart-data-gantt.js"></script>
+<script type="module" src="../standard/assets/js/Fuse.esm.min.js"></script>
+<script type="module">
+import Fuse from '../standard/assets/js/Fuse.esm.min.js';
+$(document).ready(function () {
+console.log('getjson');
+window.$.getJSON('../standard/assets/js/searchindexcontent.json', function (response) {
+console.log('getjson ok');
+var isIndex = "";
+var url = window.location.pathname;
+var filename = url.substring(url.lastIndexOf('/')+1);
+if( filename.includes("index") || filename === "" ){
+isIndex = "pages/";
+} else {
+isIndex = "";
+}
+const fuse = new Fuse(response, {
+keys: ['title','text'],
+shouldSort: true,
+includeMatches : true,
+findAllMatches : true
+});
+$('#search-fuse').on('keyup', function () {
+let result = fuse.search($(this).val());
+console.log(result);
+let resultdiv = $('div.searchresults-fuse');
+if (result.length === 0) {
+resultdiv.hide();
+} else {
+resultdiv.empty();
+resultdiv.append('<table class="table-search" width="100%" cellspacing="0"><thead ><tr><th>Name</th><th>Object Type</th><th>Modification date</th></tr></thead><tbody>');
+
+for (let obj in result.slice(0,10)) {
+
+let searchObj = '<tr><td><a href="./'+ isIndex + result[obj].item.url + '">' + result[obj].item.title +'</a></td><td>' + result[obj].item.ObjectType + '</td><td>' + result[obj].item.ModificationDate + '</td></tr>' ;
+
+
+resultdiv.find('tbody').append(searchObj);
+}
+resultdiv.append('</tbody></table>');
+resultdiv.show();
+}
+});
+});
+});
+</script>
+<title>HOPEX Metamodel Overview (Beta Version)</title>
+</head>
+<nav class="navbar navbar-expand-md navbar-dark  navbar-mega"><!-- Brand --><!--<a class="navbar-brand" href="#">Navbar</a>--><a class="" href="../index.htm"><img class="logo-mega" src="../standard/assets/img/logo.png"  alt="">(Beta Version)</a><!-- Toggler/collapsibe Button --><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><!-- Navbar links -->
+<div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsibleNavbar"><div class="col-sm-auto col-md-auto col-lg-5"></div>
+<div class="col-sm-auto">
+<ul class="navbar-nav">      
+<li><a class="dropdown-item" href="ad30ce115ebf7e90.htm">EA Grid</a></li> 
+<li><a class="dropdown-item" href="fdd5018459bc3c6a.htm">EA Domains</a></li> 
+<li><a class="dropdown-item" href="07e731775ecc93f4.htm">Solutions</a></li> 
+<li><a class="dropdown-item" href="c5dfc62c54810c2c.htm">Glossary</a></li> 
+<li class="nav-item dropdown mx-1">
+<a class="nav-link" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</a>
+<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<li><a class="dropdown-item" href="5446555d5f88c32e.htm">Outcome Driven Metamodel</a></li> 
+<li><a class="dropdown-item" href="e1ccfc295f8f7b90.htm">Playbooks</a></li> 
+<li><a class="dropdown-item" href="42bc992862d20ea7.htm">Framework Mappings</a></li> 
+<li><a class="dropdown-item" href="e93aebb35fa20550.htm">Metamodel Patterns</a></li> 
+<li><a class="dropdown-item" href="d599fe87602b2b85.htm">References</a></li> 
+<li><a class="dropdown-item" href="333f3a7f5dde11de.htm">Legend</a></li> 
+</ul>									                                            
+</li>
+</ul>
+</div>
+<div class="col-sm-auto"><a class="nav-link search" href="#" onclick=showHideSearch("search-section-fuse")><i class="fa fa-search mr-1 form-control-feedback"></i></a></div>
+</div>
+</nav>
+<div id="search-section-fuse" style="display:none">>
+<div class="search_header"><span class="closesearch">&times;</span>
+<nav class="breadcrumb">
+<a class="breadcrumb-item" href="../index.htm">Home </a> 
+<span class="breadcrumb-item active">Search</span> 
+</nav>
+</div>
+<input id="search-fuse" placeholder="Search..."  name="q" onfocus="this.value=''" type="search">
+<div class="searchresults-fuse"></div>
+</div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>function showHideSearch(elementId) {var contentDivs = document.getElementsByClassName('content');var footerDivs = document.getElementsByClassName('footer'); var containerDivs = document.getElementsByClassName('container');var containerfluidDivs = document.getElementsByClassName('container-fluid');var x = document.getElementById(elementId);if (x.style.display === "none") {x.style.display = "block";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "none";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "none";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "none";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "none";}} else {x.style.display = "none";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "block";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "block";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "block";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "block";}}} ;<!-- END WIDGET DRILL DOWN --></script><script>$(document).ready(function() {$(window).scroll(function() {if ($(this).scrollTop() > 100) {$('.scrollup').fadeIn();} else {$('.scrollup').fadeOut();}});$('.scrollup').click(function() {$("html, body").animate({scrollTop: 0}, 600);return false;});});</script><script>
+var modal = document.getElementById("search-section-fuse");
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = "none";
+}
+}
+$(document).on('click', '.closesearch', function() {
+showHideSearch("search-section-fuse");
+
+
+
+
+
+});</script><div class="container-fluid col-lg-11"><nav class="breadcrumb"><a class="breadcrumb-item" href="../index.htm">Home </a> <span class="breadcrumb-item active">Framework Mapping/TOGAF - Content MetaModel Mapping</span> </nav></div>
+<div class="container-fluid col-lg-11 content">
+<section class="fadeInDown animated"><a href="#det" class="btn btn-d">IDENTITY</a><a href="#dia" class="btn btn-d">DIAGRAM</a> <a href="#map" class="btn btn-d">MAPPING</a> <a href="#ext" class="btn btn-d">EXTERNAL REFERENCES</a> 
+</section>
+<a class="object-section-anchor" id="det"></a>
+<section class="object-section">
+<h4>IDENTITY - TOGAF - Content MetaModel Mapping</h4> 
+<hr class="sectionbreak" />
+<table class="table table-vertical-headers table-set-col-width">
+<tr><th>Description</th><td class="description-text">Mapping of core concepts of the TOGAF Content Metamodel to HOPEX concepts.</td></tr>
+<tr><th>References</th><td>
+<a  href="49bb4e74623c7a14.htm" target="_top">OpenGroup - TOGAF - Content Metamodel</a></td></tr>            
+<tr><th>Corresponding HOPEX Domain</th><td class="description-text">
+<a  href="07230e3a5f4e5003.htm" target="_top">HOPEX - TOGAF</a></td></tr>
+</table>
+</section>
+<a class="object-section-anchor" id="dia"></a>
+<section class="object-section">
+<hr class="sectionbreak" />
+<map  name="E9B863E65F51E351">
+  <area  href=0185cc626221bb37.htm#OBMK0185CC626221BB37 shape="polygon" coords="659, 680, 659, 667, 672, 667, 672, 680, 659, 680"   target="_self"  title="A&#160; Business Event is a type of business change that is used to coordinate Business Behaviors.">
+  
+  <area  href="#OBMK2DA3A61062D37336" shape="rect" coords="620, 655, 739, 692"   target="_self"  title="An organizational state change that triggers processing events; may originate from inside or outside the organization and may be resolved inside or outside the organization.">
+  
+  <area  href=bcebd0565491287e.htm#OBMKBCEBD0565491287E shape="polygon" coords="180, 209, 180, 196, 193, 196, 193, 209, 180, 209"   target="_self"  title="A&#160; Driver is a factor which can have a significant impact on the activities, and goals of an Enterprise or a Management System.">
+  
+  <area  href="#OBMK806A146B62D1F686" shape="rect" coords="142, 178, 261, 228"   target="_self"  title="An external or internal condition that motivates the organization to define its goals. An example of an external driver is a change in regulation or compliance rules which, for example, require changes to the way an organization operates; i.e., Sarbanes-Oxley in the US.">
+  
+  <area  href=036a3de3548f229e.htm#OBMK036A3DE3548F229E shape="polygon" coords="613, 297, 613, 284, 627, 284, 627, 297, 613, 297"   target="_self"  title="An&#160; Enterprise Stage is a past, current or future state of the enterprise. ">
+  
+  <area  href="#OBMK97439CC562905E62" shape="rect" coords="152, 269, 1171, 313"   target="_self"  title="Direction and focus provided by strategic goals and objectives, often to deliver the value proposition characterized in the business model.">
+  
+  <area  href=2cff30205eda86d9.htm#OBMK2CFF30205EDA86D9 shape="polygon" coords="1093, 539, 1093, 525, 1107, 525, 1107, 539, 1093, 539"   target="_self"  title="A control is a set of rules and means enabling assurance that a legal, regulatory, internal or strategic requirement is respected.">
+  
+  <area  href="#OBMKEE24F19962857B66" shape="rect" coords="1059, 513, 1178, 551"   target="_self"  title="A decision-making step with accompanying decision logic used to determine execution approach for a process or to ensure that a process complies with governance criteria. For example, a sign-off control on the purchase request processing process that checks whether the total value of the request is within the sign-off limits of the requester, or whether it needs escalating to higher authority.">
+  
+  <area  href="#OBMKEE24F0A662857921" shape="rect" coords="938, 946, 1080, 984"   target="_self"  title="An implementation-independent encapsulation of technology services.">
+  
+  <area  href=9dce9f8d5ec76311.htm#OBMK9DCE9F8D5EC76311 shape="polygon" coords="604, 892, 604, 878, 617, 878, 617, 892, 604, 892"   target="_self"  title="An&#160; Application Interface is a Business Service Interface that occurs between Software Systems.">
+  
+  <area  href="#OBMKDDB3DF8F62854075" shape="rect" coords="588, 866, 730, 904"   target="_self"  title="The automated elements of a business service. An application service may deliver or support part or all of one or more business services.">
+  
+  <area  href=bcebd8e9549144db.htm#OBMKBCEBD8E9549144DB shape="polygon" coords="602, 1044, 602, 1031, 615, 1031, 615, 1044, 602, 1044"   target="_self"  title="An Application is a Software System that provides a set of Functionality(ies) that End Users see as a single unit.">
+  
+  <area  href="#OBMKDDB3DF2E62854031" shape="rect" coords="588, 1025, 730, 1063"   target="_self"  title="A realization of logical application functionality using components of functionality in applications that may be hired, procured, or built.">
+  
+  <area  href=63f8870255ae1ba2.htm#OBMK63F8870255AE1BA2 shape="polygon" coords="1089, 205, 1089, 192, 1102, 192, 1102, 205, 1089, 205"   target="_self"  title="A&#160; Constraining Property expresses a type of constraint that can be applied to Architecture Blocks.">
+  
+  <area  href="#OBMK5E6A64AE627E4978" shape="rect" coords="1068, 181, 1168, 218"   target="_self"  title="An indicator or factor that can be tracked, usually on an ongoing basis, to determine success or alignment with objectives and goals.">
+  
+  <area  href=325c32fc5eb02d02.htm#OBMK325C32FC5EB02D02 shape="polygon" coords="275, 893, 275, 879, 289, 879, 289, 893, 275, 893"   target="_self"  title="A&#160; Data Entity is an abstract structure of an Information Entity. It has an independent existence and can be uniquely identified.">
+  
+  <area  href="#OBMK5E6A6414627E493D" shape="rect" coords="238, 867, 380, 905"   target="_self"  title="Represents data that is recognized by the business as a distinct concept.">
+  
+  <area  href=762582bb5f6bd659.htm#OBMK762582BB5F6BD659 shape="polygon" coords="253, 1051, 253, 1038, 266, 1038, 266, 1051, 253, 1051"   target="_self"  title="A&#160; Physical Data Entity is a representation the physical structure of a Data Entity as it will be stored in a DBMS.">
+  
+  <area  href="#OBMK5E6A63D3627E490F" shape="rect" coords="238, 1025, 380, 1064"   target="_self"  title="A data structure that realizes related logical data components represented in the format or schema required by a particular technology.">
+  
+  <area  href=255833f95c6d1db3.htm#OBMK255833F95C6D1DB3 shape="polygon" coords="606, 966, 606, 953, 619, 953, 619, 966, 606, 966"   target="_self"  title="A&#160; Logical Application is an encapsulation of application functionality that is independent of a particular implementation. For example, the classification of all purchase request processing applications implemented in an enterprise.">
+  
+  <area  href="#OBMK5E6A6395627E48E9" shape="rect" coords="588, 947, 733, 985"   target="_self"  title="An encapsulation of application functionality that is definable by services offered and data maintained, independently of implementation and technology.">
+  
+  <area  href=215cceda606c35c6.htm#OBMK215CCEDA606C35C6 shape="polygon" coords="173, 387, 173, 373, 186, 373, 186, 387, 173, 387"   target="_self"  title="A&#160; Product is a Business Object that represents merchandises offered for sale, either goods (produced as the result of manufacturing) or services (some work done by a Resource Agent&#160; which produces Business Outcomes that benefits another Resource Agent).">
+  
+  <area  href="#OBMK5E6A6341627E48B8" shape="rect" coords="150, 360, 248, 400"   target="_self"  title="An outcome generated by the business to be offered to customers. Products include materials and/or services.">
+  
+  <area  href="#OBMK5E6A62BE627E4885" shape="rect" coords="439, 179, 564, 219"   target="_self"  title="A high-level statement of intent or direction for an organization. Typically used to measure success of an organization.">
+  
+  <area  href="#OBMK5E6A628C627E485F" shape="rect" coords="753, 180, 873, 221"   target="_self"  title="An organizational aim that is declared in a Simple, Measurable, Actionable, Realistic, and Timebound (SMART) way. For example, &quot;Increase capacity utilization by 30% by the end of the year, to support the planned increase in market share&quot;.">
+  
+  <area  href=362fc4365b3c39b8.htm#OBMK362FC4365B3C39B8 shape="polygon" coords="1088, 380, 1088, 367, 1102, 367, 1102, 380, 1088, 380"   target="_self"  title="A&#160; Concept is the representation of any tangible or intanglible entity that is of interest to understand the enterprises, its data, resources and activities.">
+  
+  <area  href="#OBMK5E6A6244627E4837" shape="rect" coords="1068, 361, 1168, 399"   target="_self"  title="Represents a concept and its semantics used within the business.">
+  
+  <area  href=959320325ee7fe24.htm#OBMK959320325EE7FE24 shape="polygon" coords="307, 81, 307, 67, 320, 67, 320, 81, 307, 81"   target="_self"  title="A&#160; Policy is a Directive that is not directly enforceable whose purpose is to govern, guide or constrain the structure and behavior of Agents in the enterprise. ">
+  
+  <area  href="#OBMK7D3784215FD04C1B" shape="rect" coords="281, 55, 400, 93"   target="_self"  title="An external factor that prevents an organization from pursuing particular approaches to meet its goals. For example, customer data is not harmonized within the organization, regionally or nationally, constraining the organization&#39;s ability to offer effective customer service.">
+  
+  <area  href=076d151c5a5e1561.htm#OBMK076D151C5A5E1561 shape="polygon" coords="660, 626, 660, 612, 674, 612, 674, 626, 660, 626"   target="_self"  title="An&#160; Organizational Position is a type of position held by people when part of an Org-Unit. ">
+  
+  <area  href="#OBMK7D3783A25FD04BC2" shape="rect" coords="629, 599, 727, 639"   target="_self"  title="The usual or expected behavior of an actor, or the part somebody or something plays in a particular process or event. An actor may have a number of roles.">
+  
+  <area  href=9dcea2655ec768ee.htm#OBMK9DCEA2655EC768EE shape="polygon" coords="609, 781, 609, 768, 623, 768, 623, 781, 609, 781"   target="_self"  title="A&#160; Business Service Interface is a communication behavior that describes a typical course of interactions intended to produce Business Outcomes, through the involvement of Business Operating Agents.">
+  
+  <area  href="#OBMK41A746D55F573336" shape="rect" coords="134, 748, 1184, 803"   target="_self"  title="Supports business capabilities through an explicitly defined interface and is explicitly governed by an organization.">
+  
+  <area  href=b181b98c54891882.htm#OBMKB181B98C54891882 shape="polygon" coords="1071, 81, 1071, 67, 1084, 67, 1084, 81, 1071, 81"   target="_self"  title="A&#160; Capability&#160; is an ability to produce an Outcome.">
+  
+  <area  href="#OBMK41A7469A5F5732F3" shape="rect" coords="1043, 55, 1162, 93"   target="_self"  title="An ability that an organization, person, or system possesses.">
+  
+  <area  href=598272e954c622f4.htm#OBMK598272E954C622F4 shape="polygon" coords="518, 81, 518, 67, 531, 67, 531, 81, 518, 81"   target="_self"  title="A&#160; Functionality is a Business Operating Capability offered by Business Systems (software or hardware) and aimed at delivering Information Outcomes.">
+  
+  <area  href="#OBMK41A746595F5732B8" shape="rect" coords="497, 55, 616, 93"   target="_self"  title="A statement of need that must be met by a particular architecture or work package.">
+  
+  <area  href=8d5e986f552e28d5.htm#OBMK8D5E986F552E28D5 shape="polygon" coords="642, 81, 642, 67, 655, 67, 655, 81, 642, 81"   target="_self"  title="A&#160; Location is a geopolitical location anywhere on the earth.">
+  
+  <area  href="#OBMK41A745DD5F57327B" shape="rect" coords="611, 55, 730, 93"   target="_self"  title="A place where activities occur. Locations can be composed and decomposed.">
+  
+  <area  href=26b8382f5eeae265.htm#OBMK26B8382F5EEAE265 shape="polygon" coords="954, 892, 954, 878, 967, 878, 967, 892, 954, 892"   target="_self"  title="A&#160; Technology Interface is a Behavior that describes a typical course of interactions intended to produce Technology Outcomes, through the involvement of Technology Systems.">
+  
+  <area  href="#OBMK41A743D85F573231" shape="rect" coords="938, 866, 1080, 904"   target="_self"  title="A technical capability required to provide enabling infrastructure that supports the delivery of applications.">
+  
+  <area  href=d5e6ddd05c46547c.htm#OBMKD5E6DDD05C46547C shape="polygon" coords="975, 1045, 975, 1032, 988, 1032, 988, 1045, 975, 1045"   target="_self"  title="A&#160; Software Technology is an elementary Software Technology System&#160; used as an enabler by Software Modules.">
+  
+  <area  href="#OBMK41A743655F5731FC" shape="rect" coords="939, 1026, 1081, 1064"   target="_self"  title="A realization of logical technology functionality using a particular technology product that may be deployed.">
+  
+  <area  href=4619527e560d45eb.htm#OBMK4619527E560D45EB shape="polygon" coords="272, 965, 272, 952, 285, 952, 285, 965, 272, 965"   target="_self"  title="A&#160; Logical Data Entity is a logical structure of a Data Entity. As any Data Entity, it has an independent existence and can be uniquely identified.">
+  
+  <area  href="#OBMK41A7431D5F5731C8" shape="rect" coords="239, 946, 381, 984"   target="_self"  title="A data structure composed of logically-related data entities.">
+  
+  <area  href=076d151c5a5e1561.htm#OBMK076D151C5A5E1561 shape="polygon" coords="486, 538, 486, 524, 499, 524, 499, 538, 486, 538"   target="_self"  title="An&#160; Organizational Position is a type of position held by people when part of an Org-Unit. ">
+  
+  <area  href="#OBMK41A7422B5F573122" shape="rect" coords="447, 511, 566, 551"   target="_self"  title="A person, organization, or system that has one or more roles that initiates or interacts with activities; for example, a sales representative who travels to visit customers. Actors may be internal or external to an organization.">
+  
+  <area  href=91be97ff54882d9f.htm#OBMK91BE97FF54882D9F shape="polygon" coords="844, 81, 844, 68, 857, 68, 857, 81, 844, 81"   target="_self"  title="A&#160; Project is a course of action that is being executed or has been selected for execution. An organization&#39;s Initiatives represent the choices the organization has made about how to pursue the change that allows it to achieve its objectives.">
+  
+  <area  href="#OBMKE9B868195F5120B0" shape="rect" coords="827, 55, 947, 93"   target="_self"  title="A set of actions identified to achieve one or more objectives for the business. A work package can be a part of a project, a complete project, or a program.">
+  
+  <area  href=57dfc52d550932ef.htm#OBMK57DFC52D550932EF shape="polygon" coords="784, 540, 784, 527, 798, 527, 798, 540, 784, 540"   target="_self"  title="An&#160; Business Process is a set of Operations performed by Human Resources and/or by automated systems (Business Systems) to produce a Business Outcome. It is depicted as a sequence of Operations, controlled by events and conditions. ">
+  
+  <area  href="#OBMKE9B867CB5F512069" shape="rect" coords="753, 513, 872, 553"   target="_self"  title="A process represents a sequence of activities that together achieve a specified outcome, can be decomposed into sub-processes, and can show operation of a function or service (at next level of detail). Processes may also be used to link or compose organizations, functions, services, and processes.">
+  
+  <area  href=57dfc5f555093444.htm#OBMK57DFC5F555093444 shape="polygon" coords="847, 389, 847, 375, 860, 375, 860, 389, 847, 389"   target="_self"  title="&#160;Value Streams are used to frame the Conceptual Operating Model of the enterprise: they describe how the enterprise operates at the conceptual level and helps chunking responsibilities between Conceptual Agents (Activity Domain or Business Function) .">
+  
+  <area  href="#OBMKE9B8676C5F51201D" shape="rect" coords="828, 362, 947, 402"   target="_self"  title="A representation of an end-to-end collection of value-adding activities that create an overall result for a customer, stakeholder, or end user.">
+  
+  <area  href=9810abf3551135c4.htm#OBMK9810ABF3551135C4 shape="polygon" coords="627, 381, 627, 368, 640, 368, 640, 381, 627, 381"   target="_self"  title="A&#160; Business Capability is a Capability that benefits to Customers (internal or external) of the enterprise. It expresses an ability to deliver Business Outcomes.">
+  
+  <area  href="#OBMKE9B8673B5F511FDC" shape="rect" coords="605, 361, 709, 401"   target="_self"  title="A particular ability that a business may possess or exchange to achieve a specific purpose.">
+  
+  <area  href=7c4094d2552717db.htm#OBMK7C4094D2552717DB shape="polygon" coords="171, 539, 171, 525, 184, 525, 184, 539, 171, 539"   target="_self"  title="A&#160; Business Function is a unit of the enterprise functional division of labor. It is used to shape the enterprise management structure in regard to how it produces, consumes or processes Business Outcomes: information, energy, materiel.">
+  
+  <area  href="#OBMKE9B866EA5F511F99" shape="rect" coords="140, 512, 259, 552"   target="_self"  title="Delivers business capabilities closely aligned to an organization, but not necessarily explicitly governed by the organization.">
+  
+  <area  href=07231aff5f4eb337.htm#OBMK07231AFF5F4EB337 shape="polygon" coords="204, 81, 204, 67, 217, 67, 217, 81, 204, 81"   target="_self"  title="An&#160; Architecture principles is a general guideline (Policy) that informs, supports and constrains the way in which an organization will design and construct architectures.">
+  
+  <area  href="#OBMKE9B866A25F511F55" shape="rect" coords="182, 55, 285, 93"   target="_self"  title="-">
+  
+  <area  href=7c408aa155270eea.htm#OBMK7C408AA155270EEA shape="polygon" coords="380, 387, 380, 374, 393, 374, 393, 387, 380, 387"   target="_self"  title="An&#160; Org-Unit is a type of administrative unit in government or business that is a template of Organization .">
+  
+  <area  href="#OBMKE9B866315F511F1A" shape="rect" coords="380, 362, 479, 399"   target="_self"  title="A self-contained unit of resources with goals, objectives, and measures. Organization units may include external parties and business partner organizations.">
+  
+</map>
+<img  src="../images/e9b863d95f51e220_e9b863e65f51e351_i.png" alt="../images/e9b863d95f51e220_e9b863e65f51e351_i.png" usemap="#E9B863E65F51E351" height="1107" width="1319" border=0>
+
+</section>
+<a class="object-section-anchor" id="map"></a>
+<section class="object-section">
+<h4>MAPPED ENTITIES</h4> 
+<hr class="sectionbreak" />
+<table id="sortabletable" class="table table-sm  table-bordered table-cell-resizable table-index-set-col-width-4 table-custom-style table-scrollX" width="100%" cellspacing="0">
+<tr><th>Framework Concept</th><th>Framework Definition</th><th>HOPEX Concept</th><th>HOPEX Definition</th></tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK41A7422B5F573122"/>Actor</td>
+<td><div align="left" style="min-height: 12pt; ">A person, organization, or system that has one or more roles that initiates or interacts with activities; for example, a sales representative who travels to visit customers. Actors may be internal or external to an organization.</div><div align="left" style="min-height: 12pt; ">Note:</div><div align="left" style="min-height: 12pt; ">In the automotive industry, an original equipment manufacturer would be considered an actor by an automotive dealership that interacts with its supply chain activities.</div><i><br/>References:<br/><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_02" target="_blank">OpenGroup - TOGAF - Definition -Actor</a></i></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="076d151c5a5e1561.htm" target="_top">Organizational Position</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="fb5f6ff8587e40e3.htm" target="_top">Position Type</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Organizational Position</b> is a type of position held by people when part of an <a href="7c408aa155270eea.htm" target="_top"><b><u>Org-Unit</u></b></a>. </div><div align="left" style="min-height: 12pt; ">Examples: </div><div align="left" style="min-height: 13pt; ">- Sales representative</div><div align="left" style="min-height: 13pt; ">- Developer</div><div align="left" style="min-height: 13pt; ">- Storekeeper</div><div align="left" style="min-height: 13pt; ">- Architect</div><i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Post" target="_blank">OMG - UAF - Post</a><br/><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_66" target="_blank">OpenGroup - TOGAF - Definition - Role</a><br/><a href="https://compliancedictionary.com/term/252897" target="_blank">UCF Glossary - Position Description</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMKDDB3DF8F62854075"/>Application Service</td>
+<td>The automated elements of a business service. An application service may deliver or support part or all of one or more business services.<i><br/>References:<br/><a href="https://pubs.opengroup.org/togaf-standard/architecture-content/chap02.html#tag_02_04" target="_blank">OpenGroup - TOGAF - Content Metamodel - Application Service</a></i></td>
+<td><img src="../standard/relationship-concepttype.ico.gif"/>&nbsp;
+<a  href="9dce9f8d5ec76311.htm" target="_top">Application Interface</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="ee0cee7f3919000d.htm" target="_top">Exchange Contract</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Application Interface</b> is a <a href="9dcea2655ec768ee.htm" target="_top"><b><u>Business Service Interface</u></b></a> that occurs between <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">The interface is described by messages exchanged between endpoints (provider, consumer..).</div><i><br/>References:<br/><a href="https://www.enterpriseintegrationpatterns.com/patterns/messaging" target="_blank">EIP - messaging</a><br/><a href="https://martinfowler.com/tags/API%20design.html" target="_blank">Martin Fowler - API Design</a><br/><a href="https://martinfowler.com/articles/richardsonMaturityModel.html" target="_blank">Martin Fowler - Richardson Maturity Model</a><br/><a href="https://learn.microsoft.com/en-us/azure/architecture/best-practices/api-design" target="_blank">Microsoft - Architecture Design - RESTful web API design</a><br/><a href="https://publications.opengroup.org/w161" target="_blank">OpenGroup - IT4IT - Defining Service Reference Architecture</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMKE9B8673B5F511FDC"/>Business Capability</td>
+<td>A particular ability that a business may possess or exchange to achieve a specific purpose.<i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Capability" target="_blank">OMG - UAF - Capability</a><br/><a href="https://pubs.opengroup.org/togaf-standard/architecture-content/chap02.html" target="_blank">OpenGroup - TOGAF - Content Metamodel</a><br/><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_28" target="_blank">OpenGroup - TOGAF - Definition - Business Capability</a></i></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="9810abf3551135c4.htm" target="_top">Business Capability</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="da99dae349820097.htm" target="_top">Business Capability</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Business Capability</b> is a <a href="b181b98c54891882.htm" target="_top"><b><u>Capability</u></b></a> that benefits to Customers (internal or external) of the enterprise. It expresses an ability to deliver <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Business Capability</b> is defined by its intended <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s and the conditions (<a href="63f8870255ae1ba2.htm" target="_top"><b><u>Constraining Property</u></b></a>) under which the delivery of the <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s shall be proceeded.<br />The actual <a href="7c40a5b455272bb4.htm" target="_top"><b><u>Constraint Value</u></b></a>s for a given&#160;<b> Business Capability</b> at the different <a href="036a3de3548f229e.htm" target="_top"><b><u>Enterprise Stage</u></b></a>s is given by their exhibition (<b> Exhibited Capability</b>).</div><i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Capability" target="_blank">OMG - UAF - Capability</a><br/><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_28" target="_blank">OpenGroup - TOGAF - Definition - Business Capability</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK5E6A6244627E4837"/>Business Information</td>
+<td>Represents a concept and its semantics used within the business.<i><br/>References:<br/><a href="https://pubs.opengroup.org/togaf-standard/architecture-content/chap02.html#tag_02_04" target="_blank">OpenGroup - TOGAF - Content Metamodel - Business Information</a></i></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="362fc4365b3c39b8.htm" target="_top">Concept</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="ec16ee36442800d3.htm" target="_top">Concept</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Concept</b> is the representation of any tangible or intanglible entity that is of interest to understand the enterprises, its data, resources and activities.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Concept</b> is defined through its essential characteristics which can be:</div><div align="left" style="min-height: 12pt; ">1) A <a href="362fc5a85b3c3c03.htm" target="_top"><b><u>Concept Property</u></b></a> that represents some an immutable factual characteristic such as &quot;name&quot;, &quot;amount&quot;.</div><div align="left" style="min-height: 12pt; ">2) A <a href="f654f7e85ebb76fa.htm" target="_top"><b><u>Concept Relationship</u></b></a> that represents relationships to other&#160;<b> Concept</b>s.</div><i><br/>References:<br/><a href="https://www.google.com/search?q=site%3Ahttps%3A%2F%2Fwww.dddcommunity.org%2Fresources%2Fddd_terms%2F+Entity" target="_blank">DDD - Glossary - Entity</a><br/><a href="../../../www.omg.org/spec/SBVR/1.5/formal-19-10-02.pdf#page=38" target="_blank">OMG - SBVR - Concept</a><br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#OperationalInformation" target="_blank">OMG - UAF - OperationalInformation</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK41A746D55F573336"/>Business Service</td>
+<td>Supports business capabilities through an explicitly defined interface and is explicitly governed by an organization.<i><br/>References:<br/><a href="https://publications.opengroup.org/w161" target="_blank">OpenGroup - IT4IT - Defining Service Reference Architecture</a><br/><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_32" target="_blank">OpenGroup - TOGAF - Definition - Business Service</a><br/><a href="https://pubs.opengroup.org/architecture/togaf9-doc/m/chap03.html#tag_03_29" target="_blank">OpenGroup - TOGAF 9 - Definition - Business Service</a></i></td>
+<td><img src="../standard/relationship-concepttype.ico.gif"/>&nbsp;
+<a  href="9dcea2655ec768ee.htm" target="_top">Business Service Interface</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="ee0cee7f3919000d.htm" target="_top">Exchange Contract</a></td>
+<td class="description-text">A&#160;<b> Business Service Interface</b> is a communication behavior that describes a typical course of interactions intended to produce <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s, through the involvement of <a href="e2ef091962147ad7.htm" target="_top"><b><u>Business Operating Agent</u></b></a>s.<i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#OperationalInterface" target="_blank">OMG - UAF - Operational Interface</a><br/><a href="https://publications.opengroup.org/w161" target="_blank">OpenGroup - IT4IT - Defining Service Reference Architecture</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK41A7469A5F5732F3"/>Capability</td>
+<td><div align="left" style="min-height: 12pt; ">An ability that an organization, person, or system possesses.</div><div align="left" style="min-height: 12pt; ">Note:</div><div align="left" style="min-height: 12pt; ">For example, Enterprise Architecture, marketing, customer contact, or outbound telemarketing.</div><i><br/>References:<br/><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_33" target="_blank">OpenGroup - TOGAF - Definition - Capability</a></i></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="b181b98c54891882.htm" target="_top">Capability</a><br>   <img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="77987c424f5f17c5.htm" target="_top">Capability</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Capability</b>&#160; is an ability to produce an <a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>.</div><div align="left" style="min-height: 12pt; "><b>&#160;Capability</b>s are fulfilled by <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s performing <a href="d682ef5e56144e77.htm" target="_top"><b><u>Process</u></b></a>es and interacting with other <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s to produce the desired <a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>.</div><i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Capability" target="_blank">OMG - UAF - Capability</a><br/><a href="https://pubs.opengroup.org/architecture/o-aa-standard/definitions.html#_capability" target="_blank">OpenGroup - OAA - Capability</a><br/><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_33" target="_blank">OpenGroup - TOGAF - Definition - Capability</a><br/><a href="../resources/Ackoff-Choice-Communication-and-Conflict.pdf#FunctionalClass" target="_blank">Russell Ackoff - Choice &amp; Communication - FunctionalClass</a><br/><a href="http://wordnetweb.princeton.edu/perl/webwn?o2=&amp;o0=1&amp;o8=1&amp;o1=1&amp;o7=&amp;o5=&amp;o9=&amp;o6=&amp;o3=&amp;o4=&amp;r=1&amp;s=capability&amp;i=3&amp;h=10000000#c" target="_blank">WordNet - Capabiity</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK7D3784215FD04C1B"/>Constraint</td>
+<td>An external factor that prevents an organization from pursuing particular approaches to meet its goals. For example, customer data is not harmonized within the organization, regionally or nationally, constraining the organization&#39;s ability to offer effective customer service.<i><br/>References:<br/><a href="https://pubs.opengroup.org/togaf-standard/architecture-content/chap02.html" target="_blank">OpenGroup - TOGAF - Content Metamodel</a></i></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="959320325ee7fe24.htm" target="_top">Policy</a><br>   <img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="68ed6a295d065b7b.htm" target="_top">Policy</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Policy</b> is a <a href="278678e95b2533d6.htm" target="_top"><b><u>Directive</u></b></a> that is not directly enforceable whose purpose is to govern, guide or constrain the structure and behavior of <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s in the enterprise. </div><div align="left" style="min-height: 12pt; ">Policies provide the basis for rules and govern <a href="986cd4ec5ffca3ac.htm" target="_top"><b><u>Behavior</u></b></a>s carried out by <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s.<br />Example of&#160;<b> Policy</b>s are <a href="07ca0ca15dd84ada.htm" target="_top"><b><u>Regulation Article</u></b></a>s, <a href="fe22ffdd5c4e0bd4.htm" target="_top"><b><u>Business Policy</u></b></a>s or <a href="07231aff5f4eb337.htm" target="_top"><b><u>Architecture principle</u></b></a>s.</div><i><br/>References:<br/><a href="../../../www.omg.org/spec/BMM/1.3/formal-15-05-19.pdf#page=45" target="_blank">OMG - BMM 1.3 - Business Policy</a><br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Rule" target="_blank">OMG - UAF - Rule</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMKEE24F19962857B66"/>Control</td>
+<td>A decision-making step with accompanying decision logic used to determine execution approach for a process or to ensure that a process complies with governance criteria. For example, a sign-off control on the purchase request processing process that checks whether the total value of the request is within the sign-off limits of the requester, or whether it needs escalating to higher authority.<i><br/>References:<br/><a href="https://pubs.opengroup.org/togaf-standard/architecture-content/chap02.html#tag_02_04" target="_blank">OpenGroup - TOGAF - Content MetaModel - Control</a></i></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="2cff30205eda86d9.htm" target="_top">Control</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="f3d722cf44210694.htm" target="_top">Control</a></td>
+<td class="description-text">A control is a set of rules and means enabling assurance that a legal, regulatory, internal or strategic requirement is respected.<i><br/>References:<br/><a href="https://pubs.opengroup.org/togaf-standard/architecture-content/chap02.html#tag_02_04" target="_blank">OpenGroup - TOGAF - Content MetaModel - Control</a><br/><a href="https://compliancedictionary.com/term/5788" target="_blank">UCF Glossary - Control</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK97439CC562905E62"/>Course of Action</td>
+<td>Direction and focus provided by strategic goals and objectives, often to deliver the value proposition characterized in the business model.<i><br/>References:<br/><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_38" target="_blank">OpenGroup - TOGAF - Definition - Course of Action</a></i></td>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="036a3de3548f229e.htm" target="_top">Enterprise Stage</a><br>   <img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="daf320b15e597a39.htm" target="_top">Business Undertaking</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Enterprise Stage</b> is a past, current or future state of the enterprise. </div><div align="left" style="min-height: 12pt; ">Each stage represents an initiative comprising a purposeful set of activities whose primary purpose is focused on achieving a set of clearly defined objectives that may transcend organisational boundaries and consequently require integrated team working under the direction of an <a href="ff0512935b254723.htm" target="_top"><b><u>Architecture Governance Committee</u></b></a>.</div></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK5E6A6414627E493D"/>Data Entity</td>
+<td>Represents data that is recognized by the business as a distinct concept.<i><br/>References:<br/><a href="https://pubs.opengroup.org/togaf-standard/architecture-content/chap02.html#tag_02_04" target="_blank">OpenGroup - TOGAF - Content MetaModel - Data Entity</a><br/><a href="https://pubs.opengroup.org/togaf-standard/introduction/apdxb.html#tag_06_10" target="_blank">OpenGroup - TOGAF - Definition - Data Element</a></i></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="325c32fc5eb02d02.htm" target="_top">Data Entity</a><br>   <img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="061109ec62ab6d05.htm" target="_top">Data Entity - E</a></td>
+<td class="description-text">A&#160;<b> Data Entity</b> is an abstract structure of an <a href="d6cd2cea5ab98e5f.htm" target="_top"><b><u>Information Entity</u></b></a>. It has an independent existence and can be uniquely identified.<br /><b> Data Entity</b> is characterized by <a href="b6e3cc7a5fbb6878.htm" target="_top"><b><u>Relationship</u></b></a>s it has with other&#160;<b> Data Entity</b>(ies) and by <a href="b6e3dcfb5fbb6d4d.htm" target="_top"><b><u>Value Property</u></b></a>(ies).<i><br/>References:<br/><a href="https://www.google.com/search?q=site%3Ahttps%3A%2F%2Fwww.dddcommunity.org%2Fresources%2Fddd_terms%2F+Entity" target="_blank">DDD - Glossary - Entity</a><br/><a href="https://pubs.opengroup.org/togaf-standard/introduction/apdxb.html#tag_06_10" target="_blank">OpenGroup - TOGAF - Definition - Data Element</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK806A146B62D1F686"/>Driver</td>
+<td>An external or internal condition that motivates the organization to define its goals. An example of an external driver is a change in regulation or compliance rules which, for example, require changes to the way an organization operates; i.e., Sarbanes-Oxley in the US.<i><br/>References:<br/><a href="https://pubs.opengroup.org/togaf-standard/architecture-content/chap02.html#tag_02_04" target="_blank">OpenGroup - TOGAF - Content MetaModel - Driver</a></i></td>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="bcebd0565491287e.htm" target="_top">Driver</a><br>   <img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="06110e0d56466c02.htm" target="_top">Stakeholder Driver</a></td>
+<td class="description-text">A&#160;<b> Driver</b> is a factor which can have a significant impact on the activities, and goals of an <a href="b181b82a54891668.htm" target="_top"><b><u>Enterprise</u></b></a> or a <a href="29df3f4060084c07.htm" target="_top"><b><u>Management System</u></b></a>.<i><br/>References:<br/><a href="https://www.iso.org/obp/ui/#iso:std:iso-iec-ieee:42010:ed-2:v1:enConcern" target="_blank">ISO 42010 - Concern</a><br/><a href="../../../www.omg.org/spec/BMM/1.3/formal-15-05-19.pdf#page=24" target="_blank">OMG - BMM - Influencer</a><br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Driver" target="_blank">OMG - UAF - Driver</a><br/><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_37" target="_blank">OpenGroup - TOGAF - Definitions - Concern</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK2DA3A61062D37336"/>Event</td>
+<td>An organizational state change that triggers processing events; may originate from inside or outside the organization and may be resolved inside or outside the organization.<i><br/>References:<br/><a href="https://pubs.opengroup.org/togaf-standard/architecture-content/chap02.html#tag_02_04" target="_blank">OpenGroup - TOGAF - Content Metamodel - Event</a></i></td>
+<td><img src="../standard/relationship-concepttype.ico.gif"/>&nbsp;
+<a  href="0185cc626221bb37.htm" target="_top">Business Event</a></td>
+<td class="description-text">A&#160;<b> Business Event</b> is a type of business change that is used to coordinate <a href="0185cd936221bd72.htm" target="_top"><b><u>Business Behavior</u></b></a>s.<i><br/>References:<br/><a href="https://pubs.opengroup.org/togaf-standard/architecture-content/chap02.html#tag_02_04" target="_blank">OpenGroup - TOGAF - Content Metamodel - Event</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMKE9B866EA5F511F99"/>Function</td>
+<td>Delivers business capabilities closely aligned to an organization, but not necessarily explicitly governed by the organization.<i><br/>References:<br/><a href="https://pubs.opengroup.org/togaf-standard/architecture-content/chap02.html" target="_blank">OpenGroup - TOGAF - Content Metamodel</a><br/><a href="https://pubs.opengroup.org/architecture/togaf9-doc/m/chap03.html#tag_03_26" target="_blank">OpenGroup - TOGAF 9 - Definition - Business Function</a></i></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="7c4094d2552717db.htm" target="_top">Business Function</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="b1edb2582c140183.htm" target="_top">Business Function</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Business Function</b> is a unit of the enterprise functional division of labor. It is used to shape the enterprise management structure in regard to how it produces, consumes or processes <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s: information, energy, materiel.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Business Function</b> specifies <a href="7c409e95552724ab.htm" target="_top"><b><u>Skill</u></b></a>s and <a href="598272e954c622f4.htm" target="_top"><b><u>Functionality</u></b></a>(ies) required to perform their activities.</div><i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#OperationalPerformer" target="_blank">OMG - UAF - OperationalPerformer</a><br/><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_29" target="_blank">OpenGroup - TOGAF - Definition - Business Function</a><br/><a href="https://pubs.opengroup.org/architecture/togaf9-doc/m/chap03.html#tag_03_26" target="_blank">OpenGroup - TOGAF 9 - Definition - Business Function</a><br/><a href="../resources/Ackoff-Towards-a-system-of-systems-concepts.pdf#FunctionalDivisionOfLabor" target="_blank">Russell Ackoff - System of concepts - FunctionalDivisionOfLabor</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK5E6A62BE627E4885"/>Goal</td>
+<td>A high-level statement of intent or direction for an organization. Typically used to measure success of an organization.<i><br/>References:<br/><a href="https://method.demomega.com/MM-OVERVIEW/pages/architecture-content/chap02.html#tag_02_04" target="_blank">OpenGroup - TOGAF - Content MetaModel - Goal</a></i></td>
+<td><img src="../standard/concept-trait.ico.gif"/>&nbsp;
+<a  href="e0d5e58e5eca855f.htm" target="_top">Enterprise Goal</a><br>   <img src="../standard/metaclasspart_concrete.ico.gif"/>&nbsp;
+<a  href="1731210a4b3b08cc.htm" target="_top">Enterprise Goal</a></td>
+<td class="description-text">An&#160;<b> Enterprise Goal</b> tends to be longer term, and defined qualitatively rather than quantitatively. It should be sufficiently&#160; narrow-focused so that Objectives can be defined for it.<i><br/>References:<br/><a href="../../../www.omg.org/spec/BMM/1.3/formal-15-05-19.pdf#page=34" target="_blank">OMG - BMM - Goal</a><br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#EnterpriseGoal" target="_blank">OMG - UAF - EnterpriseGoal</a><br/><a href="../resources/Ackoff-Towards-a-system-of-systems-concepts.pdf#ObjectivePreferredOutcome" target="_blank">Russell Ackoff - System of Concepts - Objective</a><br/><a href="https://compliancedictionary.com/term/264941" target="_blank">UCF Glossary - Enterprise Objective</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK41A745DD5F57327B"/>Location</td>
+<td>A place where activities occur. Locations can be composed and decomposed.</td>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="8d5e986f552e28d5.htm" target="_top">Location</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="b1edb2612c1401d3.htm" target="_top">Site</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Location</b> is a geopolitical location anywhere on the earth.</div><div align="left" style="min-height: 12pt; ">Examples: </div><div align="left" style="min-height: 12pt; ">- France</div><div align="left" style="min-height: 12pt; ">- Paris</div><div align="left" style="min-height: 12pt; ">- Washington DC</div><div align="left" style="min-height: 12pt; ">- Cairo</div><div align="left" style="min-height: 12pt; ">- Buenos-Aires</div><div align="left" style="min-height: 12pt; ">- Asia</div><i><br/>References:<br/><a href="https://15926.blog/topics/data-model/index.htm#SpatialLocation" target="_blank">ISO 15926 - SpatialLocation</a><br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ActualLocation" target="_blank">OMG - UAF - ActualLocation</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK5E6A6395627E48E9"/>Logical Application Component</td>
+<td>An encapsulation of application functionality that is definable by services offered and data maintained, independently of implementation and technology.<i><br/>References:<br/><a href="https://pubs.opengroup.org/togaf-standard/architecture-content/chap02.html#tag_02_04" target="_blank">OpenGroup - TOGAF - Logical Application Component</a></i></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="255833f95c6d1db3.htm" target="_top">Logical Application</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="6b44825a522847d9.htm" target="_top">Logical Application</a></td>
+<td class="description-text">A&#160;<b> Logical Application</b> is an encapsulation of application functionality that is independent of a particular implementation. For example, the classification of all purchase request processing applications implemented in an enterprise.<i><br/>References:<br/><a href="https://pubs.opengroup.org/togaf-standard/architecture-content/chap02.html#tag_02_04" target="_blank">OpenGroup - TOGAF - Logical Application Component</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK41A7431D5F5731C8"/>Logical Data Component</td>
+<td>A data structure composed of logically-related data entities.<i><br/>References:<br/><a href="https://method.demomega.com/MM-OVERVIEW/pages/architecture-content/chap02.html#tag_02_04" target="_blank">OpenGroup - TOGAF - Content MetaModel - Logical Data Component</a></i></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="4619527e560d45eb.htm" target="_top">Logical Data Entity</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="7db8824033340504.htm" target="_top">Class</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Logical Data Entity</b> is a logical structure of a <a href="325c32fc5eb02d02.htm" target="_top"><b><u>Data Entity</u></b></a>. As any <a href="325c32fc5eb02d02.htm" target="_top"><b><u>Data Entity</u></b></a>, it has an independent existence and can be uniquely identified.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Logical Data Entity</b> is characterized by <a href="f4be36b65ee1c923.htm" target="_top"><b><u>Logical Relationship</u></b></a>s it has with other&#160;<b> Logical Data Entity</b>(ies) and by its <a href="f4be36695ee1c7fa.htm" target="_top"><b><u>Attribute</u></b></a>s.</div><i><br/>References:<br/><a href="https://www.google.com/search?q=site%3Ahttps%3A%2F%2Fwww.dddcommunity.org%2Fresources%2Fddd_terms%2F+Entity" target="_blank">DDD - Glossary - Entity</a><br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ResourceInformation" target="_blank">OMG - UAF - ResourceInformation</a><br/><a href="https://pubs.opengroup.org/togaf-standard/introduction/apdxb.html#tag_06_10" target="_blank">OpenGroup - TOGAF - Definition - Data Element</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMKEE24F0A662857921"/>Logical Technology Component</td>
+<td>An implementation-independent encapsulation of technology services.</td>
+<td></td>
+<td class="description-text"></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK5E6A64AE627E4978"/>Measure</td>
+<td>An indicator or factor that can be tracked, usually on an ongoing basis, to determine success or alignment with objectives and goals.<i><br/>References:<br/><a href="https://method.demomega.com/MM-OVERVIEW/pages/architecture-content/chap02.html#tag_02_04" target="_blank">OpenGroup - TOGAF - Content Metamodel - Measure</a></i></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="63f8870255ae1ba2.htm" target="_top">Constraining Property</a><br>   <img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="4d035025569f42f3.htm" target="_top">KPI Dimension Building Block</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Constraining Property</b> expresses a type of constraint that can be applied to <a href="d342d88e5b121401.htm" target="_top"><b><u>Architecture Block</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">These constraints can be either <a href="48d2c45c63b57003.htm" target="_top"><b><u>Measurable Property (Abstract)</u></b></a> (Time, Mass, Cost, ..), <a href="f68d26e263b8e425.htm" target="_top"><b><u>Environmental Property</u></b></a>s (Terrain Type, Light conditions, Weather conditions) or a grouping of these (<a href="48d2bc1a63b567da.htm" target="_top"><b><u>Set of Constraining Properties</u></b></a>).</div><div align="left" style="min-height: 12pt; "><b>&#160;Constraining Property</b>s are used to constrain <a href="d342d88e5b121401.htm" target="_top"><b><u>Architecture Block</u></b></a>s in the context of non-functional requirement analysis and <a href="abba950e62a94390.htm" target="_top"><b><u>Value Proposition</u></b></a> analysis.</div><i><br/>References:<br/><a href="https://method.demomega.com/MM-OVERVIEW/pages/architecture-content/chap02.html#tag_02_04" target="_blank">OpenGroup - TOGAF - Content Metamodel - Measure</a><br/><a href="../resources/Ackoff-Choice-Communication-and-Conflict.pdf#MorphologicalProperty" target="_blank">Russell Ackoff - Choice &amp; Communication - MorphologicalProperty</a><br/><a href="https://en.wikipedia.org/wiki/List_of_system_quality_attributes" target="_blank">Wikipeddia - List of quality attributes</a><br/><a href="https://en.wikipedia.org/wiki/Measurement" target="_blank">Wikipedia - Measurement</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK5E6A628C627E485F"/>Objective</td>
+<td>An organizational aim that is declared in a Simple, Measurable, Actionable, Realistic, and Timebound (SMART) way. For example, &quot;Increase capacity utilization by 30% by the end of the year, to support the planned increase in market share&quot;.<i><br/>References:<br/><a href="https://method.demomega.com/MM-OVERVIEW/pages/architecture-content/chap02.html#tag_02_04" target="_blank">OpenGroup - TOGAF - Content Metamodel - Objective</a><br/><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_58" target="_blank">OpenGroup - TOGAF - Definition - Objective</a></i></td>
+<td><img src="../standard/concept-trait.ico.gif"/>&nbsp;
+<a  href="e0d5e5fb5eca8703.htm" target="_top">Enterprise Objective</a><br>   <img src="../standard/metaclasspart_concrete.ico.gif"/>&nbsp;
+<a  href="2ee4433359245e91.htm" target="_top">Enterprise Objective</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Enterprise Objective</b> is a quantifiable end that a company/organization wants to achieve for a given <a href="036a3de3548f229e.htm" target="_top"><b><u>Enterprise Stage</u></b></a>.</div><div align="left" style="min-height: 12pt; ">An Enterprise Objective may support an Enterprise Goal; it may be refined into sub-objectives.</div><div align="left" style="min-height: 12pt; ">An Enterprise Objective may concern a defined Exhibited Capability and be addressed by a defined Tactic.</div><i><br/>References:<br/><a href="../../../www.omg.org/spec/BMM/1.3/formal-15-05-19.pdf#page=34" target="_blank">OMG - BMM - Objective</a><br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#EnterpriseObjective" target="_blank">OMG - UAF - EnterpriseObjective</a><br/><a href="https://method.demomega.com/MM-OVERVIEW/pages/architecture-content/chap02.html#tag_02_04" target="_blank">OpenGroup - TOGAF - Content Metamodel - Objective</a><br/><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_58" target="_blank">OpenGroup - TOGAF - Definition - Objective</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMKE9B866315F511F1A"/>Organization Unit</td>
+<td>A self-contained unit of resources with goals, objectives, and measures. Organization units may include external parties and business partner organizations.<i><br/>References:<br/><a href="https://method.demomega.com/MM-OVERVIEW/pages/architecture-content/chap02.html#tag_02_04" target="_blank">OpenGroup - TOGAF - Content Metamodel - Organization Unit</a></i></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="7c408aa155270eea.htm" target="_top">Org-Unit</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="b1edb2562c140173.htm" target="_top">Org-Unit</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Org-Unit</b> is a type of administrative unit in government or business that is a template of <a href="910196ca550a2ec2.htm" target="_top"><b><u>Organization</u></b></a> .</div><div align="left" style="min-height: 12pt; ">Example : Sales Department, Finance Department, Logistics Deparment.</div><i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Organization" target="_blank">OMG - UAF - Organization</a><br/><a href="https://method.demomega.com/MM-OVERVIEW/pages/architecture-content/chap02.html#tag_02_04" target="_blank">OpenGroup - TOGAF - Content Metamodel - Organization Unit</a><br/><a href="../resources/Ackoff-Towards-a-system-of-systems-concepts.pdf#FunctionalDivisionOfLabor" target="_blank">Russell Ackoff - System of concepts - FunctionalDivisionOfLabor</a><br/><a href="../resources/Ackoff-Towards-a-system-of-systems-concepts.pdf#Organizations" target="_blank">Russell Ackoff - System of Concepts - Organizations</a><br/><a href="https://compliancedictionary.com/term/1463" target="_blank">UCF Glossary - Department</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMKDDB3DF2E62854031"/>Physical Application Component</td>
+<td>A realization of logical application functionality using components of functionality in applications that may be hired, procured, or built.<i><br/>References:<br/><a href="https://method.demomega.com/MM-OVERVIEW/pages/architecture-content/chap02.html#tag_02_04" target="_blank">OpenGroup - TOGAF - Content MetaModel - Physical Application Component</a><br/><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_04" target="_blank">OpenGroup - TOGAF - Definition - Application Component</a></i></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="bcebd8e9549144db.htm" target="_top">Application</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="b1edb2562c14016f.htm" target="_top">Application</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An <a href="b1edb2562c14016f.htm" target="_top"><b><u>Application</u></b></a> is a <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a> that provides a set of <a href="598272e954c622f4.htm" target="_top"><b><u>Functionality</u></b></a>(ies) that <a href="2dcea8705fc4827c.htm" target="_top"><b><u>End User</u></b></a>s see as a single unit.</div><div align="left" style="min-height: 12pt; ">Essentially&#160;<b> Application</b>s are architectural constructions resulting from the combinaison of the following four criteria:</div><div align="left" style="min-height: 12pt; ">1) A group of <a href="598272e954c622f4.htm" target="_top"><b><u>Functionality</u></b></a> that <a href="2dcea8705fc4827c.htm" target="_top"><b><u>End User</u></b></a>s see as a single unit.</div><div align="left" style="min-height: 12pt; ">2) A managed asset (<b> Managed Application</b>) associated with a budget line in the context of an <a href="1ce3429d5c48982e.htm" target="_top"><b><u>Application Portfolio</u></b></a>.</div><div align="left" style="min-height: 12pt; ">3) A body of code that is seen by developers as a single unit.</div><div align="left" style="min-height: 12pt; ">4) A group of deployable software units (<a href="d5e6d7eb5c464b21.htm" target="_top"><b><u>Deployable Application Package</u></b></a>s) that must be installed together on one or multiple execution nodes (<a href="f4be0eda5ee1d6c0.htm" target="_top"><b><u>Computational Aspect</u></b></a>).</div><div align="left" style="min-height: 12pt; "><b>&#160;Application</b> is a <a href="5c43887c64103e30.htm" target="_top"><b><u>Mezzo</u></b></a> enterprise asset&#160; that sits between <a href="46194ca7560d3a45.htm" target="_top"><b><u>Application System</u></b></a> and <a href="46194ce9560d3ab8.htm" target="_top"><b><u>IT Service</u></b></a> in the decomposition of <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">Example: &quot;Payroll&quot; is an&#160;<b> Application</b> that is part an &quot;HR system&quot; which is an <a href="46194ca7560d3a45.htm" target="_top"><b><u>Application System</u></b></a>.</div><div align="left" style="min-height: 12pt; ">The &quot;Payroll&quot;&#160;<b> Application</b> includes, among other things, the &quot;Salary and Wage Calculation&quot; <a href="46194ce9560d3ab8.htm" target="_top"><b><u>IT Service</u></b></a>.</div><i><br/>References:<br/><a href="https://c4model.com/#Abstractions" target="_blank">C4 Model - Software System</a><br/><a href="https://martinfowler.com/bliki/ApplicationBoundary.html" target="_blank">Martin Fowler - Application Boundary</a><br/><a href="https://learn.microsoft.com/en-us/azure/architecture/guide/architecture-styles" target="_blank">Microsoft - Architecture Design - Architecture Styles</a><br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Software" target="_blank">OMG - UAF - Software</a><br/><a href="https://pubs.opengroup.org/architecture/archimate32-doc/#_Toc112154993" target="_blank">OpenGroup - ArchiMate - Application Component</a><br/><a href="https://method.demomega.com/MM-OVERVIEW/pages/architecture-content/chap02.html#tag_02_04" target="_blank">OpenGroup - TOGAF - Content MetaModel - Physical Application Component</a><br/><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_04" target="_blank">OpenGroup - TOGAF - Definition - Application Component</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK5E6A63D3627E490F"/>Physical Data Entity</td>
+<td>A data structure that realizes related logical data components represented in the format or schema required by a particular technology.</td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="762582bb5f6bd659.htm" target="_top">Physical Data Entity</a><br>   <img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="e3caf1c0624b4974.htm" target="_top">Physical Data Entity E</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Physical Data Entity</b> is a representation the physical structure of a <a href="325c32fc5eb02d02.htm" target="_top"><b><u>Data Entity</u></b></a> as it will be stored in a DBMS.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Physical Data Entity</b> has an independent existence and can be uniquely identified.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Physical Data Entity</b> is characterized by <a href="b6e3df8e5fbb724d.htm" target="_top"><b><u>Physical Relationship</u></b></a>s it has with other&#160;<b> Physical Data Entity</b>(ies) and by <a href="e6f220d45f771837.htm" target="_top"><b><u>Physical Data Property</u></b></a>(ies).</div><i><br/>References:<br/><a href="https://www.google.com/search?q=site%3Ahttps%3A%2F%2Fwww.dddcommunity.org%2Fresources%2Fddd_terms%2F+Entity" target="_blank">DDD - Glossary - Entity</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMKE9B866A25F511F55"/>Principle</td>
+<td><i><br/>References:<br/><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_19" target="_blank">OpenGroup - TOGAF - Definition - Architecture Principle</a><br/><a href="https://pubs.opengroup.org/togaf-standard/adm-techniques/chap02.html#tag_02" target="_blank">OpenGroup - TOGAF - Guide - Architecture Principles</a></i></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="07231aff5f4eb337.htm" target="_top">Architecture principle</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="c6b2ed605fbc670b.htm" target="_top">Architecture Principle</a></td>
+<td class="description-text">An&#160;<b> Architecture principle</b>s is a general guideline (<a href="959320325ee7fe24.htm" target="_top"><b><u>Policy</u></b></a>) that informs, supports and constrains the way in which an organization will design and construct architectures.<i><br/>References:<br/><a href="https://cio-wiki.org/wiki/Architectural_Principles#:~:text=Architecture%20Principles%20are%20the%20principles,structure%2C%20work%2C%20producing%20results." target="_blank">CIO Wiki - Architecture Principle</a><br/><a href="https://pubs.opengroup.org/architecture/o-aa-standard/definitions.html#_architecture_principle" target="_blank">OpenGroup - OAA - Architecture Principle</a><br/><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_19" target="_blank">OpenGroup - TOGAF - Definition - Architecture Principle</a><br/><a href="https://pubs.opengroup.org/togaf-standard/adm-techniques/chap02.html#tag_02" target="_blank">OpenGroup - TOGAF - Guide - Architecture Principles</a><br/><a href="https://compliancedictionary.com/term/382783" target="_blank">UCF Glossary - Architecture Principle</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMKE9B867CB5F512069"/>Process</td>
+<td>A process represents a sequence of activities that together achieve a specified outcome, can be decomposed into sub-processes, and can show operation of a function or service (at next level of detail). Processes may also be used to link or compose organizations, functions, services, and processes.<i><br/>References:<br/><a href="https://pubs.opengroup.org/togaf-standard/architecture-content/chap02.html" target="_blank">OpenGroup - TOGAF - Content Metamodel</a><br/><a href="https://pubs.opengroup.org/architecture/togaf9-doc/m/apdxa.html#tag_47_48" target="_blank">OpenGroup - TOGAF 9 - Definition - Process</a></i></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="57dfc52d550932ef.htm" target="_top">Business Process</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="b1edb25e2c1401bb.htm" target="_top">Organizational Process</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Business Process</b> is a set of <a href="0f9213fd5ebc1b87.htm" target="_top"><b><u>Operation</u></b></a>s performed by <a href="076d15425a5e158c.htm" target="_top"><b><u>Human Resource</u></b></a>s and/or by automated systems (<a href="278675d65b252f4d.htm" target="_top"><b><u>Business System</u></b></a>s) to produce a <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>. It is depicted as a sequence of <a href="0f9213fd5ebc1b87.htm" target="_top"><b><u>Operation</u></b></a>s, controlled by events and conditions. </div><div align="left" style="min-height: 12pt; "><a href="0f9213fd5ebc1b87.htm" target="_top"><b><u>Operation</u></b></a>s are carried out by the involvment of <a href="076d15425a5e158c.htm" target="_top"><b><u>Human Resource</u></b></a>s and system resources (<a href="bcebd8e9549144db.htm" target="_top"><b><u>Application</u></b></a>) as participants in the process (<a href="b4ebbe325ffdca40.htm" target="_top"><u>Participant Resource Agent</u></a>).</div><div align="left" style="min-height: 12pt; ">During its course of action, an&#160;<b> Business Process</b> consumes or produces <a href="6d2b7c935fbb6270.htm" target="_top"><b><u>Data Object</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">1) It may read or write <a href="6d2b7c935fbb6270.htm" target="_top"><b><u>Data Object</u></b></a>s in its Process Store.</div><div align="left" style="min-height: 12pt; ">2) It may receive <a href="6d2b7c935fbb6270.htm" target="_top"><b><u>Data Object</u></b></a>s at its boundary:&#160;<b> Triggering Business Outcome</b>.</div><div align="left" style="min-height: 12pt; ">3) It may produce <a href="6d2b7c935fbb6270.htm" target="_top"><b><u>Data Object</u></b></a>s at its boundary:&#160;<b> Published Business Outcome</b>.</div><div align="left" style="min-height: 12pt; ">The course of actions of an&#160;<b> Business Process</b> is constrained by the application of rules (<a href="0f9215805ebc1d2a.htm" target="_top"><b><u>Business Rule Enforcement</u></b></a>) that define what is allowed and not allowed to do.</div><i><br/>References:<br/><a href="https://www.iso.org/obp/ui/#iso:std:iso:9000:ed-4:v1:en" target="_blank">ISO 9000 - 3.4 - Process</a><br/><a href="https://www.lean.org/lexicon-terms/value-stream/" target="_blank">Lean.org - Value Stream</a><br/><a href="https://www.lean.org/lexicon-terms/value-stream-mapping/" target="_blank">Lean.org - Value Stream Mapping</a><br/><a href="../../../www.omg.org/spec/BMM/1.3/formal-15-05-19.pdf#page=64" target="_blank">OMG - BMM - Business Process</a><br/><a href="../../../www.omg.org/spec/BPMN/2.0.2/formal-13-12-09.pdf#page=173" target="_blank">OMG - BPMN - Process</a><br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Function" target="_blank">OMG - UAF - Function</a><br/><a href="https://pubs.opengroup.org/architecture/o-aa-standard/definitions.html#_process" target="_blank">OpenGroup - OAA - Process</a><br/><a href="https://pubs.opengroup.org/togaf-standard/architecture-content/chap02.html" target="_blank">OpenGroup - TOGAF - Content Metamodel</a><br/><a href="https://pubs.opengroup.org/architecture/togaf9-doc/m/apdxa.html#tag_47_48" target="_blank">OpenGroup - TOGAF 9 - Definition - Process</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK5E6A6341627E48B8"/>Product</td>
+<td>An outcome generated by the business to be offered to customers. Products include materials and/or services.<i><br/>References:<br/><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_62" target="_blank">OpenGroup - TOGAF - Definition - Product</a></i></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="215cceda606c35c6.htm" target="_top">Product</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="6f7c7418494b0138.htm" target="_top">Product</a></td>
+<td class="description-text">A&#160;<b> Product</b> is a <a href="43ee3c7963725899.htm" target="_top"><b><u>Business Object</u></b></a> that represents merchandises offered for sale, either goods (produced as the result of manufacturing) or services (some work done by a <a href="bcebd31f5491302c.htm" target="_top"><b><u>Resource Agent</u></b></a>&#160; which produces <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s that benefits another <a href="bcebd31f5491302c.htm" target="_top"><b><u>Resource Agent</u></b></a>).<i><br/>References:<br/><a href="https://martinfowler.com/articles/products-over-projects.html" target="_blank">Martin Fowler - Products over Projects</a><br/><a href="https://pubs.opengroup.org/architecture/o-aa-standard/definitions.html#Product" target="_blank">OpenGroup - OAA - Definition - Product</a><br/><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_62" target="_blank">OpenGroup - TOGAF - Definition - Product</a><br/><a href="http://wordnetweb.princeton.edu/perl/webwn?o2=&amp;o0=1&amp;o8=1&amp;o1=1&amp;o7=&amp;o5=&amp;o9=&amp;o6=&amp;o3=&amp;o4=&amp;r=1&amp;s=product&amp;i=2&amp;h=1000000000#c" target="_blank">WordNet - Product</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK41A746595F5732B8"/>Requirement</td>
+<td>A statement of need that must be met by a particular architecture or work package.<i><br/>References:<br/><a href="https://pubs.opengroup.org/togaf-standard/architecture-content/chap02.html" target="_blank">OpenGroup - TOGAF - Content Metamodel</a><br/><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_64" target="_blank">OpenGroup - TOGAF - Definition - Requirement</a></i></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="598272e954c622f4.htm" target="_top">Functionality</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="e939e9cf2c140236.htm" target="_top">Functionality</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Functionality</b> is a <a href="aea4936060645978.htm" target="_top"><b><u>Business Operating Capability</u></b></a> offered by <a href="278675d65b252f4d.htm" target="_top"><b><u>Business System</u></b></a>s (software or hardware) and aimed at delivering <a href="302238be5ec9020a.htm" target="_top"><b><u>Information Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Functionality</b> describes WHAT a software or hardware system can provide.</div><div align="left" style="min-height: 12pt; "><b>&#160;Functionality</b>(ies) are used to express the features required by people when performing their job.</div><div align="left" style="min-height: 12pt; ">For internal customers, these jobs correspond to <a href="0f9213fd5ebc1b87.htm" target="_top"><b><u>Operation</u></b></a>s described in <a href="57dfc52d550932ef.htm" target="_top"><b><u>Business Process</u></b></a> (see <a href="0f9213345ebc1a67.htm" target="_top"><b><u>Instrument</u></b></a>)</div><div align="left" style="min-height: 12pt; ">For enterprise <a href="d6cdfdbc5ab86331.htm" target="_top"><b><u>Customer</u></b></a>s, these jobs correspond to <a href="d17034875be85304.htm" target="_top"><b><u>Job-to-be-done</u></b></a> in the context of <a href="d170d6a25be734ed.htm" target="_top"><b><u>Customer Journey</u></b></a>s.</div><i><br/>References:<br/><a href="https://www.scaledagileframework.com/glossary/#goto-letter-F" target="_blank">SAFe&copy; - Feature</a><br/><a href="https://www.scaledagileframework.com/features-and-capabilities/" target="_blank">SAFe&copy; - Features and Capabilities</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK7D3783A25FD04BC2"/>Role</td>
+<td><div align="left" style="min-height: 12pt; ">The usual or expected behavior of an actor, or the part somebody or something plays in a particular process or event. An actor may have a number of roles.</div><div align="left" style="min-height: 12pt; ">See also Actor.</div><i><br/>References:<br/><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_66" target="_blank">OpenGroup - TOGAF - Definition - Role</a></i></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="076d151c5a5e1561.htm" target="_top">Organizational Position</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="fb5f6ff8587e40e3.htm" target="_top">Position Type</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Organizational Position</b> is a type of position held by people when part of an <a href="7c408aa155270eea.htm" target="_top"><b><u>Org-Unit</u></b></a>. </div><div align="left" style="min-height: 12pt; ">Examples: </div><div align="left" style="min-height: 13pt; ">- Sales representative</div><div align="left" style="min-height: 13pt; ">- Developer</div><div align="left" style="min-height: 13pt; ">- Storekeeper</div><div align="left" style="min-height: 13pt; ">- Architect</div><i><br/>References:<br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Post" target="_blank">OMG - UAF - Post</a><br/><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_66" target="_blank">OpenGroup - TOGAF - Definition - Role</a><br/><a href="https://compliancedictionary.com/term/252897" target="_blank">UCF Glossary - Position Description</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK41A743655F5731FC"/>Technology Component</td>
+<td>A realization of logical technology functionality using a particular technology product that may be deployed.<i><br/>References:<br/><a href="https://method.demomega.com/MM-OVERVIEW/pages/architecture-content/chap02.html#tag_02_04" target="_blank">OpenGroup - TOGAF - Content MetaModel - Technology Component</a><br/><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_81" target="_blank">OpenGroup - TOGAF - Definition - Technology Component</a></i></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="d5e6ddd05c46547c.htm" target="_top">Software Technology</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="2885299152a85717.htm" target="_top">Software Technology</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Software Technology</b> is an elementary <a href="0463ea9a63fd8b6c.htm" target="_top"><b><u>Software Technology System</u></b></a>&#160; used as an enabler by <a href="c30bdac25a5d9eaf.htm" target="_top"><b><u>Software Module</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">Examples : </div><div align="left" style="min-height: 12pt; ">- Application server, </div><div align="left" style="min-height: 12pt; ">- Message server, </div><div align="left" style="min-height: 12pt; ">- Storage, </div><div align="left" style="min-height: 12pt; ">- Business information sharing, </div><div align="left" style="min-height: 12pt; ">- Operating systems, </div><div align="left" style="min-height: 12pt; ">- Navigators, etc</div><i><br/>References:<br/><a href="https://method.demomega.com/MM-OVERVIEW/pages/architecture-content/chap02.html#tag_02_04" target="_blank">OpenGroup - TOGAF - Content MetaModel - Technology Component</a><br/><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_81" target="_blank">OpenGroup - TOGAF - Definition - Technology Component</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMK41A743D85F573231"/>Technology Service</td>
+<td>A technical capability required to provide enabling infrastructure that supports the delivery of applications.<i><br/>References:<br/><a href="https://method.demomega.com/MM-OVERVIEW/pages/architecture-content/chap02.html#tag_02_04" target="_blank">OpenGroup - TOGAF - Content MetaModel - Technology Service</a></i></td>
+<td><img src="../standard/relationship-concepttype.ico.gif"/>&nbsp;
+<a  href="26b8382f5eeae265.htm" target="_top">Technology Interface</a></td>
+<td class="description-text">A&#160;<b> Technology Interface</b> is a Behavior that describes a typical course of interactions intended to produce <a href="f4be0a955ee1c4f5.htm" target="_top"><b><u>Technology Outcome</u></b></a>s, through the involvement of <a href="0cbd1fa663fe18ac.htm" target="_top"><b><u>Technology System</u></b></a>s.</td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMKE9B8676C5F51201D"/>Value Stream</td>
+<td>A representation of an end-to-end collection of value-adding activities that create an overall result for a customer, stakeholder, or end user.<i><br/>References:<br/><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_84" target="_blank">OpenGroup - TOGAF - Definition - Value Stream</a></i></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="57dfc5f555093444.htm" target="_top">Value Stream</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="ac83ad5a481000b0.htm" target="_top">Value Stream</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; "><b>&#160;Value Stream</b>s are used to frame the <a href="19dc1a30555649d9.htm" target="_top"><b><u>Conceptual Operating Model</u></b></a> of the enterprise: they describe how the enterprise operates at the conceptual level and helps chunking responsibilities between <a href="7c40987055271d04.htm" target="_top"><b><u>Conceptual Agent</u></b></a>s (<a href="9810b060551137d0.htm" target="_top"><b><u>Activity Domain</u></b></a> or <a href="7c4094d2552717db.htm" target="_top"><b><u>Business Function</u></b></a>) .</div><div align="left" style="min-height: 12pt; "></div><div align="left" style="min-height: 12pt; ">A&#160;<b> Value Stream</b> is a conceptual <a href="d682ef5e56144e77.htm" target="_top"><b><u>Process</u></b></a>&#160; performed by <a href="7c40987055271d04.htm" target="_top"><b><u>Conceptual Agent</u></b></a>s to produce a <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>. It is depicted as a sequence of <a href="3b4b40da5ebc2bce.htm" target="_top"><b><u>Value Stream Activity</u></b></a>s, controlled by events and conditions.</div><div align="left" style="min-height: 12pt; "><a href="3b4b40da5ebc2bce.htm" target="_top"><b><u>Value Stream Activity</u></b></a>s are carried out by the involvment of <a href="7c40987055271d04.htm" target="_top"><b><u>Conceptual Agent</u></b></a>s as participants in the&#160;<b> Value Stream</b>.</div><div align="left" style="min-height: 12pt; ">During its course of action, a&#160;<b> Value Stream</b> consumes, produces or stores <a href="43ee3c7963725899.htm" target="_top"><b><u>Business Object</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">1) It may read or write <a href="43ee3c7963725899.htm" target="_top"><b><u>Business Object</u></b></a>s in its <a href="48d14ae75ebc11bc.htm" target="_top"><b><u>Business Object Store</u></b></a>.</div><div align="left" style="min-height: 12pt; ">2) It may receive <a href="43ee3c7963725899.htm" target="_top"><b><u>Business Object</u></b></a>s at its boundary:&#160; Consumed <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">3) It may produce <a href="43ee3c7963725899.htm" target="_top"><b><u>Business Object</u></b></a>s at its boundary:&#160; Delivered <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">The course of actions of a&#160;<b> Value Stream</b> is constrained by the application of rules (<a href="3b4b44685ebc333e.htm" target="_top"><b><u>Conceptual Rule Enforcement</u></b></a>) that define what is allowed and not allowed to do.</div><div align="left" style="min-height: 12pt; "><br />There are traditionnaly two kinds of&#160;<b> Value Stream</b>s:</div><div align="left" style="min-height: 12pt; ">1) Development development&#160;<b> Value Stream</b>s define all of the actions, both value-creating and nonvalue-creating, required to bring a <a href="215cceda606c35c6.htm" target="_top"><b><u>Product</u></b></a> from concept to launch.<br />2)&#160; Operational&#160;<b> Value Stream</b>s define define all of the actions, both value-creating and nonvalue-creating, required from order to delivery. These include actions to process information from the <a href="d6cdfdbc5ab86331.htm" target="_top"><b><u>Customer</u></b></a> and actions to transform the product on its way to the <a href="d6cdfdbc5ab86331.htm" target="_top"><b><u>Customer</u></b></a>.</div><i><br/>References:<br/><a href="https://www.lean.org/lexicon-terms/value-stream/" target="_blank">Lean.org - Value Stream</a><br/><a href="../../../www.omg.org/spec/BPMN/2.0.2/formal-13-12-09.pdf#page=173" target="_blank">OMG - BPMN - Process</a><br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#OperationalActivity" target="_blank">OMG - UAF - Operational Activity</a><br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#OperationalActivity" target="_blank">OMG - UAF - OperationalActivity</a><br/><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_84" target="_blank">OpenGroup - TOGAF - Definition - Value Stream</a><br/><a href="https://www.scaledagileframework.com/value-streams/" target="_blank">SAFe&copy; - Value Stream</a><br/><a href="https://en.wikipedia.org/wiki/Value_stream" target="_blank">Wikipedia - Value Stream</a></i></td>
+</tr>
+<tr>
+<td><img src="../standard/sketching%20-%20rectangle.ico.gif"/>&nbsp;<a name="OBMKE9B868195F5120B0"/>Work Package</td>
+<td>A set of actions identified to achieve one or more objectives for the business. A work package can be a part of a project, a complete project, or a program.<i><br/>References:<br/><a href="https://pubs.opengroup.org/architecture/togaf9-doc/m/chap03.html#tag_03_85" target="_blank">OpenGroup - TOGAF - Definitions - Work Package</a></i></td>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="91be97ff54882d9f.htm" target="_top">Project</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="8a1f952c585256cc.htm" target="_top">Project</a></td>
+<td class="description-text">A&#160;<b> Project</b> is a course of action that is being executed or has been selected for execution. An organization&#39;s <a href="0ffeec41600be08a.htm" target="_top"><b><u>Initiative</u></b></a>s represent the choices the organization has made about how to pursue the change that allows it to achieve its objectives.<i><br/>References:<br/><a href="https://dodcio.defense.gov/Library/DoD-Architecture-Framework/dodaf20_project/" target="_blank">DoDAF2 - Project Viewpoint</a><br/><a href="https://martinfowler.com/articles/products-over-projects.html" target="_blank">Martin Fowler - Products over Projects</a><br/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ActualProject" target="_blank">OMG - UAF - ActualProject</a><br/><a href="https://pubs.opengroup.org/architecture/togaf9-doc/m/chap03.html#tag_03_85" target="_blank">OpenGroup - TOGAF - Definitions - Work Package</a></i></td>
+</tr>
+</table>
+</section>
+<a class="object-section-anchor" id="ext"></a>
+<section class="object-section">
+<h4>EXTERNAL REFERENCES</h4> 
+<hr class="sectionbreak" />
+<table id="sortabletable" class="table table-sm  table-bordered table-cell-resizable table-index-set-col-width-4 table-custom-style table-scrollX" width="100%" cellspacing="0">
+<tr><th>Framework reference</th><th>HOPEX Description</th></tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMK370D619361C2BC04"/><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Capability">OMG - UAF - Capability</a></td>
+<td><br/> A particular ability that a business may possess or exchange to achieve a specific purpose.<br/><br/><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="9810abf3551135c4.htm" target="_top">Business Capability</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="da99dae349820097.htm" target="_top">Business Capability</a><br/> <div align="left" style="min-height: 12pt; ">A&#160;<b> Business Capability</b> is a <a href="b181b98c54891882.htm" target="_top"><b><u>Capability</u></b></a> that benefits to Customers (internal or external) of the enterprise. It expresses an ability to deliver <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Business Capability</b> is defined by its intended <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s and the conditions (<a href="63f8870255ae1ba2.htm" target="_top"><b><u>Constraining Property</u></b></a>) under which the delivery of the <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s shall be proceeded.<br />The actual <a href="7c40a5b455272bb4.htm" target="_top"><b><u>Constraint Value</u></b></a>s for a given&#160;<b> Business Capability</b> at the different <a href="036a3de3548f229e.htm" target="_top"><b><u>Enterprise Stage</u></b></a>s is given by their exhibition (<b> Exhibited Capability</b>).</div><br/><br/><br/> An enterprise&#39;s ability to Achieve a desired effect realized through a combination of ways and means (e.g. CapabilityConfigurations) along with specified measures.<br/><br/><br/> An enterprise&#39;s ability to Achieve a desired effect realized through a combination of ways and means (e.g. CapabilityConfigurations) along with specified measures.<br/><br/><br/> An enterprise&#39;s ability to Achieve a desired effect realized through a combination of ways and means (e.g. CapabilityConfigurations) along with specified measures.<br/><br/><br/> An enterprise&#39;s ability to Achieve a desired effect realized through a combination of ways and means (e.g. CapabilityConfigurations) along with specified measures.<br/><br/><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="b181b98c54891882.htm" target="_top">Capability</a><br>   <img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="77987c424f5f17c5.htm" target="_top">Capability</a><br/> <div align="left" style="min-height: 12pt; ">A&#160;<b> Capability</b>&#160; is an ability to produce an <a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>.</div><div align="left" style="min-height: 12pt; "><b>&#160;Capability</b>s are fulfilled by <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s performing <a href="d682ef5e56144e77.htm" target="_top"><b><u>Process</u></b></a>es and interacting with other <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s to produce the desired <a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>.</div></td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMK49BB4FD4623C7AE2"/><a href="https://publications.opengroup.org/w161">OpenGroup - IT4IT - Defining Service Reference Architecture</a></td>
+<td><img src="../standard/relationship-concepttype.ico.gif"/>&nbsp;
+<a  href="9dce9f8d5ec76311.htm" target="_top">Application Interface</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="ee0cee7f3919000d.htm" target="_top">Exchange Contract</a><br/> <div align="left" style="min-height: 12pt; ">An&#160;<b> Application Interface</b> is a <a href="9dcea2655ec768ee.htm" target="_top"><b><u>Business Service Interface</u></b></a> that occurs between <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">The interface is described by messages exchanged between endpoints (provider, consumer..).</div><br/><br/><img src="../standard/relationship-concepttype.ico.gif"/>&nbsp;
+<a  href="9dcea4535ec76e6c.htm" target="_top">Business Outcome</a><br>   <img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="d9fdded9582953e7.htm" target="_top">Class of Work Product</a><br/> <div align="left" style="min-height: 12pt; ">A&#160;<b> Business Outcome</b> is a <a href="0185cc626221bb37.htm" target="_top"><b><u>Business Event</u></b></a> that indicates the availability of an expected change in the state of a <a href="43ee3c7963725899.htm" target="_top"><b><u>Business Object</u></b></a>, produced by a <a href="e2ef091962147ad7.htm" target="_top"><b><u>Business Operating Agent</u></b></a>, for the benefits of an internal or external consumer (especially <a href="d6cdfdbc5ab86331.htm" target="_top"><b><u>Customer</u></b></a>s).</div><div align="left" style="min-height: 12pt; "><a href="43ee3c7963725899.htm" target="_top"><b><u>Business Object</u></b></a>s range from <a href="e6f250185f772ee1.htm" target="_top"><b><u>Information Object</u></b></a>s to any organizational constructs (<a href="1ce356355c48c0e2.htm" target="_top"><b><u>People &amp; Accountability</u></b></a>) or <a href="62466ea661b80d09.htm" target="_top"><b><u>Resource Operating Asset</u></b></a>s offered, produced and delivered by an <a href="b181b82a54891668.htm" target="_top"><b><u>Enterprise</u></b></a>.</div><br/><br/><br/> Supports business capabilities through an explicitly defined interface and is explicitly governed by an organization.<br/><br/><img src="../standard/relationship-concepttype.ico.gif"/>&nbsp;
+<a  href="9dcea2655ec768ee.htm" target="_top">Business Service Interface</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="ee0cee7f3919000d.htm" target="_top">Exchange Contract</a><br/> A&#160;<b> Business Service Interface</b> is a communication behavior that describes a typical course of interactions intended to produce <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s, through the involvement of <a href="e2ef091962147ad7.htm" target="_top"><b><u>Business Operating Agent</u></b></a>s.<br/><br/><img src="../standard/relationship-concepttype.ico.gif"/>&nbsp;
+<a  href="302238be5ec9020a.htm" target="_top">Information Outcome</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="ea52ea613aac006d.htm" target="_top">Content</a><br/> <div align="left" style="min-height: 11pt; ">An&#160;<b> Information Outcome</b> is a <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a> that indicates the availability of an expected change in the state of <a href="6d2b7c935fbb6270.htm" target="_top"><b><u>Data Object</u></b></a>s produced by the enterprise or by one of its sub-system, for the benefits of an internal or external party.</div><div align="left" style="min-height: 11pt; ">Example: </div><div align="left" style="min-height: 11pt; ">- Order received</div><div align="left" style="min-height: 11pt; ">- Payment rejected</div><br/><br/><img src="../standard/relationship-concepttype.ico.gif"/>&nbsp;
+<a  href="24ae31b55ed1c66d.htm" target="_top">Service Interface</a><br>   <img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="907592d6594725eb.htm" target="_top">Class of Exchange Contract</a><br/> A&#160;<b> Service Interface</b> is a communication <a href="986cd4ec5ffca3ac.htm" target="_top"><b><u>Behavior</u></b></a> that describes a typical course of interactions, coordinated by <a href="24ae31d75ed1c747.htm" target="_top"><b><u>Event</u></b></a>s and <a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>s, and intended to produce <a href="43ee620e63725a56.htm" target="_top"><b><u>Value Added Object</u></b></a>s, through the involvement of <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s.</td>
+</tr>
+<tr>
+<td><img src="../standard/extr_htm.ico.gif"/>&nbsp;<a name="OBMK49BB4E74623C7A14"/><a href="https://pubs.opengroup.org/togaf-standard/architecture-content/chap02.html">OpenGroup - TOGAF - Content Metamodel</a></td>
+<td><br/> A particular ability that a business may possess or exchange to achieve a specific purpose.<br/><br/><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="57dfc52d550932ef.htm" target="_top">Business Process</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="b1edb25e2c1401bb.htm" target="_top">Organizational Process</a><br/> <div align="left" style="min-height: 12pt; ">An&#160;<b> Business Process</b> is a set of <a href="0f9213fd5ebc1b87.htm" target="_top"><b><u>Operation</u></b></a>s performed by <a href="076d15425a5e158c.htm" target="_top"><b><u>Human Resource</u></b></a>s and/or by automated systems (<a href="278675d65b252f4d.htm" target="_top"><b><u>Business System</u></b></a>s) to produce a <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>. It is depicted as a sequence of <a href="0f9213fd5ebc1b87.htm" target="_top"><b><u>Operation</u></b></a>s, controlled by events and conditions. </div><div align="left" style="min-height: 12pt; "><a href="0f9213fd5ebc1b87.htm" target="_top"><b><u>Operation</u></b></a>s are carried out by the involvment of <a href="076d15425a5e158c.htm" target="_top"><b><u>Human Resource</u></b></a>s and system resources (<a href="bcebd8e9549144db.htm" target="_top"><b><u>Application</u></b></a>) as participants in the process (<a href="b4ebbe325ffdca40.htm" target="_top"><u>Participant Resource Agent</u></a>).</div><div align="left" style="min-height: 12pt; ">During its course of action, an&#160;<b> Business Process</b> consumes or produces <a href="6d2b7c935fbb6270.htm" target="_top"><b><u>Data Object</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">1) It may read or write <a href="6d2b7c935fbb6270.htm" target="_top"><b><u>Data Object</u></b></a>s in its Process Store.</div><div align="left" style="min-height: 12pt; ">2) It may receive <a href="6d2b7c935fbb6270.htm" target="_top"><b><u>Data Object</u></b></a>s at its boundary:&#160;<b> Triggering Business Outcome</b>.</div><div align="left" style="min-height: 12pt; ">3) It may produce <a href="6d2b7c935fbb6270.htm" target="_top"><b><u>Data Object</u></b></a>s at its boundary:&#160;<b> Published Business Outcome</b>.</div><div align="left" style="min-height: 12pt; ">The course of actions of an&#160;<b> Business Process</b> is constrained by the application of rules (<a href="0f9215805ebc1d2a.htm" target="_top"><b><u>Business Rule Enforcement</u></b></a>) that define what is allowed and not allowed to do.</div><br/><br/><br/> An external factor that prevents an organization from pursuing particular approaches to meet its goals. For example, customer data is not harmonized within the organization, regionally or nationally, constraining the organization&#39;s ability to offer effective customer service.<br/><br/><br/> Delivers business capabilities closely aligned to an organization, but not necessarily explicitly governed by the organization.<br/><br/><br/> A process represents a sequence of activities that together achieve a specified outcome, can be decomposed into sub-processes, and can show operation of a function or service (at next level of detail). Processes may also be used to link or compose organizations, functions, services, and processes.<br/><br/><br/> A statement of need that must be met by a particular architecture or work package.<br/><br/><br/> <br/><br/><br/> Mapping of core concepts of the TOGAF Content Metamodel to HOPEX concepts.</td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMKF72EF93B62D4541C"/><a href="https://pubs.opengroup.org/togaf-standard/architecture-content/chap02.html#tag_02_04">OpenGroup - TOGAF - Content Metamodel - Application Service</a></td>
+<td><br/> The automated elements of a business service. An application service may deliver or support part or all of one or more business services.</td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMK2DA3A6C562D374C6"/><a href="https://pubs.opengroup.org/togaf-standard/architecture-content/chap02.html#tag_02_04">OpenGroup - TOGAF - Content Metamodel - Business Information</a></td>
+<td><br/> Represents a concept and its semantics used within the business.</td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMKEE24F1FE62857BA3"/><a href="https://pubs.opengroup.org/togaf-standard/architecture-content/chap02.html#tag_02_04">OpenGroup - TOGAF - Content MetaModel - Control</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="2cff30205eda86d9.htm" target="_top">Control</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="f3d722cf44210694.htm" target="_top">Control</a><br/> A control is a set of rules and means enabling assurance that a legal, regulatory, internal or strategic requirement is respected.<br/><br/><br/> A decision-making step with accompanying decision logic used to determine execution approach for a process or to ensure that a process complies with governance criteria. For example, a sign-off control on the purchase request processing process that checks whether the total value of the request is within the sign-off limits of the requester, or whether it needs escalating to higher authority.</td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMKDDB3E348628541CD"/><a href="https://pubs.opengroup.org/togaf-standard/architecture-content/chap02.html#tag_02_04">OpenGroup - TOGAF - Content MetaModel - Data Entity</a></td>
+<td><br/> Represents data that is recognized by the business as a distinct concept.</td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMK806A15B062D1F6D5"/><a href="https://pubs.opengroup.org/togaf-standard/architecture-content/chap02.html#tag_02_04">OpenGroup - TOGAF - Content MetaModel - Driver</a></td>
+<td><br/> An external or internal condition that motivates the organization to define its goals. An example of an external driver is a change in regulation or compliance rules which, for example, require changes to the way an organization operates; i.e., Sarbanes-Oxley in the US.</td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMK2DA3A73D62D37533"/><a href="https://pubs.opengroup.org/togaf-standard/architecture-content/chap02.html#tag_02_04">OpenGroup - TOGAF - Content Metamodel - Event</a></td>
+<td><img src="../standard/relationship-concepttype.ico.gif"/>&nbsp;
+<a  href="0185cc626221bb37.htm" target="_top">Business Event</a><br/> A&#160;<b> Business Event</b> is a type of business change that is used to coordinate <a href="0185cd936221bd72.htm" target="_top"><b><u>Business Behavior</u></b></a>s.<br/><br/><br/> An organizational state change that triggers processing events; may originate from inside or outside the organization and may be resolved inside or outside the organization.</td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMK806A115062D1F21D"/><a href="https://method.demomega.com/MM-OVERVIEW/pages/architecture-content/chap02.html#tag_02_04">OpenGroup - TOGAF - Content MetaModel - Goal</a></td>
+<td><br/> A high-level statement of intent or direction for an organization. Typically used to measure success of an organization.</td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMKDDB3E3EF62854213"/><a href="https://method.demomega.com/MM-OVERVIEW/pages/architecture-content/chap02.html#tag_02_04">OpenGroup - TOGAF - Content MetaModel - Logical Data Component</a></td>
+<td><br/> A data structure composed of logically-related data entities.</td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMKF72EFA1662D45495"/><a href="https://method.demomega.com/MM-OVERVIEW/pages/architecture-content/chap02.html#tag_02_04">OpenGroup - TOGAF - Content Metamodel - Measure</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="63f8870255ae1ba2.htm" target="_top">Constraining Property</a><br>   <img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="4d035025569f42f3.htm" target="_top">KPI Dimension Building Block</a><br/> <div align="left" style="min-height: 12pt; ">A&#160;<b> Constraining Property</b> expresses a type of constraint that can be applied to <a href="d342d88e5b121401.htm" target="_top"><b><u>Architecture Block</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">These constraints can be either <a href="48d2c45c63b57003.htm" target="_top"><b><u>Measurable Property (Abstract)</u></b></a> (Time, Mass, Cost, ..), <a href="f68d26e263b8e425.htm" target="_top"><b><u>Environmental Property</u></b></a>s (Terrain Type, Light conditions, Weather conditions) or a grouping of these (<a href="48d2bc1a63b567da.htm" target="_top"><b><u>Set of Constraining Properties</u></b></a>).</div><div align="left" style="min-height: 12pt; "><b>&#160;Constraining Property</b>s are used to constrain <a href="d342d88e5b121401.htm" target="_top"><b><u>Architecture Block</u></b></a>s in the context of non-functional requirement analysis and <a href="abba950e62a94390.htm" target="_top"><b><u>Value Proposition</u></b></a> analysis.</div><br/><br/><br/> An indicator or factor that can be tracked, usually on an ongoing basis, to determine success or alignment with objectives and goals.</td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMK806A117062D1F260"/><a href="https://method.demomega.com/MM-OVERVIEW/pages/architecture-content/chap02.html#tag_02_04">OpenGroup - TOGAF - Content Metamodel - Objective</a></td>
+<td><img src="../standard/concept-trait.ico.gif"/>&nbsp;
+<a  href="e0d5e5fb5eca8703.htm" target="_top">Enterprise Objective</a><br>   <img src="../standard/metaclasspart_concrete.ico.gif"/>&nbsp;
+<a  href="2ee4433359245e91.htm" target="_top">Enterprise Objective</a><br/> <div align="left" style="min-height: 12pt; ">An&#160;<b> Enterprise Objective</b> is a quantifiable end that a company/organization wants to achieve for a given <a href="036a3de3548f229e.htm" target="_top"><b><u>Enterprise Stage</u></b></a>.</div><div align="left" style="min-height: 12pt; ">An Enterprise Objective may support an Enterprise Goal; it may be refined into sub-objectives.</div><div align="left" style="min-height: 12pt; ">An Enterprise Objective may concern a defined Exhibited Capability and be addressed by a defined Tactic.</div><br/><br/><br/> An organizational aim that is declared in a Simple, Measurable, Actionable, Realistic, and Timebound (SMART) way. For example, &quot;Increase capacity utilization by 30% by the end of the year, to support the planned increase in market share&quot;.</td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMKF72F000A62D5DC74"/><a href="https://method.demomega.com/MM-OVERVIEW/pages/architecture-content/chap02.html#tag_02_04">OpenGroup - TOGAF - Content Metamodel - Organization Unit</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="7c408aa155270eea.htm" target="_top">Org-Unit</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="b1edb2562c140173.htm" target="_top">Org-Unit</a><br/> <div align="left" style="min-height: 12pt; ">An&#160;<b> Org-Unit</b> is a type of administrative unit in government or business that is a template of <a href="910196ca550a2ec2.htm" target="_top"><b><u>Organization</u></b></a> .</div><div align="left" style="min-height: 12pt; ">Example : Sales Department, Finance Department, Logistics Deparment.</div><br/><br/><br/> A self-contained unit of resources with goals, objectives, and measures. Organization units may include external parties and business partner organizations.</td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMK5803724E623C863D"/><a href="https://method.demomega.com/MM-OVERVIEW/pages/architecture-content/chap02.html#tag_02_04">OpenGroup - TOGAF - Content MetaModel - Physical Application Component</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="bcebd8e9549144db.htm" target="_top">Application</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="b1edb2562c14016f.htm" target="_top">Application</a><br/> <div align="left" style="min-height: 12pt; ">An <a href="b1edb2562c14016f.htm" target="_top"><b><u>Application</u></b></a> is a <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a> that provides a set of <a href="598272e954c622f4.htm" target="_top"><b><u>Functionality</u></b></a>(ies) that <a href="2dcea8705fc4827c.htm" target="_top"><b><u>End User</u></b></a>s see as a single unit.</div><div align="left" style="min-height: 12pt; ">Essentially&#160;<b> Application</b>s are architectural constructions resulting from the combinaison of the following four criteria:</div><div align="left" style="min-height: 12pt; ">1) A group of <a href="598272e954c622f4.htm" target="_top"><b><u>Functionality</u></b></a> that <a href="2dcea8705fc4827c.htm" target="_top"><b><u>End User</u></b></a>s see as a single unit.</div><div align="left" style="min-height: 12pt; ">2) A managed asset (<b> Managed Application</b>) associated with a budget line in the context of an <a href="1ce3429d5c48982e.htm" target="_top"><b><u>Application Portfolio</u></b></a>.</div><div align="left" style="min-height: 12pt; ">3) A body of code that is seen by developers as a single unit.</div><div align="left" style="min-height: 12pt; ">4) A group of deployable software units (<a href="d5e6d7eb5c464b21.htm" target="_top"><b><u>Deployable Application Package</u></b></a>s) that must be installed together on one or multiple execution nodes (<a href="f4be0eda5ee1d6c0.htm" target="_top"><b><u>Computational Aspect</u></b></a>).</div><div align="left" style="min-height: 12pt; "><b>&#160;Application</b> is a <a href="5c43887c64103e30.htm" target="_top"><b><u>Mezzo</u></b></a> enterprise asset&#160; that sits between <a href="46194ca7560d3a45.htm" target="_top"><b><u>Application System</u></b></a> and <a href="46194ce9560d3ab8.htm" target="_top"><b><u>IT Service</u></b></a> in the decomposition of <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">Example: &quot;Payroll&quot; is an&#160;<b> Application</b> that is part an &quot;HR system&quot; which is an <a href="46194ca7560d3a45.htm" target="_top"><b><u>Application System</u></b></a>.</div><div align="left" style="min-height: 12pt; ">The &quot;Payroll&quot;&#160;<b> Application</b> includes, among other things, the &quot;Salary and Wage Calculation&quot; <a href="46194ce9560d3ab8.htm" target="_top"><b><u>IT Service</u></b></a>.</div><br/><br/><br/> A realization of logical application functionality using components of functionality in applications that may be hired, procured, or built.</td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMKDDB3E0C9628540C7"/><a href="https://method.demomega.com/MM-OVERVIEW/pages/architecture-content/chap02.html#tag_02_04">OpenGroup - TOGAF - Content MetaModel - Technology Component</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="d5e6ddd05c46547c.htm" target="_top">Software Technology</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="2885299152a85717.htm" target="_top">Software Technology</a><br/> <div align="left" style="min-height: 12pt; ">A&#160;<b> Software Technology</b> is an elementary <a href="0463ea9a63fd8b6c.htm" target="_top"><b><u>Software Technology System</u></b></a>&#160; used as an enabler by <a href="c30bdac25a5d9eaf.htm" target="_top"><b><u>Software Module</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">Examples : </div><div align="left" style="min-height: 12pt; ">- Application server, </div><div align="left" style="min-height: 12pt; ">- Message server, </div><div align="left" style="min-height: 12pt; ">- Storage, </div><div align="left" style="min-height: 12pt; ">- Business information sharing, </div><div align="left" style="min-height: 12pt; ">- Operating systems, </div><div align="left" style="min-height: 12pt; ">- Navigators, etc</div><br/><br/><br/> A realization of logical technology functionality using a particular technology product that may be deployed.</td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMKDDB3E8816285427E"/><a href="https://method.demomega.com/MM-OVERVIEW/pages/architecture-content/chap02.html#tag_02_04">OpenGroup - TOGAF - Content MetaModel - Technology Service</a></td>
+<td><br/> A technical capability required to provide enabling infrastructure that supports the delivery of applications.</td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMK355A7CCF627AECDB"/><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_04">OpenGroup - TOGAF - Definition - Application Component</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="bcebd8e9549144db.htm" target="_top">Application</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="b1edb2562c14016f.htm" target="_top">Application</a><br/> <div align="left" style="min-height: 12pt; ">An <a href="b1edb2562c14016f.htm" target="_top"><b><u>Application</u></b></a> is a <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a> that provides a set of <a href="598272e954c622f4.htm" target="_top"><b><u>Functionality</u></b></a>(ies) that <a href="2dcea8705fc4827c.htm" target="_top"><b><u>End User</u></b></a>s see as a single unit.</div><div align="left" style="min-height: 12pt; ">Essentially&#160;<b> Application</b>s are architectural constructions resulting from the combinaison of the following four criteria:</div><div align="left" style="min-height: 12pt; ">1) A group of <a href="598272e954c622f4.htm" target="_top"><b><u>Functionality</u></b></a> that <a href="2dcea8705fc4827c.htm" target="_top"><b><u>End User</u></b></a>s see as a single unit.</div><div align="left" style="min-height: 12pt; ">2) A managed asset (<b> Managed Application</b>) associated with a budget line in the context of an <a href="1ce3429d5c48982e.htm" target="_top"><b><u>Application Portfolio</u></b></a>.</div><div align="left" style="min-height: 12pt; ">3) A body of code that is seen by developers as a single unit.</div><div align="left" style="min-height: 12pt; ">4) A group of deployable software units (<a href="d5e6d7eb5c464b21.htm" target="_top"><b><u>Deployable Application Package</u></b></a>s) that must be installed together on one or multiple execution nodes (<a href="f4be0eda5ee1d6c0.htm" target="_top"><b><u>Computational Aspect</u></b></a>).</div><div align="left" style="min-height: 12pt; "><b>&#160;Application</b> is a <a href="5c43887c64103e30.htm" target="_top"><b><u>Mezzo</u></b></a> enterprise asset&#160; that sits between <a href="46194ca7560d3a45.htm" target="_top"><b><u>Application System</u></b></a> and <a href="46194ce9560d3ab8.htm" target="_top"><b><u>IT Service</u></b></a> in the decomposition of <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">Example: &quot;Payroll&quot; is an&#160;<b> Application</b> that is part an &quot;HR system&quot; which is an <a href="46194ca7560d3a45.htm" target="_top"><b><u>Application System</u></b></a>.</div><div align="left" style="min-height: 12pt; ">The &quot;Payroll&quot;&#160;<b> Application</b> includes, among other things, the &quot;Salary and Wage Calculation&quot; <a href="46194ce9560d3ab8.htm" target="_top"><b><u>IT Service</u></b></a>.</div><br/><br/><br/> A realization of logical application functionality using components of functionality in applications that may be hired, procured, or built.</td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMK546C51CE60117436"/><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_19">OpenGroup - TOGAF - Definition - Architecture Principle</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="07231aff5f4eb337.htm" target="_top">Architecture principle</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="c6b2ed605fbc670b.htm" target="_top">Architecture Principle</a><br/> An&#160;<b> Architecture principle</b>s is a general guideline (<a href="959320325ee7fe24.htm" target="_top"><b><u>Policy</u></b></a>) that informs, supports and constrains the way in which an organization will design and construct architectures.<br/><br/><br/> </td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMK52995346623C6BA1"/><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_28">OpenGroup - TOGAF - Definition - Business Capability</a></td>
+<td><br/> A particular ability that a business may possess or exchange to achieve a specific purpose.<br/><br/><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="9810abf3551135c4.htm" target="_top">Business Capability</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="da99dae349820097.htm" target="_top">Business Capability</a><br/> <div align="left" style="min-height: 12pt; ">A&#160;<b> Business Capability</b> is a <a href="b181b98c54891882.htm" target="_top"><b><u>Capability</u></b></a> that benefits to Customers (internal or external) of the enterprise. It expresses an ability to deliver <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Business Capability</b> is defined by its intended <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s and the conditions (<a href="63f8870255ae1ba2.htm" target="_top"><b><u>Constraining Property</u></b></a>) under which the delivery of the <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s shall be proceeded.<br />The actual <a href="7c40a5b455272bb4.htm" target="_top"><b><u>Constraint Value</u></b></a>s for a given&#160;<b> Business Capability</b> at the different <a href="036a3de3548f229e.htm" target="_top"><b><u>Enterprise Stage</u></b></a>s is given by their exhibition (<b> Exhibited Capability</b>).</div></td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMK5299545D623C6D12"/><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_32">OpenGroup - TOGAF - Definition - Business Service</a></td>
+<td><br/> Supports business capabilities through an explicitly defined interface and is explicitly governed by an organization.</td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMK5803774D623CCA31"/><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_33">OpenGroup - TOGAF - Definition - Capability</a></td>
+<td><br/> <div align="left" style="min-height: 12pt; ">An ability that an organization, person, or system possesses.</div><div align="left" style="min-height: 12pt; ">Note:</div><div align="left" style="min-height: 12pt; ">For example, Enterprise Architecture, marketing, customer contact, or outbound telemarketing.</div><br/><br/><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="b181b98c54891882.htm" target="_top">Capability</a><br>   <img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="77987c424f5f17c5.htm" target="_top">Capability</a><br/> <div align="left" style="min-height: 12pt; ">A&#160;<b> Capability</b>&#160; is an ability to produce an <a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>.</div><div align="left" style="min-height: 12pt; "><b>&#160;Capability</b>s are fulfilled by <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s performing <a href="d682ef5e56144e77.htm" target="_top"><b><u>Process</u></b></a>es and interacting with other <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s to produce the desired <a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>.</div></td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMK97439CDD62905E8C"/><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_38">OpenGroup - TOGAF - Definition - Course of Action</a></td>
+<td><br/> Direction and focus provided by strategic goals and objectives, often to deliver the value proposition characterized in the business model.</td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMK84D9ACEF623DDF83"/><a href="https://pubs.opengroup.org/togaf-standard/introduction/apdxb.html#tag_06_10">OpenGroup - TOGAF - Definition - Data Element</a></td>
+<td><br/> Represents data that is recognized by the business as a distinct concept.<br/><br/><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="325c32fc5eb02d02.htm" target="_top">Data Entity</a><br>   <img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="061109ec62ab6d05.htm" target="_top">Data Entity - E</a><br/> A&#160;<b> Data Entity</b> is an abstract structure of an <a href="d6cd2cea5ab98e5f.htm" target="_top"><b><u>Information Entity</u></b></a>. It has an independent existence and can be uniquely identified.<br /><b> Data Entity</b> is characterized by <a href="b6e3cc7a5fbb6878.htm" target="_top"><b><u>Relationship</u></b></a>s it has with other&#160;<b> Data Entity</b>(ies) and by <a href="b6e3dcfb5fbb6d4d.htm" target="_top"><b><u>Value Property</u></b></a>(ies).<br/><br/><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="4619527e560d45eb.htm" target="_top">Logical Data Entity</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="7db8824033340504.htm" target="_top">Class</a><br/> <div align="left" style="min-height: 12pt; ">A&#160;<b> Logical Data Entity</b> is a logical structure of a <a href="325c32fc5eb02d02.htm" target="_top"><b><u>Data Entity</u></b></a>. As any <a href="325c32fc5eb02d02.htm" target="_top"><b><u>Data Entity</u></b></a>, it has an independent existence and can be uniquely identified.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Logical Data Entity</b> is characterized by <a href="f4be36b65ee1c923.htm" target="_top"><b><u>Logical Relationship</u></b></a>s it has with other&#160;<b> Logical Data Entity</b>(ies) and by its <a href="f4be36695ee1c7fa.htm" target="_top"><b><u>Attribute</u></b></a>s.</div></td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMK289256426307965A"/><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_58">OpenGroup - TOGAF - Definition - Objective</a></td>
+<td><img src="../standard/concept-trait.ico.gif"/>&nbsp;
+<a  href="e0d5e5fb5eca8703.htm" target="_top">Enterprise Objective</a><br>   <img src="../standard/metaclasspart_concrete.ico.gif"/>&nbsp;
+<a  href="2ee4433359245e91.htm" target="_top">Enterprise Objective</a><br/> <div align="left" style="min-height: 12pt; ">An&#160;<b> Enterprise Objective</b> is a quantifiable end that a company/organization wants to achieve for a given <a href="036a3de3548f229e.htm" target="_top"><b><u>Enterprise Stage</u></b></a>.</div><div align="left" style="min-height: 12pt; ">An Enterprise Objective may support an Enterprise Goal; it may be refined into sub-objectives.</div><div align="left" style="min-height: 12pt; ">An Enterprise Objective may concern a defined Exhibited Capability and be addressed by a defined Tactic.</div><br/><br/><br/> An organizational aim that is declared in a Simple, Measurable, Actionable, Realistic, and Timebound (SMART) way. For example, &quot;Increase capacity utilization by 30% by the end of the year, to support the planned increase in market share&quot;.</td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMK801C8B83627A6416"/><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_62">OpenGroup - TOGAF - Definition - Product</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="215cceda606c35c6.htm" target="_top">Product</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="6f7c7418494b0138.htm" target="_top">Product</a><br/> A&#160;<b> Product</b> is a <a href="43ee3c7963725899.htm" target="_top"><b><u>Business Object</u></b></a> that represents merchandises offered for sale, either goods (produced as the result of manufacturing) or services (some work done by a <a href="bcebd31f5491302c.htm" target="_top"><b><u>Resource Agent</u></b></a>&#160; which produces <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s that benefits another <a href="bcebd31f5491302c.htm" target="_top"><b><u>Resource Agent</u></b></a>).<br/><br/><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="bcebd0175491272a.htm" target="_top">Stakeholder</a><br>   <img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="000000008000003f.htm" target="_top">Assignable Entity</a><br/> An outcome generated by the business to be offered to customers. Products include materials and/or services.</td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMK49BB4B8C623C786E"/><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_64">OpenGroup - TOGAF - Definition - Requirement</a></td>
+<td><br/> A statement of need that must be met by a particular architecture or work package.</td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMK28925559630782A5"/><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_66">OpenGroup - TOGAF - Definition - Role</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="076d151c5a5e1561.htm" target="_top">Organizational Position</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="fb5f6ff8587e40e3.htm" target="_top">Position Type</a><br/> <div align="left" style="min-height: 12pt; ">An&#160;<b> Organizational Position</b> is a type of position held by people when part of an <a href="7c408aa155270eea.htm" target="_top"><b><u>Org-Unit</u></b></a>. </div><div align="left" style="min-height: 12pt; ">Examples: </div><div align="left" style="min-height: 13pt; ">- Sales representative</div><div align="left" style="min-height: 13pt; ">- Developer</div><div align="left" style="min-height: 13pt; ">- Storekeeper</div><div align="left" style="min-height: 13pt; ">- Architect</div><br/><br/><img src="../standard/ctx-concepttype.ico.gif"/>&nbsp;
+<a  href="b4ebbe325ffdca40.htm" target="_top">Participant Resource Agent</a><br>   <img src="../standard/metaclasspart_concrete.ico.gif"/>&nbsp;
+<a  href="10c5117e48060036.htm" target="_top">Participant</a><br/> <br/><br/><br/> <div align="left" style="min-height: 12pt; ">The usual or expected behavior of an actor, or the part somebody or something plays in a particular process or event. An actor may have a number of roles.</div><div align="left" style="min-height: 12pt; ">See also Actor.</div></td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMK58037687623CC9AE"/><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_81">OpenGroup - TOGAF - Definition - Technology Component</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="d5e6ddd05c46547c.htm" target="_top">Software Technology</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="2885299152a85717.htm" target="_top">Software Technology</a><br/> <div align="left" style="min-height: 12pt; ">A&#160;<b> Software Technology</b> is an elementary <a href="0463ea9a63fd8b6c.htm" target="_top"><b><u>Software Technology System</u></b></a>&#160; used as an enabler by <a href="c30bdac25a5d9eaf.htm" target="_top"><b><u>Software Module</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">Examples : </div><div align="left" style="min-height: 12pt; ">- Application server, </div><div align="left" style="min-height: 12pt; ">- Message server, </div><div align="left" style="min-height: 12pt; ">- Storage, </div><div align="left" style="min-height: 12pt; ">- Business information sharing, </div><div align="left" style="min-height: 12pt; ">- Operating systems, </div><div align="left" style="min-height: 12pt; ">- Navigators, etc</div><br/><br/><br/> A realization of logical technology functionality using a particular technology product that may be deployed.</td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMK529952E1623C6B31"/><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_84">OpenGroup - TOGAF - Definition - Value Stream</a></td>
+<td><br/> A representation of an end-to-end collection of value-adding activities that create an overall result for a customer, stakeholder, or end user.<br/><br/><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="57dfc5f555093444.htm" target="_top">Value Stream</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="ac83ad5a481000b0.htm" target="_top">Value Stream</a><br/> <div align="left" style="min-height: 12pt; "><b>&#160;Value Stream</b>s are used to frame the <a href="19dc1a30555649d9.htm" target="_top"><b><u>Conceptual Operating Model</u></b></a> of the enterprise: they describe how the enterprise operates at the conceptual level and helps chunking responsibilities between <a href="7c40987055271d04.htm" target="_top"><b><u>Conceptual Agent</u></b></a>s (<a href="9810b060551137d0.htm" target="_top"><b><u>Activity Domain</u></b></a> or <a href="7c4094d2552717db.htm" target="_top"><b><u>Business Function</u></b></a>) .</div><div align="left" style="min-height: 12pt; "></div><div align="left" style="min-height: 12pt; ">A&#160;<b> Value Stream</b> is a conceptual <a href="d682ef5e56144e77.htm" target="_top"><b><u>Process</u></b></a>&#160; performed by <a href="7c40987055271d04.htm" target="_top"><b><u>Conceptual Agent</u></b></a>s to produce a <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>. It is depicted as a sequence of <a href="3b4b40da5ebc2bce.htm" target="_top"><b><u>Value Stream Activity</u></b></a>s, controlled by events and conditions.</div><div align="left" style="min-height: 12pt; "><a href="3b4b40da5ebc2bce.htm" target="_top"><b><u>Value Stream Activity</u></b></a>s are carried out by the involvment of <a href="7c40987055271d04.htm" target="_top"><b><u>Conceptual Agent</u></b></a>s as participants in the&#160;<b> Value Stream</b>.</div><div align="left" style="min-height: 12pt; ">During its course of action, a&#160;<b> Value Stream</b> consumes, produces or stores <a href="43ee3c7963725899.htm" target="_top"><b><u>Business Object</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">1) It may read or write <a href="43ee3c7963725899.htm" target="_top"><b><u>Business Object</u></b></a>s in its <a href="48d14ae75ebc11bc.htm" target="_top"><b><u>Business Object Store</u></b></a>.</div><div align="left" style="min-height: 12pt; ">2) It may receive <a href="43ee3c7963725899.htm" target="_top"><b><u>Business Object</u></b></a>s at its boundary:&#160; Consumed <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">3) It may produce <a href="43ee3c7963725899.htm" target="_top"><b><u>Business Object</u></b></a>s at its boundary:&#160; Delivered <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">The course of actions of a&#160;<b> Value Stream</b> is constrained by the application of rules (<a href="3b4b44685ebc333e.htm" target="_top"><b><u>Conceptual Rule Enforcement</u></b></a>) that define what is allowed and not allowed to do.</div><div align="left" style="min-height: 12pt; "><br />There are traditionnaly two kinds of&#160;<b> Value Stream</b>s:</div><div align="left" style="min-height: 12pt; ">1) Development development&#160;<b> Value Stream</b>s define all of the actions, both value-creating and nonvalue-creating, required to bring a <a href="215cceda606c35c6.htm" target="_top"><b><u>Product</u></b></a> from concept to launch.<br />2)&#160; Operational&#160;<b> Value Stream</b>s define define all of the actions, both value-creating and nonvalue-creating, required from order to delivery. These include actions to process information from the <a href="d6cdfdbc5ab86331.htm" target="_top"><b><u>Customer</u></b></a> and actions to transform the product on its way to the <a href="d6cdfdbc5ab86331.htm" target="_top"><b><u>Customer</u></b></a>.</div></td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMK529954BC623C6DAD"/><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_02">OpenGroup - TOGAF - Definition -Actor</a></td>
+<td><br/> <div align="left" style="min-height: 12pt; ">A person, organization, or system that has one or more roles that initiates or interacts with activities; for example, a sales representative who travels to visit customers. Actors may be internal or external to an organization.</div><div align="left" style="min-height: 12pt; ">Note:</div><div align="left" style="min-height: 12pt; ">In the automotive industry, an original equipment manufacturer would be considered an actor by an automotive dealership that interacts with its supply chain activities.</div></td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMK2DA32E5462D370FC"/><a href="https://pubs.opengroup.org/architecture/togaf9-doc/m/chap03.html#tag_03_85">OpenGroup - TOGAF - Definitions - Work Package</a></td>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="91be97ff54882d9f.htm" target="_top">Project</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="8a1f952c585256cc.htm" target="_top">Project</a><br/> A&#160;<b> Project</b> is a course of action that is being executed or has been selected for execution. An organization&#39;s <a href="0ffeec41600be08a.htm" target="_top"><b><u>Initiative</u></b></a>s represent the choices the organization has made about how to pursue the change that allows it to achieve its objectives.<br/><br/><br/> A set of actions identified to achieve one or more objectives for the business. A work package can be a part of a project, a complete project, or a program.</td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMK355A78FF627AEA51"/><a href="https://pubs.opengroup.org/togaf-standard/adm-techniques/chap02.html#tag_02">OpenGroup - TOGAF - Guide - Architecture Principles</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="07231aff5f4eb337.htm" target="_top">Architecture principle</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="c6b2ed605fbc670b.htm" target="_top">Architecture Principle</a><br/> An&#160;<b> Architecture principle</b>s is a general guideline (<a href="959320325ee7fe24.htm" target="_top"><b><u>Policy</u></b></a>) that informs, supports and constrains the way in which an organization will design and construct architectures.<br/><br/><br/> </td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMKB6522082627D39B4"/><a href="https://pubs.opengroup.org/togaf-standard/architecture-content/chap02.html#tag_02_04">OpenGroup - TOGAF - Logical Application Component</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="255833f95c6d1db3.htm" target="_top">Logical Application</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="6b44825a522847d9.htm" target="_top">Logical Application</a><br/> A&#160;<b> Logical Application</b> is an encapsulation of application functionality that is independent of a particular implementation. For example, the classification of all purchase request processing applications implemented in an enterprise.<br/><br/><br/> An encapsulation of application functionality that is definable by services offered and data maintained, independently of implementation and technology.</td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMK49BB4F0E623C7A74"/><a href="https://pubs.opengroup.org/architecture/togaf9-doc/m/chap03.html#tag_03_26">OpenGroup - TOGAF 9 - Definition - Business Function</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="7c4094d2552717db.htm" target="_top">Business Function</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="b1edb2582c140183.htm" target="_top">Business Function</a><br/> <div align="left" style="min-height: 12pt; ">A&#160;<b> Business Function</b> is a unit of the enterprise functional division of labor. It is used to shape the enterprise management structure in regard to how it produces, consumes or processes <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s: information, energy, materiel.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Business Function</b> specifies <a href="7c409e95552724ab.htm" target="_top"><b><u>Skill</u></b></a>s and <a href="598272e954c622f4.htm" target="_top"><b><u>Functionality</u></b></a>(ies) required to perform their activities.</div><br/><br/><br/> Delivers business capabilities closely aligned to an organization, but not necessarily explicitly governed by the organization.</td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMK355A7155627AE4F4"/><a href="https://pubs.opengroup.org/architecture/togaf9-doc/m/chap03.html#tag_03_29">OpenGroup - TOGAF 9 - Definition - Business Service</a></td>
+<td><br/> Supports business capabilities through an explicitly defined interface and is explicitly governed by an organization.</td>
+</tr>
+<tr>
+<td><img src="../standard/extr.ico.gif"/>&nbsp;<a name="OBMKC2E93E28624DDC2A"/><a href="https://pubs.opengroup.org/architecture/togaf9-doc/m/apdxa.html#tag_47_48">OpenGroup - TOGAF 9 - Definition - Process</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="57dfc52d550932ef.htm" target="_top">Business Process</a><br>   <img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="b1edb25e2c1401bb.htm" target="_top">Organizational Process</a><br/> <div align="left" style="min-height: 12pt; ">An&#160;<b> Business Process</b> is a set of <a href="0f9213fd5ebc1b87.htm" target="_top"><b><u>Operation</u></b></a>s performed by <a href="076d15425a5e158c.htm" target="_top"><b><u>Human Resource</u></b></a>s and/or by automated systems (<a href="278675d65b252f4d.htm" target="_top"><b><u>Business System</u></b></a>s) to produce a <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>. It is depicted as a sequence of <a href="0f9213fd5ebc1b87.htm" target="_top"><b><u>Operation</u></b></a>s, controlled by events and conditions. </div><div align="left" style="min-height: 12pt; "><a href="0f9213fd5ebc1b87.htm" target="_top"><b><u>Operation</u></b></a>s are carried out by the involvment of <a href="076d15425a5e158c.htm" target="_top"><b><u>Human Resource</u></b></a>s and system resources (<a href="bcebd8e9549144db.htm" target="_top"><b><u>Application</u></b></a>) as participants in the process (<a href="b4ebbe325ffdca40.htm" target="_top"><u>Participant Resource Agent</u></a>).</div><div align="left" style="min-height: 12pt; ">During its course of action, an&#160;<b> Business Process</b> consumes or produces <a href="6d2b7c935fbb6270.htm" target="_top"><b><u>Data Object</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">1) It may read or write <a href="6d2b7c935fbb6270.htm" target="_top"><b><u>Data Object</u></b></a>s in its Process Store.</div><div align="left" style="min-height: 12pt; ">2) It may receive <a href="6d2b7c935fbb6270.htm" target="_top"><b><u>Data Object</u></b></a>s at its boundary:&#160;<b> Triggering Business Outcome</b>.</div><div align="left" style="min-height: 12pt; ">3) It may produce <a href="6d2b7c935fbb6270.htm" target="_top"><b><u>Data Object</u></b></a>s at its boundary:&#160;<b> Published Business Outcome</b>.</div><div align="left" style="min-height: 12pt; ">The course of actions of an&#160;<b> Business Process</b> is constrained by the application of rules (<a href="0f9215805ebc1d2a.htm" target="_top"><b><u>Business Rule Enforcement</u></b></a>) that define what is allowed and not allowed to do.</div><br/><br/><br/> A process represents a sequence of activities that together achieve a specified outcome, can be decomposed into sub-processes, and can show operation of a function or service (at next level of detail). Processes may also be used to link or compose organizations, functions, services, and processes.</td>
+</tr>
+</table>
+</section>
+</div></html>

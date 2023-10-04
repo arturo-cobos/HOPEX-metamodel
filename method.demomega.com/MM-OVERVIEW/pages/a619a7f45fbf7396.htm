@@ -1,0 +1,241 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="keywords" content="">
+<meta name="description" content="">    
+<LINK REL="icon" HREF="../standard/assets/img/favicon.ico">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/bootstrap.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nav.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/eaportal.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/font-awesome.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/animate.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/datatables.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/grid.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nae.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/custom.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/chosen.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/prism.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery.dataTables.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jsTreeStyle.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.theme.css" media="screen" />
+<script type="text/javascript" src="../standard/assets/js/jquery-3.2.1.min.js" ></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-ui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.columnFilter.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3-force.v2.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.gui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.search.js"></script> 
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.util.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-2.1.1.min.js"></script>
+<script src="../standard/assets/js/ws_zoomtemplate_firefox.js"></script>
+<script src="../standard/assets/js/bootstrap.min.js"></script>
+<script src="../standard/assets/js/datatables.min.js"></script>
+<script src="../standard/assets/js/moment.min.js"></script>
+<script src="../standard/assets/js/datetime-moment.js"></script>
+<script src="../standard/assets/js/chartjs.min.js"></script>
+<script src="../standard/assets/js/searchindexcontent.json"></script>
+<script src="../standard/assets/js/anls.js"></script>
+<script src="../../../cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script src="../standard/assets/js/gauge.js"></script> 
+<script src="../standard/assets/js/domesticApi.js"></script> 
+<script src="../standard/assets/js/piecelabel.js"></script>
+<script src="../standard/assets/js/popper.min.js"></script>
+<script src="../standard/assets/js/custom.js"></script>
+<script src="../standard/assets/js/chosen.jquery.js"></script>
+<script src="../standard/assets/js/prism.js"></script>
+<script src="../standard/assets/js/init-chosen.js"></script>
+<script src="../standard/assets/js/chart-data-flow.js"></script>
+<script src="../standard/assets/js/chart-data-gantt.js"></script>
+<script type="module" src="../standard/assets/js/Fuse.esm.min.js"></script>
+<script type="module">
+import Fuse from '../standard/assets/js/Fuse.esm.min.js';
+$(document).ready(function () {
+console.log('getjson');
+window.$.getJSON('../standard/assets/js/searchindexcontent.json', function (response) {
+console.log('getjson ok');
+var isIndex = "";
+var url = window.location.pathname;
+var filename = url.substring(url.lastIndexOf('/')+1);
+if( filename.includes("index") || filename === "" ){
+isIndex = "pages/";
+} else {
+isIndex = "";
+}
+const fuse = new Fuse(response, {
+keys: ['title','text'],
+shouldSort: true,
+includeMatches : true,
+findAllMatches : true
+});
+$('#search-fuse').on('keyup', function () {
+let result = fuse.search($(this).val());
+console.log(result);
+let resultdiv = $('div.searchresults-fuse');
+if (result.length === 0) {
+resultdiv.hide();
+} else {
+resultdiv.empty();
+resultdiv.append('<table class="table-search" width="100%" cellspacing="0"><thead ><tr><th>Name</th><th>Object Type</th><th>Modification date</th></tr></thead><tbody>');
+
+for (let obj in result.slice(0,10)) {
+
+let searchObj = '<tr><td><a href="./'+ isIndex + result[obj].item.url + '">' + result[obj].item.title +'</a></td><td>' + result[obj].item.ObjectType + '</td><td>' + result[obj].item.ModificationDate + '</td></tr>' ;
+
+
+resultdiv.find('tbody').append(searchObj);
+}
+resultdiv.append('</tbody></table>');
+resultdiv.show();
+}
+});
+});
+});
+</script>
+<title>HOPEX Metamodel Overview (Beta Version)</title>
+</head>
+<nav class="navbar navbar-expand-md navbar-dark  navbar-mega"><!-- Brand --><!--<a class="navbar-brand" href="#">Navbar</a>--><a class="" href="../index.htm"><img class="logo-mega" src="../standard/assets/img/logo.png"  alt="">(Beta Version)</a><!-- Toggler/collapsibe Button --><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><!-- Navbar links -->
+<div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsibleNavbar"><div class="col-sm-auto col-md-auto col-lg-5"></div>
+<div class="col-sm-auto">
+<ul class="navbar-nav">      
+<li><a class="dropdown-item" href="ad30ce115ebf7e90.htm">EA Grid</a></li> 
+<li><a class="dropdown-item" href="fdd5018459bc3c6a.htm">EA Domains</a></li> 
+<li><a class="dropdown-item" href="07e731775ecc93f4.htm">Solutions</a></li> 
+<li><a class="dropdown-item" href="c5dfc62c54810c2c.htm">Glossary</a></li> 
+<li class="nav-item dropdown mx-1">
+<a class="nav-link" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</a>
+<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<li><a class="dropdown-item" href="5446555d5f88c32e.htm">Outcome Driven Metamodel</a></li> 
+<li><a class="dropdown-item" href="e1ccfc295f8f7b90.htm">Playbooks</a></li> 
+<li><a class="dropdown-item" href="42bc992862d20ea7.htm">Framework Mappings</a></li> 
+<li><a class="dropdown-item" href="e93aebb35fa20550.htm">Metamodel Patterns</a></li> 
+<li><a class="dropdown-item" href="d599fe87602b2b85.htm">References</a></li> 
+<li><a class="dropdown-item" href="333f3a7f5dde11de.htm">Legend</a></li> 
+</ul>									                                            
+</li>
+</ul>
+</div>
+<div class="col-sm-auto"><a class="nav-link search" href="#" onclick=showHideSearch("search-section-fuse")><i class="fa fa-search mr-1 form-control-feedback"></i></a></div>
+</div>
+</nav>
+<div id="search-section-fuse" style="display:none">>
+<div class="search_header"><span class="closesearch">&times;</span>
+<nav class="breadcrumb">
+<a class="breadcrumb-item" href="../index.htm">Home </a> 
+<span class="breadcrumb-item active">Search</span> 
+</nav>
+</div>
+<input id="search-fuse" placeholder="Search..."  name="q" onfocus="this.value=''" type="search">
+<div class="searchresults-fuse"></div>
+</div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>function showHideSearch(elementId) {var contentDivs = document.getElementsByClassName('content');var footerDivs = document.getElementsByClassName('footer'); var containerDivs = document.getElementsByClassName('container');var containerfluidDivs = document.getElementsByClassName('container-fluid');var x = document.getElementById(elementId);if (x.style.display === "none") {x.style.display = "block";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "none";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "none";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "none";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "none";}} else {x.style.display = "none";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "block";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "block";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "block";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "block";}}} ;<!-- END WIDGET DRILL DOWN --></script><script>$(document).ready(function() {$(window).scroll(function() {if ($(this).scrollTop() > 100) {$('.scrollup').fadeIn();} else {$('.scrollup').fadeOut();}});$('.scrollup').click(function() {$("html, body").animate({scrollTop: 0}, 600);return false;});});</script><script>
+var modal = document.getElementById("search-section-fuse");
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = "none";
+}
+}
+$(document).on('click', '.closesearch', function() {
+showHideSearch("search-section-fuse");
+
+
+
+
+
+});</script><div class="container-fluid col-lg-11"><nav class="breadcrumb"><a class="breadcrumb-item" href="../index.htm">Home </a> <span class="breadcrumb-item active"> Value Stream / Application Rationalization</span> </nav></div>
+<div class="container-fluid col-lg-11 content">
+<section class="fadeInDown animated"><a href="#det" class="btn btn-d">IDENTITY</a> <a href="#dia" class="btn btn-d">METHOD DIAGRAM</a> <a href="#stg" class="btn btn-d">STAGES</a> <a href="#cpt" class="btn btn-d">INVOLVED CONCEPTS</a></section>
+<a class="object-section-anchor" id="det"></a>
+<section class="object-section">
+<h4>IDENTITY - Application Rationalization</h4> 
+<hr class="sectionbreak" />
+<table id="sortabletable" class="table table-sm  table-bordered table-cell-resizable table-index-set-col-width-4 table-custom-style table-scrollX" width="100%" cellspacing="0">
+<tr><th>Performer Activity Domain</th><td><img src="../standard/busa.ico.gif">&nbsp;IT Asset Management&nbsp;</td></tr>
+<tr><th>Referenced Concept Domain</th><td><img src="../standard/dic_graph.ico.gif">&nbsp;
+<a  href="1ce330355c4878d7.htm" target="_top">IT Asset Management</a>&nbsp;</td></tr>
+<tr><th>Description</th><td></td></tr>
+</table>
+</section>
+<a class="object-section-anchor" id="dia"></a>
+<section class="object-section"><h4>METHOD DIAGRAM</h4> <hr class="sectionbreak" />
+<map  name="A619A8065FBF73F1">
+  <area  href=#OBMK9E1FEB5C5FC8DB5E shape="polygon" coords="680, 208, 680, 348, 448, 348, 448, 338, 670, 338, 670, 208"    title="-">
+  
+  <area  href=#OBMKA619DA705FBF95C0 shape="polygon" coords="449, 316, 625, 316, 625, 208, 635, 208, 635, 326, 449, 326"    title="-">
+  
+  <area  href=#OBMK915220325ED65A20 shape="polygon" coords="368, 268, 368, 255, 482, 255, 482, 268, 368, 268"    title="-">
+  
+  <area  href=#OBMKA619D9CE5FBF9496 shape="polygon" coords="430, 307, 430, 204, 440, 204, 440, 307"    title="-">
+  
+  <area  href=#OBMK915220325ED65A20 shape="polygon" coords="220, 327, 220, 314, 288, 314, 288, 327, 276, 327, 276, 340, 233, 340, 233, 327, 220, 327"    title="-">
+  
+  <area  href=#OBMKA619D89B5FBF9428 shape="polygon" coords="224, 204, 224, 322, 412, 322, 412, 333, 213, 333, 213, 204"    title="-">
+  
+  <area  href=#OBMKA619A8EA5FBF77AD shape="polygon" coords="33, 149, 134, 149, 134, 160, 33, 160"    title="-">
+  
+  <area  href=#OBMKA619A8EE5FBF77FE shape="polygon" coords="303, 149, 352, 149, 352, 160, 303, 160"    title="-">
+  
+  <area  href=a619a8945fbf75e2.htm#OBMKA619A8945FBF75E2 shape="polygon" coords="188, 157, 188, 143, 249, 143, 249, 157, 249, 157, 249, 170, 188, 170, 188, 157, 188, 157"    title="-">
+  
+  <area  href="#OBMKA619D88A5FBF935E" shape="rect" coords="133, 104, 303, 204"    title="-">
+  
+  <area  href=#OBMKA619A8EF5FBF784E shape="polygon" coords="521, 149, 570, 149, 570, 160, 521, 160"    title="-">
+  
+  <area  href=a619a8a85fbf7654.htm#OBMKA619A8A85FBF7654 shape="polygon" coords="408, 157, 408, 143, 466, 143, 466, 157, 467, 157, 467, 170, 406, 170, 406, 157, 408, 157"    title="-">
+  
+  <area  href="#OBMKA619D8865FBF92A0" shape="rect" coords="352, 104, 522, 204"    title="-">
+  
+  <area  href=#OBMKA619A8F15FBF789E shape="polygon" coords="740, 151, 821, 151, 821, 161, 740, 161"    title="-">
+  
+  <area  href=a619a8b45fbf76c6.htm#OBMKA619A8B45FBF76C6 shape="polygon" coords="637, 152, 637, 139, 673, 139, 673, 152, 692, 152, 692, 165, 676, 165, 676, 179, 634, 179, 634, 165, 617, 165, 617, 152, 637, 152"    title="-">
+  
+  <area  href="#OBMKA619D87E5FBF91E2" shape="rect" coords="570, 104, 740, 208"    title="-">
+  
+  <area  href="#OBMKA619D8085FBF90F7" shape="rect" coords="381, 307, 480, 373"    title="-">
+  
+  <area  href="#OBMKA619A8075FBF74CA" shape="rect" coords="0, 132, 47, 165"    title="-">
+  
+  <area  href="#OBMKA619A8075FBF7507" shape="rect" coords="808, 146, 855, 179"    title="-">
+  
+  <area  href="a619a7f45fbf7396.htm" shape="rect" coords="23, 0, 831, 394"   target="_top"  title="-">
+  
+</map>
+<img  src="../images/a619a7f45fbf7396_a619a8065fbf73f1_i.png" alt="../images/a619a7f45fbf7396_a619a8065fbf73f1_i.png" usemap="#A619A8065FBF73F1" height="394" width="855" border=0>
+</section>
+<a class="object-section-anchor" id="stg"></a>
+<section class="object-section">
+<h4>STAGES</h4>
+<hr class="sectionbreak" />
+<table id="sortabletable" class="table table-sm  table-bordered table-cell-resizable table-index-set-col-width-4 table-custom-style table-scrollX" width="100%" cellspacing="0">		
+<tr><th>Name</th><th>Description</th><th>Consummed Information</th><th>Produced Information</th></tr>  
+	<tr><td><img src="../standard/bpaccp.ico.gif"><a name="OBMKA619D8865FBF92A0"> Evaluate applications</a></td><td>       </td><td><img src="../standard/dicdefinition.ico.gif">&nbsp;
+<a  href="1ce3429d5c48982e.htm" target="_top">Application Portfolio</a></td><td></td></tr>  
+	<tr><td><img src="../standard/bpaccp.ico.gif"><a name="OBMKA619D88A5FBF935E"> Inventory applications</a></td><td>       </td><td></td><td><img src="../standard/dicdefinition.ico.gif">&nbsp;
+<a  href="1ce3429d5c48982e.htm" target="_top">Application Portfolio</a></td></tr>  
+	<tr><td><img src="../standard/bpaccp.ico.gif"><a name="OBMKA619D87E5FBF91E2"> Run transformation projects</a></td><td>       </td><td></td><td></td></tr>
+</table>
+</section>
+<a class="object-section-anchor" id="cpt"></a>
+<section class="object-section">
+<h4>CONCEPT DOMAINS & INVOLVED CONCEPTS</h4> 
+<hr class="sectionbreak" />
+<table id="sortabletable" class="table table-sm  table-bordered table-cell-resizable table-index-set-col-width-4 table-custom-style table-scrollX" width="100%" cellspacing="0">
+<tr><th><a name="OBMKA619D8085FBF90F7"><b>Concept Domain:</b>&nbsp;<img src="../standard/dic_graph.ico.gif">&nbsp;
+<a  href="1ce330355c4878d7.htm" target="_top">IT Asset Management</a></a></th></tr>
+<tr><th>Updated Information</th><th>Description</th></tr>
+<tr><td><img src="../standard/dicdefinition.ico.gif">&nbsp;
+<a  href="1ce3429d5c48982e.htm" target="_top">Application Portfolio</a></td><td><div align="left" style="min-height: 12pt; "><b>&#160;Application Portfolio</b>s are <a href="d321c226601262ae.htm" target="_top"><b><u>Enduring Initiative</u></b></a>s aimed at managing a set of <a href="bcebd8e9549144db.htm" target="_top"><b><u>Application</u></b></a>s delivering functionalities required by enterprise operations.</div><div align="left" style="min-height: 12pt; ">The purpose of&#160;<b> Application Portfolio</b>s is efficiency: managed <a href="bcebd8e9549144db.htm" target="_top"><b><u>Application</u></b></a>s must provide expected functionalities in the best cost / performance ratio.</div></td></tr>
+<tr><th>Read Information</th><th>Description</th></tr>
+<tr><td><img src="../standard/dicdefinition.ico.gif">&nbsp;
+<a  href="1ce3429d5c48982e.htm" target="_top">Application Portfolio</a></td><td><div align="left" style="min-height: 12pt; "><b>&#160;Application Portfolio</b>s are <a href="d321c226601262ae.htm" target="_top"><b><u>Enduring Initiative</u></b></a>s aimed at managing a set of <a href="bcebd8e9549144db.htm" target="_top"><b><u>Application</u></b></a>s delivering functionalities required by enterprise operations.</div><div align="left" style="min-height: 12pt; ">The purpose of&#160;<b> Application Portfolio</b>s is efficiency: managed <a href="bcebd8e9549144db.htm" target="_top"><b><u>Application</u></b></a>s must provide expected functionalities in the best cost / performance ratio.</div></td></tr>
+</table>
+</section><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>window.onscroll = function() {scrollFunction()};$(document).on('click', 'a[href^="#"]', function (event) {event.preventDefault();$('html, body').animate({scrollTop: $($.attr(this, 'href')).offset().top}, 500);});</script></html>

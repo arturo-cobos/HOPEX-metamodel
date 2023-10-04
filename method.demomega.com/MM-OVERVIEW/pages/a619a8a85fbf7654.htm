@@ -1,0 +1,243 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="keywords" content="">
+<meta name="description" content="">    
+<LINK REL="icon" HREF="../standard/assets/img/favicon.ico">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/bootstrap.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nav.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/eaportal.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/font-awesome.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/animate.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/datatables.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/grid.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nae.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/custom.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/chosen.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/prism.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery.dataTables.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jsTreeStyle.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.theme.css" media="screen" />
+<script type="text/javascript" src="../standard/assets/js/jquery-3.2.1.min.js" ></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-ui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.columnFilter.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3-force.v2.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.gui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.search.js"></script> 
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.util.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-2.1.1.min.js"></script>
+<script src="../standard/assets/js/ws_zoomtemplate_firefox.js"></script>
+<script src="../standard/assets/js/bootstrap.min.js"></script>
+<script src="../standard/assets/js/datatables.min.js"></script>
+<script src="../standard/assets/js/moment.min.js"></script>
+<script src="../standard/assets/js/datetime-moment.js"></script>
+<script src="../standard/assets/js/chartjs.min.js"></script>
+<script src="../standard/assets/js/searchindexcontent.json"></script>
+<script src="../standard/assets/js/anls.js"></script>
+<script src="../../../cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script src="../standard/assets/js/gauge.js"></script> 
+<script src="../standard/assets/js/domesticApi.js"></script> 
+<script src="../standard/assets/js/piecelabel.js"></script>
+<script src="../standard/assets/js/popper.min.js"></script>
+<script src="../standard/assets/js/custom.js"></script>
+<script src="../standard/assets/js/chosen.jquery.js"></script>
+<script src="../standard/assets/js/prism.js"></script>
+<script src="../standard/assets/js/init-chosen.js"></script>
+<script src="../standard/assets/js/chart-data-flow.js"></script>
+<script src="../standard/assets/js/chart-data-gantt.js"></script>
+<script type="module" src="../standard/assets/js/Fuse.esm.min.js"></script>
+<script type="module">
+import Fuse from '../standard/assets/js/Fuse.esm.min.js';
+$(document).ready(function () {
+console.log('getjson');
+window.$.getJSON('../standard/assets/js/searchindexcontent.json', function (response) {
+console.log('getjson ok');
+var isIndex = "";
+var url = window.location.pathname;
+var filename = url.substring(url.lastIndexOf('/')+1);
+if( filename.includes("index") || filename === "" ){
+isIndex = "pages/";
+} else {
+isIndex = "";
+}
+const fuse = new Fuse(response, {
+keys: ['title','text'],
+shouldSort: true,
+includeMatches : true,
+findAllMatches : true
+});
+$('#search-fuse').on('keyup', function () {
+let result = fuse.search($(this).val());
+console.log(result);
+let resultdiv = $('div.searchresults-fuse');
+if (result.length === 0) {
+resultdiv.hide();
+} else {
+resultdiv.empty();
+resultdiv.append('<table class="table-search" width="100%" cellspacing="0"><thead ><tr><th>Name</th><th>Object Type</th><th>Modification date</th></tr></thead><tbody>');
+
+for (let obj in result.slice(0,10)) {
+
+let searchObj = '<tr><td><a href="./'+ isIndex + result[obj].item.url + '">' + result[obj].item.title +'</a></td><td>' + result[obj].item.ObjectType + '</td><td>' + result[obj].item.ModificationDate + '</td></tr>' ;
+
+
+resultdiv.find('tbody').append(searchObj);
+}
+resultdiv.append('</tbody></table>');
+resultdiv.show();
+}
+});
+});
+});
+</script>
+<title>HOPEX Metamodel Overview (Beta Version)</title>
+</head>
+<nav class="navbar navbar-expand-md navbar-dark  navbar-mega"><!-- Brand --><!--<a class="navbar-brand" href="#">Navbar</a>--><a class="" href="../index.htm"><img class="logo-mega" src="../standard/assets/img/logo.png"  alt="">(Beta Version)</a><!-- Toggler/collapsibe Button --><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><!-- Navbar links -->
+<div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsibleNavbar"><div class="col-sm-auto col-md-auto col-lg-5"></div>
+<div class="col-sm-auto">
+<ul class="navbar-nav">      
+<li><a class="dropdown-item" href="ad30ce115ebf7e90.htm">EA Grid</a></li> 
+<li><a class="dropdown-item" href="fdd5018459bc3c6a.htm">EA Domains</a></li> 
+<li><a class="dropdown-item" href="07e731775ecc93f4.htm">Solutions</a></li> 
+<li><a class="dropdown-item" href="c5dfc62c54810c2c.htm">Glossary</a></li> 
+<li class="nav-item dropdown mx-1">
+<a class="nav-link" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</a>
+<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<li><a class="dropdown-item" href="5446555d5f88c32e.htm">Outcome Driven Metamodel</a></li> 
+<li><a class="dropdown-item" href="e1ccfc295f8f7b90.htm">Playbooks</a></li> 
+<li><a class="dropdown-item" href="42bc992862d20ea7.htm">Framework Mappings</a></li> 
+<li><a class="dropdown-item" href="e93aebb35fa20550.htm">Metamodel Patterns</a></li> 
+<li><a class="dropdown-item" href="d599fe87602b2b85.htm">References</a></li> 
+<li><a class="dropdown-item" href="333f3a7f5dde11de.htm">Legend</a></li> 
+</ul>									                                            
+</li>
+</ul>
+</div>
+<div class="col-sm-auto"><a class="nav-link search" href="#" onclick=showHideSearch("search-section-fuse")><i class="fa fa-search mr-1 form-control-feedback"></i></a></div>
+</div>
+</nav>
+<div id="search-section-fuse" style="display:none">>
+<div class="search_header"><span class="closesearch">&times;</span>
+<nav class="breadcrumb">
+<a class="breadcrumb-item" href="../index.htm">Home </a> 
+<span class="breadcrumb-item active">Search</span> 
+</nav>
+</div>
+<input id="search-fuse" placeholder="Search..."  name="q" onfocus="this.value=''" type="search">
+<div class="searchresults-fuse"></div>
+</div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>function showHideSearch(elementId) {var contentDivs = document.getElementsByClassName('content');var footerDivs = document.getElementsByClassName('footer'); var containerDivs = document.getElementsByClassName('container');var containerfluidDivs = document.getElementsByClassName('container-fluid');var x = document.getElementById(elementId);if (x.style.display === "none") {x.style.display = "block";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "none";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "none";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "none";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "none";}} else {x.style.display = "none";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "block";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "block";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "block";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "block";}}} ;<!-- END WIDGET DRILL DOWN --></script><script>$(document).ready(function() {$(window).scroll(function() {if ($(this).scrollTop() > 100) {$('.scrollup').fadeIn();} else {$('.scrollup').fadeOut();}});$('.scrollup').click(function() {$("html, body").animate({scrollTop: 0}, 600);return false;});});</script><script>
+var modal = document.getElementById("search-section-fuse");
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = "none";
+}
+}
+$(document).on('click', '.closesearch', function() {
+showHideSearch("search-section-fuse");
+
+
+
+
+
+});</script><div class="container-fluid col-lg-11"><nav class="breadcrumb"><a class="breadcrumb-item" href="../index.htm">Home </a> <span class="breadcrumb-item active"> Value Stream / Evaluate applications</span> </nav></div>
+<div class="container-fluid col-lg-11 content">
+<section class="fadeInDown animated"><a href="#det" class="btn btn-d">IDENTITY</a> <a href="#dia" class="btn btn-d">METHOD DIAGRAM</a> <a href="#stg" class="btn btn-d">STAGES</a> <a href="#cpt" class="btn btn-d">INVOLVED CONCEPTS</a></section>
+<a class="object-section-anchor" id="det"></a>
+<section class="object-section">
+<h4>IDENTITY - Evaluate applications</h4> 
+<hr class="sectionbreak" />
+<table id="sortabletable" class="table table-sm  table-bordered table-cell-resizable table-index-set-col-width-4 table-custom-style table-scrollX" width="100%" cellspacing="0">
+<tr><th>Parent Method</th><td><img src="../standard/bpmn_subprocessfun.ico.gif">&nbsp;
+<a  href="a619a7f45fbf7396.htm" target="_top">Application Rationalization</a>&nbsp;</td></tr>
+<tr><th>Referenced Concept Domain</th><td><img src="../standard/dic_graph.ico.gif">&nbsp;
+<a  href="1ce330355c4878d7.htm" target="_top">IT Asset Management</a>&nbsp;</td></tr>
+<tr><th>Description</th><td></td></tr>
+</table>
+</section>
+<a class="object-section-anchor" id="dia"></a>
+<section class="object-section"><h4>METHOD DIAGRAM</h4> <hr class="sectionbreak" />
+<map  name="A619AA095FBF7DA7">
+  <area  href=#OBMK915220395ED65AA3 shape="polygon" coords="427, 239, 427, 226, 486, 226, 486, 239, 427, 239"    title="-">
+  
+  <area  href=#OBMK6D82FD756163159E shape="polygon" coords="461, 186, 461, 278, 451, 278, 451, 186"    title="-">
+  
+  <area  href=#OBMKDC9404B16025F609 shape="polygon" coords="604, 299, 604, 286, 658, 286, 658, 299, 662, 299, 662, 312, 599, 312, 599, 299, 604, 299"    title="-">
+  
+  <area  href=#OBMK6D82FD4B6163153A shape="polygon" coords="683, 186, 683, 304, 471, 304, 471, 293, 672, 293, 672, 186"    title="-">
+  
+  <area  href=#OBMK6D82EDF861630F56 shape="polygon" coords="432, 309, 241, 309, 241, 186, 252, 186, 252, 298, 432, 298"    title="-">
+  
+  <area  href="#OBMK6D82EDE461630F0A" shape="rect" coords="402, 278, 501, 346"    title="-">
+  
+  <area  href=#OBMKA619AAA55FBF8202 shape="polygon" coords="977, 140, 1058, 140, 1058, 150, 977, 150"    title="-">
+  
+  <area  href=#OBMKA619AAA45FBF81B2 shape="polygon" coords="763, 140, 805, 140, 805, 150, 763, 150"    title="-">
+  
+  <area  href=#OBMKA619AAA35FBF8162 shape="polygon" coords="549, 140, 591, 140, 591, 150, 549, 150"    title="-">
+  
+  <area  href=#OBMKA619AAA15FBF8112 shape="polygon" coords="335, 140, 377, 140, 377, 150, 335, 150"    title="-">
+  
+  <area  href=#OBMKA619AA9E5FBF80C2 shape="polygon" coords="72, 140, 163, 140, 163, 150, 72, 150"    title="-">
+  
+  <area  href="#OBMKA619AA645FBF807C" shape="rect" coords="805, 104, 978, 186"    title="-">
+  
+  <area  href="#OBMKA619AA475FBF8036" shape="rect" coords="591, 104, 764, 186"    title="-">
+  
+  <area  href="#OBMKA619AA3A5FBF7FFA" shape="rect" coords="378, 104, 551, 186"    title="-">
+  
+  <area  href="#OBMKA619AA255FBF7FBE" shape="rect" coords="164, 104, 337, 186"    title="-">
+  
+  <area  href=#OBMKA619D87E5FBF91E2 shape="polygon" coords="1078, 151, 1078, 138, 1232, 138, 1232, 151, 1078, 151"    title="-">
+  
+  <area  href="#OBMKA619AA0A5FBF7E71" shape="rect" coords="1044, 135, 1232, 168"    title="-">
+  
+  <area  href=#OBMKA619D88A5FBF935E shape="polygon" coords="0, 168, 0, 155, 123, 155, 123, 168, 0, 168"    title="-">
+  
+  <area  href="#OBMKA619AA095FBF7E4C" shape="rect" coords="0, 122, 123, 168"    title="-">
+  
+  <area  href="a619a8a85fbf7654.htm" shape="rect" coords="62, 0, 1068, 422"   target="_top"  title="-">
+  
+</map>
+<img  src="../images/a619a8a85fbf7654_a619aa095fbf7da7_i.png" alt="../images/a619a8a85fbf7654_a619aa095fbf7da7_i.png" usemap="#A619AA095FBF7DA7" height="422" width="1232" border=0>
+</section>
+<a class="object-section-anchor" id="stg"></a>
+<section class="object-section">
+<h4>STAGES</h4>
+<hr class="sectionbreak" />
+<table id="sortabletable" class="table table-sm  table-bordered table-cell-resizable table-index-set-col-width-4 table-custom-style table-scrollX" width="100%" cellspacing="0">		
+<tr><th>Name</th><th>Description</th><th>Consummed Information</th><th>Produced Information</th></tr>  
+	<tr><td><img src="../standard/bpac.ico.gif"><a name="OBMKA619AA475FBF8036"> Assess applications through questionnaires</a></td><td>       </td><td></td><td><img src="../standard/dic_concept_archgov.ico.gif">&nbsp;
+<a  href="e57e0a415fb820e5.htm" target="_top">IT Asset Assessment</a></td></tr>  
+	<tr><td><img src="../standard/bpac.ico.gif"><a name="OBMKA619AA3A5FBF7FFA"> Evaluate costs per application, based several cost lines</a></td><td>       </td><td></td><td><img src="../standard/dic_concepttype.ico.gif">&nbsp;
+<a  href="9e77a0325c51443f.htm" target="_top">Cost Line</a></td></tr>  
+	<tr><td><img src="../standard/bpac.ico.gif"><a name="OBMKA619AA645FBF807C"> Generate the TIME report to support investment decisions</a></td><td>       </td><td></td><td></td></tr>  
+	<tr><td><img src="../standard/bpac.ico.gif"><a name="OBMKA619AA255FBF7FBE"> Identify gaps and redundancies through a capability map</a></td><td>       </td><td></td><td></td></tr>
+</table>
+</section>
+<a class="object-section-anchor" id="cpt"></a>
+<section class="object-section">
+<h4>CONCEPT DOMAINS & INVOLVED CONCEPTS</h4> 
+<hr class="sectionbreak" />
+<table id="sortabletable" class="table table-sm  table-bordered table-cell-resizable table-index-set-col-width-4 table-custom-style table-scrollX" width="100%" cellspacing="0">
+<tr><th><a name="OBMK6D82EDE461630F0A"><b>Concept Domain:</b>&nbsp;<img src="../standard/dic_graph.ico.gif">&nbsp;
+<a  href="1ce330355c4878d7.htm" target="_top">IT Asset Management</a></a></th></tr>
+<tr><th>Updated Information</th><th>Description</th></tr>
+<tr><td><img src="../standard/dic_concept_archgov.ico.gif">&nbsp;
+<a  href="e57e0a415fb820e5.htm" target="_top">IT Asset Assessment</a></td><td></td></tr>
+<tr><td><img src="../standard/dic_concepttype.ico.gif">&nbsp;
+<a  href="9e77a0325c51443f.htm" target="_top">Cost Line</a></td><td></td></tr>
+<tr><th>Read Information</th><th>Description</th></tr>
+</table>
+</section><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>window.onscroll = function() {scrollFunction()};$(document).on('click', 'a[href^="#"]', function (event) {event.preventDefault();$('html, body').animate({scrollTop: $($.attr(this, 'href')).offset().top}, 500);});</script></html>

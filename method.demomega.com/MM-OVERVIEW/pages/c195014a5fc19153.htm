@@ -1,0 +1,367 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="keywords" content="">
+<meta name="description" content="">    
+<LINK REL="icon" HREF="../standard/assets/img/favicon.ico">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/bootstrap.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nav.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/eaportal.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/font-awesome.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/animate.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/datatables.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/grid.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nae.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/custom.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/chosen.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/prism.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery.dataTables.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jsTreeStyle.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.theme.css" media="screen" />
+<script type="text/javascript" src="../standard/assets/js/jquery-3.2.1.min.js" ></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-ui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.columnFilter.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3-force.v2.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.gui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.search.js"></script> 
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.util.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-2.1.1.min.js"></script>
+<script src="../standard/assets/js/ws_zoomtemplate_firefox.js"></script>
+<script src="../standard/assets/js/bootstrap.min.js"></script>
+<script src="../standard/assets/js/datatables.min.js"></script>
+<script src="../standard/assets/js/moment.min.js"></script>
+<script src="../standard/assets/js/datetime-moment.js"></script>
+<script src="../standard/assets/js/chartjs.min.js"></script>
+<script src="../standard/assets/js/searchindexcontent.json"></script>
+<script src="../standard/assets/js/anls.js"></script>
+<script src="../../../cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script src="../standard/assets/js/gauge.js"></script> 
+<script src="../standard/assets/js/domesticApi.js"></script> 
+<script src="../standard/assets/js/piecelabel.js"></script>
+<script src="../standard/assets/js/popper.min.js"></script>
+<script src="../standard/assets/js/custom.js"></script>
+<script src="../standard/assets/js/chosen.jquery.js"></script>
+<script src="../standard/assets/js/prism.js"></script>
+<script src="../standard/assets/js/init-chosen.js"></script>
+<script src="../standard/assets/js/chart-data-flow.js"></script>
+<script src="../standard/assets/js/chart-data-gantt.js"></script>
+<script type="module" src="../standard/assets/js/Fuse.esm.min.js"></script>
+<script type="module">
+import Fuse from '../standard/assets/js/Fuse.esm.min.js';
+$(document).ready(function () {
+console.log('getjson');
+window.$.getJSON('../standard/assets/js/searchindexcontent.json', function (response) {
+console.log('getjson ok');
+var isIndex = "";
+var url = window.location.pathname;
+var filename = url.substring(url.lastIndexOf('/')+1);
+if( filename.includes("index") || filename === "" ){
+isIndex = "pages/";
+} else {
+isIndex = "";
+}
+const fuse = new Fuse(response, {
+keys: ['title','text'],
+shouldSort: true,
+includeMatches : true,
+findAllMatches : true
+});
+$('#search-fuse').on('keyup', function () {
+let result = fuse.search($(this).val());
+console.log(result);
+let resultdiv = $('div.searchresults-fuse');
+if (result.length === 0) {
+resultdiv.hide();
+} else {
+resultdiv.empty();
+resultdiv.append('<table class="table-search" width="100%" cellspacing="0"><thead ><tr><th>Name</th><th>Object Type</th><th>Modification date</th></tr></thead><tbody>');
+
+for (let obj in result.slice(0,10)) {
+
+let searchObj = '<tr><td><a href="./'+ isIndex + result[obj].item.url + '">' + result[obj].item.title +'</a></td><td>' + result[obj].item.ObjectType + '</td><td>' + result[obj].item.ModificationDate + '</td></tr>' ;
+
+
+resultdiv.find('tbody').append(searchObj);
+}
+resultdiv.append('</tbody></table>');
+resultdiv.show();
+}
+});
+});
+});
+</script>
+<title>HOPEX Metamodel Overview (Beta Version)</title>
+</head>
+<nav class="navbar navbar-expand-md navbar-dark  navbar-mega"><!-- Brand --><!--<a class="navbar-brand" href="#">Navbar</a>--><a class="" href="../index.htm"><img class="logo-mega" src="../standard/assets/img/logo.png"  alt="">(Beta Version)</a><!-- Toggler/collapsibe Button --><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><!-- Navbar links -->
+<div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsibleNavbar"><div class="col-sm-auto col-md-auto col-lg-5"></div>
+<div class="col-sm-auto">
+<ul class="navbar-nav">      
+<li><a class="dropdown-item" href="ad30ce115ebf7e90.htm">EA Grid</a></li> 
+<li><a class="dropdown-item" href="fdd5018459bc3c6a.htm">EA Domains</a></li> 
+<li><a class="dropdown-item" href="07e731775ecc93f4.htm">Solutions</a></li> 
+<li><a class="dropdown-item" href="c5dfc62c54810c2c.htm">Glossary</a></li> 
+<li class="nav-item dropdown mx-1">
+<a class="nav-link" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</a>
+<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<li><a class="dropdown-item" href="5446555d5f88c32e.htm">Outcome Driven Metamodel</a></li> 
+<li><a class="dropdown-item" href="e1ccfc295f8f7b90.htm">Playbooks</a></li> 
+<li><a class="dropdown-item" href="42bc992862d20ea7.htm">Framework Mappings</a></li> 
+<li><a class="dropdown-item" href="e93aebb35fa20550.htm">Metamodel Patterns</a></li> 
+<li><a class="dropdown-item" href="d599fe87602b2b85.htm">References</a></li> 
+<li><a class="dropdown-item" href="333f3a7f5dde11de.htm">Legend</a></li> 
+</ul>									                                            
+</li>
+</ul>
+</div>
+<div class="col-sm-auto"><a class="nav-link search" href="#" onclick=showHideSearch("search-section-fuse")><i class="fa fa-search mr-1 form-control-feedback"></i></a></div>
+</div>
+</nav>
+<div id="search-section-fuse" style="display:none">>
+<div class="search_header"><span class="closesearch">&times;</span>
+<nav class="breadcrumb">
+<a class="breadcrumb-item" href="../index.htm">Home </a> 
+<span class="breadcrumb-item active">Search</span> 
+</nav>
+</div>
+<input id="search-fuse" placeholder="Search..."  name="q" onfocus="this.value=''" type="search">
+<div class="searchresults-fuse"></div>
+</div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>function showHideSearch(elementId) {var contentDivs = document.getElementsByClassName('content');var footerDivs = document.getElementsByClassName('footer'); var containerDivs = document.getElementsByClassName('container');var containerfluidDivs = document.getElementsByClassName('container-fluid');var x = document.getElementById(elementId);if (x.style.display === "none") {x.style.display = "block";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "none";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "none";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "none";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "none";}} else {x.style.display = "none";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "block";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "block";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "block";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "block";}}} ;<!-- END WIDGET DRILL DOWN --></script><script>$(document).ready(function() {$(window).scroll(function() {if ($(this).scrollTop() > 100) {$('.scrollup').fadeIn();} else {$('.scrollup').fadeOut();}});$('.scrollup').click(function() {$("html, body").animate({scrollTop: 0}, 600);return false;});});</script><script>
+var modal = document.getElementById("search-section-fuse");
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = "none";
+}
+}
+$(document).on('click', '.closesearch', function() {
+showHideSearch("search-section-fuse");
+
+
+
+
+
+});</script><div class="container-fluid col-lg-11" id="top"><nav class="breadcrumb"><a class="breadcrumb-item" href="../index.htm">Home</a> <span class="breadcrumb-item active">
+<a  href="c5dfc62c54810c2c.htm" target="_top">Dictionary of HOPEX concepts</a>&nbsp;/&nbsp;Data Processing Category</span></nav></div>
+<div class="container-fluid col-lg-11 content">
+<section class="fadeInDown animated"><a href="#det" class="btn btn-d">DEFINITION</a><a href="#rel" class="btn btn-d">RELATIONSHIPS</a>	 <a href="#shi" class="btn btn-d">SUPER-SUB TYPE HIERARCHY</a></section>
+<a class="object-section-anchor" id="det"></a>
+<section class="object-section">
+<h4>BUILDING BLOCK - Data Processing Category</h4>
+<hr class="sectionbreak" />
+<table class="table table-vertical-headers table-set-col-width">
+<tr><th>Description</th><td class="description-text"><div class="description-text"></div><div></div></td></tr>		
+<tr><th>Version</th><td class="description-text">Available since: HOPEX V2R1 U3<br/>Last Update: HOPEX V2R1 U3</td></tr>		
+<tr><th>Super Types</th><td class="description-text><img src="../standard/dic_concepttype.ico.gif">&nbsp;
+<a  href="ca353b065fc5e146.htm" target="_top">Categorization Block</a>&nbsp;&nbsp;</td></tr>   
+<tr><th>Dictionary</th><td><img src="../standard/dicsubjectarea.ico.gif">&nbsp;
+<a  href="c5dfc62c54810c2c.htm" target="_top">Dictionary of HOPEX concepts</a></td></tr>
+<tr><th>Managing Namespace</th><td><img src="../standard/dic_concept_syntax.ico.gif">&nbsp;
+<a  href="209c29bb5ed23342.htm" target="_top">Model Namespace</a>&nbsp;</td></tr>
+<tr><th>Implementing MetaClass</th><td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="8943ce775c6221ce.htm" target="_top">Data Processing Category</a></td></tr>
+</table>
+</section>
+<section class="object-section">
+<h4>RELATIONSHIPS</h4> 
+<hr class="sectionbreak" />
+<a href="#" class="btn btn-d" value="Relationship1" onclick="showDiagOnClick(this)">Simple Graph</a>
+<a href="#" class="btn btn-d" value="Relationship2" onclick="showDiagOnClick(this)">Graph & Hierarchy</a>
+<a href="#" class="btn btn-d" value="Relationship3" onclick="showDiagOnClick(this)">Graph by Domain</a>
+<a href="#" class="btn btn-d" value="Relationship4" onclick="showDiagOnClick(this)">Table</a>
+<a class="object-section-anchor" id="rel"></a>
+<div class="Relationship" id="Relationship1">
+<h3>Simple Graph</h3>
+<svg id="C195014A5FC19153" height="344" width="1610" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" overflow="hidden">
+  <defs>
+    <marker id="Simple-C195014A5FC19153__RelCircle" refX="3" refY="3" markerWidth="6" markerHeight="6">
+      <circle cx="3" cy="3" r="3" fill="#A52A00"></circle>
+    </marker>
+    <marker id="Simple-C195014A5FC19153__RelArrowTip" refX="3" refY="3" markerWidth="8" markerHeight="6" orient="0">
+      <path d="M0,0 L6,2 L0,4" fill="#A52A00"></path>
+    </marker>
+  </defs>
+<g   transform="translate(585,170)">
+  <rect height="30"  width="150"  id="core-C195014A5FC19153-0"  rx="3"  ry="3"  x="0"  y="-10"  stroke="#A52A00"/>
+<foreignObject x="0" y="-10" width="150" height="30" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:12; text-align:center"><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-C195014A5FC19153').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-C195014A5FC19153').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="#Relationship1">Data Processing Category</a>
+  <span id="Desc-C195014A5FC19153" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">  </span>
+</div></div></foreignObject>
+</g>
+<g   transform="translate(50,139)">
+  <rect height="40"  width="325"  id="F27F168563375D82"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="F27F168563375D82.htm#Relationship1">&#60;Quality & Risk Assurance&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(50,159)">
+  <rect height="20"  width="320"  id="In-C195017E5FC1926F-72FE99B65E985953"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#A52A00"><a href="72fe99b65e985953.htm#Relationship1">Data Processor</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="c195017e5fc1926f.htm">[Data Processing Category]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="C195017E5FC1926F-72FE99B65E985953-72FE99B65E985953" class="Simple-C195014A5FC19153_Rel-line" d="M370,159 C477.5,159 477.5,170 585,170" stroke="gray" fill="none" marker-start="url(#Simple-C195014A5FC19153__RelCircle" marker-end="url(#Simple-C195014A5FC19153__RelArrowTip"/>
+<g   transform="translate(50,189)">
+  <rect height="40"  width="325"  id="705983E063236AE9"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="705983E063236AE9.htm#Relationship1">&#60;Packaging&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(50,209)">
+  <rect height="20"  width="320"  id="In-CA353B355FC5E1B6-209C29BB5ED23342"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"gray"><a href="209c29bb5ed23342.htm#Relationship1">Model Namespace</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="https://method.demomega.com/MM-OVERVIEW/pages/CA353B355FC5E1B6.htm">[Owned Categorization Block]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="CA353B355FC5E1B6-209C29BB5ED23342-209C29BB5ED23342" class="Simple-C195014A5FC19153_Rel-line" d="M370,209 C477.5,209 477.5,170 585,170" stroke="gray" fill="none" marker-start="url(#Simple-C195014A5FC19153__RelCircle" marker-end="url(#Simple-C195014A5FC19153__RelArrowTip"/>
+</svg>
+
+</div>
+<div class="Relationship" id="Relationship2" style="display:none">
+<h3>Graph & Hierarchy</h3>
+<svg id="C195014A5FC19153" height="344" width="1610" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" overflow="hidden">
+  <defs>
+    <marker id="Full-C195014A5FC19153__RelCircle" refX="3" refY="3" markerWidth="6" markerHeight="6">
+      <circle cx="3" cy="3" r="3" fill="#A52A00"></circle>
+    </marker>
+    <marker id="Full-C195014A5FC19153__RelArrowTip" refX="3" refY="3" markerWidth="8" markerHeight="6" orient="0">
+      <path d="M0,0 L6,2 L0,4" fill="#A52A00"></path>
+    </marker>
+  </defs>
+<g   transform="translate(580,171)">
+  <rect height="53"  width="160"  id="core-C195014A5FC19153-1"  rx="3"  ry="3"  x="0"  y="-10"  stroke="#A9A9A9"/>
+<foreignObject x="0" y="-10" width="160" height="53" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:center"><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-CA353B065FC5E146').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-CA353B065FC5E146').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="ca353b065fc5e146.htm#Relationship1">Categorization Block</a>
+  <span id="Desc-CA353B065FC5E146" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">A Categorization Block is a Model Building Block used to provid classification and qualification of other Model Building Blocks.  </span>
+</div></div></foreignObject>
+</g>
+<g   transform="translate(585,190)">
+  <rect height="30"  width="150"  id="core-C195014A5FC19153-0"  rx="3"  ry="3"  x="0"  y="-10"  stroke="#A52A00"/>
+<foreignObject x="0" y="-10" width="150" height="30" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:12; text-align:center"><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-C195014A5FC19153').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-C195014A5FC19153').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="#Relationship1">Data Processing Category</a>
+  <span id="Desc-C195014A5FC19153" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">  </span>
+</div></div></foreignObject>
+</g>
+<g   transform="translate(50,139)">
+  <rect height="40"  width="325"  id="F27F168563375D82"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="F27F168563375D82.htm#Relationship1">&#60;Quality & Risk Assurance&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(50,159)">
+  <rect height="20"  width="320"  id="In-C195017E5FC1926F-72FE99B65E985953"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#A52A00"><a href="72fe99b65e985953.htm#Relationship1">Data Processor</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="c195017e5fc1926f.htm">[Data Processing Category]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="C195017E5FC1926F-72FE99B65E985953-72FE99B65E985953" class="Full-C195014A5FC19153_Rel-line" d="M370,159 C477.5,159 477.5,190 585,190" stroke="gray" fill="none" marker-start="url(#Full-C195014A5FC19153__RelCircle" marker-end="url(#Full-C195014A5FC19153__RelArrowTip"/>
+<g   transform="translate(50,189)">
+  <rect height="40"  width="325"  id="705983E063236AE9"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="705983E063236AE9.htm#Relationship1">&#60;Packaging&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(50,209)">
+  <rect height="20"  width="320"  id="In-CA353B355FC5E1B6-209C29BB5ED23342"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"gray"><a href="209c29bb5ed23342.htm#Relationship1">Model Namespace</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="https://method.demomega.com/MM-OVERVIEW/pages/CA353B355FC5E1B6.htm">[Owned Categorization Block]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="CA353B355FC5E1B6-209C29BB5ED23342-209C29BB5ED23342" class="Full-C195014A5FC19153_Rel-line" d="M370,209 C475,209 475,171 580,171" stroke="gray" fill="none" marker-start="url(#Full-C195014A5FC19153__RelCircle" marker-end="url(#Full-C195014A5FC19153__RelArrowTip"/>
+</svg>
+
+</div>
+<div class="Relationship" id="Relationship3" style="display:none">
+<h3>Graph by Domain</h3>
+<svg id="C195014A5FC19153" height="344" width="1610" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" overflow="hidden">
+  <defs>
+    <marker id="Domain-C195014A5FC19153__RelCircle" refX="3" refY="3" markerWidth="6" markerHeight="6">
+      <circle cx="3" cy="3" r="3" fill="#A52A00"></circle>
+    </marker>
+    <marker id="Domain-C195014A5FC19153__RelArrowTip" refX="3" refY="3" markerWidth="8" markerHeight="6" orient="0">
+      <path d="M0,0 L6,2 L0,4" fill="#A52A00"></path>
+    </marker>
+  </defs>
+<g   transform="translate(585,170)">
+  <rect height="30"  width="150"  id="core-C195014A5FC19153-0"  rx="3"  ry="3"  x="0"  y="-10"  stroke="#A52A00"/>
+<foreignObject x="0" y="-10" width="150" height="30" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:12; text-align:center"><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-C195014A5FC19153').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-C195014A5FC19153').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="#Relationship1">Data Processing Category</a>
+  <span id="Desc-C195014A5FC19153" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">  </span>
+</div></div></foreignObject>
+</g>
+<g   transform="translate(50,139)">
+  <rect height="40"  width="325"  id="D326D866617A49A5"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="d326d866617a49a5.htm#Relationship1">{Data Provenance & Reliability Assurance}</a></div></foreignObject>
+</g>
+<g   transform="translate(50,159)">
+  <rect height="20"  width="320"  id="In-C195017E5FC1926F-72FE99B65E985953"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#A52A00"><a href="72fe99b65e985953.htm#Relationship1">Data Processor</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="c195017e5fc1926f.htm">[Data Processing Category]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="C195017E5FC1926F-72FE99B65E985953-72FE99B65E985953" class="Domain-C195014A5FC19153_Rel-line" d="M370,159 C477.5,159 477.5,170 585,170" stroke="gray" fill="none" marker-start="url(#Domain-C195014A5FC19153__RelCircle" marker-end="url(#Domain-C195014A5FC19153__RelArrowTip"/>
+<g   transform="translate(50,189)">
+  <rect height="40"  width="325"  id="AF4DB12D62993434"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="af4db12d62993434.htm#Relationship1">{Model Block Management}</a></div></foreignObject>
+</g>
+<g   transform="translate(50,209)">
+  <rect height="20"  width="320"  id="In-CA353B355FC5E1B6-209C29BB5ED23342"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"gray"><a href="209c29bb5ed23342.htm#Relationship1">Model Namespace</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="https://method.demomega.com/MM-OVERVIEW/pages/CA353B355FC5E1B6.htm">[Owned Categorization Block]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="CA353B355FC5E1B6-209C29BB5ED23342-209C29BB5ED23342" class="Domain-C195014A5FC19153_Rel-line" d="M370,209 C477.5,209 477.5,170 585,170" stroke="gray" fill="none" marker-start="url(#Domain-C195014A5FC19153__RelCircle" marker-end="url(#Domain-C195014A5FC19153__RelArrowTip"/>
+</svg>
+
+</div>
+<div class="Relationship" id="Relationship4" style="display:none">
+<h3>Relationship Table</h3>
+<table id="sortabletable" class="table table-sm  table-bordered table-cell-resizable table-index-set-col-width-4 table-custom-style table-scrollX" width="100%" cellspacing="0">
+<tr><th>Relationship</th><th>Cardinality</th><th>Target Entity</th><th>Source Entity</th><th>Description</th><th>Implementation</th></tr>
+<tr>
+<td><img src="../standard/dic_concept_structuralcomponent.ico.gif"/>&nbsp;
+<a  href="5B7A080561F55C10.htm" target="_top">Referenced Building Block</a></td>
+<td>[0..*]</td>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="ccb819645a564f12.htm" target="_top">Building Block</a></td>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="ccb819645a564f12.htm" target="_top">Building Block</a></td>
+<td><i>Abstract Relationship</i><br/>Reference relationship between a source <a href="ccb819645a564f12.htm" target="_top"><b><u>Building Block</u></b></a> and a target <a href="ccb819645a564f12.htm" target="_top"><b><u>Building Block</u></b></a> (<b> Referenced Building Block</b>).</td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype_component.ico.gif"/>&nbsp;
+<a  href="5C2D6377622B1CED.htm" target="_top">Specialized Category</a></td>
+<td>[0..*]</td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="2b5888b55ef0874d.htm" target="_top">Category</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="2b5888b55ef0874d.htm" target="_top">Category</a></td>
+<td><i>Abstract Relationship</i><br/></td>
+<td><img src="../standard/metaclasspart_concrete.ico.gif"/>&nbsp;
+<a  href="17341f4844a50054.htm" target="_top">Variation</a></td>
+</tr>
+</table>
+</div>
+</section>
+<a class="object-section-anchor" id="shi"></a>
+<section class="object-section">
+<h4>SUPER TYPES HIERARCHY</h4> 
+<hr class="sectionbreak" />
+<span>Left click on a node to toggle it. Right click to navigate through its page
+</section>
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<div id="categoryHierarchy"></div>
+ <script>
+var hierarchy = JSON.parse('{"name":"Data Processing Category","comment":"","url":"C195014A5FC19153.htm","parents":[{"name":"Categorization Block","comment":"A Categorization Block is a Model Building Block used to provid classification and qualification of other Model Building Blocks.","url":"CA353B065FC5E146.htm", "isparent":true,"parents":[{"name":"Building Block","comment":"A Building Block is an autonomous, resusable Entity that contributes to the makeup of other Building Blocks.","url":"CCB819645A564F12.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]},{"name":"Category","comment":"A Category is kind of Class which is used to classifiy other Classes. It is a Class of Class.","url":"2B5888B55EF0874D.htm", "isparent":true,"parents":[{"name":"Class","comment":"A Class is collection of Entitys which it classifies according to one or more criteria.","url":"744B935D5FBFE0F9.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]}]}],"children":[]}');
+$(document).ready(function(event) {
+var tree = CollapsibleTree("#categoryHierarchy");
+tree.init(hierarchy);
+});
+</script>
+</div>
+<button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button>
+<script>window.onscroll = function() {scrollFunction()};$(document).on('click', 'a[href^="#"]', function (event) {event.preventDefault();$('html, body').animate({scrollTop: $($.attr(this, 'href')).offset().top}, 500);});
+function showDiagOnClick(elem){ var x = document.getElementsByClassName('Relationship');var e = elem.getAttribute("value"); for (var i=0; i < x.length ;i++){x[i].style.display="none"; if (x[i].id == e){x[i].style.display="block";x[i].style.textAlign="left";}}}
+</script></html>

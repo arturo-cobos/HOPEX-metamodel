@@ -1,0 +1,333 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="keywords" content="">
+<meta name="description" content="">    
+<LINK REL="icon" HREF="../standard/assets/img/favicon.ico">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/bootstrap.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nav.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/eaportal.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/font-awesome.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/animate.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/datatables.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/grid.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nae.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/custom.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/chosen.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/prism.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery.dataTables.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jsTreeStyle.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.theme.css" media="screen" />
+<script type="text/javascript" src="../standard/assets/js/jquery-3.2.1.min.js" ></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-ui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.columnFilter.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3-force.v2.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.gui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.search.js"></script> 
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.util.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-2.1.1.min.js"></script>
+<script src="../standard/assets/js/ws_zoomtemplate_firefox.js"></script>
+<script src="../standard/assets/js/bootstrap.min.js"></script>
+<script src="../standard/assets/js/datatables.min.js"></script>
+<script src="../standard/assets/js/moment.min.js"></script>
+<script src="../standard/assets/js/datetime-moment.js"></script>
+<script src="../standard/assets/js/chartjs.min.js"></script>
+<script src="../standard/assets/js/searchindexcontent.json"></script>
+<script src="../standard/assets/js/anls.js"></script>
+<script src="../../../cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script src="../standard/assets/js/gauge.js"></script> 
+<script src="../standard/assets/js/domesticApi.js"></script> 
+<script src="../standard/assets/js/piecelabel.js"></script>
+<script src="../standard/assets/js/popper.min.js"></script>
+<script src="../standard/assets/js/custom.js"></script>
+<script src="../standard/assets/js/chosen.jquery.js"></script>
+<script src="../standard/assets/js/prism.js"></script>
+<script src="../standard/assets/js/init-chosen.js"></script>
+<script src="../standard/assets/js/chart-data-flow.js"></script>
+<script src="../standard/assets/js/chart-data-gantt.js"></script>
+<script type="module" src="../standard/assets/js/Fuse.esm.min.js"></script>
+<script type="module">
+import Fuse from '../standard/assets/js/Fuse.esm.min.js';
+$(document).ready(function () {
+console.log('getjson');
+window.$.getJSON('../standard/assets/js/searchindexcontent.json', function (response) {
+console.log('getjson ok');
+var isIndex = "";
+var url = window.location.pathname;
+var filename = url.substring(url.lastIndexOf('/')+1);
+if( filename.includes("index") || filename === "" ){
+isIndex = "pages/";
+} else {
+isIndex = "";
+}
+const fuse = new Fuse(response, {
+keys: ['title','text'],
+shouldSort: true,
+includeMatches : true,
+findAllMatches : true
+});
+$('#search-fuse').on('keyup', function () {
+let result = fuse.search($(this).val());
+console.log(result);
+let resultdiv = $('div.searchresults-fuse');
+if (result.length === 0) {
+resultdiv.hide();
+} else {
+resultdiv.empty();
+resultdiv.append('<table class="table-search" width="100%" cellspacing="0"><thead ><tr><th>Name</th><th>Object Type</th><th>Modification date</th></tr></thead><tbody>');
+
+for (let obj in result.slice(0,10)) {
+
+let searchObj = '<tr><td><a href="./'+ isIndex + result[obj].item.url + '">' + result[obj].item.title +'</a></td><td>' + result[obj].item.ObjectType + '</td><td>' + result[obj].item.ModificationDate + '</td></tr>' ;
+
+
+resultdiv.find('tbody').append(searchObj);
+}
+resultdiv.append('</tbody></table>');
+resultdiv.show();
+}
+});
+});
+});
+</script>
+<title>HOPEX Metamodel Overview (Beta Version)</title>
+</head>
+<nav class="navbar navbar-expand-md navbar-dark  navbar-mega"><!-- Brand --><!--<a class="navbar-brand" href="#">Navbar</a>--><a class="" href="../index.htm"><img class="logo-mega" src="../standard/assets/img/logo.png"  alt="">(Beta Version)</a><!-- Toggler/collapsibe Button --><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><!-- Navbar links -->
+<div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsibleNavbar"><div class="col-sm-auto col-md-auto col-lg-5"></div>
+<div class="col-sm-auto">
+<ul class="navbar-nav">      
+<li><a class="dropdown-item" href="ad30ce115ebf7e90.htm">EA Grid</a></li> 
+<li><a class="dropdown-item" href="fdd5018459bc3c6a.htm">EA Domains</a></li> 
+<li><a class="dropdown-item" href="07e731775ecc93f4.htm">Solutions</a></li> 
+<li><a class="dropdown-item" href="c5dfc62c54810c2c.htm">Glossary</a></li> 
+<li class="nav-item dropdown mx-1">
+<a class="nav-link" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</a>
+<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<li><a class="dropdown-item" href="5446555d5f88c32e.htm">Outcome Driven Metamodel</a></li> 
+<li><a class="dropdown-item" href="e1ccfc295f8f7b90.htm">Playbooks</a></li> 
+<li><a class="dropdown-item" href="42bc992862d20ea7.htm">Framework Mappings</a></li> 
+<li><a class="dropdown-item" href="e93aebb35fa20550.htm">Metamodel Patterns</a></li> 
+<li><a class="dropdown-item" href="d599fe87602b2b85.htm">References</a></li> 
+<li><a class="dropdown-item" href="333f3a7f5dde11de.htm">Legend</a></li> 
+</ul>									                                            
+</li>
+</ul>
+</div>
+<div class="col-sm-auto"><a class="nav-link search" href="#" onclick=showHideSearch("search-section-fuse")><i class="fa fa-search mr-1 form-control-feedback"></i></a></div>
+</div>
+</nav>
+<div id="search-section-fuse" style="display:none">>
+<div class="search_header"><span class="closesearch">&times;</span>
+<nav class="breadcrumb">
+<a class="breadcrumb-item" href="../index.htm">Home </a> 
+<span class="breadcrumb-item active">Search</span> 
+</nav>
+</div>
+<input id="search-fuse" placeholder="Search..."  name="q" onfocus="this.value=''" type="search">
+<div class="searchresults-fuse"></div>
+</div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>function showHideSearch(elementId) {var contentDivs = document.getElementsByClassName('content');var footerDivs = document.getElementsByClassName('footer'); var containerDivs = document.getElementsByClassName('container');var containerfluidDivs = document.getElementsByClassName('container-fluid');var x = document.getElementById(elementId);if (x.style.display === "none") {x.style.display = "block";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "none";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "none";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "none";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "none";}} else {x.style.display = "none";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "block";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "block";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "block";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "block";}}} ;<!-- END WIDGET DRILL DOWN --></script><script>$(document).ready(function() {$(window).scroll(function() {if ($(this).scrollTop() > 100) {$('.scrollup').fadeIn();} else {$('.scrollup').fadeOut();}});$('.scrollup').click(function() {$("html, body").animate({scrollTop: 0}, 600);return false;});});</script><script>
+var modal = document.getElementById("search-section-fuse");
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = "none";
+}
+}
+$(document).on('click', '.closesearch', function() {
+showHideSearch("search-section-fuse");
+
+
+
+
+
+});</script><div class="container-fluid col-lg-11"><nav class="breadcrumb"><a class="breadcrumb-item" href="../index.htm">Home</a> <span class="breadcrumb-item active">
+<a  href="02af0a215a1823ee.htm" target="_top">Dictionary of HOPEX patterns</a>&nbsp;/&nbsp;Elementary Graph</span></nav></div>
+<div class="container-fluid col-lg-11 content">
+<section class="fadeInDown animated"><a href="#idt" class="btn btn-d">DEFINITION</a> <a href="#grf" class="btn btn-d">CONCEPT GRAPH</a> <a href="#des" class="btn btn-d">CONCEPT DESCRIPTIONS</a> 
+</section>
+<a class="object-section-anchor" id="idt"></a>
+<section class="object-section">
+<h4>CONCEPT DOMAIN - Elementary Graph</h4><hr class="sectionbreak" /><table class="table table-vertical-headers table-set-col-width"><tr><th>Description</th><td class="description-text"><i>Pattern Domain</i><br/>The&#160;<b> Elementary Graph</b> domain defines the top level constructs employed to formalize entities (<a href="ae26f8b05acd5185.htm" target="_top"><b><u>Entity</u></b></a>) and their <a href="67db585661c071cc.htm" target="_top"><b><u>Relationship</u></b></a>s. This comprises the formalization of elementary entities (<a href="ae26f8b05acd5185.htm" target="_top"><b><u>Entity</u></b></a>), their elementary relationship (<a href="27862aa35b251d4c.htm" target="_top"><b><u>Nested Entity</u></b></a>, <a href="ae26f8e85acd51c8.htm" target="_top"><b><u>Referenced Element</u></b></a>) and their classification (<a href="744b935d5fbfe0f9.htm" target="_top"><b><u>Class</u></b></a>).<div><br/><i>References:</i><br/><a href="../../../www.omg.org/spec/KerML/1.0/Beta1/ptc-23-06-01.pdf#page=39" target="_blank">OMG - KerML - Root</a><br/><a href="https://en.wikipedia.org/wiki/Upper_ontology" target="_blank">Wikipedia - Upper ontology</a></div></td></tr><tr><th>Dictionary</th><td><img src="../standard/dicsubjectarea.ico.gif"/>&nbsp;
+<a  href="02af0a215a1823ee.htm" target="_top">Dictionary of HOPEX patterns</a></td></tr><tr><th>Parent Domain</th><td><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="3616864f6157d242.htm" target="_top">Upper Ontology</a>&nbsp;</td></tr>
+<tr><th>Implementing Metamodel</th><td><img src="../standard/metapack_pattern.ico.gif"/>&nbsp;
+<a  href="0d6d38ce5e138905.htm" target="_top">Repository Content Object and Class</a>&nbsp;</td></tr></table></section>
+<a class="object-section-anchor" id="grf"></a>
+<section class="object-section">
+<h4>DOMAIN CONCEPT GRAPH</h4>
+<hr class="sectionbreak" />
+<a href="#" class="btn btn-d" value="Relationship1" onclick="showDiagOnClick(this)">Diagram</a>
+<a href="#" class="btn btn-d" value="Relationship2" onclick="showDiagOnClick(this)">Graph</a>
+<div class="Relationship" id="Relationship1">
+
+<map  name="AE26FB4A5ACD53CB">
+  <area  href=ae26f8e85acd51c8.htm#OBMKAE26F8E85ACD51C8 shape="polygon" coords="595, 302, 600, 302, 600, 316, 492, 316, 492, 302, 595, 302"   target="_top"  title="A directed relationship between Entitys.">
+  
+  <area  href=348f6fb6619631ec.htm shape="polygon" coords="481, 262, 569, 262, 569, 342, 469, 342, 469, 331, 558, 331, 558, 273, 481, 273"   target="_top"  title="Kind of classification of ">
+  
+  <area  href=67db585661c071cc.htm#OBMK67DB585661C071CC shape="polygon" coords="188, 59, 178, 59, 178, 73, 108, 73, 108, 59, 188, 59"   target="_top"  title="-">
+  
+  <area  href=27862aa35b251d4c.htm shape="polygon" coords="128, 165, 78, 165, 78, 71, 197, 71, 197, 93, 186, 93, 186, 82, 89, 82, 89, 154, 128, 154"   target="_top"  title="A directed relationship that indicates that the source Entity nests its target Entitys.">
+  
+  <area  href=ae26f8b05acd5185.htm#OBMKAE26F8B05ACD5185 shape="polygon" coords="262, 148, 262, 138, 293, 138, 293, 148, 262, 148"   target="_top"  title="An&#160; Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.">
+  
+  <area  href=4D414EEF580E189A.htm#OBMK4D414EEF580E189A shape="polygon" coords="220, 180, 220, 167, 335, 167, 335, 180, 220, 180"   target="_top"  title="Group of Repository Items wich are constitued of other items through inclusion relationships.">
+  
+  <area  href="ae26f8d65acd51ab.htm" shape="rect" coords="128, 135, 427, 184"   target="_top"  title="A&#160; Nesting Entity is an Entity that nests other entities as sub-entities, serving as their lexical scope. The existence, visibility, and significance of Nested Entitys are confined within the boundaries of their&#160; Nesting Entity.">
+  
+  <area  href=67db5ccd61c075cc.htm#OBMK67DB5CCD61C075CC shape="polygon" coords="463, 398, 445, 398, 445, 412, 350, 412, 350, 398, 463, 398"   target="_top"  title="-">
+  
+  <area  href=5C2D6377622B1CED.htm shape="polygon" coords="371, 362, 371, 375, 428, 375, 428, 362, 438, 362, 438, 386, 360, 386, 360, 362"   target="_top"  title="-">
+  
+  <area  href=ae26f8e85acd51c8.htm#OBMKAE26F8E85ACD51C8 shape="polygon" coords="204, 340, 192, 340, 192, 354, 84, 354, 84, 340, 204, 340"   target="_top"  title="A directed relationship between Entitys.">
+  
+  <area  href=5b7a09ee61f55f74.htm shape="polygon" coords="100, 295, 100, 317, 172, 317, 172, 295, 183, 295, 183, 328, 90, 328, 90, 295"   target="_top"  title="-">
+  
+  <area  href=#OBMK5754805751545CA3 shape="polygon" coords="220, 265, 220, 251, 305, 251, 305, 265, 220, 265"    title="-">
+  
+  <area  href=#OBMK3492C5676196438B shape="polygon" coords="206, 266, 328, 266, 328, 277, 206, 277"    title="-">
+  
+  <area  href=744b935d5fbfe0f9.htm#OBMK744B935D5FBFE0F9 shape="polygon" coords="382, 263, 382, 252, 414, 252, 414, 263, 382, 263"   target="_top"  title="A&#160; Class is collection of Entitys which it classifies according to one or more criteria.">
+  
+  <area  href="3492c53e619642ed.htm" shape="rect" coords="328, 249, 469, 300"   target="_top"  title="A&#160; Class of Individual is a Class whose members are instances of&#160; Individual .">
+  
+  <area  href=ae26f8b05acd5185.htm#OBMKAE26F8B05ACD5185 shape="polygon" coords="120, 258, 120, 247, 151, 247, 151, 258, 120, 258"   target="_top"  title="An&#160; Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.">
+  
+  <area  href="348f55f661962ecc.htm" shape="rect" coords="66, 245, 207, 296"   target="_top"  title="&#160;Individuals are Entitys&#160; which represent objects of the real world that exist over space and time. Examples are, the Oackland digital hospital in 2016, the registration process used at the Oackland digital hospital in 2021 or SAP S/4HANA deployed in Argentina since 2020. ">
+  
+  <area  href=744b935d5fbfe0f9.htm#OBMK744B935D5FBFE0F9 shape="polygon" coords="382, 325, 382, 314, 414, 314, 414, 325, 382, 325"   target="_top"  title="A&#160; Class is collection of Entitys which it classifies according to one or more criteria.">
+  
+  <area  href=0d6d14da5e1378d4.htm#OBMK0D6D14DA5E1378D4 shape="polygon" coords="375, 357, 375, 343, 422, 343, 422, 357, 375, 357"   target="_top"  title="-">
+  
+  <area  href="2b5888b55ef0874d.htm" shape="rect" coords="328, 311, 469, 362"   target="_top"  title="A&#160; Category is kind of Class which is used to classifiy other Classes. It is a Class of Class.">
+  
+  <area  href=#OBMK5754805751545CA3 shape="polygon" coords="530, 198, 530, 184, 615, 184, 615, 198, 530, 198"    title="-">
+  
+  <area  href=#OBMKACFECCCA614D006B shape="polygon" coords="522, 128, 571, 128, 571, 236, 481, 236, 481, 225, 560, 225, 560, 138, 522, 138"    title="-">
+  
+  <area  href=#OBMKACFECCCA614D006B shape="polygon" coords="462, 486, 424, 486, 424, 500, 387, 500, 387, 486, 462, 486"   target="_top"  title="-">
+  
+  <area  href=67db5ccd61c075cc.htm shape="polygon" coords="365, 428, 365, 460, 435, 460, 435, 428, 446, 428, 446, 471, 355, 471, 355, 428"   target="_top"  title="-">
+  
+  <area  href=67db585661c071cc.htm shape="polygon" coords="217, 93, 217, 67, 329, 67, 329, 93, 319, 93, 319, 78, 228, 78, 228, 93"   target="_top"  title="-">
+  
+  <area  href=ae26f8b05acd5185.htm#OBMKAE26F8B05ACD5185 shape="polygon" coords="383, 210, 383, 199, 414, 199, 414, 210, 383, 210"   target="_top"  title="An&#160; Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.">
+  
+  <area  href=0D6D1E295E137E4F.htm#OBMK0D6D1E295E137E4F shape="polygon" coords="365, 236, 365, 223, 432, 223, 432, 236, 365, 236"   target="_top"  title="A set (or class) of ~KY6LDjb2O9AB[Repository Content Object] . ">
+  
+  <area  href="744b935d5fbfe0f9.htm" shape="rect" coords="317, 198, 482, 429"   target="_top"  title="A&#160; Class is collection of Entitys which it classifies according to one or more criteria.">
+  
+  <area  href=54685b4d580a2ca2.htm#OBMK54685B4D580A2CA2 shape="polygon" coords="221, 122, 221, 109, 345, 109, 345, 122, 221, 122"   target="_top"  title="Repository Items are all objects wich make up the content of Hopex repositories excluding technical objects such as: logs, _TransferredObject, _collection... ">
+  
+  <area  href="ae26f8b05acd5185.htm" shape="rect" coords="44, 94, 523, 511"   target="_top"  title="An&#160; Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.">
+  
+  <area  href=67db585661c071cc.htm#OBMK67DB585661C071CC shape="polygon" coords="484, 57, 457, 57, 457, 71, 387, 71, 387, 57, 484, 57"   target="_top"  title="-">
+  
+  <area  href=ae26f8e85acd51c8.htm shape="polygon" coords="368, 93, 368, 67, 456, 67, 456, 93, 446, 93, 446, 78, 379, 78, 379, 93"   target="_top"  title="A directed relationship between Entitys.">
+  
+  <area  href="ae26f9c25acd52d4.htm" shape="rect" coords="1, 0, 624, 538"   target="_top"  title="The&#160; Elementary Graph domain defines the top level constructs employed to formalize entities (Entity) and their Relationships. This comprises the formalization of elementary entities (Entity), their elementary relationship (Nested Entity, Referenced Element) and their classification (Class).">
+  
+</map>
+<img  src="../images/ae26f9c25acd52d4_ae26fb4a5acd53cb_i.png" alt="../images/ae26f9c25acd52d4_ae26fb4a5acd53cb_i.png" usemap="#AE26FB4A5ACD53CB" height="538" width="623" border=0>
+
+</div>
+<div class="Relationship" id="Relationship2">
+<div id="klmm" style="width: 100vw; height: 100vh;" ></div>
+<!-- <script src="../standard/assets/js/keylines_domain.js"></script> -->
+<script >
+const data = {
+ type: 'LinkChart',
+  items: [
+  //nodes
+    {type: 'node', id:'AE26F9C25ACD52D4', t:"Elementary Graph", sh:'box', d:"The Elementary Graph domain defines the top level constructs employed to formalize entities (Entity) and their Relationships. This comprises the formalization of elementary entities (Entity), their elementary relationship (Nested Entity, Referenced Element) and their classification (Class)."},
+    {type: 'node', id:'AE26F8B05ACD5185', t:"Entity", parentId:'AE26F9C25ACD52D4', sh:'circle', d:"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology."},
+    {type: 'node', id:'AE26F8D65ACD51AB', t:"Nesting Entity", parentId:'AE26F8B05ACD5185', sh:'circle', d:"A Nesting Entity is an Entity that nests other entities as sub-entities, serving as their lexical scope. The existence, visibility, and significance of Nested Entitys are confined within the boundaries of their Nesting Entity."},
+    {type: 'node', id:'744B935D5FBFE0F9', t:"Class", parentId:'AE26F8B05ACD5185', sh:'circle', d:"A Class is collection of Entitys which it classifies according to one or more criteria."},
+    {type: 'node', id:'2B5888B55EF0874D', t:"Category", parentId:'744B935D5FBFE0F9', sh:'circle', d:"A Category is kind of Class which is used to classifiy other Classes. It is a Class of Class."},
+    {type: 'node', id:'348F55F661962ECC', t:"Individual", parentId:'AE26F8B05ACD5185', sh:'circle', d:"Individuals are Entitys  which represent objects of the real world that exist over space and time. Examples are, the Oackland digital hospital in 2016, the registration process used at the Oackland digital hospital in 2021 or SAP S/4HANA deployed in Argentina since 2020. "},
+    {type: 'node', id:'3492C53E619642ED', t:"Class of Individual", parentId:'744B935D5FBFE0F9', sh:'circle', d:"A Class of Individual is a Class whose members are instances of  Individual ."},
+  //edges
+    { type: 'link', id:'AE26F8B05ACD5185-ACFECCCA614D006B', id1:'AE26F8B05ACD5185', id2:'744B935D5FBFE0F9', t:"Class"},
+    { type: 'link', id:'AE26F8B05ACD5185-67DB585661C071CC', id1:'AE26F8B05ACD5185', id2:'AE26F8B05ACD5185', t:"Relationship"},
+    { type: 'link', id:'AE26F8B05ACD5185-AE26F8E85ACD51C8', id1:'AE26F8B05ACD5185', id2:'AE26F8B05ACD5185', t:"Referenced Element"},
+    { type: 'link', id:'AE26F8D65ACD51AB-27862AA35B251D4C', id1:'AE26F8D65ACD51AB', id2:'AE26F8B05ACD5185', t:"Nested Entity"},
+    { type: 'link', id:'744B935D5FBFE0F9-67DB5CCD61C075CC', id1:'744B935D5FBFE0F9', id2:'744B935D5FBFE0F9', t:"specialized class"},
+    { type: 'link', id:'744B935D5FBFE0F9-348F6FB6619631EC', id1:'744B935D5FBFE0F9', id2:'2B5888B55EF0874D', t:"Categorization"},
+    { type: 'link', id:'2B5888B55EF0874D-5C2D6377622B1CED', id1:'2B5888B55EF0874D', id2:'2B5888B55EF0874D', t:"Specialized Category"},
+    { type: 'link', id:'348F55F661962ECC-3492C5676196438B', id1:'348F55F661962ECC', id2:'3492C53E619642ED', t:"Class of Individual"},
+    { type: 'link', id:'348F55F661962ECC-5B7A09EE61F55F74', id1:'348F55F661962ECC', id2:'348F55F661962ECC', t:"Referenced Individual"}
+  ]
+}
+</script>
+<script src="../standard/assets/js/keylines_domain.js" type="module"></script>
+</div>
+</section>
+<a class="object-section-anchor" id="des"></a>
+<section class="object-section">
+<h4>CONCEPT DESCRIPTIONS</h4> 
+<hr class="sectionbreak" />
+<h5>Abstract Concepts</h5>
+<table class="table  table-set-col-width">
+<thead >
+<tr><th>Concept</th><th>Description</th><th>HOPEX Metaclass</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="2b5888b55ef0874d.htm" target="_top">Category</a></td>
+<td class="description-text">A&#160;<b> Category</b> is kind of <a href="744b935d5fbfe0f9.htm" target="_top"><b><u>Class</u></b></a> which is used to classifiy other <a href="744b935d5fbfe0f9.htm" target="_top"><b><u>Class</u></b></a>es. It is a <a href="744b935d5fbfe0f9.htm" target="_top"><b><u>Class</u></b></a> of <a href="744b935d5fbfe0f9.htm" target="_top"><b><u>Class</u></b></a>.<i><ul>References:<li><a href="https://15926.blog/topics/data-model/index.htm#ClassOfClass"><img src="../standard/extr.ico.gif">&nbsp;ISO 15926 - ClassOfClass</a></li> <li><a href="../../../www.omg.org/spec/SBVR/1.5/formal-19-10-02.pdf#page=92"><img src="../standard/extr.ico.gif">&nbsp;OMG - SVBR - Categorization</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="0d6d14da5e1378d4.htm" target="_top">Category</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="744b935d5fbfe0f9.htm" target="_top">Class</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Class</b> is collection of <a href="ae26f8b05acd5185.htm" target="_top"><b><u>Entity</u></b></a>s which it classifies according to one or more criteria.</div><div align="left" style="min-height: 12pt; ">In knowledge representation, a&#160;<b> Class</b> can be defined either by extension (specifying members), or by intension (specifying criteria), using what is called in some ontology languages like OWL. </div><div align="left" style="min-height: 12pt; ">Not two&#160;<b> Class</b>es have the same membership. However, a distinction must be made between a&#160;<b> Class</b> having members, and those members being known, so within an information system the members recorded may change over time, even though the true membership does not change.</div><div align="left" style="min-height: 12pt; ">Note: The HOPEX Foundation is a higher-order ontology, so&#160;<b> Class</b>es may have members that are also&#160;<b> Class</b>es (there are&#160;<b> Class</b>es of&#160;<b> Class</b>es).</div><i><ul>References:<li><a href="https://15926.blog/topics/data-model/index.htm#Class"><img src="../standard/extr.ico.gif">&nbsp;ISO 15926 - Class</a></li> <li><a href="../../../www.omg.org/spec/KerML/1.0/Beta1/ptc-23-06-01.pdf#page=50"><img src="../standard/extr.ico.gif">&nbsp;OMG - KerML - Type</a></li> <li><a href="../../../www.omg.org/spec/SBVR/1.5/formal-19-10-02.pdf#page=38"><img src="../standard/extr.ico.gif">&nbsp;OMG - SBVR - Concept</a></li> <li><a href="../../../www.omg.org/spec/UML/2.5.1/formal-17-12-05.pdf#page=75"><img src="../standard/extr.ico.gif">&nbsp;OMG - UML - Type</a></li> <li><a href="https://www.w3.org/TR/owl-ref/#Class"><img src="../standard/extr.ico.gif">&nbsp;W3C - OWL - Class</a></li> <li><a href="https://en.wikipedia.org/wiki/Class_(knowledge_representation)"><img src="../standard/extr.ico.gif">&nbsp;Wikipedia - Class (knowledge representation)</a></li> <li><a href="https://en.wikipedia.org/wiki/Class_(set_theory)"><img src="../standard/extr.ico.gif">&nbsp;Wikipedia - Class (set theory)</a></li> <li><a href="http://wordnetweb.princeton.edu/perl/webwn?o2=&amp;o0=1&amp;o8=1&amp;o1=1&amp;o7=&amp;o5=&amp;o9=&amp;o6=&amp;o3=&amp;o4=&amp;r=1&amp;s=class&amp;i=3&amp;h=1000000000000#c"><img src="../standard/extr.ico.gif">&nbsp;WordNet - Class</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="0D6D1E295E137E4F.htm" target="_top">Class of Object</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="3492c53e619642ed.htm" target="_top">Class of Individual</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Class of Individual</b> is a <a href="744b935d5fbfe0f9.htm" target="_top"><b><u>Class</u></b></a> whose members are instances of&#160; <a href="348f55f661962ecc.htm" target="_top"><b><u>Individual</u></b></a> .</div><div align="left" style="min-height: 12pt; ">Example:</div><div align="left" style="min-height: 12pt; ">- Agent, Process, Capability</div><div align="left" style="min-height: 12pt; ">Counterexample:</div><div align="left" style="min-height: 12pt; ">- Project is not a&#160;<b> Class of Individual</b> ibecause its instances have a spatio-temporal extent.</div><i><ul>References:<li><a href="https://15926.blog/topics/data-model/index.htm#ClassOfIndividual"><img src="../standard/extr.ico.gif">&nbsp;ISO 15926 - ClassOfIndividual</a></li> <li><a href="../../../www.omg.org/spec/KerML/1.0/Beta1/ptc-23-06-01.pdf#page=65"><img src="../standard/extr.ico.gif">&nbsp;OMG - KerML - Class</a></li> <li><a href="../../../www.omg.org/spec/SBVR/1.5/formal-19-10-02.pdf#page=59"><img src="../standard/extr.ico.gif">&nbsp;OMG - SBVR - General Concept</a></li></ul></i>        </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="ae26f8b05acd5185.htm" target="_top">Entity</a></td>
+<td class="description-text">An&#160;<b> Entity</b> is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.<i><ul>References:<li><a href="https://15926.blog/topics/data-model/index.htm#Thing"><img src="../standard/extr.ico.gif">&nbsp;ISO 15926 - Thing</a></li> <li><a href="../../../www.omg.org/spec/KerML/1.0/Beta1/ptc-23-06-01.pdf#page=133"><img src="../standard/extr.ico.gif">&nbsp;OMG - KerML - Element</a></li> <li><a href="../../../www.omg.org/spec/SBVR/1.5/formal-19-10-02.pdf#page=34"><img src="../standard/extr.ico.gif">&nbsp;OMG - SBVR - Thing</a></li> <li><a href="../../../www.omg.org/spec/UML/2.5.1/formal-17-12-05.pdf#page=85"><img src="../standard/extr.ico.gif">&nbsp;OMG - UML - Element</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="54685b4d580a2ca2.htm" target="_top">Repository Content Object</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="348f55f661962ecc.htm" target="_top">Individual</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; "><b>&#160;Individual</b>s are <a href="ae26f8b05acd5185.htm" target="_top"><b><u>Entity</u></b></a>s&#160; which represent objects of the real world that exist over space and time. Examples are, the Oackland digital hospital in 2016, the registration process used at the Oackland digital hospital in 2021 or SAP S/4HANA deployed in Argentina since 2020. </div><div align="left" style="min-height: 12pt; "><b>&#160;Individual</b>s shall be made distinct from <a href="3492c53e619642ed.htm" target="_top"><b><u>Class of Individual</u></b></a> which they are instance of.</div><div align="left" style="min-height: 12pt; "><b>&#160;Individual</b>s are represented with light orange boxes (see the <a href="333f3a7f5dde11de.htm" target="_top"><b><u>Meta-Model Legend</u></b></a> ).</div><i><ul>References:<li><a href="https://15926.blog/topics/data-model/index.htm#PossibleIndividual"><img src="../standard/extr.ico.gif">&nbsp;ISO 15926 - PossibleIndividual</a></li> <li><a href="../../../www.omg.org/spec/KerML/1.0/Beta1/ptc-23-06-01.pdf#page=284"><img src="../standard/extr.ico.gif">&nbsp;OMG - KerML - Occurrence</a></li> <li><a href="https://www.w3.org/TR/owl-ref/#Individual"><img src="../standard/extr.ico.gif">&nbsp;W3C - OWL - Individual</a></li></ul></i>        </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="ae26f8d65acd51ab.htm" target="_top">Nesting Entity</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Nesting Entity</b> is an <a href="ae26f8b05acd5185.htm" target="_top"><b><u>Entity</u></b></a> that nests other entities as sub-entities, serving as their lexical scope. The existence, visibility, and significance of <a href="27862aa35b251d4c.htm" target="_top"><b><u>Nested Entity</u></b></a>s are confined within the boundaries of their&#160;<b> Nesting Entity</b>.</div><div align="left" style="min-height: 12pt; ">For instance, attributes of a class are nested in their class; attributes exist within their class, they are visible from their class, their meaning is given by their class.</div><div align="left" style="min-height: 12pt; ">Examples:</div><div align="left" style="min-height: 12pt; ">- <a href="514e5f6c620f1ec6.htm" target="_top"><b><u>Aggregate Block</u></b></a>s utilize nesting of sub-entities as a mechanism for composability.</div><div align="left" style="min-height: 12pt; ">-<a href="4089423855572F23.htm" target="_top"><b><u>Container</u></b></a>s utilize nesting of sub-entities as a mechanism for packaging.</div><div align="left" style="min-height: 12pt; ">Some modeling standards use the term &quot;Namespace&quot; in place of &quot;<b> Nesting Entity</b>&quot; due to the capability for lexical scoping provided by the latter. However, it is crucial to note that nesting does not always involve naming and namespacing.</div><i><ul>References:<li><a href="https://dev.to/fleepgeek/i-would-try-to-explain-lexical-scope-in-plain-english-wish-me-luck-4j06"><img src="../standard/extr.ico.gif">&nbsp;Blog - Explain lexical scope in plain English</a></li> <li><a href="../../../www.omg.org/spec/KerML/1.0/Beta1/ptc-23-06-01.pdf#page=45"><img src="../standard/extr.ico.gif">&nbsp;OMG - KerML - Namespace</a></li> <li><a href="../../../www.omg.org/spec/UML/2.5.1/formal-17-12-05.pdf#page=69"><img src="../standard/extr.ico.gif">&nbsp;OMG - UML - Namespace</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="4D414EEF580E189A.htm" target="_top">Group of Repository Item</a></td>
+</tr>  
+</tbody>
+</table>
+<section>
+
+</div>
+<button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button>
+<script>window.onscroll = function() {scrollFunction()};$(document).on('click', 'a[href^="#"]', function (event) {event.preventDefault();$('html, body').animate({scrollTop: $($.attr(this, 'href')).offset().top}, 500);});function showDiagOnClick(elem){ var x = document.getElementsByClassName('Relationship');var e = elem.getAttribute("value"); for (var i=0; i < x.length ;i++){x[i].style.display="none"; if (x[i].id == e){x[i].style.display="block";x[i].style.textAlign="left";}}}
+</script></html>

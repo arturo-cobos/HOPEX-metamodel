@@ -1,0 +1,545 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="keywords" content="">
+<meta name="description" content="">    
+<LINK REL="icon" HREF="../standard/assets/img/favicon.ico">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/bootstrap.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nav.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/eaportal.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/font-awesome.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/animate.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/datatables.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/grid.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nae.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/custom.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/chosen.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/prism.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery.dataTables.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jsTreeStyle.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.theme.css" media="screen" />
+<script type="text/javascript" src="../standard/assets/js/jquery-3.2.1.min.js" ></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-ui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.columnFilter.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3-force.v2.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.gui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.search.js"></script> 
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.util.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-2.1.1.min.js"></script>
+<script src="../standard/assets/js/ws_zoomtemplate_firefox.js"></script>
+<script src="../standard/assets/js/bootstrap.min.js"></script>
+<script src="../standard/assets/js/datatables.min.js"></script>
+<script src="../standard/assets/js/moment.min.js"></script>
+<script src="../standard/assets/js/datetime-moment.js"></script>
+<script src="../standard/assets/js/chartjs.min.js"></script>
+<script src="../standard/assets/js/searchindexcontent.json"></script>
+<script src="../standard/assets/js/anls.js"></script>
+<script src="../../../cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script src="../standard/assets/js/gauge.js"></script> 
+<script src="../standard/assets/js/domesticApi.js"></script> 
+<script src="../standard/assets/js/piecelabel.js"></script>
+<script src="../standard/assets/js/popper.min.js"></script>
+<script src="../standard/assets/js/custom.js"></script>
+<script src="../standard/assets/js/chosen.jquery.js"></script>
+<script src="../standard/assets/js/prism.js"></script>
+<script src="../standard/assets/js/init-chosen.js"></script>
+<script src="../standard/assets/js/chart-data-flow.js"></script>
+<script src="../standard/assets/js/chart-data-gantt.js"></script>
+<script type="module" src="../standard/assets/js/Fuse.esm.min.js"></script>
+<script type="module">
+import Fuse from '../standard/assets/js/Fuse.esm.min.js';
+$(document).ready(function () {
+console.log('getjson');
+window.$.getJSON('../standard/assets/js/searchindexcontent.json', function (response) {
+console.log('getjson ok');
+var isIndex = "";
+var url = window.location.pathname;
+var filename = url.substring(url.lastIndexOf('/')+1);
+if( filename.includes("index") || filename === "" ){
+isIndex = "pages/";
+} else {
+isIndex = "";
+}
+const fuse = new Fuse(response, {
+keys: ['title','text'],
+shouldSort: true,
+includeMatches : true,
+findAllMatches : true
+});
+$('#search-fuse').on('keyup', function () {
+let result = fuse.search($(this).val());
+console.log(result);
+let resultdiv = $('div.searchresults-fuse');
+if (result.length === 0) {
+resultdiv.hide();
+} else {
+resultdiv.empty();
+resultdiv.append('<table class="table-search" width="100%" cellspacing="0"><thead ><tr><th>Name</th><th>Object Type</th><th>Modification date</th></tr></thead><tbody>');
+
+for (let obj in result.slice(0,10)) {
+
+let searchObj = '<tr><td><a href="./'+ isIndex + result[obj].item.url + '">' + result[obj].item.title +'</a></td><td>' + result[obj].item.ObjectType + '</td><td>' + result[obj].item.ModificationDate + '</td></tr>' ;
+
+
+resultdiv.find('tbody').append(searchObj);
+}
+resultdiv.append('</tbody></table>');
+resultdiv.show();
+}
+});
+});
+});
+</script>
+<title>HOPEX Metamodel Overview (Beta Version)</title>
+</head>
+<nav class="navbar navbar-expand-md navbar-dark  navbar-mega"><!-- Brand --><!--<a class="navbar-brand" href="#">Navbar</a>--><a class="" href="../index.htm"><img class="logo-mega" src="../standard/assets/img/logo.png"  alt="">(Beta Version)</a><!-- Toggler/collapsibe Button --><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><!-- Navbar links -->
+<div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsibleNavbar"><div class="col-sm-auto col-md-auto col-lg-5"></div>
+<div class="col-sm-auto">
+<ul class="navbar-nav">      
+<li><a class="dropdown-item" href="ad30ce115ebf7e90.htm">EA Grid</a></li> 
+<li><a class="dropdown-item" href="fdd5018459bc3c6a.htm">EA Domains</a></li> 
+<li><a class="dropdown-item" href="07e731775ecc93f4.htm">Solutions</a></li> 
+<li><a class="dropdown-item" href="c5dfc62c54810c2c.htm">Glossary</a></li> 
+<li class="nav-item dropdown mx-1">
+<a class="nav-link" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</a>
+<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<li><a class="dropdown-item" href="5446555d5f88c32e.htm">Outcome Driven Metamodel</a></li> 
+<li><a class="dropdown-item" href="e1ccfc295f8f7b90.htm">Playbooks</a></li> 
+<li><a class="dropdown-item" href="42bc992862d20ea7.htm">Framework Mappings</a></li> 
+<li><a class="dropdown-item" href="e93aebb35fa20550.htm">Metamodel Patterns</a></li> 
+<li><a class="dropdown-item" href="d599fe87602b2b85.htm">References</a></li> 
+<li><a class="dropdown-item" href="333f3a7f5dde11de.htm">Legend</a></li> 
+</ul>									                                            
+</li>
+</ul>
+</div>
+<div class="col-sm-auto"><a class="nav-link search" href="#" onclick=showHideSearch("search-section-fuse")><i class="fa fa-search mr-1 form-control-feedback"></i></a></div>
+</div>
+</nav>
+<div id="search-section-fuse" style="display:none">>
+<div class="search_header"><span class="closesearch">&times;</span>
+<nav class="breadcrumb">
+<a class="breadcrumb-item" href="../index.htm">Home </a> 
+<span class="breadcrumb-item active">Search</span> 
+</nav>
+</div>
+<input id="search-fuse" placeholder="Search..."  name="q" onfocus="this.value=''" type="search">
+<div class="searchresults-fuse"></div>
+</div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>function showHideSearch(elementId) {var contentDivs = document.getElementsByClassName('content');var footerDivs = document.getElementsByClassName('footer'); var containerDivs = document.getElementsByClassName('container');var containerfluidDivs = document.getElementsByClassName('container-fluid');var x = document.getElementById(elementId);if (x.style.display === "none") {x.style.display = "block";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "none";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "none";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "none";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "none";}} else {x.style.display = "none";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "block";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "block";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "block";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "block";}}} ;<!-- END WIDGET DRILL DOWN --></script><script>$(document).ready(function() {$(window).scroll(function() {if ($(this).scrollTop() > 100) {$('.scrollup').fadeIn();} else {$('.scrollup').fadeOut();}});$('.scrollup').click(function() {$("html, body").animate({scrollTop: 0}, 600);return false;});});</script><script>
+var modal = document.getElementById("search-section-fuse");
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = "none";
+}
+}
+$(document).on('click', '.closesearch', function() {
+showHideSearch("search-section-fuse");
+
+
+
+
+
+});</script><div class="container-fluid col-lg-11"><nav class="breadcrumb"><a class="breadcrumb-item" href="../index.htm">Home </a> <span class="breadcrumb-item active"> MetaClass / Identifier</span> </nav></div>
+<div class="container-fluid col-lg-11 content">
+<section class="fadeInDown animated">
+<a href="#det" class="btn btn-d">DEFINITION</a>
+<a href="#rel" class="btn btn-d">RELATIONSHIPS</a> 
+<a href="#shi" class="btn btn-d">SUPER-SUBTYPE HIERARCHY</a> </section>
+<a class="object-section-anchor" id="det"></a>
+<section class="object-section">
+<h4>DEFINITION - Identifier</h4> 
+<hr class="sectionbreak" />
+<table class="table table-vertical-headers table-set-col-width">
+<tr><th>Description</th><td>An identifier is a set of mandatory attributes or roles&#160; that enables unique identification of an entity.</td></tr>
+<tr><th>Version</th><td class="description-text">Available since: MEGA 2005<br/>Last Update: MEGA 2005</td></tr>		
+<tr><th>Super Types</th><td><img src="../standard/metaclasabs.ico.gif">&nbsp;
+<a  href="b958bdcb45dd0007.htm" target="_top">Defined Object</a>&nbsp;&nbsp;<img src="../standard/metaclasabs.ico.gif">&nbsp;
+<a  href="13471A69493D009A.htm" target="_top">Element with Note</a>&nbsp;&nbsp;<img src="../standard/metaclasabs.ico.gif">&nbsp;
+<a  href="9ee8a1874a320189.htm" target="_top">Mapped Element</a>&nbsp;&nbsp;<img src="../standard/metaclasabs.ico.gif">&nbsp;
+<a  href="54685b4d580a2ca2.htm" target="_top">Repository Content Object</a></td></tr>
+</table>
+</section>
+<section class="object-section">
+<h4>RELATIONSHIPS</h4> 
+<hr class="sectionbreak" />
+<a href="#" class="btn btn-d" value="Relationship1" onclick="showDiagOnClick(this)">Simple Graph</a>
+<a href="#" class="btn btn-d" value="Relationship2" onclick="showDiagOnClick(this)">Graph & Hierarchy</a>
+<a class="object-section-anchor" id="rel"></a>
+<div class="Relationship" id="Relationship1">
+<h3>Simple Graph</h3>
+<svg id="D4F2E1223F27024A" height="709.5" width="1640" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" overflow="hidden">
+  <defs>
+    <marker id="Simple-D4F2E1223F27024A__RelCircle" refX="3" refY="3" markerWidth="8" markerHeight="8">
+      <circle cx="3" cy="3" r="3" fill="dimgray"></circle>
+    </marker>
+    <marker id="Simple-D4F2E1223F27024A__RelArrowTip" refX="3" refY="3" markerWidth="12" markerHeight="10" orient="0">
+      <path d="M0,0 L6,2 L0,4" fill="dimgray"></path>
+    </marker>
+  </defs>
+<g   transform="translate(585,340)">
+  <rect height="30"  width="150"  id="core-D4F2E1223F27024A-0"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="150" height="30" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:12; text-align:center"><a href="#Relationship1">Identifier</a></div></foreignObject></g>
+<g   transform="translate(50,117.5)">
+  <rect height="60"  width="325"  id="EA03ED09561F674D"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="60" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:left;"><a href="https://method.demomega.com/MM-OVERVIEW/pages/EA03ED09561F674D.htm#Relationship1">&#60;Information&#62;</a></div></foreignObject></g>
+<g   transform="translate(50,137.5)">
+  <rect height="20"  width="320"  id="In-D4F2E88E3F270337-7DB8824033340504"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="7db8824033340504.htm#Relationship1">Class</a></td><td style="text-align:right; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/D4F2E88E3F270337.htm">[Identifier]</a></td></tr></table></div></foreignObject></g>
+<path id="D4F2E88E3F270337-7DB8824033340504-7DB8824033340504" class="Simple-D4F2E1223F27024A_Rel-line" d="M370,137.5 C477.5,137.5 477.5,340 585,340" stroke="gray" fill="none" marker-start="url(#Simple-D4F2E1223F27024A__RelCircle" marker-end="url(#Simple-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(50,157.5)">
+  <rect height="20"  width="320"  id="In-B43AB6AC3FCD001D-B919B95F3ED40002"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="B919B95F3ED40002.htm#Relationship1">Entity (DM)</a></td><td style="text-align:right; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/B43AB6AC3FCD001D.htm">[Identifier]</a></td></tr></table></div></foreignObject></g>
+<path id="B43AB6AC3FCD001D-B919B95F3ED40002-B919B95F3ED40002" class="Simple-D4F2E1223F27024A_Rel-line" d="M370,157.5 C477.5,157.5 477.5,340 585,340" stroke="gray" fill="none" marker-start="url(#Simple-D4F2E1223F27024A__RelCircle" marker-end="url(#Simple-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(945,192.75)">
+  <rect height="80"  width="325"  id="EA03ED09561F674D"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="80" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:right;"><a href="https://method.demomega.com/MM-OVERVIEW/pages/EA03ED09561F674D.htm#Relationship1">&#60;Information&#62;</a></div></foreignObject></g>
+<g   transform="translate(950,212.75)">
+  <rect height="20"  width="320"  id="core-D4F2E1223F27024A-1"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/B958C32B45DD005B.htm">[Concept]</a></td><td style="text-align:right; width:50%; font-size:9"><a href="ec16ee36442800d3.htm#Relationship1">Concept</a></td></tr></table></div></foreignObject></g>
+<path id="B958C32B45DD005B-core-D4F2E1223F27024A-1-EC16EE36442800D3" class="Simple-D4F2E1223F27024A_Rel-line" d="M735,340 C842.5,340 842.5,212.75 950,212.75" stroke="gray" fill="none" marker-start="url(#Simple-D4F2E1223F27024A__RelCircle" marker-end="url(#Simple-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(950,232.75)">
+  <rect height="20"  width="320"  id="core-D4F2E1223F27024A-1"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/24B0389A46C001A9.htm">[Related Concept]</a></td><td style="text-align:right; width:50%; font-size:9"><a href="ec16ee36442800d3.htm#Relationship1">Concept</a></td></tr></table></div></foreignObject></g>
+<path id="24B0389A46C001A9-core-D4F2E1223F27024A-1-EC16EE36442800D3" class="Simple-D4F2E1223F27024A_Rel-line" d="M735,340 C842.5,340 842.5,232.75 950,232.75" stroke="gray" fill="none" marker-start="url(#Simple-D4F2E1223F27024A__RelCircle" marker-end="url(#Simple-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(950,252.75)">
+  <rect height="20"  width="320"  id="core-D4F2E1223F27024A-0"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/065109A1418A0061.htm">[Datatype]</a></td><td style="text-align:right; width:50%; font-size:9"><a href="7db8824033340504.htm#Relationship1">Class</a></td></tr></table></div></foreignObject></g>
+<path id="065109A1418A0061-core-D4F2E1223F27024A-0-7DB8824033340504" class="Simple-D4F2E1223F27024A_Rel-line" d="M735,340 C842.5,340 842.5,252.75 950,252.75" stroke="gray" fill="none" marker-start="url(#Simple-D4F2E1223F27024A__RelCircle" marker-end="url(#Simple-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(50,187.5)">
+  <rect height="100"  width="325"  id="D6B5039A5E333C9B"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="100" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:left;"><a href="https://method.demomega.com/MM-OVERVIEW/pages/D6B5039A5E333C9B.htm#Relationship1">&#60;Governance Block&#62;</a></div></foreignObject></g>
+<g   transform="translate(50,207.5)">
+  <rect height="20"  width="320"  id="In-FC6DFD63466F002D-000000008000001C"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/000000008000001C.htm#Relationship1">Writing access area</a></td><td style="text-align:right; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/FC6DFD63466F002D.htm">[Protected MEGA Objects]</a></td></tr></table></div></foreignObject></g>
+<path id="FC6DFD63466F002D-000000008000001C-000000008000001C" class="Simple-D4F2E1223F27024A_Rel-line" d="M370,207.5 C477.5,207.5 477.5,340 585,340" stroke="gray" fill="none" marker-start="url(#Simple-D4F2E1223F27024A__RelCircle" marker-end="url(#Simple-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(50,227.5)">
+  <rect height="20"  width="320"  id="In-F251F382466F0070-000000008000002A"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/000000008000002A.htm#Relationship1">Reading access area</a></td><td style="text-align:right; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/F251F382466F0070.htm">[Confidential Objects]</a></td></tr></table></div></foreignObject></g>
+<path id="F251F382466F0070-000000008000002A-000000008000002A" class="Simple-D4F2E1223F27024A_Rel-line" d="M370,227.5 C477.5,227.5 477.5,340 585,340" stroke="gray" fill="none" marker-start="url(#Simple-D4F2E1223F27024A__RelCircle" marker-end="url(#Simple-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(50,247.5)">
+  <rect height="20"  width="320"  id="In-A1F3AD584DEF3D92-1BFD1CC94DC04DF4"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/1BFD1CC94DC04DF4.htm#Relationship1">Assessment Deployment Collection</a></td><td style="text-align:right; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/A1F3AD584DEF3D92.htm">[Generic Object]</a></td></tr></table></div></foreignObject></g>
+<path id="A1F3AD584DEF3D92-1BFD1CC94DC04DF4-1BFD1CC94DC04DF4" class="Simple-D4F2E1223F27024A_Rel-line" d="M370,247.5 C477.5,247.5 477.5,340 585,340" stroke="gray" fill="none" marker-start="url(#Simple-D4F2E1223F27024A__RelCircle" marker-end="url(#Simple-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(50,267.5)">
+  <rect height="20"  width="320"  id="In-5AD691144DC148C8-5AD68FEF4DC1488B"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/5AD68FEF4DC1488B.htm#Relationship1">Assessment Deployment Query Parameter Value</a></td><td style="text-align:right; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/5AD691144DC148C8.htm">[Generic Object]</a></td></tr></table></div></foreignObject></g>
+<path id="5AD691144DC148C8-5AD68FEF4DC1488B-5AD68FEF4DC1488B" class="Simple-D4F2E1223F27024A_Rel-line" d="M370,267.5 C477.5,267.5 477.5,340 585,340" stroke="gray" fill="none" marker-start="url(#Simple-D4F2E1223F27024A__RelCircle" marker-end="url(#Simple-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(50,297.5)">
+  <rect height="80"  width="325"  id="72DE79E658C2292B"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="80" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:left;"><a href="https://method.demomega.com/MM-OVERVIEW/pages/72DE79E658C2292B.htm#Relationship1">&#60;Annotation Block&#62;</a></div></foreignObject></g>
+<g   transform="translate(50,317.5)">
+  <rect height="20"  width="320"  id="In-A171A2B360B801C5-66EA670B2C0F0017"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="66EA670B2C0F0017.htm#Relationship1">Diagram</a></td><td style="text-align:right; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/A171A2B360B801C5.htm">[Element in Diagram]</a></td></tr></table></div></foreignObject></g>
+<path id="A171A2B360B801C5-66EA670B2C0F0017-66EA670B2C0F0017" class="Simple-D4F2E1223F27024A_Rel-line" d="M370,317.5 C477.5,317.5 477.5,340 585,340" stroke="gray" fill="none" marker-start="url(#Simple-D4F2E1223F27024A__RelCircle" marker-end="url(#Simple-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(50,337.5)">
+  <rect height="20"  width="320"  id="In-13471AD8493D012A-EBB2EBC2328A0001"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="EBB2EBC2328A0001.htm#Relationship1">Note</a></td><td style="text-align:right; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/13471AD8493D012A.htm">[Element with Note]</a></td></tr></table></div></foreignObject></g>
+<path id="13471AD8493D012A-EBB2EBC2328A0001-EBB2EBC2328A0001" class="Simple-D4F2E1223F27024A_Rel-line" d="M370,337.5 C477.5,337.5 477.5,340 585,340" stroke="gray" fill="none" marker-start="url(#Simple-D4F2E1223F27024A__RelCircle" marker-end="url(#Simple-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(50,357.5)">
+  <rect height="20"  width="320"  id="In-5A3E5DCE406000A5-66EA670B2C0F0017"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="66EA670B2C0F0017.htm#Relationship1">Diagram</a></td><td style="text-align:right; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/5A3E5DCE406000A5.htm">[Identifier]</a></td></tr></table></div></foreignObject></g>
+<path id="5A3E5DCE406000A5-66EA670B2C0F0017-66EA670B2C0F0017" class="Simple-D4F2E1223F27024A_Rel-line" d="M370,357.5 C477.5,357.5 477.5,340 585,340" stroke="gray" fill="none" marker-start="url(#Simple-D4F2E1223F27024A__RelCircle" marker-end="url(#Simple-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(945,282.75)">
+  <rect height="60"  width="325"  id="72DE79E658C2292B"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="60" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:right;"><a href="https://method.demomega.com/MM-OVERVIEW/pages/72DE79E658C2292B.htm#Relationship1">&#60;Annotation Block&#62;</a></div></foreignObject></g>
+<g   transform="translate(950,302.75)">
+  <rect height="20"  width="320"  id="core-D4F2E1223F27024A-2"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/28B53BCA493D0968.htm">[Tag]</a></td><td style="text-align:right; width:50%; font-size:9"><a href="B1EDB2572C140177.htm#Relationship1">Tag</a></td></tr></table></div></foreignObject></g>
+<path id="28B53BCA493D0968-core-D4F2E1223F27024A-2-B1EDB2572C140177" class="Simple-D4F2E1223F27024A_Rel-line" d="M735,340 C842.5,340 842.5,302.75 950,302.75" stroke="gray" fill="none" marker-start="url(#Simple-D4F2E1223F27024A__RelCircle" marker-end="url(#Simple-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(950,322.75)">
+  <rect height="20"  width="320"  id="core-D4F2E1223F27024A-2"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/28B544A2493D1056.htm">[External Reference]</a></td><td style="text-align:right; width:50%; font-size:9"><a href="B8A9B8CC34D80001.htm#Relationship1">External reference</a></td></tr></table></div></foreignObject></g>
+<path id="28B544A2493D1056-core-D4F2E1223F27024A-2-B8A9B8CC34D80001" class="Simple-D4F2E1223F27024A_Rel-line" d="M735,340 C842.5,340 842.5,322.75 950,322.75" stroke="gray" fill="none" marker-start="url(#Simple-D4F2E1223F27024A__RelCircle" marker-end="url(#Simple-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(50,387.5)">
+  <rect height="220"  width="325"  id="Other"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="220" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:left;"><a href="">Other</a></div></foreignObject></g>
+<g   transform="translate(50,407.5)">
+  <rect height="20"  width="320"  id="In-60556249436A0089-851F85FD433B0160"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/851F85FD433B0160.htm#Relationship1">Report Parameter Value</a></td><td style="text-align:right; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/60556249436A0089.htm">[Report Value]</a></td></tr></table></div></foreignObject></g>
+<path id="60556249436A0089-851F85FD433B0160-851F85FD433B0160" class="Simple-D4F2E1223F27024A_Rel-line" d="M370,407.5 C477.5,407.5 477.5,340 585,340" stroke="gray" fill="none" marker-start="url(#Simple-D4F2E1223F27024A__RelCircle" marker-end="url(#Simple-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(50,427.5)">
+  <rect height="20"  width="320"  id="In-8C28942052291164-8C288F3652290D1E"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/8C288F3652290D1E.htm#Relationship1">Report Data Header(deprecated)</a></td><td style="text-align:right; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/8C28942052291164.htm">[Generic Object]</a></td></tr></table></div></foreignObject></g>
+<path id="8C28942052291164-8C288F3652290D1E-8C288F3652290D1E" class="Simple-D4F2E1223F27024A_Rel-line" d="M370,427.5 C477.5,427.5 477.5,340 585,340" stroke="gray" fill="none" marker-start="url(#Simple-D4F2E1223F27024A__RelCircle" marker-end="url(#Simple-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(50,447.5)">
+  <rect height="20"  width="320"  id="In-E89BEE755F97119E-3870395B57E562B8"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="3870395B57E562B8.htm#Relationship1">Sketching Part</a></td><td style="text-align:right; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/E89BEE755F97119E.htm">[Represented Object]</a></td></tr></table></div></foreignObject></g>
+<path id="E89BEE755F97119E-3870395B57E562B8-3870395B57E562B8" class="Simple-D4F2E1223F27024A_Rel-line" d="M370,447.5 C477.5,447.5 477.5,340 585,340" stroke="gray" fill="none" marker-start="url(#Simple-D4F2E1223F27024A__RelCircle" marker-end="url(#Simple-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(50,467.5)">
+  <rect height="20"  width="320"  id="In-BA3ACB833F28060E-7DB8824433340512"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="7DB8824433340512.htm#Relationship1">AssociationEnd</a></td><td style="text-align:right; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/BA3ACB833F28060E.htm">[Identifier via Class]</a></td></tr></table></div></foreignObject></g>
+<path id="BA3ACB833F28060E-7DB8824433340512-7DB8824433340512" class="Simple-D4F2E1223F27024A_Rel-line" d="M370,467.5 C477.5,467.5 477.5,340 585,340" stroke="gray" fill="none" marker-start="url(#Simple-D4F2E1223F27024A__RelCircle" marker-end="url(#Simple-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(50,487.5)">
+  <rect height="20"  width="320"  id="In-BA3AC8813F280520-3B523B7032C2000F"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="3B523B7032C2000F.htm#Relationship1">Generalization</a></td><td style="text-align:right; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/BA3AC8813F280520.htm">[Identifier via Class]</a></td></tr></table></div></foreignObject></g>
+<path id="BA3AC8813F280520-3B523B7032C2000F-3B523B7032C2000F" class="Simple-D4F2E1223F27024A_Rel-line" d="M370,487.5 C477.5,487.5 477.5,340 585,340" stroke="gray" fill="none" marker-start="url(#Simple-D4F2E1223F27024A__RelCircle" marker-end="url(#Simple-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(50,507.5)">
+  <rect height="20"  width="320"  id="In-C37FC750439500AB-CC1FCC7334FA039D"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="CC1FCC7334FA039D.htm#Relationship1">Candidate Key Member</a></td><td style="text-align:right; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/C37FC750439500AB.htm">[Identifier]</a></td></tr></table></div></foreignObject></g>
+<path id="C37FC750439500AB-CC1FCC7334FA039D-CC1FCC7334FA039D" class="Simple-D4F2E1223F27024A_Rel-line" d="M370,507.5 C477.5,507.5 477.5,340 585,340" stroke="gray" fill="none" marker-start="url(#Simple-D4F2E1223F27024A__RelCircle" marker-end="url(#Simple-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(50,527.5)">
+  <rect height="20"  width="320"  id="In-BA3AC3603F280399-7DB8823E333404FC"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="7DB8823E333404FC.htm#Relationship1">Association</a></td><td style="text-align:right; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/BA3AC3603F280399.htm">[Identifier]</a></td></tr></table></div></foreignObject></g>
+<path id="BA3AC3603F280399-7DB8823E333404FC-7DB8823E333404FC" class="Simple-D4F2E1223F27024A_Rel-line" d="M370,527.5 C477.5,527.5 477.5,340 585,340" stroke="gray" fill="none" marker-start="url(#Simple-D4F2E1223F27024A__RelCircle" marker-end="url(#Simple-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(50,547.5)">
+  <rect height="20"  width="320"  id="In-88138A3444FD006E-AF6CCCCF3EED0017"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="AF6CCCCF3EED0017.htm#Relationship1">Association (DM)</a></td><td style="text-align:right; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/88138A3444FD006E.htm">[Identifier]</a></td></tr></table></div></foreignObject></g>
+<path id="88138A3444FD006E-AF6CCCCF3EED0017-AF6CCCCF3EED0017" class="Simple-D4F2E1223F27024A_Rel-line" d="M370,547.5 C477.5,547.5 477.5,340 585,340" stroke="gray" fill="none" marker-start="url(#Simple-D4F2E1223F27024A__RelCircle" marker-end="url(#Simple-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(50,567.5)">
+  <rect height="20"  width="320"  id="In-06D2077846320084-AF6CCCCF3EED001D"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="AF6CCCCF3EED001D.htm#Relationship1">AssociationEnd (DM)</a></td><td style="text-align:right; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/06D2077846320084.htm">[Identifier via Entity (DM)]</a></td></tr></table></div></foreignObject></g>
+<path id="06D2077846320084-AF6CCCCF3EED001D-AF6CCCCF3EED001D" class="Simple-D4F2E1223F27024A_Rel-line" d="M370,567.5 C477.5,567.5 477.5,340 585,340" stroke="gray" fill="none" marker-start="url(#Simple-D4F2E1223F27024A__RelCircle" marker-end="url(#Simple-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(50,587.5)">
+  <rect height="20"  width="320"  id="In-06D2074646320063-68F4710E3EF10050"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="68F4710E3EF10050.htm#Relationship1">Generalization (DM)</a></td><td style="text-align:right; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/06D2074646320063.htm">[Identifier via Super Entity (DM)]</a></td></tr></table></div></foreignObject></g>
+<path id="06D2074646320063-68F4710E3EF10050-68F4710E3EF10050" class="Simple-D4F2E1223F27024A_Rel-line" d="M370,587.5 C477.5,587.5 477.5,340 585,340" stroke="gray" fill="none" marker-start="url(#Simple-D4F2E1223F27024A__RelCircle" marker-end="url(#Simple-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(945,352.75)">
+  <rect height="180"  width="325"  id="Other"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="180" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:right;"><a href="">Other</a></div></foreignObject></g>
+<g   transform="translate(950,372.75)">
+  <rect height="20"  width="320"  id="core-D4F2E1223F27024A-4"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/46015A264ECE3D65.htm">[Property contained]</a></td><td style="text-align:right; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/EDD601194EB97637.htm#Relationship1">Abstract Property</a></td></tr></table></div></foreignObject></g>
+<path id="46015A264ECE3D65-core-D4F2E1223F27024A-4-EDD601194EB97637" class="Simple-D4F2E1223F27024A_Rel-line" d="M735,340 C842.5,340 842.5,372.75 950,372.75" stroke="gray" fill="none" marker-start="url(#Simple-D4F2E1223F27024A__RelCircle" marker-end="url(#Simple-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(950,392.75)">
+  <rect height="20"  width="320"  id="core-D4F2E1223F27024A-0"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/D4F2FCDB3F2705D7.htm">[Generalization via Candidate Key Member]</a></td><td style="text-align:right; width:50%; font-size:9"><a href="3B523B7032C2000F.htm#Relationship1">Generalization</a></td></tr></table></div></foreignObject></g>
+<path id="D4F2FCDB3F2705D7-core-D4F2E1223F27024A-0-3B523B7032C2000F" class="Simple-D4F2E1223F27024A_Rel-line" d="M735,340 C842.5,340 842.5,392.75 950,392.75" stroke="gray" fill="none" marker-start="url(#Simple-D4F2E1223F27024A__RelCircle" marker-end="url(#Simple-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(950,412.75)">
+  <rect height="20"  width="320"  id="core-D4F2E1223F27024A-0"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/D4F2FCDA3F2705CB.htm">[AssociationEnd via Candidate Key Member]</a></td><td style="text-align:right; width:50%; font-size:9"><a href="7DB8824433340512.htm#Relationship1">AssociationEnd</a></td></tr></table></div></foreignObject></g>
+<path id="D4F2FCDA3F2705CB-core-D4F2E1223F27024A-0-7DB8824433340512" class="Simple-D4F2E1223F27024A_Rel-line" d="M735,340 C842.5,340 842.5,412.75 950,412.75" stroke="gray" fill="none" marker-start="url(#Simple-D4F2E1223F27024A__RelCircle" marker-end="url(#Simple-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(950,432.75)">
+  <rect height="20"  width="320"  id="core-D4F2E1223F27024A-0"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/D4F2FCDA3F2705BF.htm">[Attribute]</a></td><td style="text-align:right; width:50%; font-size:9"><a href="7db8823f33340500.htm#Relationship1">Attribute</a></td></tr></table></div></foreignObject></g>
+<path id="D4F2FCDA3F2705BF-core-D4F2E1223F27024A-0-7DB8823F33340500" class="Simple-D4F2E1223F27024A_Rel-line" d="M735,340 C842.5,340 842.5,432.75 950,432.75" stroke="gray" fill="none" marker-start="url(#Simple-D4F2E1223F27024A__RelCircle" marker-end="url(#Simple-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(950,452.75)">
+  <rect height="20"  width="320"  id="core-D4F2E1223F27024A-0"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/7ED9B11B58353053.htm">[Part via Candidate Key Member]</a></td><td style="text-align:right; width:50%; font-size:9"><a href="6e996f044d6701e4.htm#Relationship1">Part</a></td></tr></table></div></foreignObject></g>
+<path id="7ED9B11B58353053-core-D4F2E1223F27024A-0-6E996F044D6701E4" class="Simple-D4F2E1223F27024A_Rel-line" d="M735,340 C842.5,340 842.5,452.75 950,452.75" stroke="gray" fill="none" marker-start="url(#Simple-D4F2E1223F27024A__RelCircle" marker-end="url(#Simple-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(950,472.75)">
+  <rect height="20"  width="320"  id="core-D4F2E1223F27024A-0"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/1F4A2B92422F0232.htm">[Generalization DM via Candidate Key Member]</a></td><td style="text-align:right; width:50%; font-size:9"><a href="68F4710E3EF10050.htm#Relationship1">Generalization (DM)</a></td></tr></table></div></foreignObject></g>
+<path id="1F4A2B92422F0232-core-D4F2E1223F27024A-0-68F4710E3EF10050" class="Simple-D4F2E1223F27024A_Rel-line" d="M735,340 C842.5,340 842.5,472.75 950,472.75" stroke="gray" fill="none" marker-start="url(#Simple-D4F2E1223F27024A__RelCircle" marker-end="url(#Simple-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(950,492.75)">
+  <rect height="20"  width="320"  id="core-D4F2E1223F27024A-0"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/1F4A2A04422F01B3.htm">[Attribute (DM)]</a></td><td style="text-align:right; width:50%; font-size:9"><a href="68F4710E3EF1005C.htm#Relationship1">Attribute (DM)</a></td></tr></table></div></foreignObject></g>
+<path id="1F4A2A04422F01B3-core-D4F2E1223F27024A-0-68F4710E3EF1005C" class="Simple-D4F2E1223F27024A_Rel-line" d="M735,340 C842.5,340 842.5,492.75 950,492.75" stroke="gray" fill="none" marker-start="url(#Simple-D4F2E1223F27024A__RelCircle" marker-end="url(#Simple-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(950,512.75)">
+  <rect height="20"  width="320"  id="core-D4F2E1223F27024A-0"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/1F4A20CF422F00CC.htm">[AssociationEnd (DM) via Candidate Key Member]</a></td><td style="text-align:right; width:50%; font-size:9"><a href="AF6CCCCF3EED001D.htm#Relationship1">AssociationEnd (DM)</a></td></tr></table></div></foreignObject></g>
+<path id="1F4A20CF422F00CC-core-D4F2E1223F27024A-0-AF6CCCCF3EED001D" class="Simple-D4F2E1223F27024A_Rel-line" d="M735,340 C842.5,340 842.5,512.75 950,512.75" stroke="gray" fill="none" marker-start="url(#Simple-D4F2E1223F27024A__RelCircle" marker-end="url(#Simple-D4F2E1223F27024A__RelArrowTip"/>
+</svg>
+
+</div>
+<div class="Relationship" id="Relationship2" style="display:none">
+<h3>Graph & Hierarchy</h3>
+<svg id="D4F2E1223F27024A" height="709.5" width="1640" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" overflow="hidden">
+  <defs>
+    <marker id="Full-D4F2E1223F27024A__RelCircle" refX="3" refY="3" markerWidth="8" markerHeight="8">
+      <circle cx="3" cy="3" r="3" fill="dimgray"></circle>
+    </marker>
+    <marker id="Full-D4F2E1223F27024A__RelArrowTip" refX="3" refY="3" markerWidth="12" markerHeight="10" orient="0">
+      <path d="M0,0 L6,2 L0,4" fill="dimgray"></path>
+    </marker>
+  </defs>
+<g   transform="translate(565,285)">
+  <rect height="205"  width="190"  id="core-D4F2E1223F27024A-4"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="190" height="205" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:center"><a href="A790AA6349C30125.htm#Relationship1">Element with TaggedValue</a></div></foreignObject></g>
+<g   transform="translate(570,305)">
+  <rect height="180"  width="180"  id="core-D4F2E1223F27024A-3"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="180" height="180" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:center"><a href="60556201436A0070.htm#Relationship1">Report Value</a></div></foreignObject></g>
+<g   transform="translate(575,325)">
+  <rect height="155"  width="170"  id="core-D4F2E1223F27024A-2"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="170" height="155" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:center"><a href="0000000080000033.htm#Relationship1">Generic Object</a><br/><a href="28B53986493D082D.htm#Relationship1">Element with tags</a><br/><a href="28B543CF493D0F42.htm#Relationship1">Element with External Reference</a><br/><a href="33E840BB493E0ADD.htm#Relationship1">Element in Diagram</a></div></foreignObject></g>
+<g   transform="translate(580,390)">
+  <rect height="85"  width="160"  id="core-D4F2E1223F27024A-1"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="160" height="85" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:center"><a href="13471A69493D009A.htm#Relationship1">Element with Note</a><br/><a href="b958bdcb45dd0007.htm#Relationship1">Defined Object</a><br/><a href="54685b4d580a2ca2.htm#Relationship1">Repository Content Object</a></div></foreignObject></g>
+<g   transform="translate(585,440)">
+  <rect height="30"  width="150"  id="core-D4F2E1223F27024A-0"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="150" height="30" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:12; text-align:center"><a href="#Relationship1">Identifier</a></div></foreignObject></g>
+<g   transform="translate(50,117.5)">
+  <rect height="60"  width="325"  id="EA03ED09561F674D"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="60" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:left;"><a href="https://method.demomega.com/MM-OVERVIEW/pages/EA03ED09561F674D.htm#Relationship1">&#60;Information&#62;</a></div></foreignObject></g>
+<g   transform="translate(50,137.5)">
+  <rect height="20"  width="320"  id="In-D4F2E88E3F270337-7DB8824033340504"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="7db8824033340504.htm#Relationship1">Class</a></td><td style="text-align:right; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/D4F2E88E3F270337.htm">[Identifier]</a></td></tr></table></div></foreignObject></g>
+<path id="D4F2E88E3F270337-7DB8824033340504-7DB8824033340504" class="Full-D4F2E1223F27024A_Rel-line" d="M370,137.5 C477.5,137.5 477.5,440 585,440" stroke="gray" fill="none" marker-start="url(#Full-D4F2E1223F27024A__RelCircle" marker-end="url(#Full-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(50,157.5)">
+  <rect height="20"  width="320"  id="In-B43AB6AC3FCD001D-B919B95F3ED40002"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="B919B95F3ED40002.htm#Relationship1">Entity (DM)</a></td><td style="text-align:right; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/B43AB6AC3FCD001D.htm">[Identifier]</a></td></tr></table></div></foreignObject></g>
+<path id="B43AB6AC3FCD001D-B919B95F3ED40002-B919B95F3ED40002" class="Full-D4F2E1223F27024A_Rel-line" d="M370,157.5 C477.5,157.5 477.5,440 585,440" stroke="gray" fill="none" marker-start="url(#Full-D4F2E1223F27024A__RelCircle" marker-end="url(#Full-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(945,192.75)">
+  <rect height="80"  width="325"  id="EA03ED09561F674D"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="80" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:right;"><a href="https://method.demomega.com/MM-OVERVIEW/pages/EA03ED09561F674D.htm#Relationship1">&#60;Information&#62;</a></div></foreignObject></g>
+<g   transform="translate(950,212.75)">
+  <rect height="20"  width="320"  id="core-D4F2E1223F27024A-1"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/B958C32B45DD005B.htm">[Concept]</a></td><td style="text-align:right; width:50%; font-size:9"><a href="ec16ee36442800d3.htm#Relationship1">Concept</a></td></tr></table></div></foreignObject></g>
+<path id="B958C32B45DD005B-core-D4F2E1223F27024A-1-EC16EE36442800D3" class="Full-D4F2E1223F27024A_Rel-line" d="M740,390 C845,390 845,212.75 950,212.75" stroke="gray" fill="none" marker-start="url(#Full-D4F2E1223F27024A__RelCircle" marker-end="url(#Full-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(950,232.75)">
+  <rect height="20"  width="320"  id="core-D4F2E1223F27024A-1"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/24B0389A46C001A9.htm">[Related Concept]</a></td><td style="text-align:right; width:50%; font-size:9"><a href="ec16ee36442800d3.htm#Relationship1">Concept</a></td></tr></table></div></foreignObject></g>
+<path id="24B0389A46C001A9-core-D4F2E1223F27024A-1-EC16EE36442800D3" class="Full-D4F2E1223F27024A_Rel-line" d="M740,390 C845,390 845,232.75 950,232.75" stroke="gray" fill="none" marker-start="url(#Full-D4F2E1223F27024A__RelCircle" marker-end="url(#Full-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(950,252.75)">
+  <rect height="20"  width="320"  id="core-D4F2E1223F27024A-0"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/065109A1418A0061.htm">[Datatype]</a></td><td style="text-align:right; width:50%; font-size:9"><a href="7db8824033340504.htm#Relationship1">Class</a></td></tr></table></div></foreignObject></g>
+<path id="065109A1418A0061-core-D4F2E1223F27024A-0-7DB8824033340504" class="Full-D4F2E1223F27024A_Rel-line" d="M735,440 C842.5,440 842.5,252.75 950,252.75" stroke="gray" fill="none" marker-start="url(#Full-D4F2E1223F27024A__RelCircle" marker-end="url(#Full-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(50,187.5)">
+  <rect height="100"  width="325"  id="D6B5039A5E333C9B"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="100" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:left;"><a href="https://method.demomega.com/MM-OVERVIEW/pages/D6B5039A5E333C9B.htm#Relationship1">&#60;Governance Block&#62;</a></div></foreignObject></g>
+<g   transform="translate(50,207.5)">
+  <rect height="20"  width="320"  id="In-FC6DFD63466F002D-000000008000001C"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/000000008000001C.htm#Relationship1">Writing access area</a></td><td style="text-align:right; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/FC6DFD63466F002D.htm">[Protected MEGA Objects]</a></td></tr></table></div></foreignObject></g>
+<path id="FC6DFD63466F002D-000000008000001C-000000008000001C" class="Full-D4F2E1223F27024A_Rel-line" d="M370,207.5 C472.5,207.5 472.5,325 575,325" stroke="gray" fill="none" marker-start="url(#Full-D4F2E1223F27024A__RelCircle" marker-end="url(#Full-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(50,227.5)">
+  <rect height="20"  width="320"  id="In-F251F382466F0070-000000008000002A"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/000000008000002A.htm#Relationship1">Reading access area</a></td><td style="text-align:right; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/F251F382466F0070.htm">[Confidential Objects]</a></td></tr></table></div></foreignObject></g>
+<path id="F251F382466F0070-000000008000002A-000000008000002A" class="Full-D4F2E1223F27024A_Rel-line" d="M370,227.5 C472.5,227.5 472.5,325 575,325" stroke="gray" fill="none" marker-start="url(#Full-D4F2E1223F27024A__RelCircle" marker-end="url(#Full-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(50,247.5)">
+  <rect height="20"  width="320"  id="In-A1F3AD584DEF3D92-1BFD1CC94DC04DF4"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/1BFD1CC94DC04DF4.htm#Relationship1">Assessment Deployment Collection</a></td><td style="text-align:right; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/A1F3AD584DEF3D92.htm">[Generic Object]</a></td></tr></table></div></foreignObject></g>
+<path id="A1F3AD584DEF3D92-1BFD1CC94DC04DF4-1BFD1CC94DC04DF4" class="Full-D4F2E1223F27024A_Rel-line" d="M370,247.5 C472.5,247.5 472.5,325 575,325" stroke="gray" fill="none" marker-start="url(#Full-D4F2E1223F27024A__RelCircle" marker-end="url(#Full-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(50,267.5)">
+  <rect height="20"  width="320"  id="In-5AD691144DC148C8-5AD68FEF4DC1488B"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/5AD68FEF4DC1488B.htm#Relationship1">Assessment Deployment Query Parameter Value</a></td><td style="text-align:right; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/5AD691144DC148C8.htm">[Generic Object]</a></td></tr></table></div></foreignObject></g>
+<path id="5AD691144DC148C8-5AD68FEF4DC1488B-5AD68FEF4DC1488B" class="Full-D4F2E1223F27024A_Rel-line" d="M370,267.5 C472.5,267.5 472.5,325 575,325" stroke="gray" fill="none" marker-start="url(#Full-D4F2E1223F27024A__RelCircle" marker-end="url(#Full-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(50,297.5)">
+  <rect height="80"  width="325"  id="72DE79E658C2292B"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="80" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:left;"><a href="https://method.demomega.com/MM-OVERVIEW/pages/72DE79E658C2292B.htm#Relationship1">&#60;Annotation Block&#62;</a></div></foreignObject></g>
+<g   transform="translate(50,317.5)">
+  <rect height="20"  width="320"  id="In-A171A2B360B801C5-66EA670B2C0F0017"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="66EA670B2C0F0017.htm#Relationship1">Diagram</a></td><td style="text-align:right; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/A171A2B360B801C5.htm">[Element in Diagram]</a></td></tr></table></div></foreignObject></g>
+<path id="A171A2B360B801C5-66EA670B2C0F0017-66EA670B2C0F0017" class="Full-D4F2E1223F27024A_Rel-line" d="M370,317.5 C472.5,317.5 472.5,325 575,325" stroke="gray" fill="none" marker-start="url(#Full-D4F2E1223F27024A__RelCircle" marker-end="url(#Full-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(50,337.5)">
+  <rect height="20"  width="320"  id="In-13471AD8493D012A-EBB2EBC2328A0001"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="EBB2EBC2328A0001.htm#Relationship1">Note</a></td><td style="text-align:right; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/13471AD8493D012A.htm">[Element with Note]</a></td></tr></table></div></foreignObject></g>
+<path id="13471AD8493D012A-EBB2EBC2328A0001-EBB2EBC2328A0001" class="Full-D4F2E1223F27024A_Rel-line" d="M370,337.5 C475,337.5 475,390 580,390" stroke="gray" fill="none" marker-start="url(#Full-D4F2E1223F27024A__RelCircle" marker-end="url(#Full-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(50,357.5)">
+  <rect height="20"  width="320"  id="In-5A3E5DCE406000A5-66EA670B2C0F0017"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="66EA670B2C0F0017.htm#Relationship1">Diagram</a></td><td style="text-align:right; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/5A3E5DCE406000A5.htm">[Identifier]</a></td></tr></table></div></foreignObject></g>
+<path id="5A3E5DCE406000A5-66EA670B2C0F0017-66EA670B2C0F0017" class="Full-D4F2E1223F27024A_Rel-line" d="M370,357.5 C477.5,357.5 477.5,440 585,440" stroke="gray" fill="none" marker-start="url(#Full-D4F2E1223F27024A__RelCircle" marker-end="url(#Full-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(945,282.75)">
+  <rect height="60"  width="325"  id="72DE79E658C2292B"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="60" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:right;"><a href="https://method.demomega.com/MM-OVERVIEW/pages/72DE79E658C2292B.htm#Relationship1">&#60;Annotation Block&#62;</a></div></foreignObject></g>
+<g   transform="translate(950,302.75)">
+  <rect height="20"  width="320"  id="core-D4F2E1223F27024A-2"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/28B544A2493D1056.htm">[External Reference]</a></td><td style="text-align:right; width:50%; font-size:9"><a href="B8A9B8CC34D80001.htm#Relationship1">External reference</a></td></tr></table></div></foreignObject></g>
+<path id="28B544A2493D1056-core-D4F2E1223F27024A-2-B8A9B8CC34D80001" class="Full-D4F2E1223F27024A_Rel-line" d="M745,325 C847.5,325 847.5,302.75 950,302.75" stroke="gray" fill="none" marker-start="url(#Full-D4F2E1223F27024A__RelCircle" marker-end="url(#Full-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(950,322.75)">
+  <rect height="20"  width="320"  id="core-D4F2E1223F27024A-2"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/28B53BCA493D0968.htm">[Tag]</a></td><td style="text-align:right; width:50%; font-size:9"><a href="B1EDB2572C140177.htm#Relationship1">Tag</a></td></tr></table></div></foreignObject></g>
+<path id="28B53BCA493D0968-core-D4F2E1223F27024A-2-B1EDB2572C140177" class="Full-D4F2E1223F27024A_Rel-line" d="M745,325 C847.5,325 847.5,322.75 950,322.75" stroke="gray" fill="none" marker-start="url(#Full-D4F2E1223F27024A__RelCircle" marker-end="url(#Full-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(50,387.5)">
+  <rect height="220"  width="325"  id="Other"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="220" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:left;"><a href="">Other</a></div></foreignObject></g>
+<g   transform="translate(50,407.5)">
+  <rect height="20"  width="320"  id="In-60556249436A0089-851F85FD433B0160"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/851F85FD433B0160.htm#Relationship1">Report Parameter Value</a></td><td style="text-align:right; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/60556249436A0089.htm">[Report Value]</a></td></tr></table></div></foreignObject></g>
+<path id="60556249436A0089-851F85FD433B0160-851F85FD433B0160" class="Full-D4F2E1223F27024A_Rel-line" d="M370,407.5 C470,407.5 470,305 570,305" stroke="gray" fill="none" marker-start="url(#Full-D4F2E1223F27024A__RelCircle" marker-end="url(#Full-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(50,427.5)">
+  <rect height="20"  width="320"  id="In-8C28942052291164-8C288F3652290D1E"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/8C288F3652290D1E.htm#Relationship1">Report Data Header(deprecated)</a></td><td style="text-align:right; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/8C28942052291164.htm">[Generic Object]</a></td></tr></table></div></foreignObject></g>
+<path id="8C28942052291164-8C288F3652290D1E-8C288F3652290D1E" class="Full-D4F2E1223F27024A_Rel-line" d="M370,427.5 C472.5,427.5 472.5,325 575,325" stroke="gray" fill="none" marker-start="url(#Full-D4F2E1223F27024A__RelCircle" marker-end="url(#Full-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(50,447.5)">
+  <rect height="20"  width="320"  id="In-E89BEE755F97119E-3870395B57E562B8"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="3870395B57E562B8.htm#Relationship1">Sketching Part</a></td><td style="text-align:right; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/E89BEE755F97119E.htm">[Represented Object]</a></td></tr></table></div></foreignObject></g>
+<path id="E89BEE755F97119E-3870395B57E562B8-3870395B57E562B8" class="Full-D4F2E1223F27024A_Rel-line" d="M370,447.5 C475,447.5 475,390 580,390" stroke="gray" fill="none" marker-start="url(#Full-D4F2E1223F27024A__RelCircle" marker-end="url(#Full-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(50,467.5)">
+  <rect height="20"  width="320"  id="In-BA3ACB833F28060E-7DB8824433340512"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="7DB8824433340512.htm#Relationship1">AssociationEnd</a></td><td style="text-align:right; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/BA3ACB833F28060E.htm">[Identifier via Class]</a></td></tr></table></div></foreignObject></g>
+<path id="BA3ACB833F28060E-7DB8824433340512-7DB8824433340512" class="Full-D4F2E1223F27024A_Rel-line" d="M370,467.5 C477.5,467.5 477.5,440 585,440" stroke="gray" fill="none" marker-start="url(#Full-D4F2E1223F27024A__RelCircle" marker-end="url(#Full-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(50,487.5)">
+  <rect height="20"  width="320"  id="In-BA3AC8813F280520-3B523B7032C2000F"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="3B523B7032C2000F.htm#Relationship1">Generalization</a></td><td style="text-align:right; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/BA3AC8813F280520.htm">[Identifier via Class]</a></td></tr></table></div></foreignObject></g>
+<path id="BA3AC8813F280520-3B523B7032C2000F-3B523B7032C2000F" class="Full-D4F2E1223F27024A_Rel-line" d="M370,487.5 C477.5,487.5 477.5,440 585,440" stroke="gray" fill="none" marker-start="url(#Full-D4F2E1223F27024A__RelCircle" marker-end="url(#Full-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(50,507.5)">
+  <rect height="20"  width="320"  id="In-C37FC750439500AB-CC1FCC7334FA039D"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="CC1FCC7334FA039D.htm#Relationship1">Candidate Key Member</a></td><td style="text-align:right; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/C37FC750439500AB.htm">[Identifier]</a></td></tr></table></div></foreignObject></g>
+<path id="C37FC750439500AB-CC1FCC7334FA039D-CC1FCC7334FA039D" class="Full-D4F2E1223F27024A_Rel-line" d="M370,507.5 C477.5,507.5 477.5,440 585,440" stroke="gray" fill="none" marker-start="url(#Full-D4F2E1223F27024A__RelCircle" marker-end="url(#Full-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(50,527.5)">
+  <rect height="20"  width="320"  id="In-BA3AC3603F280399-7DB8823E333404FC"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="7DB8823E333404FC.htm#Relationship1">Association</a></td><td style="text-align:right; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/BA3AC3603F280399.htm">[Identifier]</a></td></tr></table></div></foreignObject></g>
+<path id="BA3AC3603F280399-7DB8823E333404FC-7DB8823E333404FC" class="Full-D4F2E1223F27024A_Rel-line" d="M370,527.5 C477.5,527.5 477.5,440 585,440" stroke="gray" fill="none" marker-start="url(#Full-D4F2E1223F27024A__RelCircle" marker-end="url(#Full-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(50,547.5)">
+  <rect height="20"  width="320"  id="In-88138A3444FD006E-AF6CCCCF3EED0017"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="AF6CCCCF3EED0017.htm#Relationship1">Association (DM)</a></td><td style="text-align:right; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/88138A3444FD006E.htm">[Identifier]</a></td></tr></table></div></foreignObject></g>
+<path id="88138A3444FD006E-AF6CCCCF3EED0017-AF6CCCCF3EED0017" class="Full-D4F2E1223F27024A_Rel-line" d="M370,547.5 C477.5,547.5 477.5,440 585,440" stroke="gray" fill="none" marker-start="url(#Full-D4F2E1223F27024A__RelCircle" marker-end="url(#Full-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(50,567.5)">
+  <rect height="20"  width="320"  id="In-06D2077846320084-AF6CCCCF3EED001D"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="AF6CCCCF3EED001D.htm#Relationship1">AssociationEnd (DM)</a></td><td style="text-align:right; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/06D2077846320084.htm">[Identifier via Entity (DM)]</a></td></tr></table></div></foreignObject></g>
+<path id="06D2077846320084-AF6CCCCF3EED001D-AF6CCCCF3EED001D" class="Full-D4F2E1223F27024A_Rel-line" d="M370,567.5 C477.5,567.5 477.5,440 585,440" stroke="gray" fill="none" marker-start="url(#Full-D4F2E1223F27024A__RelCircle" marker-end="url(#Full-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(50,587.5)">
+  <rect height="20"  width="320"  id="In-06D2074646320063-68F4710E3EF10050"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="68F4710E3EF10050.htm#Relationship1">Generalization (DM)</a></td><td style="text-align:right; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/06D2074646320063.htm">[Identifier via Super Entity (DM)]</a></td></tr></table></div></foreignObject></g>
+<path id="06D2074646320063-68F4710E3EF10050-68F4710E3EF10050" class="Full-D4F2E1223F27024A_Rel-line" d="M370,587.5 C477.5,587.5 477.5,440 585,440" stroke="gray" fill="none" marker-start="url(#Full-D4F2E1223F27024A__RelCircle" marker-end="url(#Full-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(945,352.75)">
+  <rect height="180"  width="325"  id="Other"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="180" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:right;"><a href="">Other</a></div></foreignObject></g>
+<g   transform="translate(950,372.75)">
+  <rect height="20"  width="320"  id="core-D4F2E1223F27024A-4"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/46015A264ECE3D65.htm">[Property contained]</a></td><td style="text-align:right; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/EDD601194EB97637.htm#Relationship1">Abstract Property</a></td></tr></table></div></foreignObject></g>
+<path id="46015A264ECE3D65-core-D4F2E1223F27024A-4-EDD601194EB97637" class="Full-D4F2E1223F27024A_Rel-line" d="M755,285 C852.5,285 852.5,372.75 950,372.75" stroke="gray" fill="none" marker-start="url(#Full-D4F2E1223F27024A__RelCircle" marker-end="url(#Full-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(950,392.75)">
+  <rect height="20"  width="320"  id="core-D4F2E1223F27024A-0"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/D4F2FCDB3F2705D7.htm">[Generalization via Candidate Key Member]</a></td><td style="text-align:right; width:50%; font-size:9"><a href="3B523B7032C2000F.htm#Relationship1">Generalization</a></td></tr></table></div></foreignObject></g>
+<path id="D4F2FCDB3F2705D7-core-D4F2E1223F27024A-0-3B523B7032C2000F" class="Full-D4F2E1223F27024A_Rel-line" d="M735,440 C842.5,440 842.5,392.75 950,392.75" stroke="gray" fill="none" marker-start="url(#Full-D4F2E1223F27024A__RelCircle" marker-end="url(#Full-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(950,412.75)">
+  <rect height="20"  width="320"  id="core-D4F2E1223F27024A-0"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/D4F2FCDA3F2705CB.htm">[AssociationEnd via Candidate Key Member]</a></td><td style="text-align:right; width:50%; font-size:9"><a href="7DB8824433340512.htm#Relationship1">AssociationEnd</a></td></tr></table></div></foreignObject></g>
+<path id="D4F2FCDA3F2705CB-core-D4F2E1223F27024A-0-7DB8824433340512" class="Full-D4F2E1223F27024A_Rel-line" d="M735,440 C842.5,440 842.5,412.75 950,412.75" stroke="gray" fill="none" marker-start="url(#Full-D4F2E1223F27024A__RelCircle" marker-end="url(#Full-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(950,432.75)">
+  <rect height="20"  width="320"  id="core-D4F2E1223F27024A-0"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/D4F2FCDA3F2705BF.htm">[Attribute]</a></td><td style="text-align:right; width:50%; font-size:9"><a href="7db8823f33340500.htm#Relationship1">Attribute</a></td></tr></table></div></foreignObject></g>
+<path id="D4F2FCDA3F2705BF-core-D4F2E1223F27024A-0-7DB8823F33340500" class="Full-D4F2E1223F27024A_Rel-line" d="M735,440 C842.5,440 842.5,432.75 950,432.75" stroke="gray" fill="none" marker-start="url(#Full-D4F2E1223F27024A__RelCircle" marker-end="url(#Full-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(950,452.75)">
+  <rect height="20"  width="320"  id="core-D4F2E1223F27024A-0"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/7ED9B11B58353053.htm">[Part via Candidate Key Member]</a></td><td style="text-align:right; width:50%; font-size:9"><a href="6e996f044d6701e4.htm#Relationship1">Part</a></td></tr></table></div></foreignObject></g>
+<path id="7ED9B11B58353053-core-D4F2E1223F27024A-0-6E996F044D6701E4" class="Full-D4F2E1223F27024A_Rel-line" d="M735,440 C842.5,440 842.5,452.75 950,452.75" stroke="gray" fill="none" marker-start="url(#Full-D4F2E1223F27024A__RelCircle" marker-end="url(#Full-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(950,472.75)">
+  <rect height="20"  width="320"  id="core-D4F2E1223F27024A-0"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/1F4A2B92422F0232.htm">[Generalization DM via Candidate Key Member]</a></td><td style="text-align:right; width:50%; font-size:9"><a href="68F4710E3EF10050.htm#Relationship1">Generalization (DM)</a></td></tr></table></div></foreignObject></g>
+<path id="1F4A2B92422F0232-core-D4F2E1223F27024A-0-68F4710E3EF10050" class="Full-D4F2E1223F27024A_Rel-line" d="M735,440 C842.5,440 842.5,472.75 950,472.75" stroke="gray" fill="none" marker-start="url(#Full-D4F2E1223F27024A__RelCircle" marker-end="url(#Full-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(950,492.75)">
+  <rect height="20"  width="320"  id="core-D4F2E1223F27024A-0"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/1F4A2A04422F01B3.htm">[Attribute (DM)]</a></td><td style="text-align:right; width:50%; font-size:9"><a href="68F4710E3EF1005C.htm#Relationship1">Attribute (DM)</a></td></tr></table></div></foreignObject></g>
+<path id="1F4A2A04422F01B3-core-D4F2E1223F27024A-0-68F4710E3EF1005C" class="Full-D4F2E1223F27024A_Rel-line" d="M735,440 C842.5,440 842.5,492.75 950,492.75" stroke="gray" fill="none" marker-start="url(#Full-D4F2E1223F27024A__RelCircle" marker-end="url(#Full-D4F2E1223F27024A__RelArrowTip"/>
+<g   transform="translate(950,512.75)">
+  <rect height="20"  width="320"  id="core-D4F2E1223F27024A-0"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9"><a href="https://method.demomega.com/MM-OVERVIEW/pages/1F4A20CF422F00CC.htm">[AssociationEnd (DM) via Candidate Key Member]</a></td><td style="text-align:right; width:50%; font-size:9"><a href="AF6CCCCF3EED001D.htm#Relationship1">AssociationEnd (DM)</a></td></tr></table></div></foreignObject></g>
+<path id="1F4A20CF422F00CC-core-D4F2E1223F27024A-0-AF6CCCCF3EED001D" class="Full-D4F2E1223F27024A_Rel-line" d="M735,440 C842.5,440 842.5,512.75 950,512.75" stroke="gray" fill="none" marker-start="url(#Full-D4F2E1223F27024A__RelCircle" marker-end="url(#Full-D4F2E1223F27024A__RelArrowTip"/>
+</svg>
+
+</div>
+</section>
+<script>
+function showDiagOnClick(elem){ var x = document.getElementsByClassName('Relationship');var e = elem.getAttribute("value"); for (var i=0; i < x.length ;i++){x[i].style.display="none"; if (x[i].id == e){x[i].style.display="block";x[i].style.textAlign="left";}}}
+</script>
+<a class="object-section-anchor" id="shi"></a>
+<section class="object-section">
+<h4>SUPER-SUBTYPE HIERARCHY</h4> 
+<hr class="sectionbreak" />
+<span>Left click on a node to toggle it. Right click to navigate through its page
+</section>
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<div id="categoryHierarchy"></div>
+<script>
+var hierarchy = JSON.parse('{"name":"Identifier","comment":"An identifier is a set of mandatory attributes or roles  that enables unique identification of an entity.","url":"D4F2E1223F27024A.htm","parents":[{"name":"Element with Note","comment":"Element to which a note can be associated.","url":"13471A69493D009A.htm", "isparent":true,"parents":[{"name":"Generic Object","comment":"Higher level metaclass in data repository. ","url":"0000000080000033.htm", "isparent":true,"parents":[]}]},{"name":"Repository Content Object","comment":"Repository Items are all objects wich make up the content of Hopex repositories excluding technical objects such as: logs, _TransferredObject, _collection... ","url":"54685B4D580A2CA2.htm", "isparent":true,"parents":[{"name":"Element with Note","comment":"Element to which a note can be associated.","url":"13471A69493D009A.htm", "isparent":true},{"name":"Element with tags","comment":"Element which can be associated to keywords.","url":"28B53986493D082D.htm", "isparent":true,"parents":[{"name":"Report Value","comment":"Set of metaclasses whose instances can be used as report parameter values.","url":"60556201436A0070.htm", "isparent":true,"parents":[{"name":"Element with TaggedValue","comment":"Element that can be associated to a tagged value.","url":"A790AA6349C30125.htm", "isparent":true,"parents":[{"name":"Generic Object","comment":"Higher level metaclass in data repository. ","url":"0000000080000033.htm", "isparent":true}]}]}]},{"name":"Element in Diagram","comment":"Object which can be displayed in diagrams.","url":"33E840BB493E0ADD.htm", "isparent":true,"parents":[{"name":"Abstract Element in Diagram","comment":"","url":"C190C8A4566E3E7B.htm", "isparent":true,"parents":[{"name":"Generic Object","comment":"Higher level metaclass in data repository. ","url":"0000000080000033.htm", "isparent":true}]}]},{"name":"Element with External Reference","comment":"Element that can be associated to an external reference.","url":"28B543CF493D0F42.htm", "isparent":true,"parents":[{"name":"Generic Object","comment":"Higher level metaclass in data repository. ","url":"0000000080000033.htm", "isparent":true}]}]},{"name":"Mapped Element","comment":"","url":"9EE8A1874A320189.htm", "isparent":true,"parents":[{"name":"Generic Object","comment":"Higher level metaclass in data repository. ","url":"0000000080000033.htm", "isparent":true}]},{"name":"Defined Object","comment":"A defined object is an object connected to a definition.","url":"B958BDCB45DD0007.htm", "isparent":true,"parents":[{"name":"Generic Object","comment":"Higher level metaclass in data repository. ","url":"0000000080000033.htm", "isparent":true}]}],"children":[]}');
+$(document).ready(function(event) {
+var tree = CollapsibleTree("#categoryHierarchy");
+tree.init(hierarchy);
+});
+</script></div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>window.onscroll = function() {scrollFunction()};$(document).on('click', 'a[href^="#"]', function (event) {event.preventDefault();$('html, body').animate({scrollTop: $($.attr(this, 'href')).offset().top}, 500);});</script></html>

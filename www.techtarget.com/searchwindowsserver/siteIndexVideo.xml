@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
+    <url>
+        <loc>https://www.techtarget.com/searchwindowsserver/video/Windows-Server-System-Insights-steers-admins-from-trouble</loc>
+        <video:video>
+            <video:title>Windows Server System Insights steers admins from trouble</video:title>
+            <video:publication_date>2020-07-17T10:28:00-04:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/4YZJDoDOYbo/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=4YZJDoDOYbo</video:player_loc>
+            <video:duration>265</video:duration>
+            <video:description>The predictive analytics feature in Windows Server 2019 gives administrators a heads-up to potential problems to avoid the scrambling when help desk tickets start to pile up.</video:description>
+        </video:video>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchwindowsserver/video/Use-a-Windows-Server-2019-domain-controller-or-go-to-Azure</loc>
+        <video:video>
+            <video:title>Use a Windows Server 2019 domain controller or go to Azure?</video:title>
+            <video:publication_date>2020-05-21T09:00:00-04:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/xBVauAnUT0s/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=xBVauAnUT0s</video:player_loc>
+            <video:duration>364</video:duration>
+            <video:description>Administrators must dig into the details to see if a swap from on-premises Active Directory to the Azure equivalent makes sense for their organization.</video:description>
+        </video:video>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchwindowsserver/video/Update-makes-Storage-Migration-Service-more-cloud-friendly</loc>
+        <video:video>
+            <video:title>Update makes Storage Migration Service more cloud-friendly</video:title>
+            <video:publication_date>2020-04-17T12:48:00-04:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/EZwcbrBoRZw/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=EZwcbrBoRZw</video:player_loc>
+            <video:duration>463</video:duration>
+            <video:description>The latest version of the Windows Admin Center comes with a refinement to one of its tools to make moving a file server to Azure less of a challenge.</video:description>
+        </video:video>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchwindowsserver/video/Deploy-and-configure-WSUS-2019-for-Windows-patching-needs</loc>
+        <video:video>
+            <video:title>Deploy and configure WSUS 2019 for Windows patching needs</video:title>
+            <video:publication_date>2020-02-13T11:46:00-05:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/yFWdqs03LW8/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=yFWdqs03LW8</video:player_loc>
+            <video:duration>297</video:duration>
+            <video:description>You can update your Microsoft software with a few tools, but Windows Server Update Services is the go-to for many administrators who want a reliable patch deployment platform.</video:description>
+        </video:video>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchwindowsserver/video/How-to-install-the-Windows-Server-2019-VPN</loc>
+        <video:video>
+            <video:title>How to install the Windows Server 2019 VPN</video:title>
+            <video:publication_date>2020-01-23T15:22:00-05:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/DyMzGXxXL-o/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=DyMzGXxXL-o</video:player_loc>
+            <video:duration>248</video:duration>
+            <video:description>A VPN prevents unauthorized users from gaining access to critical resources in your organization. This tutorial covers the deployment on Windows Server 2019.</video:description>
+        </video:video>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchwindowsserver/video/How-to-install-and-test-Windows-Server-2019-IIS</loc>
+        <video:video>
+            <video:title>How to install and test Windows Server 2019 IIS</video:title>
+            <video:publication_date>2019-12-13T11:32:00-05:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/GW-7ALBlWqY/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=GW-7ALBlWqY</video:player_loc>
+            <video:duration>352</video:duration>
+            <video:description>The installation process for the Windows Server 2019 IIS role is fairly straightforward. This tutorial explains how to stand up the web server and check its ports and bindings.</video:description>
+        </video:video>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchwindowsserver/video/Working-with-the-VSCode-PowerShell-extension</loc>
+        <video:video>
+            <video:title>Working with the VSCode PowerShell extension</video:title>
+            <video:publication_date>2018-10-11T08:00:00-04:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/PJTtqlv4_QM/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=PJTtqlv4_QM</video:player_loc>
+            <video:duration>413</video:duration>
+            <video:description>PowerShell ISE remains one of the more popular PowerShell editors, but admins should explore the capabilities of VSCode if they want to manage more than just Windows systems.</video:description>
+        </video:video>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchwindowsserver/video/Office-365-labels-help-keep-content-under-control</loc>
+        <video:video>
+            <video:title>Office 365 labels help keep content under control</video:title>
+            <video:publication_date>2018-01-25T13:22:00-05:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/g_oowt21TQ4/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=g_oowt21TQ4</video:player_loc>
+            <video:duration>511</video:duration>
+            <video:description>Labels in Office 365 take data governance tasks out of the users' hands through the automatic designation of policies to meet regulations or internal procedures.</video:description>
+        </video:video>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchwindowsserver/video/Build-a-chain-of-commands-with-the-PowerShell-pipeline</loc>
+        <video:video>
+            <video:title>Construct a chain of commands with the PowerShell pipeline</video:title>
+            <video:publication_date>2017-07-28T00:00:00-04:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/QoM9PWOdKd0/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=QoM9PWOdKd0</video:player_loc>
+            <video:duration>296</video:duration>
+            <video:description>The pipeline in PowerShell connects multiple cmdlets to assemble complex commands to give administrators advanced management control over their systems.</video:description>
+        </video:video>
+    </url>
+</urlset>

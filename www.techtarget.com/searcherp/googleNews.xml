@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:ns2="http://www.google.com/schemas/sitemap-news/0.9">
+    <url>
+        <loc>https://www.techtarget.com/searcherp/tip/PLM-and-PDM-software-Learn-the-differences</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-29</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>PLM and PDM software: Learn the differences</ns2:title>
+        </ns2:news>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searcherp/tip/PLM-vs-PIM-What-are-the-differences</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-25</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>PLM vs. PIM: What are the differences?</ns2:title>
+        </ns2:news>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searcherp/tip/Value-chain-vs-supply-chain-What-are-the-differences</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-25</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>Value chain vs. supply chain: What are the differences?</ns2:title>
+        </ns2:news>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searcherp/news/366552598/Industrial-operations-needs-open-technology-ecosystem</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-19</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>Industrial operations needs open technology ecosystem</ns2:title>
+        </ns2:news>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searcherp/news/366552130/Industry-40-manufacturing-success-depends-on-enabling-people</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-15</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>Industry 4.0 manufacturing success depends on enabling people</ns2:title>
+        </ns2:news>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searcherp/tip/Ways-AI-can-help-in-field-service-management</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-12</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>5 ways AI can help in field service management</ns2:title>
+        </ns2:news>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searcherp/tip/Benefits-of-ERP-in-accounting</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-12</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>7 benefits of ERP in accounting</ns2:title>
+        </ns2:news>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searcherp/tip/5-uses-for-IoT-in-field-service-management</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-08</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>5 uses for IoT in field service management</ns2:title>
+        </ns2:news>
+    </url>
+</urlset>

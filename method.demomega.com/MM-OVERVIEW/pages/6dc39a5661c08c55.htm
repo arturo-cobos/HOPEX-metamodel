@@ -1,0 +1,1406 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="keywords" content="">
+<meta name="description" content="">    
+<LINK REL="icon" HREF="../standard/assets/img/favicon.ico">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/bootstrap.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nav.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/eaportal.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/font-awesome.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/animate.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/datatables.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/grid.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nae.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/custom.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/chosen.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/prism.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery.dataTables.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jsTreeStyle.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.theme.css" media="screen" />
+<script type="text/javascript" src="../standard/assets/js/jquery-3.2.1.min.js" ></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-ui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.columnFilter.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3-force.v2.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.gui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.search.js"></script> 
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.util.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-2.1.1.min.js"></script>
+<script src="../standard/assets/js/ws_zoomtemplate_firefox.js"></script>
+<script src="../standard/assets/js/bootstrap.min.js"></script>
+<script src="../standard/assets/js/datatables.min.js"></script>
+<script src="../standard/assets/js/moment.min.js"></script>
+<script src="../standard/assets/js/datetime-moment.js"></script>
+<script src="../standard/assets/js/chartjs.min.js"></script>
+<script src="../standard/assets/js/searchindexcontent.json"></script>
+<script src="../standard/assets/js/anls.js"></script>
+<script src="../../../cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script src="../standard/assets/js/gauge.js"></script> 
+<script src="../standard/assets/js/domesticApi.js"></script> 
+<script src="../standard/assets/js/piecelabel.js"></script>
+<script src="../standard/assets/js/popper.min.js"></script>
+<script src="../standard/assets/js/custom.js"></script>
+<script src="../standard/assets/js/chosen.jquery.js"></script>
+<script src="../standard/assets/js/prism.js"></script>
+<script src="../standard/assets/js/init-chosen.js"></script>
+<script src="../standard/assets/js/chart-data-flow.js"></script>
+<script src="../standard/assets/js/chart-data-gantt.js"></script>
+<script type="module" src="../standard/assets/js/Fuse.esm.min.js"></script>
+<script type="module">
+import Fuse from '../standard/assets/js/Fuse.esm.min.js';
+$(document).ready(function () {
+console.log('getjson');
+window.$.getJSON('../standard/assets/js/searchindexcontent.json', function (response) {
+console.log('getjson ok');
+var isIndex = "";
+var url = window.location.pathname;
+var filename = url.substring(url.lastIndexOf('/')+1);
+if( filename.includes("index") || filename === "" ){
+isIndex = "pages/";
+} else {
+isIndex = "";
+}
+const fuse = new Fuse(response, {
+keys: ['title','text'],
+shouldSort: true,
+includeMatches : true,
+findAllMatches : true
+});
+$('#search-fuse').on('keyup', function () {
+let result = fuse.search($(this).val());
+console.log(result);
+let resultdiv = $('div.searchresults-fuse');
+if (result.length === 0) {
+resultdiv.hide();
+} else {
+resultdiv.empty();
+resultdiv.append('<table class="table-search" width="100%" cellspacing="0"><thead ><tr><th>Name</th><th>Object Type</th><th>Modification date</th></tr></thead><tbody>');
+
+for (let obj in result.slice(0,10)) {
+
+let searchObj = '<tr><td><a href="./'+ isIndex + result[obj].item.url + '">' + result[obj].item.title +'</a></td><td>' + result[obj].item.ObjectType + '</td><td>' + result[obj].item.ModificationDate + '</td></tr>' ;
+
+
+resultdiv.find('tbody').append(searchObj);
+}
+resultdiv.append('</tbody></table>');
+resultdiv.show();
+}
+});
+});
+});
+</script>
+<title>HOPEX Metamodel Overview (Beta Version)</title>
+</head>
+<nav class="navbar navbar-expand-md navbar-dark  navbar-mega"><!-- Brand --><!--<a class="navbar-brand" href="#">Navbar</a>--><a class="" href="../index.htm"><img class="logo-mega" src="../standard/assets/img/logo.png"  alt="">(Beta Version)</a><!-- Toggler/collapsibe Button --><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><!-- Navbar links -->
+<div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsibleNavbar"><div class="col-sm-auto col-md-auto col-lg-5"></div>
+<div class="col-sm-auto">
+<ul class="navbar-nav">      
+<li><a class="dropdown-item" href="ad30ce115ebf7e90.htm">EA Grid</a></li> 
+<li><a class="dropdown-item" href="fdd5018459bc3c6a.htm">EA Domains</a></li> 
+<li><a class="dropdown-item" href="07e731775ecc93f4.htm">Solutions</a></li> 
+<li><a class="dropdown-item" href="c5dfc62c54810c2c.htm">Glossary</a></li> 
+<li class="nav-item dropdown mx-1">
+<a class="nav-link" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</a>
+<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<li><a class="dropdown-item" href="5446555d5f88c32e.htm">Outcome Driven Metamodel</a></li> 
+<li><a class="dropdown-item" href="e1ccfc295f8f7b90.htm">Playbooks</a></li> 
+<li><a class="dropdown-item" href="42bc992862d20ea7.htm">Framework Mappings</a></li> 
+<li><a class="dropdown-item" href="e93aebb35fa20550.htm">Metamodel Patterns</a></li> 
+<li><a class="dropdown-item" href="d599fe87602b2b85.htm">References</a></li> 
+<li><a class="dropdown-item" href="333f3a7f5dde11de.htm">Legend</a></li> 
+</ul>									                                            
+</li>
+</ul>
+</div>
+<div class="col-sm-auto"><a class="nav-link search" href="#" onclick=showHideSearch("search-section-fuse")><i class="fa fa-search mr-1 form-control-feedback"></i></a></div>
+</div>
+</nav>
+<div id="search-section-fuse" style="display:none">>
+<div class="search_header"><span class="closesearch">&times;</span>
+<nav class="breadcrumb">
+<a class="breadcrumb-item" href="../index.htm">Home </a> 
+<span class="breadcrumb-item active">Search</span> 
+</nav>
+</div>
+<input id="search-fuse" placeholder="Search..."  name="q" onfocus="this.value=''" type="search">
+<div class="searchresults-fuse"></div>
+</div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>function showHideSearch(elementId) {var contentDivs = document.getElementsByClassName('content');var footerDivs = document.getElementsByClassName('footer'); var containerDivs = document.getElementsByClassName('container');var containerfluidDivs = document.getElementsByClassName('container-fluid');var x = document.getElementById(elementId);if (x.style.display === "none") {x.style.display = "block";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "none";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "none";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "none";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "none";}} else {x.style.display = "none";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "block";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "block";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "block";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "block";}}} ;<!-- END WIDGET DRILL DOWN --></script><script>$(document).ready(function() {$(window).scroll(function() {if ($(this).scrollTop() > 100) {$('.scrollup').fadeIn();} else {$('.scrollup').fadeOut();}});$('.scrollup').click(function() {$("html, body").animate({scrollTop: 0}, 600);return false;});});</script><script>
+var modal = document.getElementById("search-section-fuse");
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = "none";
+}
+}
+$(document).on('click', '.closesearch', function() {
+showHideSearch("search-section-fuse");
+
+
+
+
+
+});</script><div class="container-fluid col-lg-11" id="top"><nav class="breadcrumb"><a class="breadcrumb-item" href="../index.htm">Home</a> <span class="breadcrumb-item active">
+<a  href="c5dfc62c54810c2c.htm" target="_top">Dictionary of HOPEX concepts</a>&nbsp;/&nbsp;Resource Rule</span></nav></div>
+<div class="container-fluid col-lg-11 content">
+<section class="fadeInDown animated"><a href="#det" class="btn btn-d">DEFINITION</a><a href="#rel" class="btn btn-d">RELATIONSHIPS</a><a href="#str" class="btn btn-d">INTERNAL STRUCTURE</a>	 <a href="#shi" class="btn btn-d">SUPER-SUB TYPE HIERARCHY</a></section>
+<a class="object-section-anchor" id="det"></a>
+<section class="object-section">
+<h4>BUILDING BLOCK - Resource Rule</h4>
+<hr class="sectionbreak" />
+<table class="table table-vertical-headers table-set-col-width">
+<tr><th>Description</th><td class="description-text"><i>Abstract Concept</i><br/><div class="description-text">A&#160;<b> Resource Rule</b> is an <a href="3be69d8c63037c0f.htm" target="_top"><b><u>Business Operating Rule</u></b></a> that is enforced by <a href="62466ea661b80d09.htm" target="_top"><b><u>Resource Operating Asset</u></b></a>s of the Enterprise.</div><div><br/><i>References:</i><br/><a href="../../../www.omg.org/spec/BMM/1.3/formal-15-05-19.pdf#page=46" target="_blank">OMG - BMM - Business Rule</a></div></td></tr>		
+<tr><th>Version</th><td class="description-text">Available since: HOPEX V2<br/>Last Update: HOPEX V2</td></tr>		
+<tr><th>Super Types</th><td class="description-text><img src="../standard/dic_concepttype.ico.gif">&nbsp;
+<a  href="3be69d8c63037c0f.htm" target="_top">Business Operating Rule</a>&nbsp;&nbsp;</td></tr>   
+<tr><th>Definition Domain</th><td class="description-text"><img src="../standard/dic_graph.ico.gif">&nbsp;
+<a  href="d670b6155ffe8bb1.htm" target="_top">EA Pattern - Business Resource Operating Pattern</a><br/>The EA Pattern - Business Resource Operating Pattern domain defines concepts and relationships used to model how physical resources (Resource Operating Assets) operates/functions in Resource Ecosystems to deliver Business Outcomes.
+</td></tr>
+<tr><th>Dictionary</th><td><img src="../standard/dicsubjectarea.ico.gif">&nbsp;
+<a  href="c5dfc62c54810c2c.htm" target="_top">Dictionary of HOPEX concepts</a></td></tr>
+<tr><th>Conceptualization Level</th><td><img src="../standard/category_data.ico.gif">&nbsp;
+<a  href="9d1da3dc64251e32.htm" target="_top">Resource Ontology</a>&nbsp;</td></tr>
+<tr><th>Managing Namespace</th><td><img src="../standard/dic_concept_syntax.ico.gif">&nbsp;
+<a  href="d342d91a5b121454.htm" target="_top">Architecture Namespace</a>&nbsp;</td></tr>
+<tr><th>Framework Mapping</th><td>
+<a  href="e288e48263190e75.htm" target="_top">UAF - Resource Views</a>&nbsp;:&nbsp;Rule</td></tr>
+<tr><th>Implementing MetaClass</th><td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="75cb8c1758b6482f.htm" target="_top">Operational Rule</a></td></tr>
+</table>
+</section>
+<section class="object-section">
+<h4>RELATIONSHIPS</h4> 
+<hr class="sectionbreak" />
+<a href="#" class="btn btn-d" value="Relationship1" onclick="showDiagOnClick(this)">Simple Graph</a>
+<a href="#" class="btn btn-d" value="Relationship2" onclick="showDiagOnClick(this)">Graph & Hierarchy</a>
+<a href="#" class="btn btn-d" value="Relationship3" onclick="showDiagOnClick(this)">Graph by Domain</a>
+<a href="#" class="btn btn-d" value="Relationship4" onclick="showDiagOnClick(this)">Table</a>
+<a class="object-section-anchor" id="rel"></a>
+<div class="Relationship" id="Relationship1">
+<h3>Simple Graph</h3>
+<svg id="6DC39A5661C08C55" height="559" width="1640" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" overflow="hidden">
+  <defs>
+    <marker id="Simple-6DC39A5661C08C55__RelCircle" refX="3" refY="3" markerWidth="6" markerHeight="6">
+      <circle cx="3" cy="3" r="3" fill="#A52A00"></circle>
+    </marker>
+    <marker id="Simple-6DC39A5661C08C55__RelArrowTip" refX="3" refY="3" markerWidth="8" markerHeight="6" orient="0">
+      <path d="M0,0 L6,2 L0,4" fill="#A52A00"></path>
+    </marker>
+  </defs>
+<g   transform="translate(585,270)">
+  <rect height="30"  width="150"  id="core-6DC39A5661C08C55-0"  rx="3"  ry="3"  x="0"  y="-10"  stroke="#A52A00"/>
+<foreignObject x="0" y="-10" width="150" height="30" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:12; text-align:center"><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-6DC39A5661C08C55').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-6DC39A5661C08C55').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="#Relationship1">Resource Rule</a>
+  <span id="Desc-6DC39A5661C08C55" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">A Resource Rule is an Business Operating Rule that is enforced by Resource Operating Assets of the Enterprise.  </span>
+</div></div></foreignObject>
+</g>
+<g   transform="translate(945,106.75)">
+  <rect height="40"  width="325"  id="8856901B620A6237"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="8856901B620A6237.htm#Relationship1">&#60;Data&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(950,126.75)">
+  <rect height="20"  width="320"  id="362FC8045B3C3E65"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-9152E9845ED773CF-core-6DC39A5661C08C55-2-362FC8045B3C3E65').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-9152E9845ED773CF-core-6DC39A5661C08C55-2-362FC8045B3C3E65').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="9152E9845ED773CF.htm">[Business Directive Subject]</a>  <div id="Desc-9152E9845ED773CF-core-6DC39A5661C08C55-2-362FC8045B3C3E65" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-362FC8045B3C3E65').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-362FC8045B3C3E65').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="362fc8045b3c3e65.htm#Relationship1">Conceptual Object</a><div id="Desc-362FC8045B3C3E65" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Conceptual Object is the representation of any tangible or intanglible resource, or its respective state, that is critical for comprehending an enterprise, including its data, resources, and activities.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="9152E9845ED773CF-core-6DC39A5661C08C55-2-362FC8045B3C3E65" class="Simple-6DC39A5661C08C55_Rel-line" d="M735,270 C842.5,270 842.5,126.75 950,126.75" stroke="gray" fill="none" marker-start="url(#Simple-6DC39A5661C08C55__RelCircle" marker-end="url(#Simple-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(50,117.5)">
+  <rect height="40"  width="325"  id="F27F168563375D82"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="F27F168563375D82.htm#Relationship1">&#60;Quality & Risk Assurance&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(50,137.5)">
+  <rect height="20"  width="320"  id="In-71F59B656008373C-07CA19E95DD854E9"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#A52A00"><a href="07ca19e95dd854e9.htm#Relationship1">Assurance Case</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="71f59b656008373c.htm">[Constraining Policy]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="71F59B656008373C-07CA19E95DD854E9-07CA19E95DD854E9" class="Simple-6DC39A5661C08C55_Rel-line" d="M370,137.5 C477.5,137.5 477.5,270 585,270" stroke="gray" fill="none" marker-start="url(#Simple-6DC39A5661C08C55__RelCircle" marker-end="url(#Simple-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(50,167.5)">
+  <rect height="40"  width="325"  id="4C7853C35FCB7CEF"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="4C7853C35FCB7CEF.htm#Relationship1">&#60;Transformations&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(50,187.5)">
+  <rect height="20"  width="320"  id="In-9152E0345ED75863-07CA18D25DD85477"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#F4DB6F"><a href="07ca18d25dd85477.htm#Relationship1">Assurance System</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="https://method.demomega.com/MM-OVERVIEW/pages/9152E0345ED75863.htm">[Policy Item in Scope]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="9152E0345ED75863-07CA18D25DD85477-07CA18D25DD85477" class="Simple-6DC39A5661C08C55_Rel-line" d="M370,187.5 C477.5,187.5 477.5,270 585,270" stroke="gray" fill="none" marker-start="url(#Simple-6DC39A5661C08C55__RelCircle" marker-end="url(#Simple-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(50,217.5)">
+  <rect height="40"  width="325"  id="AD30DF2A5EBF803C"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="AD30DF2A5EBF803C.htm#Relationship1">&#60;Directives&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(50,237.5)">
+  <rect height="20"  width="320"  id="In-9815B8B85F687885-98159F6B5F682D1E"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#A52A00"><a href="98159f6b5f682d1e.htm#Relationship1">Data Quality Policy</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="9815B8B85F687885.htm">[Referenced Regulation Item]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="9815B8B85F687885-98159F6B5F682D1E-98159F6B5F682D1E" class="Simple-6DC39A5661C08C55_Rel-line" d="M370,237.5 C477.5,237.5 477.5,270 585,270" stroke="gray" fill="none" marker-start="url(#Simple-6DC39A5661C08C55__RelCircle" marker-end="url(#Simple-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(945,156.75)">
+  <rect height="80"  width="325"  id="AD30DF2A5EBF803C"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="80" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="AD30DF2A5EBF803C.htm#Relationship1">&#60;Directives&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(950,176.75)">
+  <rect height="20"  width="320"  id="278678E95B2533D6"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-5C2D64EA622B1ECC-core-6DC39A5661C08C55-3-278678E95B2533D6').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-5C2D64EA622B1ECC-core-6DC39A5661C08C55-3-278678E95B2533D6').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="5c2d64ea622b1ecc.htm">[Specialized Directive]</a>  <div id="Desc-5C2D64EA622B1ECC-core-6DC39A5661C08C55-3-278678E95B2533D6" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-278678E95B2533D6').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-278678E95B2533D6').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="278678e95b2533d6.htm#Relationship1">Directive</a><div id="Desc-278678E95B2533D6" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Directive is an authoritative declaration that indicates how Agents and their Behaviors should be (or should not be) in the enterprise.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="5C2D64EA622B1ECC-core-6DC39A5661C08C55-3-278678E95B2533D6" class="Simple-6DC39A5661C08C55_Rel-line" d="M735,270 C842.5,270 842.5,176.75 950,176.75" stroke="gray" fill="none" marker-start="url(#Simple-6DC39A5661C08C55__RelCircle" marker-end="url(#Simple-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(950,196.75)">
+  <rect height="20"  width="320"  id="959320325EE7FE24"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-95931D045EE7F60F-core-6DC39A5661C08C55-2-959320325EE7FE24').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-95931D045EE7F60F-core-6DC39A5661C08C55-2-959320325EE7FE24').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="95931d045ee7f60f.htm">[Policy Derivation]</a>  <div id="Desc-95931D045EE7F60F-core-6DC39A5661C08C55-2-959320325EE7FE24" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-959320325EE7FE24').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-959320325EE7FE24').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="959320325ee7fe24.htm#Relationship1">Policy</a><div id="Desc-959320325EE7FE24" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Policy is a Directive that is not directly enforceable whose purpose is to govern, guide or constrain the structure and behavior of Agents in the enterprise.   </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="95931D045EE7F60F-core-6DC39A5661C08C55-2-959320325EE7FE24" class="Simple-6DC39A5661C08C55_Rel-line" d="M735,270 C842.5,270 842.5,196.75 950,196.75" stroke="gray" fill="none" marker-start="url(#Simple-6DC39A5661C08C55__RelCircle" marker-end="url(#Simple-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(950,216.75)">
+  <rect height="20"  width="320"  id="FE2201105C4F0DF3"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-A397B1925FBF691A-core-6DC39A5661C08C55-2-FE2201105C4F0DF3').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-A397B1925FBF691A-core-6DC39A5661C08C55-2-FE2201105C4F0DF3').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="a397b1925fbf691a.htm">[Specialized Business Directive]</a>  <div id="Desc-A397B1925FBF691A-core-6DC39A5661C08C55-2-FE2201105C4F0DF3" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-FE2201105C4F0DF3').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-FE2201105C4F0DF3').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="fe2201105c4f0df3.htm#Relationship1">Business Directive</a><div id="Desc-FE2201105C4F0DF3" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Business Directive is Directive an intended to assert business structure or to control or influence the behavior of the enterprise.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="A397B1925FBF691A-core-6DC39A5661C08C55-2-FE2201105C4F0DF3" class="Simple-6DC39A5661C08C55_Rel-line" d="M735,270 C842.5,270 842.5,216.75 950,216.75" stroke="gray" fill="none" marker-start="url(#Simple-6DC39A5661C08C55__RelCircle" marker-end="url(#Simple-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(50,267.5)">
+  <rect height="40"  width="325"  id="938E3ED362024F5B"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="938E3ED362024F5B.htm#Relationship1">&#60;Governance&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(50,287.5)">
+  <rect height="20"  width="320"  id="In-34BD447F61F105B8-732799D364364423"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#F4DB6F"><a href="732799D364364423.htm#Relationship1">Policy Decision</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="https://method.demomega.com/MM-OVERVIEW/pages/34BD447F61F105B8.htm">[Applicable Policy]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="34BD447F61F105B8-732799D364364423-732799D364364423" class="Simple-6DC39A5661C08C55_Rel-line" d="M370,287.5 C477.5,287.5 477.5,270 585,270" stroke="gray" fill="none" marker-start="url(#Simple-6DC39A5661C08C55__RelCircle" marker-end="url(#Simple-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(945,246.75)">
+  <rect height="100"  width="325"  id="E7CDD1F0643F5BD8"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="100" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="E7CDD1F0643F5BD8.htm#Relationship1">&#60;Qualification&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(950,266.75)">
+  <rect height="20"  width="320"  id="63F8870255AE1BA2"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-83BB8C1A5B3765B5-core-6DC39A5661C08C55-4-63F8870255AE1BA2').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-83BB8C1A5B3765B5-core-6DC39A5661C08C55-4-63F8870255AE1BA2').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="83BB8C1A5B3765B5.htm">[Applicable Constraint]</a>  <div id="Desc-83BB8C1A5B3765B5-core-6DC39A5661C08C55-4-63F8870255AE1BA2" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">Set of Constraining Propertys that can be applied to an Architecture Block (Type) .  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-63F8870255AE1BA2').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-63F8870255AE1BA2').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="63f8870255ae1ba2.htm#Relationship1">Constraining Property</a><div id="Desc-63F8870255AE1BA2" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Constraining Property expresses a type of constraint that can be applied to Architecture Blocks.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="83BB8C1A5B3765B5-core-6DC39A5661C08C55-4-63F8870255AE1BA2" class="Simple-6DC39A5661C08C55_Rel-line" d="M735,270 C842.5,270 842.5,266.75 950,266.75" stroke="gray" fill="none" marker-start="url(#Simple-6DC39A5661C08C55__RelCircle" marker-end="url(#Simple-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(950,286.75)">
+  <rect height="20"  width="320"  id="16B051ED64357695"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-16B05351643577B3-core-6DC39A5661C08C55-4-16B051ED64357695').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-16B05351643577B3-core-6DC39A5661C08C55-4-16B051ED64357695').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="16B05351643577B3.htm">[Category of Asset]</a>  <div id="Desc-16B05351643577B3-core-6DC39A5661C08C55-4-16B051ED64357695" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-16B051ED64357695').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-16B051ED64357695').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="16B051ED64357695.htm#Relationship1">Asset Category</a><div id="Desc-16B051ED64357695" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">An Asset Category is a general purpose Architecture Category used to classify any type of Architecture Block (Type).  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="16B05351643577B3-core-6DC39A5661C08C55-4-16B051ED64357695" class="Simple-6DC39A5661C08C55_Rel-line" d="M735,270 C842.5,270 842.5,286.75 950,286.75" stroke="gray" fill="none" marker-start="url(#Simple-6DC39A5661C08C55__RelCircle" marker-end="url(#Simple-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(950,306.75)">
+  <rect height="20"  width="320"  id="7C40A5B455272BB4"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-DC9407806025FC1C-core-6DC39A5661C08C55-4-7C40A5B455272BB4').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-DC9407806025FC1C-core-6DC39A5661C08C55-4-7C40A5B455272BB4').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="dc9407806025fc1c.htm">[Qualifying Constraint Value]</a>  <div id="Desc-DC9407806025FC1C-core-6DC39A5661C08C55-4-7C40A5B455272BB4" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">Set of Constraint Values that constrain an Architecture Block (Type).  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-7C40A5B455272BB4').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-7C40A5B455272BB4').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="7c40a5b455272bb4.htm#Relationship1">Constraint Value</a><div id="Desc-7C40A5B455272BB4" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Constraint Value is a possible value of a Constraining Property such as a delivery time of 30 minutes, a weight of 20 kg, a high level of confidentiality, stormy conditions.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="DC9407806025FC1C-core-6DC39A5661C08C55-4-7C40A5B455272BB4" class="Simple-6DC39A5661C08C55_Rel-line" d="M735,270 C842.5,270 842.5,306.75 950,306.75" stroke="gray" fill="none" marker-start="url(#Simple-6DC39A5661C08C55__RelCircle" marker-end="url(#Simple-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(950,326.75)">
+  <rect height="20"  width="320"  id="744B8F3F5FBFD1C2"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-744B90065FBFD27C-core-6DC39A5661C08C55-3-744B8F3F5FBFD1C2').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-744B90065FBFD27C-core-6DC39A5661C08C55-3-744B8F3F5FBFD1C2').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="744b90065fbfd27c.htm">[Parent Category]</a>  <div id="Desc-744B90065FBFD27C-core-6DC39A5661C08C55-3-744B8F3F5FBFD1C2" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-744B8F3F5FBFD1C2').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-744B8F3F5FBFD1C2').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="744b8f3f5fbfd1c2.htm#Relationship1">Policy Category</a><div id="Desc-744B8F3F5FBFD1C2" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">Policy Category is a classification of policies. In regulations, it represents sections of the law.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="744B90065FBFD27C-core-6DC39A5661C08C55-3-744B8F3F5FBFD1C2" class="Simple-6DC39A5661C08C55_Rel-line" d="M735,270 C842.5,270 842.5,326.75 950,326.75" stroke="gray" fill="none" marker-start="url(#Simple-6DC39A5661C08C55__RelCircle" marker-end="url(#Simple-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(50,317.5)">
+  <rect height="40"  width="325"  id="3D908C805FFC642C"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="3D908C805FFC642C.htm#Relationship1">&#60;Annotation&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(50,337.5)">
+  <rect height="20"  width="320"  id="In-6712697E5EC92663-89E38D7D5C918091"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"gray"><a href="89E38D7D5C918091.htm#Relationship1">Sketch</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="6712697E5EC92663.htm">[Sketch Item]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="6712697E5EC92663-89E38D7D5C918091-89E38D7D5C918091" class="Simple-6DC39A5661C08C55_Rel-line" d="M370,337.5 C477.5,337.5 477.5,270 585,270" stroke="gray" fill="none" marker-start="url(#Simple-6DC39A5661C08C55__RelCircle" marker-end="url(#Simple-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(945,356.75)">
+  <rect height="80"  width="325"  id="3D908C805FFC642C"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="80" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="3D908C805FFC642C.htm#Relationship1">&#60;Annotation&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(950,376.75)">
+  <rect height="20"  width="320"  id="AFFEE0765F6086D4"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-05B0DF7E6006C158-core-6DC39A5661C08C55-5-AFFEE0765F6086D4').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-05B0DF7E6006C158-core-6DC39A5661C08C55-5-AFFEE0765F6086D4').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/05B0DF7E6006C158.htm">[Annotation Tag]</a>  <div id="Desc-05B0DF7E6006C158-core-6DC39A5661C08C55-5-AFFEE0765F6086D4" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-AFFEE0765F6086D4').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-AFFEE0765F6086D4').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="AFFEE0765F6086D4.htm#Relationship1">Tag</a><div id="Desc-AFFEE0765F6086D4" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Tag is a general classification description which permits characterization of Entitys.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="05B0DF7E6006C158-core-6DC39A5661C08C55-5-AFFEE0765F6086D4" class="Simple-6DC39A5661C08C55_Rel-line" d="M735,270 C842.5,270 842.5,376.75 950,376.75" stroke="gray" fill="none" marker-start="url(#Simple-6DC39A5661C08C55__RelCircle" marker-end="url(#Simple-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(950,396.75)">
+  <rect height="20"  width="320"  id="AFFEE0F15F60898A"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-05B0DF0C6006C0D8-core-6DC39A5661C08C55-5-AFFEE0F15F60898A').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-05B0DF0C6006C0D8-core-6DC39A5661C08C55-5-AFFEE0F15F60898A').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/05B0DF0C6006C0D8.htm">[Attached Document]</a>  <div id="Desc-05B0DF0C6006C0D8-core-6DC39A5661C08C55-5-AFFEE0F15F60898A" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-AFFEE0F15F60898A').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-AFFEE0F15F60898A').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="AFFEE0F15F60898A.htm#Relationship1">Business Document</a><div id="Desc-AFFEE0F15F60898A" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Business Document is a document whose lifecycle can be synched to the MEGA repository content: it may be attached to mega objects and a document version bound to a mega object timestamp in the Time Machine. This document can be of any given file format.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="05B0DF0C6006C0D8-core-6DC39A5661C08C55-5-AFFEE0F15F60898A" class="Simple-6DC39A5661C08C55_Rel-line" d="M735,270 C842.5,270 842.5,396.75 950,396.75" stroke="gray" fill="none" marker-start="url(#Simple-6DC39A5661C08C55__RelCircle" marker-end="url(#Simple-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(950,416.75)">
+  <rect height="20"  width="320"  id="89E38D7D5C918091"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-89E38E275C918176-core-6DC39A5661C08C55-5-89E38D7D5C918091').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-89E38E275C918176-core-6DC39A5661C08C55-5-89E38D7D5C918091').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="89E38E275C918176.htm">[Sketch Description]</a>  <div id="Desc-89E38E275C918176-core-6DC39A5661C08C55-5-89E38D7D5C918091" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-89E38D7D5C918091').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-89E38D7D5C918091').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="89E38D7D5C918091.htm#Relationship1">Sketch</a><div id="Desc-89E38D7D5C918091" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Sketch is a rough draft of a model; unformal representation.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="89E38E275C918176-core-6DC39A5661C08C55-5-89E38D7D5C918091" class="Simple-6DC39A5661C08C55_Rel-line" d="M735,270 C842.5,270 842.5,416.75 950,416.75" stroke="gray" fill="none" marker-start="url(#Simple-6DC39A5661C08C55__RelCircle" marker-end="url(#Simple-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(50,367.5)">
+  <rect height="40"  width="325"  id="705983E063236AE9"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="705983E063236AE9.htm#Relationship1">&#60;Packaging&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(50,387.5)">
+  <rect height="20"  width="320"  id="In-D342D97F5B1214BB-D342D91A5B121454"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"gray"><a href="d342d91a5b121454.htm#Relationship1">Architecture Namespace</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="D342D97F5B1214BB.htm">[Owned Architecture Block]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="D342D97F5B1214BB-D342D91A5B121454-D342D91A5B121454" class="Simple-6DC39A5661C08C55_Rel-line" d="M370,387.5 C477.5,387.5 477.5,270 585,270" stroke="gray" fill="none" marker-start="url(#Simple-6DC39A5661C08C55__RelCircle" marker-end="url(#Simple-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(945,446.75)">
+  <rect height="40"  width="325"  id="705983E063236AE9"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="705983E063236AE9.htm#Relationship1">&#60;Packaging&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(950,466.75)">
+  <rect height="20"  width="320"  id="8D5E9560552E22B2"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-744B90E35FBFD4D5-core-6DC39A5661C08C55-4-8D5E9560552E22B2').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-744B90E35FBFD4D5-core-6DC39A5661C08C55-4-8D5E9560552E22B2').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="744b90e35fbfd4d5.htm">[Parent Dictionary]</a>  <div id="Desc-744B90E35FBFD4D5-core-6DC39A5661C08C55-4-8D5E9560552E22B2" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-8D5E9560552E22B2').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-8D5E9560552E22B2').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="8d5e9560552e22b2.htm#Relationship1">Policy Dictionary</a><div id="Desc-8D5E9560552E22B2" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Policy Dictionary is a set of Policy(ies), defined in laws published by governements or in policy frameworks defined by the enterprise.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="744B90E35FBFD4D5-core-6DC39A5661C08C55-4-8D5E9560552E22B2" class="Simple-6DC39A5661C08C55_Rel-line" d="M735,270 C842.5,270 842.5,466.75 950,466.75" stroke="gray" fill="none" marker-start="url(#Simple-6DC39A5661C08C55__RelCircle" marker-end="url(#Simple-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(50,417.5)">
+  <rect height="80"  width="325"  id="Other"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="80" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="">Other</a></div></foreignObject>
+</g>
+<g   transform="translate(50,437.5)">
+  <rect height="20"  width="320"  id="In-514E6334620F23AE-514E623C620F2198"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"gray"><a href="514e623c620f2198.htm#Relationship1">Aggregate Block (Individual)</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="https://method.demomega.com/MM-OVERVIEW/pages/514E6334620F23AE.htm">[Aggregate Block (Type)]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="514E6334620F23AE-514E623C620F2198-514E623C620F2198" class="Simple-6DC39A5661C08C55_Rel-line" d="M370,437.5 C477.5,437.5 477.5,270 585,270" stroke="gray" fill="none" marker-start="url(#Simple-6DC39A5661C08C55__RelCircle" marker-end="url(#Simple-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(50,457.5)">
+  <rect height="20"  width="320"  id="In-EBCFB6435AD772E9-EBCFAEAC5AD76ED7"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"gray"><a href="ebcfaeac5ad76ed7.htm#Relationship1">Architecture Block (Individual)</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="https://method.demomega.com/MM-OVERVIEW/pages/EBCFB6435AD772E9.htm">[Architecture Block (Type)]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="EBCFB6435AD772E9-EBCFAEAC5AD76ED7-EBCFAEAC5AD76ED7" class="Simple-6DC39A5661C08C55_Rel-line" d="M370,457.5 C477.5,457.5 477.5,270 585,270" stroke="gray" fill="none" marker-start="url(#Simple-6DC39A5661C08C55__RelCircle" marker-end="url(#Simple-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(50,477.5)">
+  <rect height="20"  width="320"  id="In-6DC39B0261C08D88-62466EA661B80D09"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#A52A00"><a href="62466ea661b80d09.htm#Relationship1">Resource Operating Asset</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="6dc39b0261c08d88.htm">[Resource Rule Enforcement]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="6DC39B0261C08D88-62466EA661B80D09-62466EA661B80D09" class="Simple-6DC39A5661C08C55_Rel-line" d="M370,477.5 C477.5,477.5 477.5,270 585,270" stroke="gray" fill="none" marker-start="url(#Simple-6DC39A5661C08C55__RelCircle" marker-end="url(#Simple-6DC39A5661C08C55__RelArrowTip"/>
+</svg>
+
+</div>
+<div class="Relationship" id="Relationship2" style="display:none">
+<h3>Graph & Hierarchy</h3>
+<svg id="6DC39A5661C08C55" height="537.5" width="1640" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" overflow="hidden">
+  <defs>
+    <marker id="Full-6DC39A5661C08C55__RelCircle" refX="3" refY="3" markerWidth="6" markerHeight="6">
+      <circle cx="3" cy="3" r="3" fill="#A52A00"></circle>
+    </marker>
+    <marker id="Full-6DC39A5661C08C55__RelArrowTip" refX="3" refY="3" markerWidth="8" markerHeight="6" orient="0">
+      <path d="M0,0 L6,2 L0,4" fill="#A52A00"></path>
+    </marker>
+  </defs>
+<g   transform="translate(560,210)">
+  <rect height="190"  width="200"  id="core-6DC39A5661C08C55-5"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="200" height="190" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:center"><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-CA353E6D5FC5E8AF').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-CA353E6D5FC5E8AF').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="CA353E6D5FC5E8AF.htm#Relationship1">Model Building Block</a>
+  <span id="Desc-CA353E6D5FC5E8AF" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">A Model Building Block is a Building Block used to describe and manage the enterprise. It comprises:  </span>
+</div><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-D342D88E5B121401').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-D342D88E5B121401').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="d342d88e5b121401.htm#Relationship1">Architecture Block</a>
+  <span id="Desc-D342D88E5B121401" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">An Architecture Block is any Model Building Block used to describe an enterprise architecture. This includes types (applications, org-units, ...) and individuals (physical persons, software installations, sites, ...).  </span>
+</div></div></foreignObject>
+</g>
+<g   transform="translate(565,244)">
+  <rect height="152"  width="190"  id="core-6DC39A5661C08C55-4"  rx="3"  ry="3"  x="0"  y="-10"  stroke="#A9A9A9"/>
+<foreignObject x="0" y="-10" width="190" height="152" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:center"><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-514E62CE620F22C1').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-514E62CE620F22C1').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="514E62CE620F22C1.htm#Relationship1">Aggregate Block (Type)</a>
+  <span id="Desc-514E62CE620F22C1" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">An Aggregate Block (Type) is a class of  Aggregate Blocks.  </span>
+</div><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-A4A5B3F855585CE1').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-A4A5B3F855585CE1').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="A4A5B3F855585CE1.htm#Relationship1">Architecture Block (Type)</a>
+  <span id="Desc-A4A5B3F855585CE1" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">An Architecture Block (Type) is a type of Architecture Block which is used in the description of the enterprise, such as Processes, Org-Units, Applications.  </span>
+</div><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-07CA0DD75DD84E92').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-07CA0DD75DD84E92').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="07ca0dd75dd84e92.htm#Relationship1">Policy Asset</a>
+  <span id="Desc-07CA0DD75DD84E92" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">A Policy Asset is any topic related to policy definitions.  </span>
+</div></div></foreignObject>
+</g>
+<g   transform="translate(570,293)">
+  <rect height="99"  width="180"  id="core-6DC39A5661C08C55-3"  rx="3"  ry="3"  x="0"  y="-10"  stroke="#A52A00"/>
+<foreignObject x="0" y="-10" width="180" height="99" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:center"><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-278678E95B2533D6').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-278678E95B2533D6').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="278678e95b2533d6.htm#Relationship1">Directive</a>
+  <span id="Desc-278678E95B2533D6" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">A Directive is an authoritative declaration that indicates how Agents and their Behaviors should be (or should not be) in the enterprise.  </span>
+</div></div></foreignObject>
+</g>
+<g   transform="translate(575,312)">
+  <rect height="76"  width="170"  id="core-6DC39A5661C08C55-2"  rx="3"  ry="3"  x="0"  y="-10"  stroke="#A52A00"/>
+<foreignObject x="0" y="-10" width="170" height="76" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:center"><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-FE2201105C4F0DF3').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-FE2201105C4F0DF3').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="fe2201105c4f0df3.htm#Relationship1">Business Directive</a>
+  <span id="Desc-FE2201105C4F0DF3" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">A Business Directive is Directive an intended to assert business structure or to control or influence the behavior of the enterprise.  </span>
+</div><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-FE2203CA5C4F0FED').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-FE2203CA5C4F0FED').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="fe2203ca5c4f0fed.htm#Relationship1">Behavioral Rule</a>
+  <span id="Desc-FE2203CA5C4F0FED" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">A Behavioral Rule is a Directive intended to guide the Behavior of Agents, in compliance with enterprise Policy(ies) or regulations.  </span>
+</div></div></foreignObject>
+</g>
+<g   transform="translate(585,350)">
+  <rect height="30"  width="150"  id="core-6DC39A5661C08C55-0"  rx="3"  ry="3"  x="0"  y="-10"  stroke="#A52A00"/>
+<foreignObject x="0" y="-10" width="150" height="30" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:12; text-align:center"><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-6DC39A5661C08C55').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-6DC39A5661C08C55').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="#Relationship1">Resource Rule</a>
+  <span id="Desc-6DC39A5661C08C55" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">A Resource Rule is an Business Operating Rule that is enforced by Resource Operating Assets of the Enterprise.  </span>
+</div></div></foreignObject>
+</g>
+<g   transform="translate(945,106.75)">
+  <rect height="40"  width="325"  id="8856901B620A6237"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="8856901B620A6237.htm#Relationship1">&#60;Data&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(950,126.75)">
+  <rect height="20"  width="320"  id="362FC8045B3C3E65"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-9152E9845ED773CF-core-6DC39A5661C08C55-2-362FC8045B3C3E65').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-9152E9845ED773CF-core-6DC39A5661C08C55-2-362FC8045B3C3E65').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="9152E9845ED773CF.htm">[Business Directive Subject]</a>  <div id="Desc-9152E9845ED773CF-core-6DC39A5661C08C55-2-362FC8045B3C3E65" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-362FC8045B3C3E65').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-362FC8045B3C3E65').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="362fc8045b3c3e65.htm#Relationship1">Conceptual Object</a><div id="Desc-362FC8045B3C3E65" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Conceptual Object is the representation of any tangible or intanglible resource, or its respective state, that is critical for comprehending an enterprise, including its data, resources, and activities.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="9152E9845ED773CF-core-6DC39A5661C08C55-2-362FC8045B3C3E65" class="Full-6DC39A5661C08C55_Rel-line" d="M745,312 C847.5,312 847.5,126.75 950,126.75" stroke="gray" fill="none" marker-start="url(#Full-6DC39A5661C08C55__RelCircle" marker-end="url(#Full-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(50,96)">
+  <rect height="40"  width="325"  id="F27F168563375D82"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="F27F168563375D82.htm#Relationship1">&#60;Quality & Risk Assurance&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(50,116)">
+  <rect height="20"  width="320"  id="In-71F59B656008373C-07CA19E95DD854E9"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#A52A00"><a href="07ca19e95dd854e9.htm#Relationship1">Assurance Case</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="71f59b656008373c.htm">[Constraining Policy]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="71F59B656008373C-07CA19E95DD854E9-07CA19E95DD854E9" class="Full-6DC39A5661C08C55_Rel-line" d="M370,116 C467.5,116 467.5,244 565,244" stroke="gray" fill="none" marker-start="url(#Full-6DC39A5661C08C55__RelCircle" marker-end="url(#Full-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(50,146)">
+  <rect height="40"  width="325"  id="4C7853C35FCB7CEF"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="4C7853C35FCB7CEF.htm#Relationship1">&#60;Transformations&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(50,166)">
+  <rect height="20"  width="320"  id="In-9152E0345ED75863-07CA18D25DD85477"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#F4DB6F"><a href="07ca18d25dd85477.htm#Relationship1">Assurance System</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="https://method.demomega.com/MM-OVERVIEW/pages/9152E0345ED75863.htm">[Policy Item in Scope]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="9152E0345ED75863-07CA18D25DD85477-07CA18D25DD85477" class="Full-6DC39A5661C08C55_Rel-line" d="M370,166 C467.5,166 467.5,244 565,244" stroke="gray" fill="none" marker-start="url(#Full-6DC39A5661C08C55__RelCircle" marker-end="url(#Full-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(50,196)">
+  <rect height="40"  width="325"  id="AD30DF2A5EBF803C"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="AD30DF2A5EBF803C.htm#Relationship1">&#60;Directives&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(50,216)">
+  <rect height="20"  width="320"  id="In-9815B8B85F687885-98159F6B5F682D1E"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#A52A00"><a href="98159f6b5f682d1e.htm#Relationship1">Data Quality Policy</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="9815B8B85F687885.htm">[Referenced Regulation Item]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="9815B8B85F687885-98159F6B5F682D1E-98159F6B5F682D1E" class="Full-6DC39A5661C08C55_Rel-line" d="M370,216 C467.5,216 467.5,244 565,244" stroke="gray" fill="none" marker-start="url(#Full-6DC39A5661C08C55__RelCircle" marker-end="url(#Full-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(945,156.75)">
+  <rect height="60"  width="325"  id="AD30DF2A5EBF803C"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="60" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="AD30DF2A5EBF803C.htm#Relationship1">&#60;Directives&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(950,176.75)">
+  <rect height="20"  width="320"  id="959320325EE7FE24"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-95931D045EE7F60F-core-6DC39A5661C08C55-2-959320325EE7FE24').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-95931D045EE7F60F-core-6DC39A5661C08C55-2-959320325EE7FE24').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="95931d045ee7f60f.htm">[Policy Derivation]</a>  <div id="Desc-95931D045EE7F60F-core-6DC39A5661C08C55-2-959320325EE7FE24" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-959320325EE7FE24').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-959320325EE7FE24').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="959320325ee7fe24.htm#Relationship1">Policy</a><div id="Desc-959320325EE7FE24" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Policy is a Directive that is not directly enforceable whose purpose is to govern, guide or constrain the structure and behavior of Agents in the enterprise.   </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="95931D045EE7F60F-core-6DC39A5661C08C55-2-959320325EE7FE24" class="Full-6DC39A5661C08C55_Rel-line" d="M745,312 C847.5,312 847.5,176.75 950,176.75" stroke="gray" fill="none" marker-start="url(#Full-6DC39A5661C08C55__RelCircle" marker-end="url(#Full-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(950,196.75)">
+  <rect height="20"  width="320"  id="FE2201105C4F0DF3"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-A397B1925FBF691A-core-6DC39A5661C08C55-2-FE2201105C4F0DF3').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-A397B1925FBF691A-core-6DC39A5661C08C55-2-FE2201105C4F0DF3').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="a397b1925fbf691a.htm">[Specialized Business Directive]</a>  <div id="Desc-A397B1925FBF691A-core-6DC39A5661C08C55-2-FE2201105C4F0DF3" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-FE2201105C4F0DF3').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-FE2201105C4F0DF3').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="fe2201105c4f0df3.htm#Relationship1">Business Directive</a><div id="Desc-FE2201105C4F0DF3" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Business Directive is Directive an intended to assert business structure or to control or influence the behavior of the enterprise.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="A397B1925FBF691A-core-6DC39A5661C08C55-2-FE2201105C4F0DF3" class="Full-6DC39A5661C08C55_Rel-line" d="M745,312 C847.5,312 847.5,196.75 950,196.75" stroke="gray" fill="none" marker-start="url(#Full-6DC39A5661C08C55__RelCircle" marker-end="url(#Full-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(50,246)">
+  <rect height="40"  width="325"  id="938E3ED362024F5B"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="938E3ED362024F5B.htm#Relationship1">&#60;Governance&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(50,266)">
+  <rect height="20"  width="320"  id="In-34BD447F61F105B8-732799D364364423"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#F4DB6F"><a href="732799D364364423.htm#Relationship1">Policy Decision</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="https://method.demomega.com/MM-OVERVIEW/pages/34BD447F61F105B8.htm">[Applicable Policy]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="34BD447F61F105B8-732799D364364423-732799D364364423" class="Full-6DC39A5661C08C55_Rel-line" d="M370,266 C467.5,266 467.5,244 565,244" stroke="gray" fill="none" marker-start="url(#Full-6DC39A5661C08C55__RelCircle" marker-end="url(#Full-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(945,226.75)">
+  <rect height="100"  width="325"  id="E7CDD1F0643F5BD8"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="100" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="E7CDD1F0643F5BD8.htm#Relationship1">&#60;Qualification&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(950,246.75)">
+  <rect height="20"  width="320"  id="63F8870255AE1BA2"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-83BB8C1A5B3765B5-core-6DC39A5661C08C55-4-63F8870255AE1BA2').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-83BB8C1A5B3765B5-core-6DC39A5661C08C55-4-63F8870255AE1BA2').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="83BB8C1A5B3765B5.htm">[Applicable Constraint]</a>  <div id="Desc-83BB8C1A5B3765B5-core-6DC39A5661C08C55-4-63F8870255AE1BA2" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">Set of Constraining Propertys that can be applied to an Architecture Block (Type) .  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-63F8870255AE1BA2').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-63F8870255AE1BA2').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="63f8870255ae1ba2.htm#Relationship1">Constraining Property</a><div id="Desc-63F8870255AE1BA2" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Constraining Property expresses a type of constraint that can be applied to Architecture Blocks.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="83BB8C1A5B3765B5-core-6DC39A5661C08C55-4-63F8870255AE1BA2" class="Full-6DC39A5661C08C55_Rel-line" d="M755,244 C852.5,244 852.5,246.75 950,246.75" stroke="gray" fill="none" marker-start="url(#Full-6DC39A5661C08C55__RelCircle" marker-end="url(#Full-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(950,266.75)">
+  <rect height="20"  width="320"  id="16B051ED64357695"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-16B05351643577B3-core-6DC39A5661C08C55-4-16B051ED64357695').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-16B05351643577B3-core-6DC39A5661C08C55-4-16B051ED64357695').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="16B05351643577B3.htm">[Category of Asset]</a>  <div id="Desc-16B05351643577B3-core-6DC39A5661C08C55-4-16B051ED64357695" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-16B051ED64357695').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-16B051ED64357695').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="16B051ED64357695.htm#Relationship1">Asset Category</a><div id="Desc-16B051ED64357695" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">An Asset Category is a general purpose Architecture Category used to classify any type of Architecture Block (Type).  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="16B05351643577B3-core-6DC39A5661C08C55-4-16B051ED64357695" class="Full-6DC39A5661C08C55_Rel-line" d="M755,244 C852.5,244 852.5,266.75 950,266.75" stroke="gray" fill="none" marker-start="url(#Full-6DC39A5661C08C55__RelCircle" marker-end="url(#Full-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(950,286.75)">
+  <rect height="20"  width="320"  id="7C40A5B455272BB4"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-DC9407806025FC1C-core-6DC39A5661C08C55-4-7C40A5B455272BB4').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-DC9407806025FC1C-core-6DC39A5661C08C55-4-7C40A5B455272BB4').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="dc9407806025fc1c.htm">[Qualifying Constraint Value]</a>  <div id="Desc-DC9407806025FC1C-core-6DC39A5661C08C55-4-7C40A5B455272BB4" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">Set of Constraint Values that constrain an Architecture Block (Type).  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-7C40A5B455272BB4').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-7C40A5B455272BB4').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="7c40a5b455272bb4.htm#Relationship1">Constraint Value</a><div id="Desc-7C40A5B455272BB4" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Constraint Value is a possible value of a Constraining Property such as a delivery time of 30 minutes, a weight of 20 kg, a high level of confidentiality, stormy conditions.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="DC9407806025FC1C-core-6DC39A5661C08C55-4-7C40A5B455272BB4" class="Full-6DC39A5661C08C55_Rel-line" d="M755,244 C852.5,244 852.5,286.75 950,286.75" stroke="gray" fill="none" marker-start="url(#Full-6DC39A5661C08C55__RelCircle" marker-end="url(#Full-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(950,306.75)">
+  <rect height="20"  width="320"  id="744B8F3F5FBFD1C2"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-744B90065FBFD27C-core-6DC39A5661C08C55-3-744B8F3F5FBFD1C2').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-744B90065FBFD27C-core-6DC39A5661C08C55-3-744B8F3F5FBFD1C2').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="744b90065fbfd27c.htm">[Parent Category]</a>  <div id="Desc-744B90065FBFD27C-core-6DC39A5661C08C55-3-744B8F3F5FBFD1C2" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-744B8F3F5FBFD1C2').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-744B8F3F5FBFD1C2').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="744b8f3f5fbfd1c2.htm#Relationship1">Policy Category</a><div id="Desc-744B8F3F5FBFD1C2" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">Policy Category is a classification of policies. In regulations, it represents sections of the law.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="744B90065FBFD27C-core-6DC39A5661C08C55-3-744B8F3F5FBFD1C2" class="Full-6DC39A5661C08C55_Rel-line" d="M750,293 C850,293 850,306.75 950,306.75" stroke="gray" fill="none" marker-start="url(#Full-6DC39A5661C08C55__RelCircle" marker-end="url(#Full-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(50,296)">
+  <rect height="40"  width="325"  id="3D908C805FFC642C"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="3D908C805FFC642C.htm#Relationship1">&#60;Annotation&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(50,316)">
+  <rect height="20"  width="320"  id="In-6712697E5EC92663-89E38D7D5C918091"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"gray"><a href="89E38D7D5C918091.htm#Relationship1">Sketch</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="6712697E5EC92663.htm">[Sketch Item]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="6712697E5EC92663-89E38D7D5C918091-89E38D7D5C918091" class="Full-6DC39A5661C08C55_Rel-line" d="M370,316 C465,316 465,210 560,210" stroke="gray" fill="none" marker-start="url(#Full-6DC39A5661C08C55__RelCircle" marker-end="url(#Full-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(945,336.75)">
+  <rect height="80"  width="325"  id="3D908C805FFC642C"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="80" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="3D908C805FFC642C.htm#Relationship1">&#60;Annotation&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(950,356.75)">
+  <rect height="20"  width="320"  id="89E38D7D5C918091"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-89E38E275C918176-core-6DC39A5661C08C55-5-89E38D7D5C918091').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-89E38E275C918176-core-6DC39A5661C08C55-5-89E38D7D5C918091').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="89E38E275C918176.htm">[Sketch Description]</a>  <div id="Desc-89E38E275C918176-core-6DC39A5661C08C55-5-89E38D7D5C918091" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-89E38D7D5C918091').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-89E38D7D5C918091').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="89E38D7D5C918091.htm#Relationship1">Sketch</a><div id="Desc-89E38D7D5C918091" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Sketch is a rough draft of a model; unformal representation.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="89E38E275C918176-core-6DC39A5661C08C55-5-89E38D7D5C918091" class="Full-6DC39A5661C08C55_Rel-line" d="M760,210 C855,210 855,356.75 950,356.75" stroke="gray" fill="none" marker-start="url(#Full-6DC39A5661C08C55__RelCircle" marker-end="url(#Full-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(950,376.75)">
+  <rect height="20"  width="320"  id="AFFEE0F15F60898A"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-05B0DF0C6006C0D8-core-6DC39A5661C08C55-5-AFFEE0F15F60898A').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-05B0DF0C6006C0D8-core-6DC39A5661C08C55-5-AFFEE0F15F60898A').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/05B0DF0C6006C0D8.htm">[Attached Document]</a>  <div id="Desc-05B0DF0C6006C0D8-core-6DC39A5661C08C55-5-AFFEE0F15F60898A" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-AFFEE0F15F60898A').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-AFFEE0F15F60898A').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="AFFEE0F15F60898A.htm#Relationship1">Business Document</a><div id="Desc-AFFEE0F15F60898A" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Business Document is a document whose lifecycle can be synched to the MEGA repository content: it may be attached to mega objects and a document version bound to a mega object timestamp in the Time Machine. This document can be of any given file format.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="05B0DF0C6006C0D8-core-6DC39A5661C08C55-5-AFFEE0F15F60898A" class="Full-6DC39A5661C08C55_Rel-line" d="M760,210 C855,210 855,376.75 950,376.75" stroke="gray" fill="none" marker-start="url(#Full-6DC39A5661C08C55__RelCircle" marker-end="url(#Full-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(950,396.75)">
+  <rect height="20"  width="320"  id="AFFEE0765F6086D4"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-05B0DF7E6006C158-core-6DC39A5661C08C55-5-AFFEE0765F6086D4').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-05B0DF7E6006C158-core-6DC39A5661C08C55-5-AFFEE0765F6086D4').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/05B0DF7E6006C158.htm">[Annotation Tag]</a>  <div id="Desc-05B0DF7E6006C158-core-6DC39A5661C08C55-5-AFFEE0765F6086D4" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-AFFEE0765F6086D4').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-AFFEE0765F6086D4').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="AFFEE0765F6086D4.htm#Relationship1">Tag</a><div id="Desc-AFFEE0765F6086D4" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Tag is a general classification description which permits characterization of Entitys.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="05B0DF7E6006C158-core-6DC39A5661C08C55-5-AFFEE0765F6086D4" class="Full-6DC39A5661C08C55_Rel-line" d="M760,210 C855,210 855,396.75 950,396.75" stroke="gray" fill="none" marker-start="url(#Full-6DC39A5661C08C55__RelCircle" marker-end="url(#Full-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(50,346)">
+  <rect height="60"  width="325"  id="705983E063236AE9"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="60" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="705983E063236AE9.htm#Relationship1">&#60;Packaging&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(50,366)">
+  <rect height="20"  width="320"  id="In-D342D97F5B1214BB-D342D91A5B121454"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"gray"><a href="d342d91a5b121454.htm#Relationship1">Architecture Namespace</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="D342D97F5B1214BB.htm">[Owned Architecture Block]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="D342D97F5B1214BB-D342D91A5B121454-D342D91A5B121454" class="Full-6DC39A5661C08C55_Rel-line" d="M370,366 C465,366 465,210 560,210" stroke="gray" fill="none" marker-start="url(#Full-6DC39A5661C08C55__RelCircle" marker-end="url(#Full-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(50,386)">
+  <rect height="20"  width="320"  id="In-CA353EB75FC5E9B2-209C29BB5ED23342"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"gray"><a href="209c29bb5ed23342.htm#Relationship1">Model Namespace</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="ca353eb75fc5e9b2.htm">[Owned Model Building Block]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="CA353EB75FC5E9B2-209C29BB5ED23342-209C29BB5ED23342" class="Full-6DC39A5661C08C55_Rel-line" d="M370,386 C465,386 465,210 560,210" stroke="gray" fill="none" marker-start="url(#Full-6DC39A5661C08C55__RelCircle" marker-end="url(#Full-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(945,426.75)">
+  <rect height="40"  width="325"  id="705983E063236AE9"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="705983E063236AE9.htm#Relationship1">&#60;Packaging&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(950,446.75)">
+  <rect height="20"  width="320"  id="8D5E9560552E22B2"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-744B90E35FBFD4D5-core-6DC39A5661C08C55-4-8D5E9560552E22B2').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-744B90E35FBFD4D5-core-6DC39A5661C08C55-4-8D5E9560552E22B2').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="744b90e35fbfd4d5.htm">[Parent Dictionary]</a>  <div id="Desc-744B90E35FBFD4D5-core-6DC39A5661C08C55-4-8D5E9560552E22B2" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-8D5E9560552E22B2').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-8D5E9560552E22B2').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="8d5e9560552e22b2.htm#Relationship1">Policy Dictionary</a><div id="Desc-8D5E9560552E22B2" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Policy Dictionary is a set of Policy(ies), defined in laws published by governements or in policy frameworks defined by the enterprise.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="744B90E35FBFD4D5-core-6DC39A5661C08C55-4-8D5E9560552E22B2" class="Full-6DC39A5661C08C55_Rel-line" d="M755,244 C852.5,244 852.5,446.75 950,446.75" stroke="gray" fill="none" marker-start="url(#Full-6DC39A5661C08C55__RelCircle" marker-end="url(#Full-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(50,416)">
+  <rect height="80"  width="325"  id="Other"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="80" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="">Other</a></div></foreignObject>
+</g>
+<g   transform="translate(50,436)">
+  <rect height="20"  width="320"  id="In-514E6334620F23AE-514E623C620F2198"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"gray"><a href="514e623c620f2198.htm#Relationship1">Aggregate Block (Individual)</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="https://method.demomega.com/MM-OVERVIEW/pages/514E6334620F23AE.htm">[Aggregate Block (Type)]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="514E6334620F23AE-514E623C620F2198-514E623C620F2198" class="Full-6DC39A5661C08C55_Rel-line" d="M370,436 C467.5,436 467.5,244 565,244" stroke="gray" fill="none" marker-start="url(#Full-6DC39A5661C08C55__RelCircle" marker-end="url(#Full-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(50,456)">
+  <rect height="20"  width="320"  id="In-EBCFB6435AD772E9-EBCFAEAC5AD76ED7"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"gray"><a href="ebcfaeac5ad76ed7.htm#Relationship1">Architecture Block (Individual)</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="https://method.demomega.com/MM-OVERVIEW/pages/EBCFB6435AD772E9.htm">[Architecture Block (Type)]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="EBCFB6435AD772E9-EBCFAEAC5AD76ED7-EBCFAEAC5AD76ED7" class="Full-6DC39A5661C08C55_Rel-line" d="M370,456 C467.5,456 467.5,244 565,244" stroke="gray" fill="none" marker-start="url(#Full-6DC39A5661C08C55__RelCircle" marker-end="url(#Full-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(50,476)">
+  <rect height="20"  width="320"  id="In-6DC39B0261C08D88-62466EA661B80D09"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#A52A00"><a href="62466ea661b80d09.htm#Relationship1">Resource Operating Asset</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="6dc39b0261c08d88.htm">[Resource Rule Enforcement]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="6DC39B0261C08D88-62466EA661B80D09-62466EA661B80D09" class="Full-6DC39A5661C08C55_Rel-line" d="M370,476 C477.5,476 477.5,350 585,350" stroke="gray" fill="none" marker-start="url(#Full-6DC39A5661C08C55__RelCircle" marker-end="url(#Full-6DC39A5661C08C55__RelArrowTip"/>
+</svg>
+
+</div>
+<div class="Relationship" id="Relationship3" style="display:none">
+<h3>Graph by Domain</h3>
+<svg id="6DC39A5661C08C55" height="559" width="1640" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" overflow="hidden">
+  <defs>
+    <marker id="Domain-6DC39A5661C08C55__RelCircle" refX="3" refY="3" markerWidth="6" markerHeight="6">
+      <circle cx="3" cy="3" r="3" fill="#A52A00"></circle>
+    </marker>
+    <marker id="Domain-6DC39A5661C08C55__RelArrowTip" refX="3" refY="3" markerWidth="8" markerHeight="6" orient="0">
+      <path d="M0,0 L6,2 L0,4" fill="#A52A00"></path>
+    </marker>
+  </defs>
+<g   transform="translate(585,270)">
+  <rect height="30"  width="150"  id="core-6DC39A5661C08C55-0"  rx="3"  ry="3"  x="0"  y="-10"  stroke="#A52A00"/>
+<foreignObject x="0" y="-10" width="150" height="30" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:12; text-align:center"><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-6DC39A5661C08C55').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-6DC39A5661C08C55').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="#Relationship1">Resource Rule</a>
+  <span id="Desc-6DC39A5661C08C55" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">A Resource Rule is an Business Operating Rule that is enforced by Resource Operating Assets of the Enterprise.  </span>
+</div></div></foreignObject>
+</g>
+<g   transform="translate(50,106.75)">
+  <rect height="40"  width="325"  id="36166B8C6157B6B4"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="36166b8c6157b6b4.htm#Relationship1">{Aggregate Syntax}</a></div></foreignObject>
+</g>
+<g   transform="translate(50,126.75)">
+  <rect height="20"  width="320"  id="In-514E6334620F23AE-514E623C620F2198"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"gray"><a href="514e623c620f2198.htm#Relationship1">Aggregate Block (Individual)</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="https://method.demomega.com/MM-OVERVIEW/pages/514E6334620F23AE.htm">[Aggregate Block (Type)]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="514E6334620F23AE-514E623C620F2198-514E623C620F2198" class="Domain-6DC39A5661C08C55_Rel-line" d="M370,126.75 C477.5,126.75 477.5,270 585,270" stroke="gray" fill="none" marker-start="url(#Domain-6DC39A5661C08C55__RelCircle" marker-end="url(#Domain-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(50,156.75)">
+  <rect height="80"  width="325"  id="C30BD1505A5D97F9"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="80" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="c30bd1505a5d97f9.htm#Relationship1">{Architecture Model Management}</a></div></foreignObject>
+</g>
+<g   transform="translate(50,176.75)">
+  <rect height="20"  width="320"  id="In-6712697E5EC92663-89E38D7D5C918091"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"gray"><a href="89E38D7D5C918091.htm#Relationship1">Sketch</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="6712697E5EC92663.htm">[Sketch Item]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="6712697E5EC92663-89E38D7D5C918091-89E38D7D5C918091" class="Domain-6DC39A5661C08C55_Rel-line" d="M370,176.75 C477.5,176.75 477.5,270 585,270" stroke="gray" fill="none" marker-start="url(#Domain-6DC39A5661C08C55__RelCircle" marker-end="url(#Domain-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(50,196.75)">
+  <rect height="20"  width="320"  id="In-D342D97F5B1214BB-D342D91A5B121454"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"gray"><a href="d342d91a5b121454.htm#Relationship1">Architecture Namespace</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="D342D97F5B1214BB.htm">[Owned Architecture Block]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="D342D97F5B1214BB-D342D91A5B121454-D342D91A5B121454" class="Domain-6DC39A5661C08C55_Rel-line" d="M370,196.75 C477.5,196.75 477.5,270 585,270" stroke="gray" fill="none" marker-start="url(#Domain-6DC39A5661C08C55__RelCircle" marker-end="url(#Domain-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(50,216.75)">
+  <rect height="20"  width="320"  id="In-EBCFB6435AD772E9-EBCFAEAC5AD76ED7"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"gray"><a href="ebcfaeac5ad76ed7.htm#Relationship1">Architecture Block (Individual)</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="https://method.demomega.com/MM-OVERVIEW/pages/EBCFB6435AD772E9.htm">[Architecture Block (Type)]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="EBCFB6435AD772E9-EBCFAEAC5AD76ED7-EBCFAEAC5AD76ED7" class="Domain-6DC39A5661C08C55_Rel-line" d="M370,216.75 C477.5,216.75 477.5,270 585,270" stroke="gray" fill="none" marker-start="url(#Domain-6DC39A5661C08C55__RelCircle" marker-end="url(#Domain-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(945,106.75)">
+  <rect height="100"  width="325"  id="C30BD1505A5D97F9"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="100" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="c30bd1505a5d97f9.htm#Relationship1">{Architecture Model Management}</a></div></foreignObject>
+</g>
+<g   transform="translate(950,126.75)">
+  <rect height="20"  width="320"  id="89E38D7D5C918091"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-89E38E275C918176-core-6DC39A5661C08C55-5-89E38D7D5C918091').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-89E38E275C918176-core-6DC39A5661C08C55-5-89E38D7D5C918091').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="89E38E275C918176.htm">[Sketch Description]</a>  <div id="Desc-89E38E275C918176-core-6DC39A5661C08C55-5-89E38D7D5C918091" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-89E38D7D5C918091').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-89E38D7D5C918091').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="89E38D7D5C918091.htm#Relationship1">Sketch</a><div id="Desc-89E38D7D5C918091" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Sketch is a rough draft of a model; unformal representation.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="89E38E275C918176-core-6DC39A5661C08C55-5-89E38D7D5C918091" class="Domain-6DC39A5661C08C55_Rel-line" d="M735,270 C842.5,270 842.5,126.75 950,126.75" stroke="gray" fill="none" marker-start="url(#Domain-6DC39A5661C08C55__RelCircle" marker-end="url(#Domain-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(950,146.75)">
+  <rect height="20"  width="320"  id="16B051ED64357695"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-16B05351643577B3-core-6DC39A5661C08C55-4-16B051ED64357695').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-16B05351643577B3-core-6DC39A5661C08C55-4-16B051ED64357695').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="16B05351643577B3.htm">[Category of Asset]</a>  <div id="Desc-16B05351643577B3-core-6DC39A5661C08C55-4-16B051ED64357695" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-16B051ED64357695').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-16B051ED64357695').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="16B051ED64357695.htm#Relationship1">Asset Category</a><div id="Desc-16B051ED64357695" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">An Asset Category is a general purpose Architecture Category used to classify any type of Architecture Block (Type).  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="16B05351643577B3-core-6DC39A5661C08C55-4-16B051ED64357695" class="Domain-6DC39A5661C08C55_Rel-line" d="M735,270 C842.5,270 842.5,146.75 950,146.75" stroke="gray" fill="none" marker-start="url(#Domain-6DC39A5661C08C55__RelCircle" marker-end="url(#Domain-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(950,166.75)">
+  <rect height="20"  width="320"  id="7C40A5B455272BB4"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-DC9407806025FC1C-core-6DC39A5661C08C55-4-7C40A5B455272BB4').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-DC9407806025FC1C-core-6DC39A5661C08C55-4-7C40A5B455272BB4').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="dc9407806025fc1c.htm">[Qualifying Constraint Value]</a>  <div id="Desc-DC9407806025FC1C-core-6DC39A5661C08C55-4-7C40A5B455272BB4" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">Set of Constraint Values that constrain an Architecture Block (Type).  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-7C40A5B455272BB4').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-7C40A5B455272BB4').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="7c40a5b455272bb4.htm#Relationship1">Constraint Value</a><div id="Desc-7C40A5B455272BB4" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Constraint Value is a possible value of a Constraining Property such as a delivery time of 30 minutes, a weight of 20 kg, a high level of confidentiality, stormy conditions.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="DC9407806025FC1C-core-6DC39A5661C08C55-4-7C40A5B455272BB4" class="Domain-6DC39A5661C08C55_Rel-line" d="M735,270 C842.5,270 842.5,166.75 950,166.75" stroke="gray" fill="none" marker-start="url(#Domain-6DC39A5661C08C55__RelCircle" marker-end="url(#Domain-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(950,186.75)">
+  <rect height="20"  width="320"  id="63F8870255AE1BA2"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-83BB8C1A5B3765B5-core-6DC39A5661C08C55-4-63F8870255AE1BA2').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-83BB8C1A5B3765B5-core-6DC39A5661C08C55-4-63F8870255AE1BA2').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="83BB8C1A5B3765B5.htm">[Applicable Constraint]</a>  <div id="Desc-83BB8C1A5B3765B5-core-6DC39A5661C08C55-4-63F8870255AE1BA2" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">Set of Constraining Propertys that can be applied to an Architecture Block (Type) .  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-63F8870255AE1BA2').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-63F8870255AE1BA2').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="63f8870255ae1ba2.htm#Relationship1">Constraining Property</a><div id="Desc-63F8870255AE1BA2" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Constraining Property expresses a type of constraint that can be applied to Architecture Blocks.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="83BB8C1A5B3765B5-core-6DC39A5661C08C55-4-63F8870255AE1BA2" class="Domain-6DC39A5661C08C55_Rel-line" d="M735,270 C842.5,270 842.5,186.75 950,186.75" stroke="gray" fill="none" marker-start="url(#Domain-6DC39A5661C08C55__RelCircle" marker-end="url(#Domain-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(50,246.75)">
+  <rect height="60"  width="325"  id="FE663DD261817752"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="60" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="fe663dd261817752.htm#Relationship1">{Assurance System Pattern}</a></div></foreignObject>
+</g>
+<g   transform="translate(50,266.75)">
+  <rect height="20"  width="320"  id="In-9152E0345ED75863-07CA18D25DD85477"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#F4DB6F"><a href="07ca18d25dd85477.htm#Relationship1">Assurance System</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="https://method.demomega.com/MM-OVERVIEW/pages/9152E0345ED75863.htm">[Policy Item in Scope]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="9152E0345ED75863-07CA18D25DD85477-07CA18D25DD85477" class="Domain-6DC39A5661C08C55_Rel-line" d="M370,266.75 C477.5,266.75 477.5,270 585,270" stroke="gray" fill="none" marker-start="url(#Domain-6DC39A5661C08C55__RelCircle" marker-end="url(#Domain-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(50,286.75)">
+  <rect height="20"  width="320"  id="In-71F59B656008373C-07CA19E95DD854E9"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#A52A00"><a href="07ca19e95dd854e9.htm#Relationship1">Assurance Case</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="71f59b656008373c.htm">[Constraining Policy]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="71F59B656008373C-07CA19E95DD854E9-07CA19E95DD854E9" class="Domain-6DC39A5661C08C55_Rel-line" d="M370,286.75 C477.5,286.75 477.5,270 585,270" stroke="gray" fill="none" marker-start="url(#Domain-6DC39A5661C08C55__RelCircle" marker-end="url(#Domain-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(945,216.75)">
+  <rect height="40"  width="325"  id="E2EF086D62147802"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="e2ef086d62147802.htm#Relationship1">{EA Pattern - Business Operating Pattern}</a></div></foreignObject>
+</g>
+<g   transform="translate(950,236.75)">
+  <rect height="20"  width="320"  id="FE2201105C4F0DF3"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-A397B1925FBF691A-core-6DC39A5661C08C55-2-FE2201105C4F0DF3').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-A397B1925FBF691A-core-6DC39A5661C08C55-2-FE2201105C4F0DF3').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="a397b1925fbf691a.htm">[Specialized Business Directive]</a>  <div id="Desc-A397B1925FBF691A-core-6DC39A5661C08C55-2-FE2201105C4F0DF3" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-FE2201105C4F0DF3').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-FE2201105C4F0DF3').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="fe2201105c4f0df3.htm#Relationship1">Business Directive</a><div id="Desc-FE2201105C4F0DF3" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Business Directive is Directive an intended to assert business structure or to control or influence the behavior of the enterprise.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="A397B1925FBF691A-core-6DC39A5661C08C55-2-FE2201105C4F0DF3" class="Domain-6DC39A5661C08C55_Rel-line" d="M735,270 C842.5,270 842.5,236.75 950,236.75" stroke="gray" fill="none" marker-start="url(#Domain-6DC39A5661C08C55__RelCircle" marker-end="url(#Domain-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(50,316.75)">
+  <rect height="40"  width="325"  id="D670B6155FFE8BB1"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="d670b6155ffe8bb1.htm#Relationship1">{EA Pattern - Business Resource Operating Pattern}</a></div></foreignObject>
+</g>
+<g   transform="translate(50,336.75)">
+  <rect height="20"  width="320"  id="In-6DC39B0261C08D88-62466EA661B80D09"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#A52A00"><a href="62466ea661b80d09.htm#Relationship1">Resource Operating Asset</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="6dc39b0261c08d88.htm">[Resource Rule Enforcement]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="6DC39B0261C08D88-62466EA661B80D09-62466EA661B80D09" class="Domain-6DC39A5661C08C55_Rel-line" d="M370,336.75 C477.5,336.75 477.5,270 585,270" stroke="gray" fill="none" marker-start="url(#Domain-6DC39A5661C08C55__RelCircle" marker-end="url(#Domain-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(945,266.75)">
+  <rect height="40"  width="325"  id="02AF08F05A1821D3"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="02af08f05a1821d3.htm#Relationship1">{Enterprise Glossary}</a></div></foreignObject>
+</g>
+<g   transform="translate(950,286.75)">
+  <rect height="20"  width="320"  id="362FC8045B3C3E65"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-9152E9845ED773CF-core-6DC39A5661C08C55-2-362FC8045B3C3E65').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-9152E9845ED773CF-core-6DC39A5661C08C55-2-362FC8045B3C3E65').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="9152E9845ED773CF.htm">[Business Directive Subject]</a>  <div id="Desc-9152E9845ED773CF-core-6DC39A5661C08C55-2-362FC8045B3C3E65" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-362FC8045B3C3E65').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-362FC8045B3C3E65').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="362fc8045b3c3e65.htm#Relationship1">Conceptual Object</a><div id="Desc-362FC8045B3C3E65" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Conceptual Object is the representation of any tangible or intanglible resource, or its respective state, that is critical for comprehending an enterprise, including its data, resources, and activities.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="9152E9845ED773CF-core-6DC39A5661C08C55-2-362FC8045B3C3E65" class="Domain-6DC39A5661C08C55_Rel-line" d="M735,270 C842.5,270 842.5,286.75 950,286.75" stroke="gray" fill="none" marker-start="url(#Domain-6DC39A5661C08C55__RelCircle" marker-end="url(#Domain-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(50,366.75)">
+  <rect height="40"  width="325"  id="AF4DB12D62993434"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="af4db12d62993434.htm#Relationship1">{Model Block Management}</a></div></foreignObject>
+</g>
+<g   transform="translate(50,386.75)">
+  <rect height="20"  width="320"  id="In-CA353EB75FC5E9B2-209C29BB5ED23342"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"gray"><a href="209c29bb5ed23342.htm#Relationship1">Model Namespace</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="ca353eb75fc5e9b2.htm">[Owned Model Building Block]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="CA353EB75FC5E9B2-209C29BB5ED23342-209C29BB5ED23342" class="Domain-6DC39A5661C08C55_Rel-line" d="M370,386.75 C477.5,386.75 477.5,270 585,270" stroke="gray" fill="none" marker-start="url(#Domain-6DC39A5661C08C55__RelCircle" marker-end="url(#Domain-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(945,316.75)">
+  <rect height="60"  width="325"  id="AF4DB12D62993434"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="60" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="af4db12d62993434.htm#Relationship1">{Model Block Management}</a></div></foreignObject>
+</g>
+<g   transform="translate(950,336.75)">
+  <rect height="20"  width="320"  id="AFFEE0765F6086D4"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-05B0DF7E6006C158-core-6DC39A5661C08C55-5-AFFEE0765F6086D4').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-05B0DF7E6006C158-core-6DC39A5661C08C55-5-AFFEE0765F6086D4').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/05B0DF7E6006C158.htm">[Annotation Tag]</a>  <div id="Desc-05B0DF7E6006C158-core-6DC39A5661C08C55-5-AFFEE0765F6086D4" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-AFFEE0765F6086D4').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-AFFEE0765F6086D4').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="AFFEE0765F6086D4.htm#Relationship1">Tag</a><div id="Desc-AFFEE0765F6086D4" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Tag is a general classification description which permits characterization of Entitys.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="05B0DF7E6006C158-core-6DC39A5661C08C55-5-AFFEE0765F6086D4" class="Domain-6DC39A5661C08C55_Rel-line" d="M735,270 C842.5,270 842.5,336.75 950,336.75" stroke="gray" fill="none" marker-start="url(#Domain-6DC39A5661C08C55__RelCircle" marker-end="url(#Domain-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(950,356.75)">
+  <rect height="20"  width="320"  id="AFFEE0F15F60898A"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-05B0DF0C6006C0D8-core-6DC39A5661C08C55-5-AFFEE0F15F60898A').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-05B0DF0C6006C0D8-core-6DC39A5661C08C55-5-AFFEE0F15F60898A').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/05B0DF0C6006C0D8.htm">[Attached Document]</a>  <div id="Desc-05B0DF0C6006C0D8-core-6DC39A5661C08C55-5-AFFEE0F15F60898A" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-AFFEE0F15F60898A').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-AFFEE0F15F60898A').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="AFFEE0F15F60898A.htm#Relationship1">Business Document</a><div id="Desc-AFFEE0F15F60898A" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Business Document is a document whose lifecycle can be synched to the MEGA repository content: it may be attached to mega objects and a document version bound to a mega object timestamp in the Time Machine. This document can be of any given file format.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="05B0DF0C6006C0D8-core-6DC39A5661C08C55-5-AFFEE0F15F60898A" class="Domain-6DC39A5661C08C55_Rel-line" d="M735,270 C842.5,270 842.5,356.75 950,356.75" stroke="gray" fill="none" marker-start="url(#Domain-6DC39A5661C08C55__RelCircle" marker-end="url(#Domain-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(945,386.75)">
+  <rect height="100"  width="325"  id="02F70FDC600F4179"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="100" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="02F70FDC600F4179.htm#Relationship1">{Policy Pattern}</a></div></foreignObject>
+</g>
+<g   transform="translate(950,406.75)">
+  <rect height="20"  width="320"  id="8D5E9560552E22B2"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-744B90E35FBFD4D5-core-6DC39A5661C08C55-4-8D5E9560552E22B2').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-744B90E35FBFD4D5-core-6DC39A5661C08C55-4-8D5E9560552E22B2').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="744b90e35fbfd4d5.htm">[Parent Dictionary]</a>  <div id="Desc-744B90E35FBFD4D5-core-6DC39A5661C08C55-4-8D5E9560552E22B2" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-8D5E9560552E22B2').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-8D5E9560552E22B2').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="8d5e9560552e22b2.htm#Relationship1">Policy Dictionary</a><div id="Desc-8D5E9560552E22B2" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Policy Dictionary is a set of Policy(ies), defined in laws published by governements or in policy frameworks defined by the enterprise.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="744B90E35FBFD4D5-core-6DC39A5661C08C55-4-8D5E9560552E22B2" class="Domain-6DC39A5661C08C55_Rel-line" d="M735,270 C842.5,270 842.5,406.75 950,406.75" stroke="gray" fill="none" marker-start="url(#Domain-6DC39A5661C08C55__RelCircle" marker-end="url(#Domain-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(950,426.75)">
+  <rect height="20"  width="320"  id="744B8F3F5FBFD1C2"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-744B90065FBFD27C-core-6DC39A5661C08C55-3-744B8F3F5FBFD1C2').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-744B90065FBFD27C-core-6DC39A5661C08C55-3-744B8F3F5FBFD1C2').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="744b90065fbfd27c.htm">[Parent Category]</a>  <div id="Desc-744B90065FBFD27C-core-6DC39A5661C08C55-3-744B8F3F5FBFD1C2" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-744B8F3F5FBFD1C2').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-744B8F3F5FBFD1C2').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="744b8f3f5fbfd1c2.htm#Relationship1">Policy Category</a><div id="Desc-744B8F3F5FBFD1C2" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">Policy Category is a classification of policies. In regulations, it represents sections of the law.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="744B90065FBFD27C-core-6DC39A5661C08C55-3-744B8F3F5FBFD1C2" class="Domain-6DC39A5661C08C55_Rel-line" d="M735,270 C842.5,270 842.5,426.75 950,426.75" stroke="gray" fill="none" marker-start="url(#Domain-6DC39A5661C08C55__RelCircle" marker-end="url(#Domain-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(950,446.75)">
+  <rect height="20"  width="320"  id="278678E95B2533D6"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-5C2D64EA622B1ECC-core-6DC39A5661C08C55-3-278678E95B2533D6').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-5C2D64EA622B1ECC-core-6DC39A5661C08C55-3-278678E95B2533D6').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="5c2d64ea622b1ecc.htm">[Specialized Directive]</a>  <div id="Desc-5C2D64EA622B1ECC-core-6DC39A5661C08C55-3-278678E95B2533D6" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-278678E95B2533D6').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-278678E95B2533D6').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="278678e95b2533d6.htm#Relationship1">Directive</a><div id="Desc-278678E95B2533D6" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Directive is an authoritative declaration that indicates how Agents and their Behaviors should be (or should not be) in the enterprise.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="5C2D64EA622B1ECC-core-6DC39A5661C08C55-3-278678E95B2533D6" class="Domain-6DC39A5661C08C55_Rel-line" d="M735,270 C842.5,270 842.5,446.75 950,446.75" stroke="gray" fill="none" marker-start="url(#Domain-6DC39A5661C08C55__RelCircle" marker-end="url(#Domain-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(950,466.75)">
+  <rect height="20"  width="320"  id="959320325EE7FE24"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-95931D045EE7F60F-core-6DC39A5661C08C55-2-959320325EE7FE24').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-95931D045EE7F60F-core-6DC39A5661C08C55-2-959320325EE7FE24').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="95931d045ee7f60f.htm">[Policy Derivation]</a>  <div id="Desc-95931D045EE7F60F-core-6DC39A5661C08C55-2-959320325EE7FE24" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-959320325EE7FE24').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-959320325EE7FE24').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="959320325ee7fe24.htm#Relationship1">Policy</a><div id="Desc-959320325EE7FE24" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Policy is a Directive that is not directly enforceable whose purpose is to govern, guide or constrain the structure and behavior of Agents in the enterprise.   </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="95931D045EE7F60F-core-6DC39A5661C08C55-2-959320325EE7FE24" class="Domain-6DC39A5661C08C55_Rel-line" d="M735,270 C842.5,270 842.5,466.75 950,466.75" stroke="gray" fill="none" marker-start="url(#Domain-6DC39A5661C08C55__RelCircle" marker-end="url(#Domain-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(50,416.75)">
+  <rect height="40"  width="325"  id="E073FB4561D211A3"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="E073FB4561D211A3.htm#Relationship1">{Resolution Pattern}</a></div></foreignObject>
+</g>
+<g   transform="translate(50,436.75)">
+  <rect height="20"  width="320"  id="In-34BD447F61F105B8-732799D364364423"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#F4DB6F"><a href="732799D364364423.htm#Relationship1">Policy Decision</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="https://method.demomega.com/MM-OVERVIEW/pages/34BD447F61F105B8.htm">[Applicable Policy]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="34BD447F61F105B8-732799D364364423-732799D364364423" class="Domain-6DC39A5661C08C55_Rel-line" d="M370,436.75 C477.5,436.75 477.5,270 585,270" stroke="gray" fill="none" marker-start="url(#Domain-6DC39A5661C08C55__RelCircle" marker-end="url(#Domain-6DC39A5661C08C55__RelArrowTip"/>
+<g   transform="translate(50,466.75)">
+  <rect height="40"  width="325"  id="Other"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="">Other</a></div></foreignObject>
+</g>
+<g   transform="translate(50,486.75)">
+  <rect height="20"  width="320"  id="In-9815B8B85F687885-98159F6B5F682D1E"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#A52A00"><a href="98159f6b5f682d1e.htm#Relationship1">Data Quality Policy</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="9815B8B85F687885.htm">[Referenced Regulation Item]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="9815B8B85F687885-98159F6B5F682D1E-98159F6B5F682D1E" class="Domain-6DC39A5661C08C55_Rel-line" d="M370,486.75 C477.5,486.75 477.5,270 585,270" stroke="gray" fill="none" marker-start="url(#Domain-6DC39A5661C08C55__RelCircle" marker-end="url(#Domain-6DC39A5661C08C55__RelArrowTip"/>
+</svg>
+
+</div>
+<div class="Relationship" id="Relationship4" style="display:none">
+<h3>Relationship Table</h3>
+<table id="sortabletable" class="table table-sm  table-bordered table-cell-resizable table-index-set-col-width-4 table-custom-style table-scrollX" width="100%" cellspacing="0">
+<tr><th>Relationship</th><th>Cardinality</th><th>Target Entity</th><th>Source Entity</th><th>Description</th><th>Implementation</th></tr>
+<tr>
+<td><img src="../standard/dic_concept_powercomponent.ico.gif"/>&nbsp;Annotation Tag</td>
+<td>[0..*]</td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="AFFEE0765F6086D4.htm" target="_top">Tag</a></td>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="CA353E6D5FC5E8AF.htm" target="_top">Model Building Block</a></td>
+<td></td>
+<td><img src="../standard/metaassosub.ico.gif"/>&nbsp;(Tag/Tag Element)</td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype_component.ico.gif"/>&nbsp;
+<a  href="83BB8C1A5B3765B5.htm" target="_top">Applicable Constraint</a></td>
+<td>[0..*]</td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="63f8870255ae1ba2.htm" target="_top">Constraining Property</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="A4A5B3F855585CE1.htm" target="_top">Architecture Block (Type)</a></td>
+<td>Set of <a href="63f8870255ae1ba2.htm" target="_top"><b><u>Constraining Property</u></b></a>s that can be applied to an <a href="A4A5B3F855585CE1.htm" target="_top"><b><u>Architecture Block (Type)</u></b></a> .<ul><b>References</b>:<li><a href="https://15926.blog/topics/data-model/index.htm#ClassOfClassification"><img src="../standard/extr.ico.gif">&nbsp;ISO 15926 - ClassOfClassification</a></li></ul> </td>
+<td><img src="../standard/metaassosub.ico.gif"/>&nbsp;KPI Dimension Application</td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_powercomponent.ico.gif"/>&nbsp;Attached Document</td>
+<td>[0..*]</td>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="AFFEE0F15F60898A.htm" target="_top">Business Document</a></td>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="CA353E6D5FC5E8AF.htm" target="_top">Model Building Block</a></td>
+<td></td>
+<td><img src="../standard/metacomposub.ico.gif"/>&nbsp;(Documented Object/Attached Document)</td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_classification.ico.gif"/>&nbsp;Class of Building Block</td>
+<td>[0..*]</td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="9597c202620aaa9d.htm" target="_top">Class of Building Block</a></td>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="ccb819645a564f12.htm" target="_top">Building Block</a></td>
+<td><i>Abstract Relationship</i><br/>Classification relationship of <a href="ccb819645a564f12.htm" target="_top"><b><u>Building Block</u></b></a> with a <a href="9597c202620aaa9d.htm" target="_top"><b><u>Class of Building Block</u></b></a>.</td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/ctx-concepttype.ico.gif"/>&nbsp;
+<a  href="9152E9845ED773CF.htm" target="_top">Business Directive Subject</a></td>
+<td>[0..*]</td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="362fc8045b3c3e65.htm" target="_top">Conceptual Object</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="fe2201105c4f0df3.htm" target="_top">Business Directive</a></td>
+<td></td>
+<td><img src="../standard/metaclasspart_concrete.ico.gif"/>&nbsp;
+<a  href="AE4FBC4358B53B8E.htm" target="_top">Business Directive Subject</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype_component.ico.gif"/>&nbsp;
+<a  href="348f6fb6619631ec.htm" target="_top">Categorization</a></td>
+<td>[0..*]</td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="2b5888b55ef0874d.htm" target="_top">Category</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="744b935d5fbfe0f9.htm" target="_top">Class</a></td>
+<td><i>Abstract Relationship</i><br/>Kind of classification of </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype_component.ico.gif"/>&nbsp;
+<a  href="0dc20f885e9b5e29.htm" target="_top">Category of Architecture Block</a></td>
+<td>[0..*]</td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="0dc20f4d5e9b5ca9.htm" target="_top">Architecture Category</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="A4A5B3F855585CE1.htm" target="_top">Architecture Block (Type)</a></td>
+<td><i>Abstract Relationship</i><br/></td>
+<td><img src="../standard/metaassosub.ico.gif"/>&nbsp;Architecture Building Block PowerTyping</td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype_component.ico.gif"/>&nbsp;
+<a  href="16B05351643577B3.htm" target="_top">Category of Asset</a></td>
+<td>[0..*]</td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="16B051ED64357695.htm" target="_top">Asset Category</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="A4A5B3F855585CE1.htm" target="_top">Architecture Block (Type)</a></td>
+<td></td>
+<td><img src="../standard/metaassosub.ico.gif"/>&nbsp;General PowerTyping</td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_classification.ico.gif"/>&nbsp;Class of Model Block</td>
+<td>[1..1]</td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="9597d7b3620ab751.htm" target="_top">Class of Model Block</a></td>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="CA353E6D5FC5E8AF.htm" target="_top">Model Building Block</a></td>
+<td><i>Abstract Relationship</i><br/></td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype_component.ico.gif"/>&nbsp;
+<a  href="744b90065fbfd27c.htm" target="_top">Parent Category</a></td>
+<td>[0..1]</td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="744b8f3f5fbfd1c2.htm" target="_top">Policy Category</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="278678e95b2533d6.htm" target="_top">Directive</a></td>
+<td><i>Abstract Relationship</i><br/></td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype_component.ico.gif"/>&nbsp;
+<a  href="744b90e35fbfd4d5.htm" target="_top">Parent Dictionary</a></td>
+<td>[0..1]</td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="8d5e9560552e22b2.htm" target="_top">Policy Dictionary</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="07ca0dd75dd84e92.htm" target="_top">Policy Asset</a></td>
+<td><i>Abstract Relationship</i><br/></td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/ctx-concepttype.ico.gif"/>&nbsp;
+<a  href="95931d045ee7f60f.htm" target="_top">Policy Derivation</a></td>
+<td>[0..*]</td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="959320325ee7fe24.htm" target="_top">Policy</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="fe2203ca5c4f0fed.htm" target="_top">Behavioral Rule</a></td>
+<td><i>Abstract Relationship</i><br/></td>
+<td><img src="../standard/metaclasspart_concrete.ico.gif"/>&nbsp;
+<a  href="ae4fbeec58b53dc5.htm" target="_top">Business Policy Derivation</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype_component.ico.gif"/>&nbsp;
+<a  href="dc9407806025fc1c.htm" target="_top">Qualifying Constraint Value</a></td>
+<td>[0..*]</td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="7c40a5b455272bb4.htm" target="_top">Constraint Value</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="A4A5B3F855585CE1.htm" target="_top">Architecture Block (Type)</a></td>
+<td><i>Abstract Relationship</i><br/>Set of <a href="7c40a5b455272bb4.htm" target="_top"><b><u>Constraint Value</u></b></a>s that constrain an <a href="A4A5B3F855585CE1.htm" target="_top"><b><u>Architecture Block (Type)</u></b></a>.</td>
+<td><img src="../standard/metaassosub.ico.gif"/>&nbsp;KPI Qualification</td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype_component.ico.gif"/>&nbsp;
+<a  href="5c2d64b9622b1e45.htm" target="_top">Realized Directive</a></td>
+<td>[0..*]</td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="278678e95b2533d6.htm" target="_top">Directive</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="278678e95b2533d6.htm" target="_top">Directive</a></td>
+<td><i>Abstract Relationship</i><br/></td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_structuralcomponent.ico.gif"/>&nbsp;
+<a  href="f594f72e61f736e1.htm" target="_top">Referenced Model Block</a></td>
+<td>[0..*]</td>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="CA353E6D5FC5E8AF.htm" target="_top">Model Building Block</a></td>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="CA353E6D5FC5E8AF.htm" target="_top">Model Building Block</a></td>
+<td><i>Abstract Relationship</i><br/></td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_structuralcomponent.ico.gif"/>&nbsp;
+<a  href="89E38E275C918176.htm" target="_top">Sketch Description</a></td>
+<td>[0..*]</td>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="89E38D7D5C918091.htm" target="_top">Sketch</a></td>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="d342d88e5b121401.htm" target="_top">Architecture Block</a></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype_component.ico.gif"/>&nbsp;
+<a  href="a397b1925fbf691a.htm" target="_top">Specialized Business Directive</a></td>
+<td>[0..*]</td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="fe2201105c4f0df3.htm" target="_top">Business Directive</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="fe2201105c4f0df3.htm" target="_top">Business Directive</a></td>
+<td><i>Abstract Relationship</i><br/></td>
+<td><img src="../standard/metaclasspart_concrete.ico.gif"/>&nbsp;
+<a  href="17341f4844a50054.htm" target="_top">Variation</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype_component.ico.gif"/>&nbsp;
+<a  href="67db5ccd61c075cc.htm" target="_top">specialized class</a></td>
+<td>[0..*]</td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="744b935d5fbfe0f9.htm" target="_top">Class</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="744b935d5fbfe0f9.htm" target="_top">Class</a></td>
+<td><i>Abstract Relationship</i><br/><ul><b>References</b>:<li><a href="../../../www.omg.org/spec/KerML/1.0/Beta1/ptc-23-06-01.pdf#page=160"><img src="../standard/extr.ico.gif">&nbsp;OMG - KerML - Specialization</a></li></ul> </td>
+<td><img src="../standard/metaclasspart_concrete.ico.gif"/>&nbsp;
+<a  href="17341f4844a50054.htm" target="_top">Variation</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype_component.ico.gif"/>&nbsp;
+<a  href="4bacbfd8624df9ca.htm" target="_top">Specialized Class of Building Block</a></td>
+<td>[0..*]</td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="9597c202620aaa9d.htm" target="_top">Class of Building Block</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="9597c202620aaa9d.htm" target="_top">Class of Building Block</a></td>
+<td><i>Abstract Relationship</i><br/></td>
+<td><img src="../standard/metaclasspart_concrete.ico.gif"/>&nbsp;
+<a  href="17341f4844a50054.htm" target="_top">Variation</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype_component.ico.gif"/>&nbsp;
+<a  href="5c2d64ea622b1ecc.htm" target="_top">Specialized Directive</a></td>
+<td>[0..*]</td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="278678e95b2533d6.htm" target="_top">Directive</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="278678e95b2533d6.htm" target="_top">Directive</a></td>
+<td><i>Abstract Relationship</i><br/></td>
+<td><img src="../standard/metaclasspart_concrete.ico.gif"/>&nbsp;
+<a  href="17341f4844a50054.htm" target="_top">Variation</a></td>
+</tr>
+</table>
+</div>
+</section>
+<section class="object-section">
+<h4>INTERNAL STRUCTURE</h4> 
+<hr class="sectionbreak" />
+<a class="object-section-anchor" id="str"></a>
+<map  name="9FA6385A6303C277">
+  <area  href=C334D5CA5ECB5A10.htm#OBMKC334D5CA5ECB5A10 shape="polygon" coords="256, 94, 256, 83, 332, 83, 332, 94, 256, 94"   target="_top"  title="Information Entity involved in the definition of a Directive.">
+  
+  <area  href=362fc8045b3c3e65.htm#OBMK362FC8045B3C3E65 shape="polygon" coords="248, 161, 248, 148, 340, 148, 340, 161, 248, 161"   target="_top"  title="A&#160; Conceptual Object is the representation of any tangible or intanglible resource, or its respective state, that is critical for comprehending an enterprise, including its data, resources, and activities.">
+  
+  <area  href=AE4FBC4358B53B8E.htm#OBMKAE4FBC4358B53B8E shape="polygon" coords="241, 128, 241, 115, 347, 115, 347, 128, 241, 128"   target="_top"  title="-">
+  
+  <area  href="9152E9845ED773CF.htm" shape="rect" coords="207, 80, 381, 183"   target="_top"  title="-">
+  
+  <area  href=959320325ee7fe24.htm#OBMK959320325EE7FE24 shape="polygon" coords="86, 159, 86, 146, 116, 146, 116, 159, 86, 159"   target="_top"  title="A&#160; Policy is a Directive that is not directly enforceable whose purpose is to govern, guide or constrain the structure and behavior of Agents in the enterprise. ">
+  
+  <area  href=ae4fbeec58b53dc5.htm#OBMKAE4FBEEC58B53DC5 shape="polygon" coords="48, 127, 48, 114, 154, 114, 154, 127, 48, 127"   target="_top"  title="-">
+  
+  <area  href="95931d045ee7f60f.htm" shape="rect" coords="32, 78, 170, 180"   target="_top"  title="-">
+  
+  <area  href=3be69d8c63037c0f.htm#OBMK3BE69D8C63037C0F shape="polygon" coords="138, 15, 138, 2, 271, 2, 271, 15, 138, 15"   target="_top"  title="An&#160; Business Operating Rule is a Behavioral Rule that is enforced by Business Operating Assets.">
+  
+  <area  href="6dc39a5661c08c55.htm" shape="rect" coords="0, 0, 410, 230"   target="_top"  title="A&#160; Resource Rule is an Business Operating Rule that is enforced by Resource Operating Assets of the Enterprise.">
+  
+</map>
+<img  src="../images/6dc39a5661c08c55_9fa6385a6303c277_i.png" alt="../images/6dc39a5661c08c55_9fa6385a6303c277_i.png" usemap="#9FA6385A6303C277" height="240" width="410" border=0>
+
+<a class="object-section-anchor" id="shi"></a>
+<section class="object-section">
+<h4>SUPER TYPES HIERARCHY</h4> 
+<hr class="sectionbreak" />
+<span>Left click on a node to toggle it. Right click to navigate through its page
+</section>
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<div id="categoryHierarchy"></div>
+ <script>
+var hierarchy = JSON.parse('{"name":"Resource Rule","comment":"A Resource Rule is an Business Operating Rule that is enforced by Resource Operating Assets of the Enterprise.","url":"6DC39A5661C08C55.htm","parents":[{"name":"Business Operating Rule","comment":"An Business Operating Rule is a Behavioral Rule that is enforced by Business Operating Assets.","url":"3BE69D8C63037C0F.htm", "isparent":true,"parents":[{"name":"Behavioral Rule","comment":"A Behavioral Rule is a Directive intended to guide the Behavior of Agents, in compliance with enterprise Policy(ies) or regulations.","url":"FE2203CA5C4F0FED.htm", "isparent":true,"parents":[{"name":"Directive","comment":"A Directive is an authoritative declaration that indicates how Agents and their Behaviors should be (or should not be) in the enterprise.","url":"278678E95B2533D6.htm", "isparent":true,"parents":[{"name":"Aggregate Block (Type)","comment":"An Aggregate Block (Type) is a class of  Aggregate Blocks.","url":"514E62CE620F22C1.htm", "isparent":true,"parents":[{"name":"Aggregate Block","comment":"An Aggregate Block is a Building Block which has an internal structure.","url":"514E5F6C620F1EC6.htm", "isparent":true,"parents":[{"name":"Aggregate Entity","comment":"An Aggregate Entity is a Nesting Entity which has an internal structure made of Aggregate Entity Members.","url":"B13D31DE5EDF42D8.htm", "isparent":true,"parents":[{"name":"<Aspects>","isparent": true,"parents":[{"name":"Nesting Entity","comment":"A Nesting Entity is an Entity that nests other entities as sub-entities, serving as their lexical scope. The existence, visibility, and significance of Nested Entitys are confined within the boundaries of their Nesting Entity.","url":"AE26F8D65ACD51AB.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]}]},{"name":"Building Block","comment":"A Building Block is an autonomous, resusable Entity that contributes to the makeup of other Building Blocks.","url":"CCB819645A564F12.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]},{"name":"Class of Building Block","comment":"A Class of Building Block is a Class that classifies Building Blocks.","url":"9597C202620AAA9D.htm", "isparent":true,"parents":[{"name":"Building Block","comment":"A Building Block is an autonomous, resusable Entity that contributes to the makeup of other Building Blocks.","url":"CCB819645A564F12.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]},{"name":"Class","comment":"A Class is collection of Entitys which it classifies according to one or more criteria.","url":"744B935D5FBFE0F9.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]},{"name":"Class of Individual","comment":"A Class of Individual is a Class whose members are instances of  Individual .","url":"3492C53E619642ED.htm", "isparent":true,"parents":[{"name":"Class","comment":"A Class is collection of Entitys which it classifies according to one or more criteria.","url":"744B935D5FBFE0F9.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]}]},{"name":"Architecture Block (Type)","comment":"An Architecture Block (Type) is a type of Architecture Block which is used in the description of the enterprise, such as Processes, Org-Units, Applications.","url":"A4A5B3F855585CE1.htm", "isparent":true,"parents":[{"name":"Class of Individual","comment":"A Class of Individual is a Class whose members are instances of  Individual .","url":"3492C53E619642ED.htm", "isparent":true,"parents":[{"name":"Class","comment":"A Class is collection of Entitys which it classifies according to one or more criteria.","url":"744B935D5FBFE0F9.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]},{"name":"Architecture Block","comment":"An Architecture Block is any Model Building Block used to describe an enterprise architecture. This includes types (applications, org-units, ...) and individuals (physical persons, software installations, sites, ...).","url":"D342D88E5B121401.htm", "isparent":true,"parents":[{"name":"Model Building Block","comment":"A Model Building Block is a Building Block used to describe and manage the enterprise. It comprises:","url":"CA353E6D5FC5E8AF.htm", "isparent":true,"parents":[{"name":"Building Block","comment":"A Building Block is an autonomous, resusable Entity that contributes to the makeup of other Building Blocks.","url":"CCB819645A564F12.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]}]},{"name":"Class of Model Block","comment":"A Class of Model Block is a Class that classifies Model Building Blocks.","url":"9597D7B3620AB751.htm", "isparent":true,"parents":[{"name":"Class of Building Block","comment":"A Class of Building Block is a Class that classifies Building Blocks.","url":"9597C202620AAA9D.htm", "isparent":true,"parents":[{"name":"Building Block","comment":"A Building Block is an autonomous, resusable Entity that contributes to the makeup of other Building Blocks.","url":"CCB819645A564F12.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]},{"name":"Class","comment":"A Class is collection of Entitys which it classifies according to one or more criteria.","url":"744B935D5FBFE0F9.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]}]}]}, {"name":"<Aspects>","isparent": true,"parents":[{"name":"Policy Asset","comment":"A Policy Asset is any topic related to policy definitions.","url":"07CA0DD75DD84E92.htm", "isparent":true,"parents":[{"name":"Model Building Block","comment":"A Model Building Block is a Building Block used to describe and manage the enterprise. It comprises:","url":"CA353E6D5FC5E8AF.htm", "isparent":true,"parents":[{"name":"Building Block","comment":"A Building Block is an autonomous, resusable Entity that contributes to the makeup of other Building Blocks.","url":"CCB819645A564F12.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]}]}]}]}]}, {"name":"<Aspects>","isparent": true,"parents":[{"name":"Business Directive","comment":"A Business Directive is Directive an intended to assert business structure or to control or influence the behavior of the enterprise.","url":"FE2201105C4F0DF3.htm", "isparent":true,"parents":[{"name":"Directive","comment":"A Directive is an authoritative declaration that indicates how Agents and their Behaviors should be (or should not be) in the enterprise.","url":"278678E95B2533D6.htm", "isparent":true,"parents":[{"name":"Aggregate Block (Type)","comment":"An Aggregate Block (Type) is a class of  Aggregate Blocks.","url":"514E62CE620F22C1.htm", "isparent":true,"parents":[{"name":"Aggregate Block","comment":"An Aggregate Block is a Building Block which has an internal structure.","url":"514E5F6C620F1EC6.htm", "isparent":true,"parents":[{"name":"Aggregate Entity","comment":"An Aggregate Entity is a Nesting Entity which has an internal structure made of Aggregate Entity Members.","url":"B13D31DE5EDF42D8.htm", "isparent":true,"parents":[{"name":"<Aspects>","isparent": true,"parents":[{"name":"Nesting Entity","comment":"A Nesting Entity is an Entity that nests other entities as sub-entities, serving as their lexical scope. The existence, visibility, and significance of Nested Entitys are confined within the boundaries of their Nesting Entity.","url":"AE26F8D65ACD51AB.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]}]},{"name":"Building Block","comment":"A Building Block is an autonomous, resusable Entity that contributes to the makeup of other Building Blocks.","url":"CCB819645A564F12.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]},{"name":"Class of Building Block","comment":"A Class of Building Block is a Class that classifies Building Blocks.","url":"9597C202620AAA9D.htm", "isparent":true,"parents":[{"name":"Building Block","comment":"A Building Block is an autonomous, resusable Entity that contributes to the makeup of other Building Blocks.","url":"CCB819645A564F12.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]},{"name":"Class","comment":"A Class is collection of Entitys which it classifies according to one or more criteria.","url":"744B935D5FBFE0F9.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]},{"name":"Class of Individual","comment":"A Class of Individual is a Class whose members are instances of  Individual .","url":"3492C53E619642ED.htm", "isparent":true,"parents":[{"name":"Class","comment":"A Class is collection of Entitys which it classifies according to one or more criteria.","url":"744B935D5FBFE0F9.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]}]},{"name":"Architecture Block (Type)","comment":"An Architecture Block (Type) is a type of Architecture Block which is used in the description of the enterprise, such as Processes, Org-Units, Applications.","url":"A4A5B3F855585CE1.htm", "isparent":true,"parents":[{"name":"Class of Individual","comment":"A Class of Individual is a Class whose members are instances of  Individual .","url":"3492C53E619642ED.htm", "isparent":true,"parents":[{"name":"Class","comment":"A Class is collection of Entitys which it classifies according to one or more criteria.","url":"744B935D5FBFE0F9.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]},{"name":"Architecture Block","comment":"An Architecture Block is any Model Building Block used to describe an enterprise architecture. This includes types (applications, org-units, ...) and individuals (physical persons, software installations, sites, ...).","url":"D342D88E5B121401.htm", "isparent":true,"parents":[{"name":"Model Building Block","comment":"A Model Building Block is a Building Block used to describe and manage the enterprise. It comprises:","url":"CA353E6D5FC5E8AF.htm", "isparent":true,"parents":[{"name":"Building Block","comment":"A Building Block is an autonomous, resusable Entity that contributes to the makeup of other Building Blocks.","url":"CCB819645A564F12.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]}]},{"name":"Class of Model Block","comment":"A Class of Model Block is a Class that classifies Model Building Blocks.","url":"9597D7B3620AB751.htm", "isparent":true,"parents":[{"name":"Class of Building Block","comment":"A Class of Building Block is a Class that classifies Building Blocks.","url":"9597C202620AAA9D.htm", "isparent":true,"parents":[{"name":"Building Block","comment":"A Building Block is an autonomous, resusable Entity that contributes to the makeup of other Building Blocks.","url":"CCB819645A564F12.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]},{"name":"Class","comment":"A Class is collection of Entitys which it classifies according to one or more criteria.","url":"744B935D5FBFE0F9.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]}]}]}, {"name":"<Aspects>","isparent": true,"parents":[{"name":"Policy Asset","comment":"A Policy Asset is any topic related to policy definitions.","url":"07CA0DD75DD84E92.htm", "isparent":true,"parents":[{"name":"Model Building Block","comment":"A Model Building Block is a Building Block used to describe and manage the enterprise. It comprises:","url":"CA353E6D5FC5E8AF.htm", "isparent":true,"parents":[{"name":"Building Block","comment":"A Building Block is an autonomous, resusable Entity that contributes to the makeup of other Building Blocks.","url":"CCB819645A564F12.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]}]}]}]}]}]}]}],"children":[{"name":"Business Rule","comment":"An Business Rule is a rule that is under business jurisdiction. ","url":"278677BD5B253114.htm", "isparent":false,"children":[]},{"name":"<Concretization>","isparent": false,"children":[{"name":"System Rule","comment":"A System Rule is a kind of Resource Rule that governs the structure and behavior of Business System Assets.","url":"83BB9D2E5B378A5D.htm", "isparent":false,"children":[]}]}]}');
+$(document).ready(function(event) {
+var tree = CollapsibleTree("#categoryHierarchy");
+tree.init(hierarchy);
+});
+</script>
+</div>
+<button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button>
+<script>window.onscroll = function() {scrollFunction()};$(document).on('click', 'a[href^="#"]', function (event) {event.preventDefault();$('html, body').animate({scrollTop: $($.attr(this, 'href')).offset().top}, 500);});
+function showDiagOnClick(elem){ var x = document.getElementsByClassName('Relationship');var e = elem.getAttribute("value"); for (var i=0; i < x.length ;i++){x[i].style.display="none"; if (x[i].id == e){x[i].style.display="block";x[i].style.textAlign="left";}}}
+</script></html>

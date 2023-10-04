@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
+    <url>
+        <loc>https://www.techtarget.com/searchhealthit/video/Epics-EHR-Challenges-and-lessons-learned-at-Mass-General</loc>
+        <video:video>
+            <video:title>Epic's EHR: Challenges and lessons learned at Mass General</video:title>
+            <video:publication_date>2016-07-25T00:00:00-04:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/G2bqQT2Ybs0/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=G2bqQT2Ybs0</video:player_loc>
+            <video:duration>293</video:duration>
+            <video:description>MGH CIO talks about the hospital's recent move to Epic's EHR. The hospital has encountered EHR challenges including moving off homegrown systems and a staggered implementation.</video:description>
+        </video:video>
+    </url>
+</urlset>

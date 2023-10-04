@@ -1,0 +1,143 @@
+User-agent: *
+Disallow: /search/query
+Disallow:/login/
+Disallow:/logout/
+Disallow:/register/
+Disallow:/regPage1/
+Disallow:/loginMembersOnly/
+Disallow:/tieredRegPage/
+Disallow:/vgn-ext-templating/
+Disallow:/page/etpk_0/
+Disallow:/application/internalSearch/
+
+User-Agent: MediaPartners-Google
+Allow: /search/
+Allow: /googleNews.xml
+
+User-agent: Updownerbot
+Disallow: /
+
+User-agent: 008
+Disallow: /
+
+User-Agent: bingbot
+Disallow: /search/query
+
+User-Agent: msnbot
+Disallow: /search/query
+
+User-agent: bingbot
+Crawl-delay: 3
+
+User-agent: msnbot
+Crawl-delay: 3
+
+Sitemap: https://internetofthingsagenda.techtarget.com/googleNews.xml
+Sitemap: https://internetofthingsagenda.techtarget.com/siteIndex.xml
+Sitemap: https://internetofthingsagenda.techtarget.com/siteIndexVideo.xml
+Sitemap: https://search400.techtarget.com/siteIndex.xml
+Sitemap: https://searchapparchitecture.techtarget.com/siteIndex.xml
+Sitemap: https://searchapparchitecture.techtarget.com/siteIndexVideo.xml
+Sitemap: https://searchaws.techtarget.com/googleNews.xml
+Sitemap: https://searchaws.techtarget.com/siteIndex.xml
+Sitemap: https://searchaws.techtarget.com/siteIndexVideo.xml
+Sitemap: https://searchbusinessanalytics.techtarget.com/googleNews.xml
+Sitemap: https://searchbusinessanalytics.techtarget.com/siteIndex.xml
+Sitemap: https://searchbusinessanalytics.techtarget.com/siteIndexVideo.xml
+Sitemap: https://searchcio.techtarget.com/googleNews.xml
+Sitemap: https://searchcio.techtarget.com/siteIndex.xml
+Sitemap: https://searchcio.techtarget.com/siteIndexVideo.xml
+Sitemap: https://searchcloudcomputing.techtarget.com/googleNews.xml
+Sitemap: https://searchcloudcomputing.techtarget.com/siteIndex.xml
+Sitemap: https://searchcloudcomputing.techtarget.com/siteIndexVideo.xml
+Sitemap: https://searchcloudsecurity.techtarget.com/googleNews.xml
+Sitemap: https://searchcloudsecurity.techtarget.com/siteIndex.xml
+Sitemap: https://searchcloudsecurity.techtarget.com/siteIndexVideo.xml
+Sitemap: https://searchcompliance.techtarget.com/googleNews.xml
+Sitemap: https://searchcompliance.techtarget.com/siteIndex.xml
+Sitemap: https://searchcompliance.techtarget.com/siteIndexVideo.xml
+Sitemap: https://searchcontentmanagement.techtarget.com/googleNews.xml
+Sitemap: https://searchcontentmanagement.techtarget.com/siteIndex.xml
+Sitemap: https://searchconvergedinfrastructure.techtarget.com/googleNews.xml
+Sitemap: https://searchconvergedinfrastructure.techtarget.com/siteIndex.xml
+Sitemap: https://searchconvergedinfrastructure.techtarget.com/siteIndexVideo.xml
+Sitemap: https://searchcustomerexperience.techtarget.com/googleNews.xml
+Sitemap: https://searchcustomerexperience.techtarget.com/siteIndex.xml
+Sitemap: https://searchcustomerexperience.techtarget.com/siteIndexVideo.xml
+Sitemap: https://searchdatabackup.techtarget.com/googleNews.xml
+Sitemap: https://searchdatabackup.techtarget.com/siteIndex.xml
+Sitemap: https://searchdatabackup.techtarget.com/siteIndexVideo.xml
+Sitemap: https://searchdatacenter.techtarget.com/es/googleNews.xml
+Sitemap: https://searchdatacenter.techtarget.com/es/siteIndex.xml
+Sitemap: https://searchdatacenter.techtarget.com/googleNews.xml
+Sitemap: https://searchdatacenter.techtarget.com/siteIndex.xml
+Sitemap: https://searchdatacenter.techtarget.com/siteIndexVideo.xml
+Sitemap: https://searchdatamanagement.techtarget.com/googleNews.xml
+Sitemap: https://searchdatamanagement.techtarget.com/siteIndex.xml
+Sitemap: https://searchdatamanagement.techtarget.com/siteIndexVideo.xml
+Sitemap: https://searchdisasterrecovery.techtarget.com/googleNews.xml
+Sitemap: https://searchdisasterrecovery.techtarget.com/siteIndex.xml
+Sitemap: https://searchdisasterrecovery.techtarget.com/siteIndexVideo.xml
+Sitemap: https://searchdomino.techtarget.com/siteIndex.xml
+Sitemap: https://searchenterpriseai.techtarget.com/googleNews.xml
+Sitemap: https://searchenterpriseai.techtarget.com/siteIndex.xml
+Sitemap: https://searchenterpriseai.techtarget.com/siteIndexVideo.xml
+Sitemap: https://searchenterprisedesktop.techtarget.com/googleNews.xml
+Sitemap: https://searchenterprisedesktop.techtarget.com/siteIndex.xml
+Sitemap: https://searchenterprisedesktop.techtarget.com/siteIndexVideo.xml
+Sitemap: https://searcherp.techtarget.com/googleNews.xml
+Sitemap: https://searcherp.techtarget.com/siteIndex.xml
+Sitemap: https://searcherp.techtarget.com/siteIndexVideo.xml
+Sitemap: https://searchhealthit.techtarget.com/googleNews.xml
+Sitemap: https://searchhealthit.techtarget.com/siteIndex.xml
+Sitemap: https://searchhealthit.techtarget.com/siteIndexVideo.xml
+Sitemap: https://searchhrsoftware.techtarget.com/googleNews.xml
+Sitemap: https://searchhrsoftware.techtarget.com/siteIndex.xml
+Sitemap: https://searchhrsoftware.techtarget.com/siteIndexVideo.xml
+Sitemap: https://searchitchannel.techtarget.com/googleNews.xml
+Sitemap: https://searchitchannel.techtarget.com/siteIndex.xml
+Sitemap: https://searchitchannel.techtarget.com/siteIndexVideo.xml
+Sitemap: https://searchitoperations.techtarget.com/googleNews.xml
+Sitemap: https://searchitoperations.techtarget.com/siteIndex.xml
+Sitemap: https://searchitoperations.techtarget.com/siteIndexVideo.xml
+Sitemap: https://searchmobilecomputing.techtarget.com/googleNews.xml
+Sitemap: https://searchmobilecomputing.techtarget.com/siteIndex.xml
+Sitemap: https://searchmobilecomputing.techtarget.com/siteIndexVideo.xml
+Sitemap: https://searchnetworking.techtarget.com/googleNews.xml
+Sitemap: https://searchnetworking.techtarget.com/siteIndex.xml
+Sitemap: https://searchnetworking.techtarget.com/siteIndexVideo.xml
+Sitemap: https://searchoracle.techtarget.com/googleNews.xml
+Sitemap: https://searchoracle.techtarget.com/siteIndex.xml
+Sitemap: https://searchoracle.techtarget.com/siteIndexVideo.xml
+Sitemap: https://searchsap.techtarget.com/googleNews.xml
+Sitemap: https://searchsap.techtarget.com/siteIndex.xml
+Sitemap: https://searchsap.techtarget.com/siteIndexVideo.xml
+Sitemap: https://searchsecurity.techtarget.com/googleNews.xml
+Sitemap: https://searchsecurity.techtarget.com/siteIndex.xml
+Sitemap: https://searchsecurity.techtarget.com/siteIndexVideo.xml
+Sitemap: https://searchservervirtualization.techtarget.com/googleNews.xml
+Sitemap: https://searchservervirtualization.techtarget.com/siteIndex.xml
+Sitemap: https://searchservervirtualization.techtarget.com/siteIndexVideo.xml
+Sitemap: https://searchsoftwarequality.techtarget.com/googleNews.xml
+Sitemap: https://searchsoftwarequality.techtarget.com/siteIndex.xml
+Sitemap: https://searchsoftwarequality.techtarget.com/siteIndexVideo.xml
+Sitemap: https://searchsqlserver.techtarget.com/siteIndex.xml
+Sitemap: https://searchstorage.techtarget.com/googleNews.xml
+Sitemap: https://searchstorage.techtarget.com/siteIndex.xml
+Sitemap: https://searchstorage.techtarget.com/siteIndexVideo.xml
+Sitemap: https://searchunifiedcommunications.techtarget.com/googleNews.xml
+Sitemap: https://searchunifiedcommunications.techtarget.com/siteIndex.xml
+Sitemap: https://searchunifiedcommunications.techtarget.com/siteIndexVideo.xml
+Sitemap: https://searchvirtualdesktop.techtarget.com/googleNews.xml
+Sitemap: https://searchvirtualdesktop.techtarget.com/siteIndex.xml
+Sitemap: https://searchvirtualdesktop.techtarget.com/siteIndexVideo.xml
+Sitemap: https://searchvmware.techtarget.com/googleNews.xml
+Sitemap: https://searchvmware.techtarget.com/siteIndex.xml
+Sitemap: https://searchvmware.techtarget.com/siteIndexVideo.xml
+Sitemap: https://searchwindevelopment.techtarget.com/siteIndex.xml
+Sitemap: https://searchwindowsserver.techtarget.com/googleNews.xml
+Sitemap: https://searchwindowsserver.techtarget.com/siteIndex.xml
+Sitemap: https://searchwindowsserver.techtarget.com/siteIndexVideo.xml
+Sitemap: https://whatis.techtarget.com/de/siteIndex.xml
+Sitemap: https://whatis.techtarget.com/fr/siteIndex.xml
+Sitemap: https://whatis.techtarget.com/siteIndex.xml

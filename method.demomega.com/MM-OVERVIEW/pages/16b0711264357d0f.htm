@@ -1,0 +1,406 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="keywords" content="">
+<meta name="description" content="">    
+<LINK REL="icon" HREF="../standard/assets/img/favicon.ico">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/bootstrap.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nav.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/eaportal.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/font-awesome.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/animate.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/datatables.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/grid.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nae.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/custom.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/chosen.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/prism.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery.dataTables.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jsTreeStyle.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.theme.css" media="screen" />
+<script type="text/javascript" src="../standard/assets/js/jquery-3.2.1.min.js" ></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-ui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.columnFilter.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3-force.v2.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.gui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.search.js"></script> 
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.util.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-2.1.1.min.js"></script>
+<script src="../standard/assets/js/ws_zoomtemplate_firefox.js"></script>
+<script src="../standard/assets/js/bootstrap.min.js"></script>
+<script src="../standard/assets/js/datatables.min.js"></script>
+<script src="../standard/assets/js/moment.min.js"></script>
+<script src="../standard/assets/js/datetime-moment.js"></script>
+<script src="../standard/assets/js/chartjs.min.js"></script>
+<script src="../standard/assets/js/searchindexcontent.json"></script>
+<script src="../standard/assets/js/anls.js"></script>
+<script src="../../../cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script src="../standard/assets/js/gauge.js"></script> 
+<script src="../standard/assets/js/domesticApi.js"></script> 
+<script src="../standard/assets/js/piecelabel.js"></script>
+<script src="../standard/assets/js/popper.min.js"></script>
+<script src="../standard/assets/js/custom.js"></script>
+<script src="../standard/assets/js/chosen.jquery.js"></script>
+<script src="../standard/assets/js/prism.js"></script>
+<script src="../standard/assets/js/init-chosen.js"></script>
+<script src="../standard/assets/js/chart-data-flow.js"></script>
+<script src="../standard/assets/js/chart-data-gantt.js"></script>
+<script type="module" src="../standard/assets/js/Fuse.esm.min.js"></script>
+<script type="module">
+import Fuse from '../standard/assets/js/Fuse.esm.min.js';
+$(document).ready(function () {
+console.log('getjson');
+window.$.getJSON('../standard/assets/js/searchindexcontent.json', function (response) {
+console.log('getjson ok');
+var isIndex = "";
+var url = window.location.pathname;
+var filename = url.substring(url.lastIndexOf('/')+1);
+if( filename.includes("index") || filename === "" ){
+isIndex = "pages/";
+} else {
+isIndex = "";
+}
+const fuse = new Fuse(response, {
+keys: ['title','text'],
+shouldSort: true,
+includeMatches : true,
+findAllMatches : true
+});
+$('#search-fuse').on('keyup', function () {
+let result = fuse.search($(this).val());
+console.log(result);
+let resultdiv = $('div.searchresults-fuse');
+if (result.length === 0) {
+resultdiv.hide();
+} else {
+resultdiv.empty();
+resultdiv.append('<table class="table-search" width="100%" cellspacing="0"><thead ><tr><th>Name</th><th>Object Type</th><th>Modification date</th></tr></thead><tbody>');
+
+for (let obj in result.slice(0,10)) {
+
+let searchObj = '<tr><td><a href="./'+ isIndex + result[obj].item.url + '">' + result[obj].item.title +'</a></td><td>' + result[obj].item.ObjectType + '</td><td>' + result[obj].item.ModificationDate + '</td></tr>' ;
+
+
+resultdiv.find('tbody').append(searchObj);
+}
+resultdiv.append('</tbody></table>');
+resultdiv.show();
+}
+});
+});
+});
+</script>
+<title>HOPEX Metamodel Overview (Beta Version)</title>
+</head>
+<nav class="navbar navbar-expand-md navbar-dark  navbar-mega"><!-- Brand --><!--<a class="navbar-brand" href="#">Navbar</a>--><a class="" href="../index.htm"><img class="logo-mega" src="../standard/assets/img/logo.png"  alt="">(Beta Version)</a><!-- Toggler/collapsibe Button --><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><!-- Navbar links -->
+<div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsibleNavbar"><div class="col-sm-auto col-md-auto col-lg-5"></div>
+<div class="col-sm-auto">
+<ul class="navbar-nav">      
+<li><a class="dropdown-item" href="ad30ce115ebf7e90.htm">EA Grid</a></li> 
+<li><a class="dropdown-item" href="fdd5018459bc3c6a.htm">EA Domains</a></li> 
+<li><a class="dropdown-item" href="07e731775ecc93f4.htm">Solutions</a></li> 
+<li><a class="dropdown-item" href="c5dfc62c54810c2c.htm">Glossary</a></li> 
+<li class="nav-item dropdown mx-1">
+<a class="nav-link" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</a>
+<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<li><a class="dropdown-item" href="5446555d5f88c32e.htm">Outcome Driven Metamodel</a></li> 
+<li><a class="dropdown-item" href="e1ccfc295f8f7b90.htm">Playbooks</a></li> 
+<li><a class="dropdown-item" href="42bc992862d20ea7.htm">Framework Mappings</a></li> 
+<li><a class="dropdown-item" href="e93aebb35fa20550.htm">Metamodel Patterns</a></li> 
+<li><a class="dropdown-item" href="d599fe87602b2b85.htm">References</a></li> 
+<li><a class="dropdown-item" href="333f3a7f5dde11de.htm">Legend</a></li> 
+</ul>									                                            
+</li>
+</ul>
+</div>
+<div class="col-sm-auto"><a class="nav-link search" href="#" onclick=showHideSearch("search-section-fuse")><i class="fa fa-search mr-1 form-control-feedback"></i></a></div>
+</div>
+</nav>
+<div id="search-section-fuse" style="display:none">>
+<div class="search_header"><span class="closesearch">&times;</span>
+<nav class="breadcrumb">
+<a class="breadcrumb-item" href="../index.htm">Home </a> 
+<span class="breadcrumb-item active">Search</span> 
+</nav>
+</div>
+<input id="search-fuse" placeholder="Search..."  name="q" onfocus="this.value=''" type="search">
+<div class="searchresults-fuse"></div>
+</div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>function showHideSearch(elementId) {var contentDivs = document.getElementsByClassName('content');var footerDivs = document.getElementsByClassName('footer'); var containerDivs = document.getElementsByClassName('container');var containerfluidDivs = document.getElementsByClassName('container-fluid');var x = document.getElementById(elementId);if (x.style.display === "none") {x.style.display = "block";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "none";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "none";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "none";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "none";}} else {x.style.display = "none";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "block";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "block";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "block";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "block";}}} ;<!-- END WIDGET DRILL DOWN --></script><script>$(document).ready(function() {$(window).scroll(function() {if ($(this).scrollTop() > 100) {$('.scrollup').fadeIn();} else {$('.scrollup').fadeOut();}});$('.scrollup').click(function() {$("html, body").animate({scrollTop: 0}, 600);return false;});});</script><script>
+var modal = document.getElementById("search-section-fuse");
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = "none";
+}
+}
+$(document).on('click', '.closesearch', function() {
+showHideSearch("search-section-fuse");
+
+
+
+
+
+});</script><div class="container-fluid col-lg-11" id="top"><nav class="breadcrumb"><a class="breadcrumb-item" href="../index.htm">Home</a> <span class="breadcrumb-item active">
+<a  href="02af0a215a1823ee.htm" target="_top">Dictionary of HOPEX patterns</a>&nbsp;/&nbsp;EA Assets</span></nav></div>
+<div class="container-fluid col-lg-11 content">
+<section class="fadeInDown animated"><a href="#det"  class="btn btn-d">DEFINITION</a> <a href="#root" class="btn btn-d">CLASSIFIED CONCEPTS</a></section>
+<a class="object-section-anchor" id="det"></a>
+<section class="object-section">
+<h4>CATEGORY - EA Assets</h4>
+<hr class="sectionbreak" />
+<table class="table table-vertical-headers table-set-col-width">
+<tr><th>Description</th><td></td></tr>		
+<tr><th>Parent Category</th><td><img src="../standard/category_data.ico.gif">&nbsp;
+<a  href="08e70f0464052155.htm" target="_top">EA Ontology</a>           &nbsp;&nbsp;</td></tr>   
+</table>
+</section>
+<hr class="sectionbreak" />
+<h5>Classified Concepts</h5>
+<table class="table  table-set-col-width">
+<thead>
+<tr><th>Concept</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="79368381561716a6.htm" target="_top">Agent</a></td>
+<td class="description-text">An&#160;<b> Agent</b> is an <a href="a371a43b5b865817.htm" target="_top"><b><u>Operating Asset</u></b></a><b> </b>which is able to participate actively to <a href="d682ef5e56144e77.htm" target="_top"><b><u>Process</u></b></a>es (<a href="004b041f5ebd1119.htm" target="_top"><b><u>Active Participant</u></b></a>) and/or to conduct <a href="d682ef5e56144e77.htm" target="_top"><b><u>Process</u></b></a>es (<a href="004b03b15ebd0fdb.htm" target="_top"><b><u>Performed Process</u></b></a>) to produce <a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>s that benefit to other&#160;<b> Agent</b>s or affect other&#160;<b> Agent</b>s.<i><ul>References:<li><a href="../../../www.omg.org/spec/KerML/1.0/Beta1/ptc-23-06-01.pdf#page=191"><img src="../standard/extr.ico.gif">&nbsp;OMG - KerML - Structure</a></li> <li><a href="../../../www.omg.org/spec/UML/2.5.1/formal-17-12-05.pdf#page=231"><img src="../standard/extr.ico.gif">&nbsp;OMG - UML - EncapsulatedClassifier</a></li> <li><a href="https://pubs.opengroup.org/architecture/o-aa-standard/definitions.html#_modularity"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - OAA - Modularity</a></li> <li><a href="https://pubs.opengroup.org/togaf-standard/introduction/apdxb.html#tag_06_41"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Definition - System</a></li> <li><a href="../resources/Ackoff-Towards-a-system-of-systems-concepts.pdf#AbstractSystem"><img src="../standard/extr.ico.gif">&nbsp;Russell Ackoff - System of Concepts - Abstract System</a></li> <li><a href="http://wordnetweb.princeton.edu/perl/webwn?o2=&amp;o0=1&amp;o8=1&amp;o1=1&amp;o7=&amp;o5=&amp;o9=&amp;o6=&amp;o3=&amp;o4=&amp;r=1&amp;s=agent&amp;i=2&amp;h=100000000#c"><img src="../standard/extr.ico.gif">&nbsp;WordNet - Agent</a></li></ul></i>        </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="d6cd0fd95ab9744b.htm" target="_top">Agent Environment</a></td>
+<td class="description-text">An&#160;<b> Agent Environment</b> is an <a href="ca35f48a5fc48686.htm" target="_top"><b><u>Operating Eco-System</u></b></a> which defines the interactions (<b> Service Channel</b>) of an <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a> with its partners (<a href="fa4ffc235ec86276.htm" target="_top"><b><u>Partner Agent</u></b></a>).<i><ul>References:<li><a href="../resources/Ackoff-Towards-a-system-of-systems-concepts.pdf#EnvironmentOfaSystem"><img src="../standard/extr.ico.gif">&nbsp;Russell Ackoff - System of Concepts - Environment of a system</a></li></ul></i>        </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="07231aff5f4eb337.htm" target="_top">Architecture principle</a></td>
+<td class="description-text">An&#160;<b> Architecture principle</b>s is a general guideline (<a href="959320325ee7fe24.htm" target="_top"><b><u>Policy</u></b></a>) that informs, supports and constrains the way in which an organization will design and construct architectures.<i><ul>References:<li><a href="https://cio-wiki.org/wiki/Architectural_Principles#:~:text=Architecture%20Principles%20are%20the%20principles,structure%2C%20work%2C%20producing%20results."><img src="../standard/extr.ico.gif">&nbsp;CIO Wiki - Architecture Principle</a></li> <li><a href="https://pubs.opengroup.org/architecture/o-aa-standard/definitions.html#_architecture_principle"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - OAA - Architecture Principle</a></li> <li><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_19"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Definition - Architecture Principle</a></li> <li><a href="https://pubs.opengroup.org/togaf-standard/adm-techniques/chap02.html#tag_02"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Guide - Architecture Principles</a></li> <li><a href="https://compliancedictionary.com/term/382783"><img src="../standard/extr.ico.gif">&nbsp;UCF Glossary - Architecture Principle</a></li></ul></i>        </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="712a83e95fcf04a7.htm" target="_top">Architecture Principle Category</a></td>
+<td class="description-text">An&#160;<b> Architecture Principle Category</b> defines a grouping of related <a href="07231aff5f4eb337.htm" target="_top"><b><u>Architecture principle</u></b></a>s.       </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="07ca19e95dd854e9.htm" target="_top">Assurance Case</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Assurance Case</b> is a claim that a particular enterprise asset or group of assets (Resources or Activites) adequately mitigates certain identified risks by means of appropriated controls.</div><div align="left" style="min-height: 12pt; ">An&#160;<b> Assurance Case</b> shall provide confidence that the concerned assets will function as intended in their environment of use.</div><div align="left" style="min-height: 12pt; ">Privacy <a href="16e319be5bf83cb9.htm" target="_top"><b><u>Processing Activity</u></b></a>(ies), <a href="23ab2e945da829b8.htm" target="_top"><b><u>Data Lineage</u></b></a>s are examples of&#160;<b> Assurance Case</b>s .</div><i><ul>References:<li><a href="https://csrc.nist.gov/glossary/term/assurance_case"><img src="../standard/extr.ico.gif">&nbsp;NIST - Assurance Case</a></li></ul></i>        </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="7d3786ff5fd052e7.htm" target="_top">Assurance Instrument</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Assurance Instrument</b> is a resource or course of actions used by an <a href="07ca18d25dd85477.htm" target="_top"><b><u>Assurance System</u></b></a> to achieve its objectives.</div><div align="left" style="min-height: 12pt; ">For instance:</div><div align="left" style="min-height: 12pt; ">Actions plans are course of actions aimed at solving incidents.</div><div align="left" style="min-height: 12pt; "><a href="9815a0dc5f682fa1.htm" target="_top"><b><u>Data Control</u></b></a>s are mechanisms used to ensure data quality and data integrity</div><div align="left" style="min-height: 12pt; "><a href="7d3786245fd04e18.htm" target="_top"><b><u>Privacy Representative</u></b></a>s are used to identify national entities in charge on privacy.</div>       </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="986cd4ec5ffca3ac.htm" target="_top">Behavior</a></td>
+<td class="description-text">A&#160;<b> Behavior</b> is an <a href="a371a43b5b865817.htm" target="_top"><b><u>Operating Asset</u></b></a> that describes any action or reaction of an <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a> to external or internal circumstances. This includes <a href="d682ef5e56144e77.htm" target="_top"><b><u>Process</u></b></a>es (action), <a href="333f35ee5dde0c8c.htm" target="_top"><b><u>Interaction Scenario</u></b></a>s (stories) or interactions (<a href="24ae31b55ed1c66d.htm" target="_top"><b><u>Service Interface</u></b></a>).<i><ul>References:<li><a href="../../../www.omg.org/spec/UML/2.5.1/formal-17-12-05.pdf#page=328"><img src="../standard/extr.ico.gif">&nbsp;OMG - UML - Behavior</a></li> <li><a href="../resources/Ackoff-Towards-a-system-of-systems-concepts.pdf#SystemBehavior"><img src="../standard/extr.ico.gif">&nbsp;Russell Ackoff - System of Concepts - Behavior</a></li> <li><a href="http://wordnetweb.princeton.edu/perl/webwn?o2=&amp;o0=1&amp;o8=1&amp;o1=1&amp;o7=&amp;o5=&amp;o9=&amp;o6=&amp;o3=&amp;o4=&amp;r=1&amp;s=behavior&amp;i=2&amp;h=1000000#c"><img src="../standard/extr.ico.gif">&nbsp;WordNet - Behavior and Activity</a></li></ul></i>        </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="fe2203ca5c4f0fed.htm" target="_top">Behavioral Rule</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Behavioral Rule</b> is a <a href="278678e95b2533d6.htm" target="_top"><b><u>Directive</u></b></a> intended to guide the <a href="986cd4ec5ffca3ac.htm" target="_top"><b><u>Behavior</u></b></a> of <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s, in compliance with enterprise <a href="959320325ee7fe24.htm" target="_top"><b><u>Policy</u></b></a>(ies) or regulations.</div><div align="left" style="min-height: 12pt; ">Often, a rule is derived from a <a href="959320325ee7fe24.htm" target="_top"><b><u>Policy</u></b></a>.&#160;<b> Behavioral Rule</b> are enforced in <a href="d682ef5e56144e77.htm" target="_top"><b><u>Process</u></b></a>es and <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s.</div><i><ul>References:<li><a href="../../../www.omg.org/spec/BMM/1.3/formal-15-05-19.pdf#page=46"><img src="../standard/extr.ico.gif">&nbsp;OMG - BMM - Business Rule</a></li> <li><a href="../../../www.omg.org/spec/SBVR/1.5/formal-19-10-02.pdf#page=129"><img src="../standard/extr.ico.gif">&nbsp;OMG - SBVR - Business Rule (Behavioral)</a></li></ul></i>        </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="fe22ffdd5c4e0bd4.htm" target="_top">Business Policy</a></td>
+<td class="description-text">A&#160;<b> Business Policy</b> is a&#160;<b> Business Regulation</b> that is not directly enforceable whose purpose is to govern or guide the enterprise.<i><ul>References:<li><a href="../../../www.omg.org/spec/BMM/1.3/formal-15-05-19.pdf#page=45"><img src="../standard/extr.ico.gif">&nbsp;OMG - BMM 1.3 - Business Policy</a></li></ul></i>        </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="07ca0d6f5dd84e37.htm" target="_top">Business Policy Category</a></td>
+<td class="description-text">        </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="b181b98c54891882.htm" target="_top">Capability</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Capability</b>&#160; is an ability to produce an <a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>.</div><div align="left" style="min-height: 12pt; "><b>&#160;Capability</b>s are fulfilled by <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s performing <a href="d682ef5e56144e77.htm" target="_top"><b><u>Process</u></b></a>es and interacting with other <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s to produce the desired <a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>.</div><i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Capability"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - Capability</a></li> <li><a href="https://pubs.opengroup.org/architecture/o-aa-standard/definitions.html#_capability"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - OAA - Capability</a></li> <li><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_33"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Definition - Capability</a></li> <li><a href="../resources/Ackoff-Choice-Communication-and-Conflict.pdf#FunctionalClass"><img src="../standard/extr.ico.gif">&nbsp;Russell Ackoff - Choice &amp; Communication - FunctionalClass</a></li> <li><a href="http://wordnetweb.princeton.edu/perl/webwn?o2=&amp;o0=1&amp;o8=1&amp;o1=1&amp;o7=&amp;o5=&amp;o9=&amp;o6=&amp;o3=&amp;o4=&amp;r=1&amp;s=capability&amp;i=3&amp;h=10000000#c"><img src="../standard/extr.ico.gif">&nbsp;WordNet - Capabiity</a></li></ul></i>        </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="7c4085db552708a4.htm" target="_top">Capability Map</a></td>
+<td class="description-text">Top level assembly of <a href="b181b98c54891882.htm" target="_top"><b><u>Capability</u></b></a>ies and their dependencies which, together, provide a scope of added value (<a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>s) pursued by <a href="d321c226601262ae.htm" target="_top"><b><u>Enduring Initiative</u></b></a>s.       </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="a67dc8ae5f8eacdf.htm" target="_top">Control Directive</a></td>
+<td class="description-text">A&#160;<b> Control Directive</b> is a kind of <a href="959320325ee7fe24.htm" target="_top"><b><u>Policy</u></b></a> that provides recommendations on how to comply with <a href="07ca0ca15dd84ada.htm" target="_top"><b><u>Regulation Article</u></b></a>s.<br />Once implemented,&#160;<b> Control Directive</b>s enforces any <a href="744b8d735fbfcfa9.htm" target="_top"><b><u>Regulatory Framework</u></b></a> your organization has to comply with.<i><ul>References:<li><a href="https://grcschema.org/Thing/Control"><img src="../standard/extr.ico.gif">&nbsp;GRCschema.org - Control</a></li> <li><a href="https://www.unifiedcompliance.com/education/common-control/"><img src="../standard/extr.ico.gif">&nbsp;UCF - What are Common Controls</a></li> <li><a href="https://compliancedictionary.com/term/7990"><img src="../standard/extr.ico.gif">&nbsp;UCF Glossary - Common Control</a></li></ul></i>        </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="a67dc9285f8eadfb.htm" target="_top">Control Framework</a></td>
+<td class="description-text">A&#160;<b> Control Framework</b> is a set of <a href="a67dc8ae5f8eacdf.htm" target="_top"><b><u>Control Directive</u></b></a>s originating from <a href="744b8d735fbfcfa9.htm" target="_top"><b><u>Regulatory Framework</u></b></a>s and their <a href="07ca0ca15dd84ada.htm" target="_top"><b><u>Regulation Article</u></b></a>s.<i><ul>References:<li><a href="https://www.unifiedcompliance.com/education/what-is-a-compliance-framework/"><img src="../standard/extr.ico.gif">&nbsp;UCF - What is a compliance framework</a></li></ul></i>        </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="6cce7d6d5a2e4834.htm" target="_top">Data Category</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Data Category</b> is a classification or division of <a href="e6f250185f772ee1.htm" target="_top"><b><u>Information Object</u></b></a>s regarded as having particular shared characteristics.</div><div align="left" style="min-height: 12pt; ">Examples of&#160;<b> Data Category</b>s are <a href="229128385a567d63.htm" target="_top"><b><u>Health</u></b></a> data, <a href="2291283b5a567d86.htm" target="_top"><b><u>Financial</u></b></a> data, <a href="49aa4b505a563520.htm" target="_top"><b><u>Contact</u></b></a> data.</div>       </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="278678e95b2533d6.htm" target="_top">Directive</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Directive</b> is an authoritative declaration that indicates how <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s and their <a href="986cd4ec5ffca3ac.htm" target="_top"><b><u>Behavior</u></b></a>s should be (or should not be) in the enterprise.</div><div align="left" style="min-height: 12pt; ">Specifically, a&#160;<b> Directive</b> defines, constrains or liberates some aspects of an <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a> and its <a href="986cd4ec5ffca3ac.htm" target="_top"><b><u>Behavior</u></b></a>s.</div><div align="left" style="min-height: 12pt; "><b>&#160;Directive</b>s are intended to assert agent structures or to control or influence their <a href="986cd4ec5ffca3ac.htm" target="_top"><b><u>Behavior</u></b></a>s.&#160;<b> Directive</b>s are stated in declarative form.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Directive</b> can either be a <a href="959320325ee7fe24.htm" target="_top"><b><u>Policy</u></b></a> or a <a href="fe2203ca5c4f0fed.htm" target="_top"><b><u>Behavioral Rule</u></b></a>.</div><i><ul>References:<li><a href="../../../www.omg.org/spec/BMM/1.3/formal-15-05-19.pdf#page=41"><img src="../standard/extr.ico.gif">&nbsp;OMG - BMM - Directive</a></li> <li><a href="../../../www.omg.org/spec/SBVR/1.5/formal-19-10-02.pdf#page=40"><img src="../standard/extr.ico.gif">&nbsp;OMG - SBVR - Element of Guidance</a></li> <li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Rule"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - Rule</a></li> <li><a href="https://compliancedictionary.com/term/9062"><img src="../standard/extr.ico.gif">&nbsp;UCF Glossary - Directive</a></li></ul></i>        </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="ca3513af5fc59413.htm" target="_top">Environment Scenario</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Environment Scenario</b> is a story that describes how an <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a> interacts with its partners (<a href="fa4ffc235ec86276.htm" target="_top"><b><u>Partner Agent</u></b></a>) to achieve <a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>s in a specific <a href="ca35f48a5fc48686.htm" target="_top"><b><u>Operating Eco-System</u></b></a> (<a href="d6cd0fd95ab9744b.htm" target="_top"><b><u>Agent Environment</u></b></a>).</div><div align="left" style="min-height: 12pt; ">This includes:</div><div align="left" style="min-height: 12pt; ">1) A course of events represented by&#160;<b> Object Flow</b>s depicting the steps towards the delivery of expected <a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">2) Interacting partners who participate to the story in the considered <a href="ca35f48a5fc48686.htm" target="_top"><b><u>Operating Eco-System</u></b></a>.</div>       </td>
+</tr>
+<tr>
+<td><img src="../standard/relationship-concepttype.ico.gif"/>&nbsp;
+<a  href="24ae31d75ed1c747.htm" target="_top">Event</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Event</b> is type of change that is used to coordinate <a href="986cd4ec5ffca3ac.htm" target="_top"><b><u>Behavior</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">An&#160;<b> Event</b> connects a&#160;<b> Predecessor Behavior</b> role producing the event, to a&#160;<b> Successor Behavior</b> role reacting to the event.</div><i><ul>References:<li><a href="../resources/Ackoff-Choice-Communication-and-Conflict.pdf#Signal"><img src="../standard/extr.ico.gif">&nbsp;Russell Ackoff - Choice &amp; Communication - Signal</a></li> <li><a href="../resources/Ackoff-Towards-a-system-of-systems-concepts.pdf#SystemChanges"><img src="../standard/extr.ico.gif">&nbsp;Russell Ackoff - System of Concepts - System Changes</a></li> <li><a href="http://wordnetweb.princeton.edu/perl/webwn?o2=&amp;o0=1&amp;o8=1&amp;o1=1&amp;o7=&amp;o5=&amp;o9=&amp;o6=&amp;o3=&amp;o4=&amp;r=1&amp;s=change&amp;i=2&amp;h=10001011231230220000000000000000000#c"><img src="../standard/extr.ico.gif">&nbsp;WordNet - Change</a></li></ul></i>        </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="07ca0f015dd84efa.htm" target="_top">Functional Asset</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; "><b>&#160;Functional Asset</b>s encompasse <a href="d342d88e5b121401.htm" target="_top"><b><u>Architecture Block</u></b></a>s used to describe how an enterprise function. This includes the purposes of an enterprise (<a href="b181b98c54891882.htm" target="_top"><b><u>Capability</u></b></a>) and the way the enterprise operates to fulfill these purposes (<a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s and their&#160; <a href="986cd4ec5ffca3ac.htm" target="_top"><b><u>Behavior</u></b></a>s).</div><div align="left" style="min-height: 12pt; "><b>&#160;Functional Asset</b>s include:</div><div align="left" style="min-height: 12pt; ">1. Blocks defining results of <a href="986cd4ec5ffca3ac.htm" target="_top"><b><u>Behavior</u></b></a>s of the enterprise or its sub-systems, that benefit to it internal or external customers : <a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>,</div><div align="left" style="min-height: 12pt; ">2. Blocks used to describe the capabilities of the enterprise or its sub-systems: <a href="b181b98c54891882.htm" target="_top"><b><u>Capability</u></b></a>,</div><div align="left" style="min-height: 12pt; ">3. Blocks used to describe information: <a href="e6f250185f772ee1.htm" target="_top"><b><u>Information Object</u></b></a>.</div><div align="left" style="min-height: 12pt; ">4. Blocks used to describe how the enterprise operates: <a href="a371a43b5b865817.htm" target="_top"><b><u>Operating Asset</u></b></a>s (<a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>, <a href="d682ef5e56144e77.htm" target="_top"><b><u>Process</u></b></a>, <a href="333f35ee5dde0c8c.htm" target="_top"><b><u>Interaction Scenario</u></b></a>, <a href="24ae31b55ed1c66d.htm" target="_top"><b><u>Service Interface</u></b></a>).</div><div align="left" style="min-height: 12pt; ">All&#160;<b> Functional Asset</b>s are constrained by <a href="959320325ee7fe24.htm" target="_top"><b><u>Policy</u></b></a>s and are exposed to <a href="427c1c7d64b5d4a1.htm" target="_top"><b><u>Risk Type</u></b></a>s.</div><i><ul>References:<li><a href="../../../complexsystems.mst.edu/media/conference/complexsystems/documents/de_Weck_CAS_Keynote_Nov_2015_updated.pdf#page=40"><img src="../standard/extr.ico.gif">&nbsp;de Weck - The three dimensions of complexity</a></li> <li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Asset"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - Asset</a></li> <li><a href="../resources/Ackoff-Choice-Communication-and-Conflict.pdf#FunctionalClass"><img src="../standard/extr.ico.gif">&nbsp;Russell Ackoff - Choice &amp; Communication - FunctionalClass</a></li> <li><a href="https://www.sebokwiki.org/wiki/Functional_Architecture_(glossary)"><img src="../standard/extr.ico.gif">&nbsp;SEBoK - Functional Architecture</a></li> <li><a href="https://en.wikipedia.org/wiki/Functional_software_architecture#:~:text=A%20functional%20software%20architecture%20(FSA,%2Doperative%20information%2Ddriven%20enterprise."><img src="../standard/extr.ico.gif">&nbsp;Wikipedia - Software Functional Architecture</a></li></ul></i>        </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="30efa75761f367fe.htm" target="_top">Information Asset</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Information Asset</b> is a <a href="CA353E6D5FC5E8AF.htm" target="_top"><b><u>Model Building Block</u></b></a> involved in the description of information.</div><div align="left" style="min-height: 12pt; "><b>&#160;Information Asset</b>s range from <a href="e6f250185f772ee1.htm" target="_top"><b><u>Information Object</u></b></a>s,&#160; <a href="d6cd116d5ab97525.htm" target="_top"><b><u>Information Domain</u></b></a>s to terminologies.</div><div align="left" style="min-height: 12pt; ">They are defined in <a href="24ae4a185ed16aaa.htm" target="_top"><b><u>Information Dictionary</u></b></a>(ies) and managed in <a href="9152d8875ed741ef.htm" target="_top"><b><u>Data Catalog</u></b></a>s.</div>       </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="24ae4a185ed16aaa.htm" target="_top">Information Dictionary</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Information Dictionary</b> is a dictionary of&#160;<b> Information Asset</b>s used to describe an information architecture. This includes:</div><div align="left" style="min-height: 12pt; ">1. <a href="d6cd116d5ab97525.htm" target="_top"><b><u>Information Domain</u></b></a> </div><div align="left" style="min-height: 12pt; ">2. <a href="d6cd2cea5ab98e5f.htm" target="_top"><b><u>Information Entity</u></b></a> </div><div align="left" style="min-height: 12pt; ">3. <a href="362fc5a85b3c3c03.htm" target="_top"><b><u>Concept Property</u></b></a> </div><div align="left" style="min-height: 12pt; ">Concrete implementations are <a href="d2a7dc875ee8740b.htm" target="_top"><b><u>Business Dictionary</u></b></a>, <a href="7eaa87e856121db2.htm" target="_top"><b><u>Logical Data Dictionary</u></b></a>, etc.</div>       </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="d6cd116d5ab97525.htm" target="_top">Information Domain</a></td>
+<td class="description-text">An&#160;<b> Information Domain</b> is a group of <a href="d6cd2cea5ab98e5f.htm" target="_top"><b><u>Information Entity</u></b></a>(ies) which constitutes a unit a knowlege required by an <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a> to operate or required during a <a href="d682ef5e56144e77.htm" target="_top"><b><u>Process</u></b></a> execution.       </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="d6cd2cea5ab98e5f.htm" target="_top">Information Entity</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Information Entity</b> is an <a href="e6f250185f772ee1.htm" target="_top"><b><u>Information Object</u></b></a> that is not fundamentally defined by its attributes, but rather by its continuity.</div><div align="left" style="min-height: 12pt; ">An&#160;<b> Information Entity</b> evolves over time and has states.</div><div align="left" style="min-height: 12pt; ">For instance a person is an&#160;<b> Information Entity</b>. Employe is a state of a person.</div><div align="left" style="min-height: 12pt; ">An&#160;<b> Information Entity</b> has relationships to other&#160;<b> Information Entity</b>s and can </div><i><ul>References:<li><a href="https://www.google.com/search?q=site%3Ahttps%3A%2F%2Fwww.dddcommunity.org%2Fresources%2Fddd_terms%2F+Entity"><img src="../standard/extr.ico.gif">&nbsp;DDD - Glossary - Entity</a></li></ul></i>        </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="d6cd2d8e5ab98edc.htm" target="_top">Information Map</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Information Map</b> is a top level grouping of <a href="d6cd116d5ab97525.htm" target="_top"><b><u>Information Domain</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">&#160;<b> Information Map</b>s are used to provide navigationtop level entry points for <a href="24ae4a185ed16aaa.htm" target="_top"><b><u>Information Dictionary</u></b></a>(ies) and to scope data management initiatives at the level of portfolio management ( <a href="9152d8875ed741ef.htm" target="_top"><b><u>Data Catalog</u></b></a>), at the project level or at the <a href="b181b82a54891668.htm" target="_top"><b><u>Enterprise</u></b></a> level (<b> Enterprise Concept Map</b>).</div>       </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="e6f250185f772ee1.htm" target="_top">Information Object</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Information Object</b>&#160; represents anything that can be communicated or memorized by an <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a> in order to produce its <a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">An&#160;<b> Information Object</b> is either an <a href="d6cd2cea5ab98e5f.htm" target="_top"><b><u>Information Entity</u></b></a> or a <a href="d7f90c675f737699.htm" target="_top"><b><u>Information Property</u></b></a>.<br />The difference lies in their relationship to change and to time. <a href="d6cd2cea5ab98e5f.htm" target="_top"><b><u>Information Entity</u></b></a>(ies) can change over time and have a lifeycle while <a href="d7f90c675f737699.htm" target="_top"><b><u>Information Property</u></b></a>s are immutable characteristics.</div>       </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="d7f90c675f737699.htm" target="_top">Information Property</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Information Property</b> is an <a href="e6f250185f772ee1.htm" target="_top"><b><u>Information Object</u></b></a> that represents a characteristic of an <a href="d6cd2cea5ab98e5f.htm" target="_top"><b><u>Information Entity</u></b></a>.</div><div align="left" style="min-height: 12pt; ">An&#160;<b> Information Property</b> is fundamentally defined by its value. It doesn&#39;t evolve over time and is thereby immutable.</div><div align="left" style="min-height: 12pt; ">For instance &quot;address&quot; or &quot;customer name&quot; are usually considered as&#160;<b> Information Property</b>s.</div><i><ul>References:<li><a href="https://www.google.com/search?q=site%3Ahttps%3A%2F%2Fwww.dddcommunity.org%2Fresources%2Fddd_terms%2F+Value+Object"><img src="../standard/extr.ico.gif">&nbsp;DDD - Glossary - Value Object</a></li></ul></i>        </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="333f35ee5dde0c8c.htm" target="_top">Interaction Scenario</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Interaction Scenario</b> is a story (<a href="986cd4ec5ffca3ac.htm" target="_top"><b><u>Behavior</u></b></a>) that describes how the components of an <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a> interacts to produce <a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>s.<br />This includes:</div><div align="left" style="min-height: 12pt; ">1) A course of events represented by&#160;<b> Object Flow</b>s depicting the story towards the delivery of expected <a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">2) Interacting <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s who participate to the story.</div><i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#InteractionScenario"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - InteractionScenario</a></li></ul></i>        </td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="8d5e986f552e28d5.htm" target="_top">Location</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Location</b> is a geopolitical location anywhere on the earth.</div><div align="left" style="min-height: 12pt; ">Examples: </div><div align="left" style="min-height: 12pt; ">- France</div><div align="left" style="min-height: 12pt; ">- Paris</div><div align="left" style="min-height: 12pt; ">- Washington DC</div><div align="left" style="min-height: 12pt; ">- Cairo</div><div align="left" style="min-height: 12pt; ">- Buenos-Aires</div><div align="left" style="min-height: 12pt; ">- Asia</div><i><ul>References:<li><a href="https://15926.blog/topics/data-model/index.htm#SpatialLocation"><img src="../standard/extr.ico.gif">&nbsp;ISO 15926 - SpatialLocation</a></li> <li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ActualLocation"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - ActualLocation</a></li></ul></i>        </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="ef5df90463212593.htm" target="_top">Location Type</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Location Type</b> is a type of <a href="8d5e986f552e28d5.htm" target="_top"><b><u>Location</u></b></a> that is a geopolitical location.</div><div align="left" style="min-height: 12pt; ">Example:</div><div align="left" style="min-height: 12pt; ">- Continent</div><div align="left" style="min-height: 12pt; ">- Country</div><div align="left" style="min-height: 12pt; ">- City</div><div align="left" style="min-height: 12pt; ">- District</div><div align="left" style="min-height: 12pt; ">- Street</div><i><ul>References:<li><a href="https://15926.blog/topics/data-model/index.htm#ClassOfRelativeLocation"><img src="../standard/extr.ico.gif">&nbsp;ISO 15926 - ClassOfRelativeLocation</a></li> <li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Location"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - Location</a></li></ul></i>        </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="a371a43b5b865817.htm" target="_top">Operating Asset</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Operating Asset</b> is a <a href="07ca0f015dd84efa.htm" target="_top"><b><u>Functional Asset</u></b></a> used to describes the way <a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>s are produced and consumed: how&#160; (<a href="986cd4ec5ffca3ac.htm" target="_top"><b><u>Behavior</u></b></a>s) and by whom (<a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s).</div><div align="left" style="min-height: 12pt; "><b>&#160;Operating Asset</b>s include&#160; <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s and their <a href="986cd4ec5ffca3ac.htm" target="_top"><b><u>Behavior</u></b></a>s (<a href="d682ef5e56144e77.htm" target="_top"><b><u>Process</u></b></a>es, <a href="24ae31b55ed1c66d.htm" target="_top"><b><u>Service Interface</u></b></a>s and <a href="333f35ee5dde0c8c.htm" target="_top"><b><u>Interaction Scenario</u></b></a>s).</div><div align="left" style="min-height: 12pt; "><b>&#160;Operating Asset</b>s fulfill <a href="b181b98c54891882.htm" target="_top"><b><u>Capability</u></b></a>(ies) (<a href="7936846756171776.htm" target="_top"><b><u>Fulfilled Capability</u></b></a>).<br />As any <a href="07ca0f015dd84efa.htm" target="_top"><b><u>Functional Asset</u></b></a>,&#160;<b> Operating Asset</b>s are subject to <a href="8E1393E85EBE476F.htm" target="_top"><b><u>Policy Conformance</u></b></a>s. In addition, they define <a href="24ae36805ed1cd18.htm" target="_top"><b><u>Rule Enforcement</u></b></a>s to indicate how <a href="8E1393E85EBE476F.htm" target="_top"><b><u>Policy Conformance</u></b></a>s are met.</div><div align="left" style="min-height: 12pt; ">Any&#160;<b> Operating Asset</b> can be considered as a <a href="43ee620e63725a56.htm" target="_top"><b><u>Value Added Object</u></b></a> which means it can be transformed and delivered as part of business transactions.</div>       </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="c559c100616f7de3.htm" target="_top">Operating Context</a></td>
+<td class="description-text">An&#160;<b> Operating Context</b> is a perimeter of <a href="A4A5B3F855585CE1.htm" target="_top"><b><u>Architecture Block (Type)</u></b></a> that forms the scope of an <a href="d321c226601262ae.htm" target="_top"><b><u>Enduring Initiative</u></b></a>. It can be a set of <a href="b181b98c54891882.htm" target="_top"><b><u>Capability</u></b></a>(ies) that define the purpose of operating <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s or the <a href="ca35f48a5fc48686.htm" target="_top"><b><u>Operating Eco-System</u></b></a> in which these <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s deliver these <a href="b181b98c54891882.htm" target="_top"><b><u>Capability</u></b></a>(ies).       </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="ca35f48a5fc48686.htm" target="_top">Operating Eco-System</a></td>
+<td class="description-text">An&#160;<b> Operating Eco-System</b> is an <a href="c559c100616f7de3.htm" target="_top"><b><u>Operating Context</u></b></a> in which an <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a> exists or lives for a specific purpose, interacting with partners.<br />For instance, the operating context of an enterprise includes its customers and suppliers.<i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Architecture"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - Architecture</a></li> <li><a href="https://pubs.opengroup.org/architecture/o-aa-standard/definitions.html#ecosystem"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - OAA - Ecosystem</a></li> <li><a href="../resources/Ackoff-Towards-a-system-of-systems-concepts.pdf#EnvironmentOfaSystem"><img src="../standard/extr.ico.gif">&nbsp;Russell Ackoff - System of Concepts - Environment of a system</a></li></ul></i>        </td>
+</tr>
+<tr>
+<td><img src="../standard/relationship-concepttype.ico.gif"/>&nbsp;
+<a  href="30223b5c5ec90c01.htm" target="_top">Outcome</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Outcome</b> is an <a href="24ae31d75ed1c747.htm" target="_top"><b><u>Event</u></b></a> that indicates the availability of an expected change in the state of a <a href="43ee620e63725a56.htm" target="_top"><b><u>Value Added Object</u></b></a> brought about by a specific <a href="986cd4ec5ffca3ac.htm" target="_top"><b><u>Behavior</u></b></a>,</div><div align="left" style="min-height: 12pt; ">An&#160;<b> Outcome</b> is a connection point between a producer <a href="986cd4ec5ffca3ac.htm" target="_top"><b><u>Behavior</u></b></a> and a consumer <a href="986cd4ec5ffca3ac.htm" target="_top"><b><u>Behavior</u></b></a> which benefits from the produced <a href="43ee620e63725a56.htm" target="_top"><b><u>Value Added Object</u></b></a>.</div><div align="left" style="min-height: 12pt; ">In HOPEX, the most common&#160;<b> Outcome</b> is exemplified by the <a href="302238be5ec9020a.htm" target="_top"><b><u>Information Outcome</u></b></a> which refers to the production or consumption of a specific <a href="e6f250185f772ee1.htm" target="_top"><b><u>Information Object</u></b></a> such as an order received or a&#160; payment rejected.</div><i><ul>References:<li><a href="../../../www.omg.org/spec/BACM/1.0/Beta1/dtc-22-06-01.pdf#page=28"><img src="../standard/extr.ico.gif">&nbsp;OMG - BACM - Outcome</a></li> <li><a href="../../../www.omg.org/spec/UML/2.5.1/formal-17-12-05.pdf#page=211"><img src="../standard/extr.ico.gif">&nbsp;OMG - UML - Signal</a></li> <li><a href="../resources/Ackoff-Choice-Communication-and-Conflict.pdf#Outcomes"><img src="../standard/extr.ico.gif">&nbsp;Russell Ackoff - Choice &amp; Communication - Outcomes</a></li> <li><a href="../resources/Ackoff-Choice-Communication-and-Conflict.pdf#Utility"><img src="../standard/extr.ico.gif">&nbsp;Russell Ackoff - Choice &amp; Communication - Utility</a></li> <li><a href="http://wordnetweb.princeton.edu/perl/webwn?o2=&amp;o0=1&amp;o8=1&amp;o1=1&amp;o7=&amp;o5=&amp;o9=&amp;o6=&amp;o3=&amp;o4=&amp;s=outcome&amp;h=10112312312231231230222200&amp;j=25#c"><img src="../standard/extr.ico.gif">&nbsp;WordNet - Outcome</a></li></ul></i>        </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="959320325ee7fe24.htm" target="_top">Policy</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Policy</b> is a <a href="278678e95b2533d6.htm" target="_top"><b><u>Directive</u></b></a> that is not directly enforceable whose purpose is to govern, guide or constrain the structure and behavior of <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s in the enterprise. </div><div align="left" style="min-height: 12pt; ">Policies provide the basis for rules and govern <a href="986cd4ec5ffca3ac.htm" target="_top"><b><u>Behavior</u></b></a>s carried out by <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s.<br />Example of&#160;<b> Policy</b>s are <a href="07ca0ca15dd84ada.htm" target="_top"><b><u>Regulation Article</u></b></a>s, <a href="fe22ffdd5c4e0bd4.htm" target="_top"><b><u>Business Policy</u></b></a>s or <a href="07231aff5f4eb337.htm" target="_top"><b><u>Architecture principle</u></b></a>s.</div><i><ul>References:<li><a href="../../../www.omg.org/spec/BMM/1.3/formal-15-05-19.pdf#page=45"><img src="../standard/extr.ico.gif">&nbsp;OMG - BMM 1.3 - Business Policy</a></li> <li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Rule"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - Rule</a></li></ul></i>        </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="07ca0dd75dd84e92.htm" target="_top">Policy Asset</a></td>
+<td class="description-text">A&#160;<b> Policy Asset</b> is any topic related to policy definitions.<br />It ranges from the different kidns of <a href="278678e95b2533d6.htm" target="_top"><b><u>Directive</u></b></a>s (<a href="fe22ffdd5c4e0bd4.htm" target="_top"><b><u>Business Policy</u></b></a>, <a href="07231aff5f4eb337.htm" target="_top"><b><u>Architecture principle</u></b></a>, <a href="278677bd5b253114.htm" target="_top"><b><u>Business Rule</u></b></a>, etc.),&#160; to classification of policies (<a href="744b8f3f5fbfd1c2.htm" target="_top"><b><u>Policy Category</u></b></a>) up to an entire set of policies (<a href="8d5e9560552e22b2.htm" target="_top"><b><u>Policy Dictionary</u></b></a>).       </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="744b8f3f5fbfd1c2.htm" target="_top">Policy Category</a></td>
+<td class="description-text"><b>&#160;Policy Category</b> is a classification of policies. In regulations, it represents sections of the law.<i><ul>References:<li><a href="../../../www.omg.org/spec/BMM/1.3/formal-15-05-19.pdf#page=44"><img src="../standard/extr.ico.gif">&nbsp;OMG - BMM 1.3 - Directive Category</a></li></ul></i>        </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="8d5e9560552e22b2.htm" target="_top">Policy Dictionary</a></td>
+<td class="description-text">A&#160;<b> Policy Dictionary</b> is a set of <a href="959320325ee7fe24.htm" target="_top"><b><u>Policy</u></b></a>(ies), defined in laws published by governements or in policy frameworks defined by the enterprise.<br />Both <a href="283131a65da81fbd.htm" target="_top"><b><u>Policy Framework</u></b></a>s and <a href="744b8d735fbfcfa9.htm" target="_top"><b><u>Regulatory Framework</u></b></a>s are&#160;<b> Policy Dictionary</b>(ies).<i><ul>References:<li><a href="https://compliancedictionary.com/term/572"><img src="../standard/extr.ico.gif">&nbsp;UCF Glossary - Framework</a></li></ul></i>        </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="af6622b86307d7fa.htm" target="_top">Policy Framework Category</a></td>
+<td class="description-text"><b>&#160;Policy Framework Category</b> is a place holder for <a href="744b8f3f5fbfd1c2.htm" target="_top"><b><u>Policy Category</u></b></a>(ies) that are managed (owned by) in a <a href="283131a65da81fbd.htm" target="_top"><b><u>Policy Framework</u></b></a>.       </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="d682ef5e56144e77.htm" target="_top">Process</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Process</b> is a <a href="986cd4ec5ffca3ac.htm" target="_top"><b><u>Behavior</u></b></a> that describes a typical course of action intended to produce <a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>s, through the involvement of <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s as <a href="004b041f5ebd1119.htm" target="_top"><b><u>Active Participant</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">During its course of action, a process consumes or produces <a href="43ee620e63725a56.htm" target="_top"><b><u>Value Added Object</u></b></a>s, including <a href="e6f250185f772ee1.htm" target="_top"><b><u>Information Object</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">1) It may read or write <a href="e6f250185f772ee1.htm" target="_top"><b><u>Information Object</u></b></a>s from and to its <a href="e4c003255ed1f037.htm" target="_top"><b><u>Process Store</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">2) It may receive <a href="43ee620e63725a56.htm" target="_top"><b><u>Value Added Object</u></b></a>s at its boundary:&#160;<b> Consumed Outcome</b>s.</div><div align="left" style="min-height: 12pt; ">3) It may produce <a href="43ee620e63725a56.htm" target="_top"><b><u>Value Added Object</u></b></a>s at its boundary:&#160;<b> Produced Outcome</b>s.</div><div align="left" style="min-height: 12pt; ">The course of actions of a&#160;<b> Process</b> is constrained (<a href="24ae36805ed1cd18.htm" target="_top"><b><u>Rule Enforcement</u></b></a>) by the application of <a href="fe2203ca5c4f0fed.htm" target="_top"><b><u>Behavioral Rule</u></b></a>s that define what is allowed and not allowed to do.</div><i><ul>References:<li><a href="https://15926.blog/topics/data-model/index.htm#ClassOfActivity"><img src="../standard/extr.ico.gif">&nbsp;ISO 15926 - ClassOfActivity</a></li> <li><a href="https://www.iso.org/obp/ui/#iso:std:iso:9000:ed-4:v1:en"><img src="../standard/extr.ico.gif">&nbsp;ISO 9000 - 3.4 - Process</a></li> <li><a href="https://www.merriam-webster.com/dictionary/process"><img src="../standard/extr.ico.gif">&nbsp;Merriam Webster - Process</a></li> <li><a href="../../../www.omg.org/spec/BPMN/2.0.2/formal-13-12-09.pdf#page=173"><img src="../standard/extr.ico.gif">&nbsp;OMG - BPMN - Process</a></li> <li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Process"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - Process</a></li> <li><a href="../../../www.omg.org/spec/UML/2.5.1/formal-17-12-05.pdf#page=415"><img src="../standard/extr.ico.gif">&nbsp;OMG - UML - Activity</a></li> <li><a href="../resources/Ackoff-Towards-a-system-of-systems-concepts.pdf#Process"><img src="../standard/extr.ico.gif">&nbsp;Russell Ackoff - System of Concepts - Process</a></li> <li><a href="http://wordnetweb.princeton.edu/perl/webwn?o2=&amp;o0=1&amp;o8=1&amp;o1=1&amp;o7=&amp;o5=&amp;o9=&amp;o6=&amp;o3=&amp;o4=&amp;s=process&amp;i=0&amp;h=0000000000000#c"><img src="../standard/extr.ico.gif">&nbsp;WordNet -Process</a></li></ul></i>        </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="2cff31375eda90bd.htm" target="_top">Process Family</a></td>
+<td class="description-text">A&#160;&#160;<b> Process Family</b> is a category of <a href="d682ef5e56144e77.htm" target="_top"><b><u>Process</u></b></a>.       </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="07ca0ca15dd84ada.htm" target="_top">Regulation Article</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">Compulsory <a href="959320325ee7fe24.htm" target="_top"><b><u>Policy</u></b></a>, define by law, that is not directly enforceable whose purpose is guide enterprise activities.</div><div align="left" style="min-height: 12pt; "><b>&#160;Regulation Article</b> are classified by <a href="07ca0c765dd84a9b.htm" target="_top"><b><u>Regulation section</u></b></a>&#160; in the context of a <a href="744b8d735fbfcfa9.htm" target="_top"><b><u>Regulatory Framework</u></b></a>.</div>       </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="07ca0c765dd84a9b.htm" target="_top">Regulation section</a></td>
+<td class="description-text">A&#160;<b> Regulation section</b> is a classification of <a href="07ca0ca15dd84ada.htm" target="_top"><b><u>Regulation Article</u></b></a>s.<br /><b> Regulation section</b>s can be themselves organized as a hierarchy.       </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="744b8d735fbfcfa9.htm" target="_top">Regulatory Framework</a></td>
+<td class="description-text"><b>&#160;Regulatory Framework</b> is a set of <a href="07ca0ca15dd84ada.htm" target="_top"><b><u>Regulation Article</u></b></a>s issued by a <a href="167124af6008e9d3.htm" target="_top"><b><u>Regulator</u></b></a> (government, international body) to rule the structure and behavior of entities participating to a specific activity domain.<i><ul>References:<li><a href="https://compliancedictionary.com/term/386219"><img src="../standard/extr.ico.gif">&nbsp;UCF Glossary - Regulatory Framework</a></li></ul></i>        </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="427c1c7d64b5d4a1.htm" target="_top">Risk Type</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Risk Type</b> refers to a distinct category or classification of risk based on its origin, nature, or potential impact. It helps in organizing and addressing different sources of uncertainty or potential harm that an individual, organization, or system might face. By categorizing risks into different types, entities can develop more targeted mitigation strategies and response plans. </div><div align="left" style="min-height: 12pt; ">Common risk types include <a href="16e327be5bf83e3b.htm" target="_top"><b><u>Operational Risk Type</u></b></a>, <a href="5163d17a64b66991.htm" target="_top"><b><u>Privacy Risk Type</u></b></a>, and <a href="8f469fa664b76efc.htm" target="_top"><b><u>Compliance Risk Type</u></b></a>, among others.</div>       </td>
+</tr>
+<tr>
+<td><img src="../standard/relationship-concepttype.ico.gif"/>&nbsp;
+<a  href="24ae31b55ed1c66d.htm" target="_top">Service Interface</a></td>
+<td class="description-text">A&#160;<b> Service Interface</b> is a communication <a href="986cd4ec5ffca3ac.htm" target="_top"><b><u>Behavior</u></b></a> that describes a typical course of interactions, coordinated by <a href="24ae31d75ed1c747.htm" target="_top"><b><u>Event</u></b></a>s and <a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>s, and intended to produce <a href="43ee620e63725a56.htm" target="_top"><b><u>Value Added Object</u></b></a>s, through the involvement of <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s.<i><ul>References:<li><a href="https://publications.opengroup.org/w161"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - IT4IT - Defining Service Reference Architecture</a></li></ul></i>        </td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="43ee620e63725a56.htm" target="_top">Value Added Object</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Value Added Object</b> is an aspect of <a href="A4A5B3F855585CE1.htm" target="_top"><b><u>Architecture Block (Type)</u></b></a>s which can be the subject of business transactions.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Value Added Object</b> can be created, enhanced or transformed through the action of a producer <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>, resulting in an increase in value (<a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>) that benefits (value) to a user <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a> .</div><div align="left" style="min-height: 12pt; "><b>&#160;Value Added Object</b>s include all <a href="a371a43b5b865817.htm" target="_top"><b><u>Operating Asset</u></b></a>s ( <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s,&#160; <a href="986cd4ec5ffca3ac.htm" target="_top"><b><u>Behavior</u></b></a>s), <a href="e6f250185f772ee1.htm" target="_top"><b><u>Information Object</u></b></a>s and <a href="861987db6372446e.htm" target="_top"><b><u>Natural Resource</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">Examples:</div><div align="left" style="min-height: 12pt; ">- An improved process (<a href="986cd4ec5ffca3ac.htm" target="_top"><b><u>Behavior</u></b></a>) that is the result of a refactoring activity done by a consulting organization (producer <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>) for the benefit of a business unit (user <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>).</div><div align="left" style="min-height: 12pt; ">- A new application (<a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>) that is the result of development and sales activities of a software company (producer Agent) for the benefit of an end user (user Agent).</div><i><ul>References:<li><a href="../resources/Ackoff-Choice-Communication-and-Conflict.pdf#Utility"><img src="../standard/extr.ico.gif">&nbsp;Russell Ackoff - Choice &amp; Communication - Utility</a></li> <li><a href="http://wordnetweb.princeton.edu/perl/webwn?o2=&amp;o0=1&amp;o8=1&amp;o1=1&amp;o7=&amp;o5=&amp;o9=&amp;o6=&amp;o3=&amp;o4=&amp;r=1&amp;s=product&amp;i=3&amp;h=010000000#c"><img src="../standard/extr.ico.gif">&nbsp;WordNet - Product (Production)</a></li></ul></i>        </td>
+</tr>
+</tbody>
+</table></html>

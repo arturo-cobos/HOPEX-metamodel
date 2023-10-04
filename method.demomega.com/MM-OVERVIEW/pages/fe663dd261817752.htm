@@ -1,0 +1,730 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="keywords" content="">
+<meta name="description" content="">    
+<LINK REL="icon" HREF="../standard/assets/img/favicon.ico">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/bootstrap.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nav.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/eaportal.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/font-awesome.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/animate.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/datatables.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/grid.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nae.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/custom.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/chosen.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/prism.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery.dataTables.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jsTreeStyle.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.theme.css" media="screen" />
+<script type="text/javascript" src="../standard/assets/js/jquery-3.2.1.min.js" ></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-ui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.columnFilter.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3-force.v2.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.gui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.search.js"></script> 
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.util.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-2.1.1.min.js"></script>
+<script src="../standard/assets/js/ws_zoomtemplate_firefox.js"></script>
+<script src="../standard/assets/js/bootstrap.min.js"></script>
+<script src="../standard/assets/js/datatables.min.js"></script>
+<script src="../standard/assets/js/moment.min.js"></script>
+<script src="../standard/assets/js/datetime-moment.js"></script>
+<script src="../standard/assets/js/chartjs.min.js"></script>
+<script src="../standard/assets/js/searchindexcontent.json"></script>
+<script src="../standard/assets/js/anls.js"></script>
+<script src="../../../cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script src="../standard/assets/js/gauge.js"></script> 
+<script src="../standard/assets/js/domesticApi.js"></script> 
+<script src="../standard/assets/js/piecelabel.js"></script>
+<script src="../standard/assets/js/popper.min.js"></script>
+<script src="../standard/assets/js/custom.js"></script>
+<script src="../standard/assets/js/chosen.jquery.js"></script>
+<script src="../standard/assets/js/prism.js"></script>
+<script src="../standard/assets/js/init-chosen.js"></script>
+<script src="../standard/assets/js/chart-data-flow.js"></script>
+<script src="../standard/assets/js/chart-data-gantt.js"></script>
+<script type="module" src="../standard/assets/js/Fuse.esm.min.js"></script>
+<script type="module">
+import Fuse from '../standard/assets/js/Fuse.esm.min.js';
+$(document).ready(function () {
+console.log('getjson');
+window.$.getJSON('../standard/assets/js/searchindexcontent.json', function (response) {
+console.log('getjson ok');
+var isIndex = "";
+var url = window.location.pathname;
+var filename = url.substring(url.lastIndexOf('/')+1);
+if( filename.includes("index") || filename === "" ){
+isIndex = "pages/";
+} else {
+isIndex = "";
+}
+const fuse = new Fuse(response, {
+keys: ['title','text'],
+shouldSort: true,
+includeMatches : true,
+findAllMatches : true
+});
+$('#search-fuse').on('keyup', function () {
+let result = fuse.search($(this).val());
+console.log(result);
+let resultdiv = $('div.searchresults-fuse');
+if (result.length === 0) {
+resultdiv.hide();
+} else {
+resultdiv.empty();
+resultdiv.append('<table class="table-search" width="100%" cellspacing="0"><thead ><tr><th>Name</th><th>Object Type</th><th>Modification date</th></tr></thead><tbody>');
+
+for (let obj in result.slice(0,10)) {
+
+let searchObj = '<tr><td><a href="./'+ isIndex + result[obj].item.url + '">' + result[obj].item.title +'</a></td><td>' + result[obj].item.ObjectType + '</td><td>' + result[obj].item.ModificationDate + '</td></tr>' ;
+
+
+resultdiv.find('tbody').append(searchObj);
+}
+resultdiv.append('</tbody></table>');
+resultdiv.show();
+}
+});
+});
+});
+</script>
+<title>HOPEX Metamodel Overview (Beta Version)</title>
+</head>
+<nav class="navbar navbar-expand-md navbar-dark  navbar-mega"><!-- Brand --><!--<a class="navbar-brand" href="#">Navbar</a>--><a class="" href="../index.htm"><img class="logo-mega" src="../standard/assets/img/logo.png"  alt="">(Beta Version)</a><!-- Toggler/collapsibe Button --><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><!-- Navbar links -->
+<div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsibleNavbar"><div class="col-sm-auto col-md-auto col-lg-5"></div>
+<div class="col-sm-auto">
+<ul class="navbar-nav">      
+<li><a class="dropdown-item" href="ad30ce115ebf7e90.htm">EA Grid</a></li> 
+<li><a class="dropdown-item" href="fdd5018459bc3c6a.htm">EA Domains</a></li> 
+<li><a class="dropdown-item" href="07e731775ecc93f4.htm">Solutions</a></li> 
+<li><a class="dropdown-item" href="c5dfc62c54810c2c.htm">Glossary</a></li> 
+<li class="nav-item dropdown mx-1">
+<a class="nav-link" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</a>
+<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<li><a class="dropdown-item" href="5446555d5f88c32e.htm">Outcome Driven Metamodel</a></li> 
+<li><a class="dropdown-item" href="e1ccfc295f8f7b90.htm">Playbooks</a></li> 
+<li><a class="dropdown-item" href="42bc992862d20ea7.htm">Framework Mappings</a></li> 
+<li><a class="dropdown-item" href="e93aebb35fa20550.htm">Metamodel Patterns</a></li> 
+<li><a class="dropdown-item" href="d599fe87602b2b85.htm">References</a></li> 
+<li><a class="dropdown-item" href="333f3a7f5dde11de.htm">Legend</a></li> 
+</ul>									                                            
+</li>
+</ul>
+</div>
+<div class="col-sm-auto"><a class="nav-link search" href="#" onclick=showHideSearch("search-section-fuse")><i class="fa fa-search mr-1 form-control-feedback"></i></a></div>
+</div>
+</nav>
+<div id="search-section-fuse" style="display:none">>
+<div class="search_header"><span class="closesearch">&times;</span>
+<nav class="breadcrumb">
+<a class="breadcrumb-item" href="../index.htm">Home </a> 
+<span class="breadcrumb-item active">Search</span> 
+</nav>
+</div>
+<input id="search-fuse" placeholder="Search..."  name="q" onfocus="this.value=''" type="search">
+<div class="searchresults-fuse"></div>
+</div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>function showHideSearch(elementId) {var contentDivs = document.getElementsByClassName('content');var footerDivs = document.getElementsByClassName('footer'); var containerDivs = document.getElementsByClassName('container');var containerfluidDivs = document.getElementsByClassName('container-fluid');var x = document.getElementById(elementId);if (x.style.display === "none") {x.style.display = "block";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "none";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "none";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "none";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "none";}} else {x.style.display = "none";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "block";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "block";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "block";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "block";}}} ;<!-- END WIDGET DRILL DOWN --></script><script>$(document).ready(function() {$(window).scroll(function() {if ($(this).scrollTop() > 100) {$('.scrollup').fadeIn();} else {$('.scrollup').fadeOut();}});$('.scrollup').click(function() {$("html, body").animate({scrollTop: 0}, 600);return false;});});</script><script>
+var modal = document.getElementById("search-section-fuse");
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = "none";
+}
+}
+$(document).on('click', '.closesearch', function() {
+showHideSearch("search-section-fuse");
+
+
+
+
+
+});</script><div class="container-fluid col-lg-11"><nav class="breadcrumb"><a class="breadcrumb-item" href="../index.htm">Home</a> <span class="breadcrumb-item active">
+<a  href="c5dfc62c54810c2c.htm" target="_top">Dictionary of HOPEX concepts</a>&nbsp;/&nbsp;Assurance System Pattern</span></nav></div>
+<div class="container-fluid col-lg-11 content">
+<section class="fadeInDown animated"><a href="#idt" class="btn btn-d">DEFINITION</a> <a href="#grf" class="btn btn-d">CONCEPT GRAPH</a> <a href="#des" class="btn btn-d">CONCEPT DESCRIPTIONS</a> 
+</section>
+<a class="object-section-anchor" id="idt"></a>
+<section class="object-section">
+<h4>CONCEPT DOMAIN - Assurance System Pattern</h4><hr class="sectionbreak" /><table class="table table-vertical-headers table-set-col-width"><tr><th>Description</th><td class="description-text"><i>Pattern Domain</i><br/><div></div></td></tr><tr><th>Dictionary</th><td><img src="../standard/dicsubjectarea.ico.gif"/>&nbsp;
+<a  href="c5dfc62c54810c2c.htm" target="_top">Dictionary of HOPEX concepts</a></td></tr><tr><th>Parent Domain</th><td></td></tr>
+<tr><th>Imported Domains</th><td><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="76147feb6182230a.htm" target="_top">Enterprise Architecting &amp; Management Systems</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="02F70FDC600F4179.htm" target="_top">Policy Pattern</a>&nbsp;</td></tr>
+<tr><th>Domain dependencies</th><td><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="c30bd1505a5d97f9.htm" target="_top">Architecture Model Management</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="02af0a4b5a182417.htm" target="_top">Operating Semantic</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="02F70FDC600F4179.htm" target="_top">Policy Pattern</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="427C1BDB64B5D1C7.htm" target="_top">Risk &amp; Threat</a>&nbsp;</td></tr></table></section>
+<a class="object-section-anchor" id="grf"></a>
+<section class="object-section">
+<h4>DOMAIN CONCEPT GRAPH</h4>
+<hr class="sectionbreak" />
+<a href="#" class="btn btn-d" value="Relationship1" onclick="showDiagOnClick(this)">Diagram</a>
+<a href="#" class="btn btn-d" value="Relationship2" onclick="showDiagOnClick(this)">Graph</a>
+<div class="Relationship" id="Relationship1">
+
+<map  name="FE663DDB61817831">
+  <area  href=#OBMK89199D0764F1C121 shape="polygon" coords="424, 315, 470, 315, 470, 326, 424, 326"    title="-">
+  
+  <area  href=89199d0764f1c112.htm shape="polygon" coords="334, 315, 470, 315, 470, 326, 334, 326"   target="_top"  title="-">
+  
+  <area  href=#OBMK89199D0964F1C15A shape="polygon" coords="334, 315, 379, 315, 379, 326, 334, 326"    title="-">
+  
+  <area  href=0dc20f4d5e9b5ca9.htm#OBMK0DC20F4D5E9B5CA9 shape="polygon" coords="482, 311, 482, 300, 579, 300, 579, 311, 482, 311"   target="_top"  title="An&#160; Architecture Category is a Categorization Block used to classify Architecture Blocks. Examples are Data Category, Business Line.">
+  
+  <area  href=977fc52e3d250359.htm#OBMK977FC52E3D250359 shape="polygon" coords="505, 343, 505, 330, 555, 330, 555, 343, 505, 343"   target="_top"  title="A risk type defines a standardized risk typology within the context of an organization.">
+  
+  <area  href="427c1c7d64b5d4a1.htm" shape="rect" coords="469, 298, 591, 349"   target="_top"  title="A&#160; Risk Type refers to a distinct category or classification of risk based on its origin, nature, or potential impact. It helps in organizing and addressing different sources of uncertainty or potential harm that an individual, organization, or system might face. By categorizing risks into different types, entities can develop more targeted mitigation strategies and response plans. ">
+  
+  <area  href=#OBMKAF6622FC6307D904 shape="polygon" coords="1239, 571, 1217, 564, 1208, 562, 1211, 551, 1220, 554, 1242, 560"    title="-">
+  
+  <area  href=#OBMKAF6622E66307D8D1 shape="polygon" coords="1195, 553, 1208, 551, 1210, 562, 1196, 563"    title="-">
+  
+  <area  href=#OBMKAF6622236307D759 shape="polygon" coords="1245, 395, 1190, 395, 1206, 395, 1206, 384, 1216, 384, 1245, 384"    title="-">
+  
+  <area  href=#OBMKAF6621E66307D723 shape="polygon" coords="1126, 392, 1136, 388, 1146, 385, 1150, 395, 1140, 398, 1130, 402"    title="-">
+  
+  <area  href=8266d01162c566dc.htm shape="polygon" coords="1321, 600, 1321, 637, 789, 637, 789, 394, 800, 394, 800, 627, 1310, 627, 1310, 600"   target="_top"  title="-">
+  
+  <area  href=744b90065fbfd27c.htm#OBMK744B90065FBFD27C shape="polygon" coords="1368, 477, 1355, 477, 1355, 491, 1268, 491, 1268, 477, 1368, 477"   target="_top"  title="-">
+  
+  <area  href=712a84225fcf0d47.htm shape="polygon" coords="1311, 431, 1311, 535, 1300, 535, 1300, 431"   target="_top"  title="-">
+  
+  <area  href=af6622b86307d7fa.htm#OBMKAF6622B86307D7FA shape="polygon" coords="1256, 548, 1256, 537, 1374, 537, 1374, 548, 1256, 548"   target="_top"  title="&#160;Policy Framework Category is a place holder for Policy Category(ies) that are managed (owned by) in a Policy Framework.">
+  
+  <area  href=6f1571bc5fbf80d3.htm#OBMK6F1571BC5FBF80D3 shape="polygon" coords="1253, 593, 1253, 580, 1377, 580, 1377, 593, 1253, 593"   target="_top"  title="An Architecture Principle Category defines a grouping of related Architecture Principles.">
+  
+  <area  href="712a83e95fcf04a7.htm" shape="rect" coords="1240, 535, 1390, 600"   target="_top"  title="An&#160; Architecture Principle Category defines a grouping of related Architecture principles.">
+  
+  <area  href=fe2201105c4f0df3.htm#OBMKFE2201105C4F0DF3 shape="polygon" coords="1266, 374, 1266, 363, 1349, 363, 1349, 374, 1266, 374"   target="_top"  title="A&#160; Business Directive is Directive an intended to assert business structure or to control or influence the behavior of the enterprise.">
+  
+  <area  href=959320325ee7fe24.htm#OBMK959320325EE7FE24 shape="polygon" coords="1291, 385, 1291, 374, 1324, 374, 1324, 385, 1291, 385"   target="_top"  title="A&#160; Policy is a Directive that is not directly enforceable whose purpose is to govern, guide or constrain the structure and behavior of Agents in the enterprise. ">
+  
+  <area  href=bfaf3542601467ab.htm#OBMKBFAF3542601467AB shape="polygon" coords="1255, 396, 1255, 385, 1360, 385, 1360, 396, 1255, 396"   target="_top"  title="A&#160; Policy Framework Asset is a Policy Asset that is declared in a Policy Framework.">
+  
+  <area  href=c6b2ed605fbc670b.htm#OBMKC6B2ED605FBC670B shape="polygon" coords="1262, 428, 1262, 414, 1353, 414, 1353, 428, 1262, 428"   target="_top"  title="An Architecture Principle&#160; is a general guideline that informs, supports and constrains the way in which an organization will design and construct architectures.">
+  
+  <area  href="07231aff5f4eb337.htm" shape="rect" coords="1244, 360, 1371, 431"   target="_top"  title="An&#160; Architecture principles is a general guideline (Policy) that informs, supports and constrains the way in which an organization will design and construct architectures.">
+  
+  <area  href=546c6e6a601178b1.htm#OBMK546C6E6A601178B1 shape="polygon" coords="994, 349, 971, 349, 971, 363, 896, 363, 896, 349, 994, 349"   target="_top"  title="-">
+  
+  <area  href=58e275eb619f7752.htm shape="polygon" coords="866, 364, 1011, 364, 1011, 375, 866, 375"   target="_top"  title="-">
+  
+  <area  href=a67dc8e95f8ead60.htm shape="polygon" coords="1213, 95, 1475, 95, 1475, 150, 1464, 150, 1464, 106, 1213, 106"   target="_top"  title="-">
+  
+  <area  href=8d5e9560552e22b2.htm#OBMK8D5E9560552E22B2 shape="polygon" coords="756, 170, 756, 159, 831, 159, 831, 170, 756, 170"   target="_top"  title="A&#160; Policy Dictionary is a set of Policy(ies), defined in laws published by governements or in policy frameworks defined by the enterprise.">
+  
+  <area  href=c229f0665d0c6f7a.htm#OBMKC229F0665D0C6F7A shape="polygon" coords="745, 202, 745, 188, 841, 188, 841, 202, 745, 202"   target="_top"  title="A regulatory framework is an authority document falling under any of following categories: regulations (rules of law that, if not followed, can result in penalties), guidelines, standards, best practices.">
+  
+  <area  href="744b8d735fbfcfa9.htm" shape="rect" coords="720, 157, 867, 240"   target="_top"  title="&#160;Regulatory Framework is a set of Regulation Articles issued by a Regulator (government, international body) to rule the structure and behavior of entities participating to a specific activity domain.">
+  
+  <area  href=167126a16008efeb.htm#OBMK167126A16008EFEB shape="polygon" coords="1225, 280, 1198, 280, 1198, 294, 1136, 294, 1136, 280, 1225, 280"   target="_top"  title="-">
+  
+  <area  href=167126066008ed22.htm shape="polygon" coords="1076, 273, 1275, 273, 1275, 284, 1076, 283"   target="_top"  title="-">
+  
+  <area  href=ebcfaeac5ad76ed7.htm#OBMKEBCFAEAC5AD76ED7 shape="polygon" coords="1283, 263, 1283, 252, 1410, 252, 1410, 263, 1283, 263"   target="_top"  title="An Individual which is used in the description of the enterprise.">
+  
+  <area  href=b1edb2612c1401d3.htm#OBMKB1EDB2612C1401D3 shape="polygon" coords="1331, 290, 1331, 276, 1361, 276, 1361, 290, 1331, 290"   target="_top"  title="A site is the geographical location of an organization. Examples: Boston subsidiary, Seattle plant, and more generally the headquarters, subsidiaries, plants, warehouses, etc.">
+  
+  <area  href="8d5e986f552e28d5.htm" shape="rect" coords="1275, 249, 1417, 309"   target="_top"  title="A&#160; Location is a geopolitical location anywhere on the earth.">
+  
+  <area  href=c7dad03f5ae92ae9.htm#OBMKC7DAD03F5AE92AE9 shape="polygon" coords="948, 262, 948, 251, 1061, 251, 1061, 262, 948, 262"   target="_top"  title="A Person or Organisation.">
+  
+  <area  href=b8bcc15559e86af6.htm#OBMKB8BCC15559E86AF6 shape="polygon" coords="980, 289, 980, 275, 1029, 275, 1029, 289, 980, 289"   target="_top"  title="Regulators are independent public authorities that supervise, through investigative and corrective powers, the application of the data protection law.">
+  
+  <area  href="167124af6008e9d3.htm" shape="rect" coords="932, 248, 1076, 308"   target="_top"  title="Regulators are independent public authorities that supervise, through investigative and corrective powers, the application of the data protection law.">
+  
+  <area  href=a397b4f95fbf6e8f.htm shape="polygon" coords="1045, 430, 833, 430, 833, 394, 843, 394, 843, 419, 1045, 419"   target="_top"  title="-">
+  
+  <area  href=546c6e6a601178b1.htm#OBMK546C6E6A601178B1 shape="polygon" coords="1073, 107, 1039, 107, 1039, 121, 964, 121, 964, 107, 1073, 107"   target="_top"  title="-">
+  
+  <area  href=a67dcbcf5f8eb6d0.htm shape="polygon" coords="865, 98, 1092, 98, 1092, 108, 865, 108"   target="_top"  title="-">
+  
+  <area  href=8d5e9560552e22b2.htm#OBMK8D5E9560552E22B2 shape="polygon" coords="756, 95, 756, 84, 831, 84, 831, 95, 756, 95"   target="_top"  title="A&#160; Policy Dictionary is a set of Policy(ies), defined in laws published by governements or in policy frameworks defined by the enterprise.">
+  
+  <area  href=cce90aca5ea72f4c.htm#OBMKCCE90ACA5EA72F4C shape="polygon" coords="751, 127, 751, 114, 835, 114, 835, 127, 751, 127"   target="_top"  title="A control framework is the set of control directives originating from regulatory frameworks and their regulation articles.">
+  
+  <area  href="a67dc9285f8eadfb.htm" shape="rect" coords="720, 82, 867, 137"   target="_top"  title="A&#160; Control Framework is a set of Control Directives originating from Regulatory Frameworks and their Regulation Articles.">
+  
+  <area  href=959320325ee7fe24.htm#OBMK959320325EE7FE24 shape="polygon" coords="1136, 88, 1136, 77, 1169, 77, 1169, 88, 1136, 88"   target="_top"  title="A&#160; Policy is a Directive that is not directly enforceable whose purpose is to govern, guide or constrain the structure and behavior of Agents in the enterprise. ">
+  
+  <area  href=0ec2c1d65ea1837e.htm#OBMK0EC2C1D65EA1837E shape="polygon" coords="1114, 120, 1114, 107, 1190, 107, 1190, 120, 1114, 120"   target="_top"  title="A control directive, once implemented, enforces any regulation article your organization has to comply with.">
+  
+  <area  href="a67dc8ae5f8eacdf.htm" shape="rect" coords="1091, 75, 1213, 128"   target="_top"  title="A&#160; Control Directive is a kind of Policy that provides recommendations on how to comply with Regulation Articles.Once implemented,&#160; Control Directives enforces any Regulatory Framework your organization has to comply with.">
+  
+  <area  href=dc5ffd215ee914e0.htm shape="polygon" coords="1475, 214, 1475, 235, 851, 235, 851, 224, 1464, 224, 1464, 214"   target="_top"  title="-">
+  
+  <area  href=22b74de15f0787b6.htm#OBMK22B74DE15F0787B6 shape="polygon" coords="1067, 180, 1063, 180, 1063, 194, 959, 194, 959, 180, 1067, 180"   target="_top"  title="-">
+  
+  <area  href=07ca0c835dd84ac5.htm shape="polygon" coords="1088, 185, 865, 185, 865, 174, 1088, 174"   target="_top"  title="-">
+  
+  <area  href=744b90065fbfd27c.htm#OBMK744B90065FBFD27C shape="polygon" coords="1345, 177, 1340, 177, 1340, 191, 1253, 191, 1253, 177, 1345, 177"   target="_top"  title="-">
+  
+  <area  href=07ca0cb25dd84b03.htm shape="polygon" coords="1383, 184, 1212, 184, 1212, 173, 1383, 173"   target="_top"  title="-">
+  
+  <area  href=fe2201105c4f0df3.htm#OBMKFE2201105C4F0DF3 shape="polygon" coords="1428, 164, 1428, 153, 1511, 153, 1511, 164, 1428, 164"   target="_top"  title="A&#160; Business Directive is Directive an intended to assert business structure or to control or influence the behavior of the enterprise.">
+  
+  <area  href=959320325ee7fe24.htm#OBMK959320325EE7FE24 shape="polygon" coords="1452, 175, 1452, 164, 1486, 164, 1486, 175, 1452, 175"   target="_top"  title="A&#160; Policy is a Directive that is not directly enforceable whose purpose is to govern, guide or constrain the structure and behavior of Agents in the enterprise. ">
+  
+  <area  href=68ed76eb5d066076.htm#OBMK68ED76EB5D066076 shape="polygon" coords="1430, 207, 1430, 194, 1508, 194, 1508, 207, 1430, 207"   target="_top"  title="An authoritative rule.">
+  
+  <area  href="07ca0ca15dd84ada.htm" shape="rect" coords="1383, 150, 1555, 214"   target="_top"  title="Compulsory Policy, define by law, that is not directly enforceable whose purpose is guide enterprise activities.">
+  
+  <area  href=744b8f3f5fbfd1c2.htm#OBMK744B8F3F5FBFD1C2 shape="polygon" coords="1115, 160, 1115, 149, 1185, 149, 1185, 160, 1115, 160"   target="_top"  title="&#160;Policy Category is a classification of policies. In regulations, it represents sections of the law.">
+  
+  <area  href=68ed6acb5d065c42.htm#OBMK68ED6ACB5D065C42 shape="polygon" coords="1109, 192, 1109, 179, 1191, 179, 1191, 192, 1109, 192"   target="_top"  title="A regulation section is a citation/text from a Regulatory Framework without any mandated control directive, but containing other sections or articles.">
+  
+  <area  href="07ca0c765dd84a9b.htm" shape="rect" coords="1088, 147, 1213, 204"   target="_top"  title="A&#160; Regulation section is a classification of Regulation Articles.">
+  
+  <area  href=744b90065fbfd27c.htm#OBMK744B90065FBFD27C shape="polygon" coords="1201, 480, 1178, 480, 1178, 494, 1091, 494, 1091, 480, 1201, 480"   target="_top"  title="-">
+  
+  <area  href=07ca0d995dd84e73.htm shape="polygon" coords="1136, 435, 1136, 532, 1125, 532, 1125, 435"   target="_top"  title="-">
+  
+  <area  href=fe2201105c4f0df3.htm#OBMKFE2201105C4F0DF3 shape="polygon" coords="1086, 379, 1086, 368, 1169, 368, 1169, 379, 1086, 379"   target="_top"  title="A&#160; Business Directive is Directive an intended to assert business structure or to control or influence the behavior of the enterprise.">
+  
+  <area  href=959320325ee7fe24.htm#OBMK959320325EE7FE24 shape="polygon" coords="1111, 390, 1111, 379, 1144, 379, 1144, 390, 1111, 390"   target="_top"  title="A&#160; Policy is a Directive that is not directly enforceable whose purpose is to govern, guide or constrain the structure and behavior of Agents in the enterprise. ">
+  
+  <area  href=bfaf3542601467ab.htm#OBMKBFAF3542601467AB shape="polygon" coords="1075, 400, 1075, 390, 1181, 390, 1181, 400, 1075, 400"   target="_top"  title="A&#160; Policy Framework Asset is a Policy Asset that is declared in a Policy Framework.">
+  
+  <area  href=aeaac4174e165ce9.htm#OBMKAEAAC4174E165CE9 shape="polygon" coords="1092, 432, 1092, 419, 1163, 419, 1163, 432, 1092, 432"   target="_top"  title="A business policy is a directive that is not directly enforceable whose purpose is to govern or guide the enterprise. Business policies provide the basis for business rules and govern business processes. A business policy is always under the enterprise control. In general business policies exist to govern; that is, control, guide, and shape the strategies and tactics. ">
+  
+  <area  href="fe22ffdd5c4e0bd4.htm" shape="rect" coords="1044, 365, 1213, 435"   target="_top"  title="A&#160; Business Policy is a&#160; Business Regulation that is not directly enforceable whose purpose is to govern or guide the enterprise.">
+  
+  <area  href=07ca0d765dd84e60.htm shape="polygon" coords="1057, 582, 789, 582, 789, 394, 800, 394, 800, 571, 1057, 571"   target="_top"  title="-">
+  
+  <area  href=af6622b86307d7fa.htm#OBMKAF6622B86307D7FA shape="polygon" coords="1068, 546, 1068, 535, 1185, 535, 1185, 546, 1068, 546"   target="_top"  title="&#160;Policy Framework Category is a place holder for Policy Category(ies) that are managed (owned by) in a Policy Framework.">
+  
+  <area  href=7efa8936598059a8.htm#OBMK7EFA8936598059A8 shape="polygon" coords="1072, 578, 1072, 565, 1181, 565, 1181, 578, 1072, 578"   target="_top"  title="A policy framework consists of a set of business policies. Policy frameworks may contain sections.">
+  
+  <area  href="07ca0d6f5dd84e37.htm" shape="rect" coords="1057, 532, 1198, 604"   target="_top"  title="-">
+  
+  <area  href=8d5e9560552e22b2.htm#OBMK8D5E9560552E22B2 shape="polygon" coords="756, 353, 756, 342, 831, 342, 831, 353, 756, 353"   target="_top"  title="A&#160; Policy Dictionary is a set of Policy(ies), defined in laws published by governements or in policy frameworks defined by the enterprise.">
+  
+  <area  href=083d11bd5d6d8439.htm#OBMK083D11BD5D6D8439 shape="polygon" coords="753, 385, 753, 372, 833, 372, 833, 385, 753, 385"   target="_top"  title="A policy framework consists of a set of business policies. Policy frameworks may contain sections.">
+  
+  <area  href="283131a65da81fbd.htm" shape="rect" coords="720, 340, 867, 395"   target="_top"  title="A&#160; Policy Framework is a set of Directives defined by an enterprise to guide its operations.">
+  
+  <area  href=#OBMKFE63131661816310 shape="polygon" coords="107, 159, 107, 353, 224, 353, 224, 364, 97, 364, 97, 159"    title="-">
+  
+  <area  href=#OBMK9152E0345ED7586A shape="polygon" coords="288, 142, 351, 142, 351, 152, 288, 152"    title="-">
+  
+  <area  href=#OBMK9152E0345ED75863 shape="polygon" coords="162, 142, 351, 142, 351, 152, 162, 152"    title="-">
+  
+  <area  href=#OBMK9152E0355ED758A1 shape="polygon" coords="162, 142, 225, 142, 225, 152, 162, 152"    title="-">
+  
+  <area  href=#OBMKB90ACFA1600E4C46 shape="polygon" coords="424, 383, 469, 383, 469, 393, 424, 393"    title="-">
+  
+  <area  href=b90acfa1600e4c31.htm shape="polygon" coords="334, 383, 469, 383, 469, 393, 334, 393"   target="_top"  title="-">
+  
+  <area  href=#OBMKB90ACFA2600E4C85 shape="polygon" coords="334, 383, 379, 383, 379, 393, 334, 393"    title="-">
+  
+  <area  href=959320325ee7fe24.htm#OBMK959320325EE7FE24 shape="polygon" coords="513, 372, 513, 361, 547, 361, 547, 372, 513, 372"   target="_top"  title="A&#160; Policy is a Directive that is not directly enforceable whose purpose is to govern, guide or constrain the structure and behavior of Agents in the enterprise. ">
+  
+  <area  href=0ec2c1d65ea1837e.htm#OBMK0EC2C1D65EA1837E shape="polygon" coords="492, 404, 492, 391, 568, 391, 568, 404, 492, 404"   target="_top"  title="A control directive, once implemented, enforces any regulation article your organization has to comply with.">
+  
+  <area  href="a67dc8ae5f8eacdf.htm" shape="rect" coords="469, 358, 591, 417"   target="_top"  title="A&#160; Control Directive is a kind of Policy that provides recommendations on how to comply with Regulation Articles.Once implemented,&#160; Control Directives enforces any Regulatory Framework your organization has to comply with.">
+  
+  <area  href=71f59b656008373c.htm shape="polygon" coords="334, 234, 402, 234, 402, 175, 413, 175, 413, 244, 334, 244"   target="_top"  title="-">
+  
+  <area  href=#OBMK9152E6975ED764DA shape="polygon" coords="420, 463, 463, 463, 463, 474, 420, 474"    title="-">
+  
+  <area  href=9152E6975ED764D3.htm shape="polygon" coords="334, 463, 463, 463, 463, 474, 334, 474"   target="_top"  title="Functional Asset involved in an Assurance Case.">
+  
+  <area  href=#OBMK9152E6985ED7651C shape="polygon" coords="334, 463, 377, 463, 377, 474, 334, 474"    title="-">
+  
+  <area  href=07ca0f015dd84efa.htm#OBMK07CA0F015DD84EFA shape="polygon" coords="525, 661, 525, 650, 602, 650, 602, 661, 525, 661"   target="_top"  title="&#160;Functional Assets encompasse Architecture Blocks used to describe how an enterprise function. This includes the purposes of an enterprise (Capability) and the way the enterprise operates to fulfill these purposes (Agents and their&#160; Behaviors).">
+  
+  <area  href=30efa75761f367fe.htm#OBMK30EFA75761F367FE shape="polygon" coords="523, 672, 523, 661, 604, 661, 604, 672, 523, 672"   target="_top"  title="An&#160; Information Asset is a Model Building Block involved in the description of information.">
+  
+  <area  href=43ee620e63725a56.htm#OBMK43EE620E63725A56 shape="polygon" coords="520, 683, 520, 672, 608, 672, 608, 683, 520, 683"   target="_top"  title="A&#160; Value Added Object is an aspect of Architecture Block (Type)s which can be the subject of business transactions.">
+  
+  <area  href=81f48a9756f17efb.htm#OBMK81F48A9756F17EFB shape="polygon" coords="523, 715, 523, 702, 604, 702, 604, 715, 523, 715"   target="_top"  title="-">
+  
+  <area  href="e6f250185f772ee1.htm" shape="rect" coords="486, 648, 641, 719"   target="_top"  title="An&#160; Information Object&#160; represents anything that can be communicated or memorized by an Agent in order to produce its Outcomes.">
+  
+  <area  href=05b0ffd76006dac0.htm#OBMK05B0FFD76006DAC0 shape="polygon" coords="183, 496, 178, 496, 178, 510, 41, 510, 41, 496, 183, 496"   target="_top"  title="-">
+  
+  <area  href=7d3787605fd0541d.htm shape="polygon" coords="71, 159, 71, 541, 215, 541, 215, 552, 60, 552, 60, 159"   target="_top"  title="-">
+  
+  <area  href=#OBMK9152E51B5ED76152 shape="polygon" coords="423, 254, 468, 254, 468, 264, 423, 264"    title="-">
+  
+  <area  href=9152e51b5ed7614c.htm shape="polygon" coords="334, 254, 468, 254, 468, 264, 334, 264"   target="_top"  title="-">
+  
+  <area  href=#OBMK9152E51C5ED76195 shape="polygon" coords="334, 254, 379, 254, 379, 264, 334, 264"    title="-">
+  
+  <area  href=14431b565ad65914.htm#OBMK14431B565AD65914 shape="polygon" coords="496, 518, 496, 507, 631, 507, 631, 518, 496, 518"   target="_top"  title="An&#160; Encapsulated Aggregate (Type) is a class of Encapsulated Aggregate (Individual).">
+  
+  <area  href=a371a43b5b865817.htm#OBMKA371A43B5B865817 shape="polygon" coords="527, 528, 527, 518, 601, 518, 601, 528, 527, 528"   target="_top"  title="An&#160; Operating Asset is a Functional Asset used to describes the way Outcomes are produced and consumed: how&#160; (Behaviors) and by whom (Agents).">
+  
+  <area  href=e9321053590b4a88.htm#OBMKE9321053590B4A88 shape="polygon" coords="512, 560, 512, 547, 615, 547, 615, 560, 512, 560"   target="_top"  title="-">
+  
+  <area  href="79368381561716a6.htm" shape="rect" coords="486, 504, 641, 562"   target="_top"  title="An&#160; Agent is an Operating Asset which is able to participate actively to Processes (Active Participant) and/or to conduct Processes (Performed Process) to produce Outcomes that benefit to other&#160; Agents or affect other&#160; Agents.">
+  
+  <area  href=986cd4ec5ffca3ac.htm#OBMK986CD4EC5FFCA3AC shape="polygon" coords="542, 591, 542, 580, 585, 580, 585, 591, 542, 591"   target="_top"  title="A&#160; Behavior is an Operating Asset that describes any action or reaction of an Agent to external or internal circumstances. This includes Processes (action), Interaction Scenarios (stories) or interactions (Service Interface).">
+  
+  <area  href=39924a285927597c.htm#OBMK39924A285927597C shape="polygon" coords="529, 623, 529, 610, 598, 610, 598, 623, 529, 623"   target="_top"  title="-">
+  
+  <area  href="d682ef5e56144e77.htm" shape="rect" coords="486, 577, 641, 631"   target="_top"  title="A&#160; Process is a Behavior that describes a typical course of action intended to produce Outcomes, through the involvement of Agents as Active Participants.">
+  
+  <area  href=ca353b065fc5e146.htm#OBMKCA353B065FC5E146 shape="polygon" coords="483, 249, 483, 238, 573, 238, 573, 249, 483, 249"   target="_top"  title="A&#160; Categorization Block is a Model Building Block used to provid classification and qualification of other Model Building Blocks.For instance, Tags are used for classification. Constraint Value are used for qualification or quantification.">
+  
+  <area  href="0bf60d3d5ddc36ed.htm" shape="rect" coords="467, 236, 589, 287"   target="_top"  title="A category of measure aming at controlling conformity of asset associated to the Assurance Case.">
+  
+  <area  href=CA353E6D5FC5E8AF.htm#OBMKCA353E6D5FC5E8AF shape="polygon" coords="361, 139, 361, 128, 451, 128, 451, 139, 361, 139"   target="_top"  title="A&#160; Model Building Block is a Building Block used to describe and manage the enterprise. It comprises:">
+  
+  <area  href=c2b8cafd5d1d208f.htm#OBMKC2B8CAFD5D1D208F shape="polygon" coords="376, 171, 376, 158, 436, 158, 436, 171, 376, 171"   target="_top"  title="-">
+  
+  <area  href="07ca0dd75dd84e92.htm" shape="rect" coords="351, 125, 461, 175"   target="_top"  title="A&#160; Policy Asset is any topic related to policy definitions.It ranges from the different kidns of Directives (Business Policy, Architecture principle, Business Rule, etc.),&#160; to classification of policies (Policy Category) up to an entire set of policies (Policy Dictionary).">
+  
+  <area  href=05b0f6d56006cc8a.htm#OBMK05B0F6D56006CC8A shape="polygon" coords="238, 230, 238, 219, 320, 219, 320, 230, 238, 230"   target="_top"  title="An&#160; Initiative Resource is a resource and course of actions defined by Enduring Initiatives&#160; to achieve its objectives.">
+  
+  <area  href=c229e83e5d0c6c6b.htm#OBMKC229E83E5D0C6C6B shape="polygon" coords="238, 259, 238, 246, 320, 246, 320, 259, 293, 259, 293, 269, 265, 269, 265, 259, 238, 259"   target="_top"  title="-">
+  
+  <area  href="07ca19e95dd854e9.htm" shape="rect" coords="224, 216, 334, 500"   target="_top"  title="An&#160; Assurance Case is a claim that a particular enterprise asset or group of assets (Resources or Activites) adequately mitigates certain identified risks by means of appropriated controls.">
+  
+  <area  href=#OBMK07CA19BE5DD854C9 shape="polygon" coords="168, 102, 696, 102, 696, 113, 168, 113"    title="-">
+  
+  <area  href=a67dc9f45f8eb2a9.htm#OBMKA67DC9F45F8EB2A9 shape="polygon" coords="754, 53, 754, 42, 846, 42, 846, 53, 754, 53"   target="_top"  title="A&#160; Reference Dictionary is an aspect of Model Namespace that are used as reference libraries used to hold reference materials used to develop architectures.">
+  
+  <area  href=083d120d5d6d84a3.htm#OBMK083D120D5D6D84A3 shape="polygon" coords="767, 80, 767, 66, 833, 66, 833, 80, 767, 80"   target="_top"  title="-">
+  
+  <area  href="8d5e9560552e22b2.htm" shape="rect" coords="696, 41, 904, 450"   target="_top"  title="A&#160; Policy Dictionary is a set of Policy(ies), defined in laws published by governements or in policy frameworks defined by the enterprise.">
+  
+  <area  href=29df3f4060084c07.htm#OBMK29DF3F4060084C07 shape="polygon" coords="52, 103, 52, 92, 147, 92, 147, 103, 52, 103"   target="_top"  title="A&#160; Management System is an Enduring Initiative within an Enterprise, aimed at creating, maintaining, evaluating, evolving, and operating a collection of essential Functional Assets of the Enterprise.">
+  
+  <area  href=c229e86a5d0c6cbc.htm#OBMKC229E86A5D0C6CBC shape="polygon" coords="59, 130, 59, 116, 140, 116, 140, 130, 59, 130"   target="_top"  title="-">
+  
+  <area  href="07ca18d25dd85477.htm" shape="rect" coords="28, 89, 171, 159"   target="_top"  title="An&#160; Assurance System is a Management System aimed at ensuring enterprise resilience against internal and external constraints:">
+  
+  <area  href=514E62CE620F22C1.htm#OBMK514E62CE620F22C1 shape="polygon" coords="512, 447, 512, 436, 613, 436, 613, 447, 512, 447"   target="_top"  title="An&#160; Aggregate Block (Type) is a class of&#160; Aggregate Blocks.">
+  
+  <area  href=A4A5B3F855585CE1.htm#OBMKA4A5B3F855585CE1 shape="polygon" coords="508, 458, 508, 447, 617, 447, 617, 458, 508, 458"   target="_top"  title="An&#160; Architecture Block (Type) is a type of Architecture Block which is used in the description of the enterprise, such as Processes, Org-Units, Applications.">
+  
+  <area  href=c229c44e5d0c649f.htm#OBMKC229C44E5D0C649F shape="polygon" coords="513, 484, 513, 471, 613, 471, 613, 484, 513, 484"   target="_top"  title="Blocks used to describe the functional architecture of an ~BR6K086dIfvA[Enterprise].">
+  
+  <area  href="07ca0f015dd84efa.htm" shape="rect" coords="463, 434, 663, 738"   target="_top"  title="&#160;Functional Assets encompasse Architecture Blocks used to describe how an enterprise function. This includes the purposes of an enterprise (Capability) and the way the enterprise operates to fulfill these purposes (Agents and their&#160; Behaviors).">
+  
+  <area  href=05b0f6d56006cc8a.htm#OBMK05B0F6D56006CC8A shape="polygon" coords="240, 534, 240, 523, 322, 523, 322, 534, 240, 534"   target="_top"  title="An&#160; Initiative Resource is a resource and course of actions defined by Enduring Initiatives&#160; to achieve its objectives.">
+  
+  <area  href=9eeca9a25dad6c78.htm#OBMK9EECA9A25DAD6C78 shape="polygon" coords="238, 560, 238, 547, 324, 547, 324, 560, 238, 560"   target="_top"  title="-">
+  
+  <area  href="7d3786ff5fd052e7.htm" shape="rect" coords="215, 522, 347, 569"   target="_top"  title="An&#160; Assurance Instrument is a resource or course of actions used by an Assurance System to achieve its objectives.">
+  
+  <area  href=07ca0dd75dd84e92.htm#OBMK07CA0DD75DD84E92 shape="polygon" coords="1176, 337, 1176, 326, 1235, 326, 1235, 337, 1176, 337"   target="_top"  title="A&#160; Policy Asset is any topic related to policy definitions.It ranges from the different kidns of Directives (Business Policy, Architecture principle, Business Rule, etc.),&#160; to classification of policies (Policy Category) up to an entire set of policies (Policy Dictionary).">
+  
+  <area  href=c6b2de145fbc6462.htm#OBMKC6B2DE145FBC6462 shape="polygon" coords="1156, 364, 1156, 350, 1256, 350, 1256, 364, 1156, 364"   target="_top"  title="-">
+  
+  <area  href="bfaf3542601467ab.htm" shape="rect" coords="1011, 325, 1401, 456"   target="_top"  title="A&#160; Policy Framework Asset is a Policy Asset that is declared in a Policy Framework.">
+  
+  <area  href=744b8f3f5fbfd1c2.htm#OBMK744B8F3F5FBFD1C2 shape="polygon" coords="1174, 513, 1174, 502, 1245, 502, 1245, 513, 1174, 513"   target="_top"  title="&#160;Policy Category is a classification of policies. In regulations, it represents sections of the law.">
+  
+  <area  href="af6622b86307d7fa.htm" shape="rect" coords="1017, 500, 1401, 612"   target="_top"  title="&#160;Policy Framework Category is a place holder for Policy Category(ies) that are managed (owned by) in a Policy Framework.">
+  
+  <area  href="fe663dd261817752.htm" shape="rect" coords="0, 1, 1702, 776"   target="_top"  title="-">
+  
+</map>
+<img  src="../images/fe663dd261817752_fe663ddb61817831_i.png" alt="../images/fe663dd261817752_fe663ddb61817831_i.png" usemap="#FE663DDB61817831" height="775" width="1702" border=0>
+
+</div>
+<div class="Relationship" id="Relationship2">
+<div id="klmm" style="width: 100vw; height: 100vh;" ></div>
+<!-- <script src="../standard/assets/js/keylines_domain.js"></script> -->
+<script >
+const data = {
+ type: 'LinkChart',
+  items: [
+  //nodes
+    {type: 'node', id:'FE663DD261817752', t:"Assurance System Pattern", sh:'box', d:""},
+    {type: 'node', id:'FE22FFDD5C4E0BD4', t:"Business Policy", parentId:'BFAF3542601467AB', sh:'circle', d:"A Business Policy is a Business Regulation that is not directly enforceable whose purpose is to govern or guide the enterprise."},
+    {type: 'node', id:'07CA0D6F5DD84E37', t:"Business Policy Category", parentId:'FE663DD261817752', sh:'circle', d:""},
+    {type: 'node', id:'07231AFF5F4EB337', t:"Architecture principle", parentId:'BFAF3542601467AB', sh:'circle', d:"An Architecture principles is a general guideline (Policy) that informs, supports and constrains the way in which an organization will design and construct architectures."},
+    {type: 'node', id:'712A83E95FCF04A7', t:"Architecture Principle Category", parentId:'AF6622B86307D7FA', sh:'circle', d:"An Architecture Principle Category defines a grouping of related Architecture principles."},
+    {type: 'node', id:'283131A65DA81FBD', t:"Policy Framework", parentId:'8D5E9560552E22B2', sh:'circle', d:"A Policy Framework is a set of Directives defined by an enterprise to guide its operations."},
+    {type: 'node', id:'7D3786FF5FD052E7', t:"Assurance Instrument", parentId:'FE663DD261817752', sh:'circle', d:"An Assurance Instrument is a resource or course of actions used by an Assurance System to achieve its objectives."},
+    {type: 'node', id:'744B8D735FBFCFA9', t:"Regulatory Framework", parentId:'8D5E9560552E22B2', sh:'circle', d:"Regulatory Framework is a set of Regulation Articles issued by a Regulator (government, international body) to rule the structure and behavior of entities participating to a specific activity domain."},
+    {type: 'node', id:'AF6622B86307D7FA', t:"Policy Framework Category", parentId:'FE663DD261817752', sh:'circle', d:"Policy Framework Category is a place holder for Policy Category(ies) that are managed (owned by) in a Policy Framework."},
+    {type: 'node', id:'167124AF6008E9D3', t:"Regulator", parentId:'FE663DD261817752', sh:'circle', d:"Regulators are independent public authorities that supervise, through investigative and corrective powers, the application of the data protection law."},
+    {type: 'node', id:'C30BD1505A5D97F9', t:"Architecture Model Management", sh:'box', d:"The Architecture Model Management domain defines top level constructs used in enterprise architecting: Architecture Blocks, Architecture Namespaces, Architecture Category(ies), Constraint Value, Location."},
+    {type: 'node', id:'8D5E986F552E28D5', t:"Location", parentId:'C30BD1505A5D97F9', sh:'circle', d:"A Location is a geopolitical location anywhere on the earth."},
+    {type: 'node', id:'A67DC9285F8EADFB', t:"Control Framework", parentId:'8D5E9560552E22B2', sh:'circle', d:"A Control Framework is a set of Control Directives originating from Regulatory Frameworks and their Regulation Articles."},
+    {type: 'node', id:'A67DC8AE5F8EACDF', t:"Control Directive", parentId:'959320325EE7FE24', sh:'circle', d:"A Control Directive is a kind of Policy that provides recommendations on how to comply with Regulation Articles."},
+    {type: 'node', id:'BFAF3542601467AB', t:"Policy Framework Asset", parentId:'FE663DD261817752', sh:'circle', d:"A Policy Framework Asset is a Policy Asset that is declared in a Policy Framework."},
+    {type: 'node', id:'07CA0C765DD84A9B', t:"Regulation section", parentId:'FE663DD261817752', sh:'circle', d:"A Regulation section is a classification of Regulation Articles."},
+    {type: 'node', id:'07CA0CA15DD84ADA', t:"Regulation Article", parentId:'FE2201105C4F0DF3', sh:'circle', d:"Compulsory Policy, define by law, that is not directly enforceable whose purpose is guide enterprise activities."},
+    {type: 'node', id:'07CA18D25DD85477', t:"Assurance System", parentId:'29DF3F4060084C07', sh:'circle', d:"An Assurance System is a Management System aimed at ensuring enterprise resilience against internal and external constraints:"},
+    {type: 'node', id:'02F70FDC600F4179', t:"Policy Pattern", sh:'box', d:"The Policy Pattern domain defines Directives and rules that constrain enterprise structures and behaviors."},
+    {type: 'node', id:'07CA0DD75DD84E92', t:"Policy Asset", parentId:'02F70FDC600F4179', sh:'circle', d:"A Policy Asset is any topic related to policy definitions."},
+    {type: 'node', id:'07CA19E95DD854E9', t:"Assurance Case", parentId:'FE663DD261817752', sh:'circle', d:"An Assurance Case is a claim that a particular enterprise asset or group of assets (Resources or Activites) adequately mitigates certain identified risks by means of appropriated controls."},
+    {type: 'node', id:'427C1BDB64B5D1C7', t:"Risk & Threat", sh:'box', d:""},
+    {type: 'node', id:'427C1C7D64B5D4A1', t:"Risk Type", parentId:'427C1BDB64B5D1C7', sh:'circle', d:"A Risk Type refers to a distinct category or classification of risk based on its origin, nature, or potential impact. It helps in organizing and addressing different sources of uncertainty or potential harm that an individual, organization, or system might face. By categorizing risks into different types, entities can develop more targeted mitigation strategies and response plans. "},
+    {type: 'node', id:'02AF0A4B5A182417', t:"Operating Semantic", sh:'box', d:"The Operating Semantic domain is used to model how a system (Agent) operates/functions (Behavior) in its Operating Eco-System to produce Outcomes that benefit (value) to other Agents or affect (have an effect upon) these Agents."},
+    {type: 'node', id:'07CA0F015DD84EFA', t:"Functional Asset", parentId:'02AF0A4B5A182417', sh:'circle', d:"Functional Assets encompasse Architecture Blocks used to describe how an enterprise function. This includes the purposes of an enterprise (Capability) and the way the enterprise operates to fulfill these purposes (Agents and their  Behaviors)."},
+    {type: 'node', id:'0BF60D3D5DDC36ED', t:"Control Measure Category", parentId:'FE663DD261817752', sh:'circle', d:"A category of measure aming at controlling conformity of asset associated to the Assurance Case."},
+    {type: 'node', id:'FE2201105C4F0DF3', t:"Business Directive", parentId:'FE663DD261817752', sh:'circle', d:"A Business Directive is Directive an intended to assert business structure or to control or influence the behavior of the enterprise."},
+    {type: 'node', id:'02AF08F05A1821D3', t:"Enterprise Glossary", sh:'box', d:"The Enterprise Glossary domain comprises the Concepts, relationships and Terms used to build the glossary of an enterprise."},
+    {type: 'node', id:'362FC8045B3C3E65', t:"Conceptual Object", parentId:'02AF08F05A1821D3', sh:'circle', d:"A Conceptual Object is the representation of any tangible or intanglible resource, or its respective state, that is critical for comprehending an enterprise, including its data, resources, and activities."},
+    {type: 'node', id:'8D5E9560552E22B2', t:"Policy Dictionary", parentId:'FE663DD261817752', sh:'circle', d:"A Policy Dictionary is a set of Policy(ies), defined in laws published by governements or in policy frameworks defined by the enterprise."},
+    {type: 'node', id:'744B8F3F5FBFD1C2', t:"Policy Category", parentId:'02F70FDC600F4179', sh:'circle', d:"Policy Category is a classification of policies. In regulations, it represents sections of the law."},
+    {type: 'node', id:'959320325EE7FE24', t:"Policy", parentId:'FE663DD261817752', sh:'circle', d:"A Policy is a Directive that is not directly enforceable whose purpose is to govern, guide or constrain the structure and behavior of Agents in the enterprise. "},
+    {type: 'node', id:'29DF3F4060084C07', t:"Management System", parentId:'FE663DD261817752', sh:'circle', d:"A Management System is an Enduring Initiative within an Enterprise, aimed at creating, maintaining, evaluating, evolving, and operating a collection of essential Functional Assets of the Enterprise."},
+    {type: 'node', id:'1CE356355C48C0E2', t:"People & Accountability", sh:'box', d:"The People & Accountability domain defines the roles that organizational members perform, so that everyone understands their responsibilities to the group."},
+    {type: 'node', id:'910196CA550A2EC2', t:"Organization", parentId:'1CE356355C48C0E2', sh:'circle', d:"An Organization is a group of people who share a common purpose and establish a functional division of labor in pursuit of their common purpose."},
+    {type: 'node', id:'76147FEB6182230A', t:"Enterprise Architecting & Management Systems", sh:'box', d:"Domain describing Agile@Scale transformation Initiatives and associated Management Systems and governing bodies (Governing Team)."},
+    {type: 'node', id:'6123633261DD757A', t:"Enterprise Porfolio Stage", parentId:'76147FEB6182230A', sh:'circle', d:"An Enterprise Porfolio Stage is a past, current or future state of Management System. "},
+    {type: 'node', id:'D670B6155FFE8BB1', t:"EA Pattern - Business Resource Operating Pattern", sh:'box', d:"The EA Pattern - Business Resource Operating Pattern domain defines concepts and relationships used to model how physical resources (Resource Operating Assets) operates/functions in Resource Ecosystems to deliver Business Outcomes."},
+    {type: 'node', id:'62466EA661B80D09', t:"Resource Operating Asset", parentId:'D670B6155FFE8BB1', sh:'circle', d:"Resource Operating Assets comprise physical assets which contribute to the delivery of Business Outcomes of the enterprise. This includes Resource Agents, their behaviors (Resource Behavior:  Resource Process, Resource Interaction Scenario), and Natural Resources."},
+  //edges
+    { type: 'link', id:'FE22FFDD5C4E0BD4-07CA0D995DD84E73', id1:'FE22FFDD5C4E0BD4', id2:'07CA0D6F5DD84E37', t:"Parent Policy Category"},
+    { type: 'link', id:'FE22FFDD5C4E0BD4-A397B4F95FBF6E8F', id1:'FE22FFDD5C4E0BD4', id2:'283131A65DA81FBD', t:"Parent Framework"},
+    { type: 'link', id:'FE22FFDD5C4E0BD4-A397B5765FBF6F76', id1:'FE22FFDD5C4E0BD4', id2:'FE22FFDD5C4E0BD4', t:"Specialized Policy"},
+    { type: 'link', id:'07231AFF5F4EB337-712A84225FCF0D47', id1:'07231AFF5F4EB337', id2:'712A83E95FCF04A7', t:"Principle Category"},
+    { type: 'link', id:'712A83E95FCF04A7-8266D01162C566DC', id1:'712A83E95FCF04A7', id2:'283131A65DA81FBD', t:"Parent Framework"},
+    { type: 'link', id:'283131A65DA81FBD-58E275EB619F7752', id1:'283131A65DA81FBD', id2:'BFAF3542601467AB', t:"Owned Policy Block"},
+    { type: 'link', id:'744B8D735FBFCFA9-BFAF347C6014671D', id1:'744B8D735FBFCFA9', id2:'07CA0CA15DD84ADA', t:"Owned Article"},
+    { type: 'link', id:'167124AF6008E9D3-167126066008ED22', id1:'167124AF6008E9D3', id2:'8D5E986F552E28D5', t:"Regulator Location"},
+    { type: 'link', id:'A67DC9285F8EADFB-A67DCBCF5F8EB6D0', id1:'A67DC9285F8EADFB', id2:'A67DC8AE5F8EACDF', t:"Owned Control Directive"},
+    { type: 'link', id:'A67DC8AE5F8EACDF-A67DC8E95F8EAD60', id1:'A67DC8AE5F8EACDF', id2:'07CA0CA15DD84ADA', t:"Fulfilled Regulation"},
+    { type: 'link', id:'07CA0C765DD84A9B-07CA0C835DD84AC5', id1:'07CA0C765DD84A9B', id2:'744B8D735FBFCFA9', t:"Parent Regulation"},
+    { type: 'link', id:'07CA0C765DD84A9B-1D962A145E8B3FFA', id1:'07CA0C765DD84A9B', id2:'07CA0C765DD84A9B', t:"Parent Section"},
+    { type: 'link', id:'07CA0CA15DD84ADA-07CA0CB25DD84B03', id1:'07CA0CA15DD84ADA', id2:'07CA0C765DD84A9B', t:"Parent Section"},
+    { type: 'link', id:'07CA0CA15DD84ADA-24AE48085ED16330', id1:'07CA0CA15DD84ADA', id2:'07CA0CA15DD84ADA', t:"Parent Article"},
+    { type: 'link', id:'07CA0CA15DD84ADA-A397B44D5FBF6D5B', id1:'07CA0CA15DD84ADA', id2:'07CA0CA15DD84ADA', t:"Specialized Article"},
+    { type: 'link', id:'07CA0CA15DD84ADA-DC5FFD215EE914E0', id1:'07CA0CA15DD84ADA', id2:'744B8D735FBFCFA9', t:"Parent Regulation"},
+    { type: 'link', id:'07CA18D25DD85477-FE63131661816310', id1:'07CA18D25DD85477', id2:'07CA19E95DD854E9', t:"Owned Assurance Case"},
+    { type: 'link', id:'07CA18D25DD85477-07CA19BE5DD854C9', id1:'07CA18D25DD85477', id2:'8D5E9560552E22B2', t:"Controlled Policy Framework"},
+    { type: 'link', id:'07CA18D25DD85477-7D3787605FD0541D', id1:'07CA18D25DD85477', id2:'7D3786FF5FD052E7', t:"Owned Assurance Block"},
+    { type: 'link', id:'07CA18D25DD85477-9152E0345ED75863', id1:'07CA18D25DD85477', id2:'07CA0DD75DD84E92', t:"Policy Item in Scope"},
+    { type: 'link', id:'07CA19E95DD854E9-71F59B656008373C', id1:'07CA19E95DD854E9', id2:'07CA0DD75DD84E92', t:"Constraining Policy"},
+    { type: 'link', id:'07CA19E95DD854E9-89199D0764F1C112', id1:'07CA19E95DD854E9', id2:'427C1C7D64B5D4A1', t:"Mitigated Risk"},
+    { type: 'link', id:'07CA19E95DD854E9-B90ACFA1600E4C31', id1:'07CA19E95DD854E9', id2:'A67DC8AE5F8EACDF', t:"Enforced Directive"},
+    { type: 'link', id:'07CA19E95DD854E9-9152E51B5ED7614C', id1:'07CA19E95DD854E9', id2:'0BF60D3D5DDC36ED', t:"Control Measure"},
+    { type: 'link', id:'07CA19E95DD854E9-9152E6975ED764D3', id1:'07CA19E95DD854E9', id2:'07CA0F015DD84EFA', t:"Involved Asset"},
+    { type: 'link', id:'FE2201105C4F0DF3-A397B1925FBF691A', id1:'FE2201105C4F0DF3', id2:'FE2201105C4F0DF3', t:"Specialized Business Directive"},
+    { type: 'link', id:'FE2201105C4F0DF3-9152E9845ED773CF', id1:'FE2201105C4F0DF3', id2:'362FC8045B3C3E65', t:"Business Directive Subject"},
+    { type: 'link', id:'8D5E9560552E22B2-E07320D261D3262B', id1:'8D5E9560552E22B2', id2:'744B8F3F5FBFD1C2', t:"Owned Policy Category"},
+    { type: 'link', id:'8D5E9560552E22B2-546C6E6A601178B1', id1:'8D5E9560552E22B2', id2:'959320325EE7FE24', t:"Owned Policy"},
+    { type: 'link', id:'959320325EE7FE24-5F94F28861F7D523', id1:'959320325EE7FE24', id2:'959320325EE7FE24', t:"Realized Policy"},
+    { type: 'link', id:'29DF3F4060084C07-391204785F4EED0A', id1:'29DF3F4060084C07', id2:'910196CA550A2EC2', t:"Concerned Organization"},
+    { type: 'link', id:'29DF3F4060084C07-5B7A0E2661F56423', id1:'29DF3F4060084C07', id2:'29DF3F4060084C07', t:"Dependent Portfolio"},
+    { type: 'link', id:'29DF3F4060084C07-5B7A0F9561F565C4', id1:'29DF3F4060084C07', id2:'29DF3F4060084C07', t:"Sub-Portfolio"},
+    { type: 'link', id:'29DF3F4060084C07-612367E761DD7A42', id1:'29DF3F4060084C07', id2:'6123633261DD757A', t:"Portfolio Roadmap"},
+    { type: 'link', id:'29DF3F4060084C07-CABFEF0661835A62', id1:'29DF3F4060084C07', id2:'62466EA661B80D09', t:"Management System Purpose"}
+  ]
+}
+</script>
+<script src="../standard/assets/js/keylines_domain.js" type="module"></script>
+</div>
+</section>
+<a class="object-section-anchor" id="des"></a>
+<section class="object-section">
+<h4>CONCEPT DESCRIPTIONS</h4> 
+<hr class="sectionbreak" />
+<h5>Concrete Concepts</h5>
+<table class="table  table-set-col-width">
+<thead>
+<tr><th>Concept</th><th>Description</th><th>HOPEX Metaclass</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="07231aff5f4eb337.htm" target="_top">Architecture principle</a></td>
+<td class="description-text">An&#160;<b> Architecture principle</b>s is a general guideline (<a href="959320325ee7fe24.htm" target="_top"><b><u>Policy</u></b></a>) that informs, supports and constrains the way in which an organization will design and construct architectures.<i><ul>References:<li><a href="https://cio-wiki.org/wiki/Architectural_Principles#:~:text=Architecture%20Principles%20are%20the%20principles,structure%2C%20work%2C%20producing%20results."><img src="../standard/extr.ico.gif">&nbsp;CIO Wiki - Architecture Principle</a></li> <li><a href="https://pubs.opengroup.org/architecture/o-aa-standard/definitions.html#_architecture_principle"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - OAA - Architecture Principle</a></li> <li><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_19"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Definition - Architecture Principle</a></li> <li><a href="https://pubs.opengroup.org/togaf-standard/adm-techniques/chap02.html#tag_02"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Guide - Architecture Principles</a></li> <li><a href="https://compliancedictionary.com/term/382783"><img src="../standard/extr.ico.gif">&nbsp;UCF Glossary - Architecture Principle</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="c6b2ed605fbc670b.htm" target="_top">Architecture Principle</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="712a83e95fcf04a7.htm" target="_top">Architecture Principle Category</a></td>
+<td class="description-text">An&#160;<b> Architecture Principle Category</b> defines a grouping of related <a href="07231aff5f4eb337.htm" target="_top"><b><u>Architecture principle</u></b></a>s.       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="6f1571bc5fbf80d3.htm" target="_top">Architecture Principle Category</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="fe22ffdd5c4e0bd4.htm" target="_top">Business Policy</a></td>
+<td class="description-text">A&#160;<b> Business Policy</b> is a&#160;<b> Business Regulation</b> that is not directly enforceable whose purpose is to govern or guide the enterprise.<i><ul>References:<li><a href="../../../www.omg.org/spec/BMM/1.3/formal-15-05-19.pdf#page=45"><img src="../standard/extr.ico.gif">&nbsp;OMG - BMM 1.3 - Business Policy</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="aeaac4174e165ce9.htm" target="_top">Business Policy</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="07ca0d6f5dd84e37.htm" target="_top">Business Policy Category</a></td>
+<td class="description-text">        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="7efa8936598059a8.htm" target="_top">Policy Framework Section</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="a67dc8ae5f8eacdf.htm" target="_top">Control Directive</a></td>
+<td class="description-text">A&#160;<b> Control Directive</b> is a kind of <a href="959320325ee7fe24.htm" target="_top"><b><u>Policy</u></b></a> that provides recommendations on how to comply with <a href="07ca0ca15dd84ada.htm" target="_top"><b><u>Regulation Article</u></b></a>s.<br />Once implemented,&#160;<b> Control Directive</b>s enforces any <a href="744b8d735fbfcfa9.htm" target="_top"><b><u>Regulatory Framework</u></b></a> your organization has to comply with.<i><ul>References:<li><a href="https://grcschema.org/Thing/Control"><img src="../standard/extr.ico.gif">&nbsp;GRCschema.org - Control</a></li> <li><a href="https://www.unifiedcompliance.com/education/common-control/"><img src="../standard/extr.ico.gif">&nbsp;UCF - What are Common Controls</a></li> <li><a href="https://compliancedictionary.com/term/7990"><img src="../standard/extr.ico.gif">&nbsp;UCF Glossary - Common Control</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="0ec2c1d65ea1837e.htm" target="_top">Control Directive</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="a67dc9285f8eadfb.htm" target="_top">Control Framework</a></td>
+<td class="description-text">A&#160;<b> Control Framework</b> is a set of <a href="a67dc8ae5f8eacdf.htm" target="_top"><b><u>Control Directive</u></b></a>s originating from <a href="744b8d735fbfcfa9.htm" target="_top"><b><u>Regulatory Framework</u></b></a>s and their <a href="07ca0ca15dd84ada.htm" target="_top"><b><u>Regulation Article</u></b></a>s.<i><ul>References:<li><a href="https://www.unifiedcompliance.com/education/what-is-a-compliance-framework/"><img src="../standard/extr.ico.gif">&nbsp;UCF - What is a compliance framework</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="cce90aca5ea72f4c.htm" target="_top">Control Framework</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="8d5e986f552e28d5.htm" target="_top">Location</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Location</b> is a geopolitical location anywhere on the earth.</div><div align="left" style="min-height: 12pt; ">Examples: </div><div align="left" style="min-height: 12pt; ">- France</div><div align="left" style="min-height: 12pt; ">- Paris</div><div align="left" style="min-height: 12pt; ">- Washington DC</div><div align="left" style="min-height: 12pt; ">- Cairo</div><div align="left" style="min-height: 12pt; ">- Buenos-Aires</div><div align="left" style="min-height: 12pt; ">- Asia</div><i><ul>References:<li><a href="https://15926.blog/topics/data-model/index.htm#SpatialLocation"><img src="../standard/extr.ico.gif">&nbsp;ISO 15926 - SpatialLocation</a></li> <li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ActualLocation"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - ActualLocation</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="b1edb2612c1401d3.htm" target="_top">Site</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="07ca0ca15dd84ada.htm" target="_top">Regulation Article</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">Compulsory <a href="959320325ee7fe24.htm" target="_top"><b><u>Policy</u></b></a>, define by law, that is not directly enforceable whose purpose is guide enterprise activities.</div><div align="left" style="min-height: 12pt; "><b>&#160;Regulation Article</b> are classified by <a href="07ca0c765dd84a9b.htm" target="_top"><b><u>Regulation section</u></b></a>&#160; in the context of a <a href="744b8d735fbfcfa9.htm" target="_top"><b><u>Regulatory Framework</u></b></a>.</div>       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="68ed76eb5d066076.htm" target="_top">Regulation Article</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="07ca0c765dd84a9b.htm" target="_top">Regulation section</a></td>
+<td class="description-text">A&#160;<b> Regulation section</b> is a classification of <a href="07ca0ca15dd84ada.htm" target="_top"><b><u>Regulation Article</u></b></a>s.<br /><b> Regulation section</b>s can be themselves organized as a hierarchy.       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="68ed6acb5d065c42.htm" target="_top">Regulation Section</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="167124af6008e9d3.htm" target="_top">Regulator</a></td>
+<td class="description-text">Regulators are independent public authorities that supervise, through investigative and corrective powers, the application of the data protection law.<i><ul>References:<li><a href="https://compliancedictionary.com/term/11444"><img src="../standard/extr.ico.gif">&nbsp;UCF Glossary - regulatory authority</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="b8bcc15559e86af6.htm" target="_top">Regulator</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="744b8d735fbfcfa9.htm" target="_top">Regulatory Framework</a></td>
+<td class="description-text"><b>&#160;Regulatory Framework</b> is a set of <a href="07ca0ca15dd84ada.htm" target="_top"><b><u>Regulation Article</u></b></a>s issued by a <a href="167124af6008e9d3.htm" target="_top"><b><u>Regulator</u></b></a> (government, international body) to rule the structure and behavior of entities participating to a specific activity domain.<i><ul>References:<li><a href="https://compliancedictionary.com/term/386219"><img src="../standard/extr.ico.gif">&nbsp;UCF Glossary - Regulatory Framework</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="c229f0665d0c6f7a.htm" target="_top">Regulatory Framework</a></td>
+</tr>  
+</tbody>
+</table>
+<hr class="sectionbreak" />
+<h5>Abstract Concepts</h5>
+<table class="table  table-set-col-width">
+<thead >
+<tr><th>Concept</th><th>Description</th><th>HOPEX Metaclass</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="79368381561716a6.htm" target="_top">Agent</a></td>
+<td class="description-text">An&#160;<b> Agent</b> is an <a href="a371a43b5b865817.htm" target="_top"><b><u>Operating Asset</u></b></a><b> </b>which is able to participate actively to <a href="d682ef5e56144e77.htm" target="_top"><b><u>Process</u></b></a>es (<a href="004b041f5ebd1119.htm" target="_top"><b><u>Active Participant</u></b></a>) and/or to conduct <a href="d682ef5e56144e77.htm" target="_top"><b><u>Process</u></b></a>es (<a href="004b03b15ebd0fdb.htm" target="_top"><b><u>Performed Process</u></b></a>) to produce <a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>s that benefit to other&#160;<b> Agent</b>s or affect other&#160;<b> Agent</b>s.<i><ul>References:<li><a href="../../../www.omg.org/spec/KerML/1.0/Beta1/ptc-23-06-01.pdf#page=191"><img src="../standard/extr.ico.gif">&nbsp;OMG - KerML - Structure</a></li> <li><a href="../../../www.omg.org/spec/UML/2.5.1/formal-17-12-05.pdf#page=231"><img src="../standard/extr.ico.gif">&nbsp;OMG - UML - EncapsulatedClassifier</a></li> <li><a href="https://pubs.opengroup.org/architecture/o-aa-standard/definitions.html#_modularity"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - OAA - Modularity</a></li> <li><a href="https://pubs.opengroup.org/togaf-standard/introduction/apdxb.html#tag_06_41"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Definition - System</a></li> <li><a href="../resources/Ackoff-Towards-a-system-of-systems-concepts.pdf#AbstractSystem"><img src="../standard/extr.ico.gif">&nbsp;Russell Ackoff - System of Concepts - Abstract System</a></li> <li><a href="http://wordnetweb.princeton.edu/perl/webwn?o2=&amp;o0=1&amp;o8=1&amp;o1=1&amp;o7=&amp;o5=&amp;o9=&amp;o6=&amp;o3=&amp;o4=&amp;r=1&amp;s=agent&amp;i=2&amp;h=100000000#c"><img src="../standard/extr.ico.gif">&nbsp;WordNet - Agent</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="e9321053590b4a88.htm" target="_top">Class of Agent Assembly</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="07ca19e95dd854e9.htm" target="_top">Assurance Case</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Assurance Case</b> is a claim that a particular enterprise asset or group of assets (Resources or Activites) adequately mitigates certain identified risks by means of appropriated controls.</div><div align="left" style="min-height: 12pt; ">An&#160;<b> Assurance Case</b> shall provide confidence that the concerned assets will function as intended in their environment of use.</div><div align="left" style="min-height: 12pt; ">Privacy <a href="16e319be5bf83cb9.htm" target="_top"><b><u>Processing Activity</u></b></a>(ies), <a href="23ab2e945da829b8.htm" target="_top"><b><u>Data Lineage</u></b></a>s are examples of&#160;<b> Assurance Case</b>s .</div><i><ul>References:<li><a href="https://csrc.nist.gov/glossary/term/assurance_case"><img src="../standard/extr.ico.gif">&nbsp;NIST - Assurance Case</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="c229e83e5d0c6c6b.htm" target="_top">Assured Enterprise Activity</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="7d3786ff5fd052e7.htm" target="_top">Assurance Instrument</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Assurance Instrument</b> is a resource or course of actions used by an <a href="07ca18d25dd85477.htm" target="_top"><b><u>Assurance System</u></b></a> to achieve its objectives.</div><div align="left" style="min-height: 12pt; ">For instance:</div><div align="left" style="min-height: 12pt; ">Actions plans are course of actions aimed at solving incidents.</div><div align="left" style="min-height: 12pt; "><a href="9815a0dc5f682fa1.htm" target="_top"><b><u>Data Control</u></b></a>s are mechanisms used to ensure data quality and data integrity</div><div align="left" style="min-height: 12pt; "><a href="7d3786245fd04e18.htm" target="_top"><b><u>Privacy Representative</u></b></a>s are used to identify national entities in charge on privacy.</div>       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="9eeca9a25dad6c78.htm" target="_top">Assurance Block</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="07ca18d25dd85477.htm" target="_top">Assurance System</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Assurance System</b> is a <a href="29df3f4060084c07.htm" target="_top"><b><u>Management System</u></b></a> aimed at ensuring enterprise resilience against internal and external constraints:</div><div align="left" style="min-height: 12pt; ">a. Regulation constraints,</div><div align="left" style="min-height: 12pt; ">b. Internal policies and rules constraints,</div><div align="left" style="min-height: 12pt; ">c. Operational constraints: maintain operational capacities of the company (maintain ability to produce, maintain quality, ensure product development , ability to hire, to train, etc).</div>       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="c229e86a5d0c6cbc.htm" target="_top">Assurance Domain</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="0bf60d3d5ddc36ed.htm" target="_top">Control Measure Category</a></td>
+<td class="description-text">A category of measure aming at controlling conformity of asset associated to the <a href="07ca19e95dd854e9.htm" target="_top"><b><u>Assurance Case</u></b></a>.       </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="07ca0f015dd84efa.htm" target="_top">Functional Asset</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; "><b>&#160;Functional Asset</b>s encompasse <a href="d342d88e5b121401.htm" target="_top"><b><u>Architecture Block</u></b></a>s used to describe how an enterprise function. This includes the purposes of an enterprise (<a href="b181b98c54891882.htm" target="_top"><b><u>Capability</u></b></a>) and the way the enterprise operates to fulfill these purposes (<a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s and their&#160; <a href="986cd4ec5ffca3ac.htm" target="_top"><b><u>Behavior</u></b></a>s).</div><div align="left" style="min-height: 12pt; "><b>&#160;Functional Asset</b>s include:</div><div align="left" style="min-height: 12pt; ">1. Blocks defining results of <a href="986cd4ec5ffca3ac.htm" target="_top"><b><u>Behavior</u></b></a>s of the enterprise or its sub-systems, that benefit to it internal or external customers : <a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>,</div><div align="left" style="min-height: 12pt; ">2. Blocks used to describe the capabilities of the enterprise or its sub-systems: <a href="b181b98c54891882.htm" target="_top"><b><u>Capability</u></b></a>,</div><div align="left" style="min-height: 12pt; ">3. Blocks used to describe information: <a href="e6f250185f772ee1.htm" target="_top"><b><u>Information Object</u></b></a>.</div><div align="left" style="min-height: 12pt; ">4. Blocks used to describe how the enterprise operates: <a href="a371a43b5b865817.htm" target="_top"><b><u>Operating Asset</u></b></a>s (<a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>, <a href="d682ef5e56144e77.htm" target="_top"><b><u>Process</u></b></a>, <a href="333f35ee5dde0c8c.htm" target="_top"><b><u>Interaction Scenario</u></b></a>, <a href="24ae31b55ed1c66d.htm" target="_top"><b><u>Service Interface</u></b></a>).</div><div align="left" style="min-height: 12pt; ">All&#160;<b> Functional Asset</b>s are constrained by <a href="959320325ee7fe24.htm" target="_top"><b><u>Policy</u></b></a>s and are exposed to <a href="427c1c7d64b5d4a1.htm" target="_top"><b><u>Risk Type</u></b></a>s.</div><i><ul>References:<li><a href="../../../complexsystems.mst.edu/media/conference/complexsystems/documents/de_Weck_CAS_Keynote_Nov_2015_updated.pdf#page=40"><img src="../standard/extr.ico.gif">&nbsp;de Weck - The three dimensions of complexity</a></li> <li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Asset"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - Asset</a></li> <li><a href="../resources/Ackoff-Choice-Communication-and-Conflict.pdf#FunctionalClass"><img src="../standard/extr.ico.gif">&nbsp;Russell Ackoff - Choice &amp; Communication - FunctionalClass</a></li> <li><a href="https://www.sebokwiki.org/wiki/Functional_Architecture_(glossary)"><img src="../standard/extr.ico.gif">&nbsp;SEBoK - Functional Architecture</a></li> <li><a href="https://en.wikipedia.org/wiki/Functional_software_architecture#:~:text=A%20functional%20software%20architecture%20(FSA,%2Doperative%20information%2Ddriven%20enterprise."><img src="../standard/extr.ico.gif">&nbsp;Wikipedia - Software Functional Architecture</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="c229c44e5d0c649f.htm" target="_top">Functional Building Block</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="e6f250185f772ee1.htm" target="_top">Information Object</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Information Object</b>&#160; represents anything that can be communicated or memorized by an <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a> in order to produce its <a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">An&#160;<b> Information Object</b> is either an <a href="d6cd2cea5ab98e5f.htm" target="_top"><b><u>Information Entity</u></b></a> or a <a href="d7f90c675f737699.htm" target="_top"><b><u>Information Property</u></b></a>.<br />The difference lies in their relationship to change and to time. <a href="d6cd2cea5ab98e5f.htm" target="_top"><b><u>Information Entity</u></b></a>(ies) can change over time and have a lifeycle while <a href="d7f90c675f737699.htm" target="_top"><b><u>Information Property</u></b></a>s are immutable characteristics.</div>       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="81f48a9756f17efb.htm" target="_top">Information Entity</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="07ca0dd75dd84e92.htm" target="_top">Policy Asset</a></td>
+<td class="description-text">A&#160;<b> Policy Asset</b> is any topic related to policy definitions.<br />It ranges from the different kidns of <a href="278678e95b2533d6.htm" target="_top"><b><u>Directive</u></b></a>s (<a href="fe22ffdd5c4e0bd4.htm" target="_top"><b><u>Business Policy</u></b></a>, <a href="07231aff5f4eb337.htm" target="_top"><b><u>Architecture principle</u></b></a>, <a href="278677bd5b253114.htm" target="_top"><b><u>Business Rule</u></b></a>, etc.),&#160; to classification of policies (<a href="744b8f3f5fbfd1c2.htm" target="_top"><b><u>Policy Category</u></b></a>) up to an entire set of policies (<a href="8d5e9560552e22b2.htm" target="_top"><b><u>Policy Dictionary</u></b></a>).       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="c2b8cafd5d1d208f.htm" target="_top">Policy Block</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="8d5e9560552e22b2.htm" target="_top">Policy Dictionary</a></td>
+<td class="description-text">A&#160;<b> Policy Dictionary</b> is a set of <a href="959320325ee7fe24.htm" target="_top"><b><u>Policy</u></b></a>(ies), defined in laws published by governements or in policy frameworks defined by the enterprise.<br />Both <a href="283131a65da81fbd.htm" target="_top"><b><u>Policy Framework</u></b></a>s and <a href="744b8d735fbfcfa9.htm" target="_top"><b><u>Regulatory Framework</u></b></a>s are&#160;<b> Policy Dictionary</b>(ies).<i><ul>References:<li><a href="https://compliancedictionary.com/term/572"><img src="../standard/extr.ico.gif">&nbsp;UCF Glossary - Framework</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="083d120d5d6d84a3.htm" target="_top">Policy Schema</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="283131a65da81fbd.htm" target="_top">Policy Framework</a></td>
+<td class="description-text">A&#160;<b> Policy Framework</b> is a set of <a href="278678e95b2533d6.htm" target="_top"><b><u>Directive</u></b></a>s defined by an enterprise to guide its operations.<i><ul>References:<li><a href="https://compliancedictionary.com/term/255189"><img src="../standard/extr.ico.gif">&nbsp;UCF Glossary - Policy and Procedure</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="083d11bd5d6d8439.htm" target="_top">Policy Framework</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="bfaf3542601467ab.htm" target="_top">Policy Framework Asset</a></td>
+<td class="description-text">A&#160;<b> Policy Framework Asset</b> is a <a href="07ca0dd75dd84e92.htm" target="_top"><b><u>Policy Asset</u></b></a> that is declared in a <a href="283131a65da81fbd.htm" target="_top"><b><u>Policy Framework</u></b></a>.       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="c6b2de145fbc6462.htm" target="_top">Policy Framework Block</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="af6622b86307d7fa.htm" target="_top">Policy Framework Category</a></td>
+<td class="description-text"><b>&#160;Policy Framework Category</b> is a place holder for <a href="744b8f3f5fbfd1c2.htm" target="_top"><b><u>Policy Category</u></b></a>(ies) that are managed (owned by) in a <a href="283131a65da81fbd.htm" target="_top"><b><u>Policy Framework</u></b></a>.       </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="d682ef5e56144e77.htm" target="_top">Process</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Process</b> is a <a href="986cd4ec5ffca3ac.htm" target="_top"><b><u>Behavior</u></b></a> that describes a typical course of action intended to produce <a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>s, through the involvement of <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s as <a href="004b041f5ebd1119.htm" target="_top"><b><u>Active Participant</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">During its course of action, a process consumes or produces <a href="43ee620e63725a56.htm" target="_top"><b><u>Value Added Object</u></b></a>s, including <a href="e6f250185f772ee1.htm" target="_top"><b><u>Information Object</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">1) It may read or write <a href="e6f250185f772ee1.htm" target="_top"><b><u>Information Object</u></b></a>s from and to its <a href="e4c003255ed1f037.htm" target="_top"><b><u>Process Store</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">2) It may receive <a href="43ee620e63725a56.htm" target="_top"><b><u>Value Added Object</u></b></a>s at its boundary:&#160;<b> Consumed Outcome</b>s.</div><div align="left" style="min-height: 12pt; ">3) It may produce <a href="43ee620e63725a56.htm" target="_top"><b><u>Value Added Object</u></b></a>s at its boundary:&#160;<b> Produced Outcome</b>s.</div><div align="left" style="min-height: 12pt; ">The course of actions of a&#160;<b> Process</b> is constrained (<a href="24ae36805ed1cd18.htm" target="_top"><b><u>Rule Enforcement</u></b></a>) by the application of <a href="fe2203ca5c4f0fed.htm" target="_top"><b><u>Behavioral Rule</u></b></a>s that define what is allowed and not allowed to do.</div><i><ul>References:<li><a href="https://15926.blog/topics/data-model/index.htm#ClassOfActivity"><img src="../standard/extr.ico.gif">&nbsp;ISO 15926 - ClassOfActivity</a></li> <li><a href="https://www.iso.org/obp/ui/#iso:std:iso:9000:ed-4:v1:en"><img src="../standard/extr.ico.gif">&nbsp;ISO 9000 - 3.4 - Process</a></li> <li><a href="https://www.merriam-webster.com/dictionary/process"><img src="../standard/extr.ico.gif">&nbsp;Merriam Webster - Process</a></li> <li><a href="../../../www.omg.org/spec/BPMN/2.0.2/formal-13-12-09.pdf#page=173"><img src="../standard/extr.ico.gif">&nbsp;OMG - BPMN - Process</a></li> <li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Process"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - Process</a></li> <li><a href="../../../www.omg.org/spec/UML/2.5.1/formal-17-12-05.pdf#page=415"><img src="../standard/extr.ico.gif">&nbsp;OMG - UML - Activity</a></li> <li><a href="../resources/Ackoff-Towards-a-system-of-systems-concepts.pdf#Process"><img src="../standard/extr.ico.gif">&nbsp;Russell Ackoff - System of Concepts - Process</a></li> <li><a href="http://wordnetweb.princeton.edu/perl/webwn?o2=&amp;o0=1&amp;o8=1&amp;o1=1&amp;o7=&amp;o5=&amp;o9=&amp;o6=&amp;o3=&amp;o4=&amp;s=process&amp;i=0&amp;h=0000000000000#c"><img src="../standard/extr.ico.gif">&nbsp;WordNet -Process</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="39924a285927597c.htm" target="_top">Action Process</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="427c1c7d64b5d4a1.htm" target="_top">Risk Type</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Risk Type</b> refers to a distinct category or classification of risk based on its origin, nature, or potential impact. It helps in organizing and addressing different sources of uncertainty or potential harm that an individual, organization, or system might face. By categorizing risks into different types, entities can develop more targeted mitigation strategies and response plans. </div><div align="left" style="min-height: 12pt; ">Common risk types include <a href="16e327be5bf83e3b.htm" target="_top"><b><u>Operational Risk Type</u></b></a>, <a href="5163d17a64b66991.htm" target="_top"><b><u>Privacy Risk Type</u></b></a>, and <a href="8f469fa664b76efc.htm" target="_top"><b><u>Compliance Risk Type</u></b></a>, among others.</div>       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="977fc52e3d250359.htm" target="_top">Risk Type</a></td>
+</tr>  
+</tbody>
+</table>
+<section>
+
+</div>
+<button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button>
+<script>window.onscroll = function() {scrollFunction()};$(document).on('click', 'a[href^="#"]', function (event) {event.preventDefault();$('html, body').animate({scrollTop: $($.attr(this, 'href')).offset().top}, 500);});function showDiagOnClick(elem){ var x = document.getElementsByClassName('Relationship');var e = elem.getAttribute("value"); for (var i=0; i < x.length ;i++){x[i].style.display="none"; if (x[i].id == e){x[i].style.display="block";x[i].style.textAlign="left";}}}
+</script></html>

@@ -1,0 +1,776 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="keywords" content="">
+<meta name="description" content="">    
+<LINK REL="icon" HREF="../standard/assets/img/favicon.ico">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/bootstrap.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nav.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/eaportal.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/font-awesome.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/animate.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/datatables.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/grid.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nae.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/custom.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/chosen.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/prism.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery.dataTables.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jsTreeStyle.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.theme.css" media="screen" />
+<script type="text/javascript" src="../standard/assets/js/jquery-3.2.1.min.js" ></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-ui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.columnFilter.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3-force.v2.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.gui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.search.js"></script> 
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.util.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-2.1.1.min.js"></script>
+<script src="../standard/assets/js/ws_zoomtemplate_firefox.js"></script>
+<script src="../standard/assets/js/bootstrap.min.js"></script>
+<script src="../standard/assets/js/datatables.min.js"></script>
+<script src="../standard/assets/js/moment.min.js"></script>
+<script src="../standard/assets/js/datetime-moment.js"></script>
+<script src="../standard/assets/js/chartjs.min.js"></script>
+<script src="../standard/assets/js/searchindexcontent.json"></script>
+<script src="../standard/assets/js/anls.js"></script>
+<script src="../../../cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script src="../standard/assets/js/gauge.js"></script> 
+<script src="../standard/assets/js/domesticApi.js"></script> 
+<script src="../standard/assets/js/piecelabel.js"></script>
+<script src="../standard/assets/js/popper.min.js"></script>
+<script src="../standard/assets/js/custom.js"></script>
+<script src="../standard/assets/js/chosen.jquery.js"></script>
+<script src="../standard/assets/js/prism.js"></script>
+<script src="../standard/assets/js/init-chosen.js"></script>
+<script src="../standard/assets/js/chart-data-flow.js"></script>
+<script src="../standard/assets/js/chart-data-gantt.js"></script>
+<script type="module" src="../standard/assets/js/Fuse.esm.min.js"></script>
+<script type="module">
+import Fuse from '../standard/assets/js/Fuse.esm.min.js';
+$(document).ready(function () {
+console.log('getjson');
+window.$.getJSON('../standard/assets/js/searchindexcontent.json', function (response) {
+console.log('getjson ok');
+var isIndex = "";
+var url = window.location.pathname;
+var filename = url.substring(url.lastIndexOf('/')+1);
+if( filename.includes("index") || filename === "" ){
+isIndex = "pages/";
+} else {
+isIndex = "";
+}
+const fuse = new Fuse(response, {
+keys: ['title','text'],
+shouldSort: true,
+includeMatches : true,
+findAllMatches : true
+});
+$('#search-fuse').on('keyup', function () {
+let result = fuse.search($(this).val());
+console.log(result);
+let resultdiv = $('div.searchresults-fuse');
+if (result.length === 0) {
+resultdiv.hide();
+} else {
+resultdiv.empty();
+resultdiv.append('<table class="table-search" width="100%" cellspacing="0"><thead ><tr><th>Name</th><th>Object Type</th><th>Modification date</th></tr></thead><tbody>');
+
+for (let obj in result.slice(0,10)) {
+
+let searchObj = '<tr><td><a href="./'+ isIndex + result[obj].item.url + '">' + result[obj].item.title +'</a></td><td>' + result[obj].item.ObjectType + '</td><td>' + result[obj].item.ModificationDate + '</td></tr>' ;
+
+
+resultdiv.find('tbody').append(searchObj);
+}
+resultdiv.append('</tbody></table>');
+resultdiv.show();
+}
+});
+});
+});
+</script>
+<title>HOPEX Metamodel Overview (Beta Version)</title>
+</head>
+<nav class="navbar navbar-expand-md navbar-dark  navbar-mega"><!-- Brand --><!--<a class="navbar-brand" href="#">Navbar</a>--><a class="" href="../index.htm"><img class="logo-mega" src="../standard/assets/img/logo.png"  alt="">(Beta Version)</a><!-- Toggler/collapsibe Button --><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><!-- Navbar links -->
+<div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsibleNavbar"><div class="col-sm-auto col-md-auto col-lg-5"></div>
+<div class="col-sm-auto">
+<ul class="navbar-nav">      
+<li><a class="dropdown-item" href="ad30ce115ebf7e90.htm">EA Grid</a></li> 
+<li><a class="dropdown-item" href="fdd5018459bc3c6a.htm">EA Domains</a></li> 
+<li><a class="dropdown-item" href="07e731775ecc93f4.htm">Solutions</a></li> 
+<li><a class="dropdown-item" href="c5dfc62c54810c2c.htm">Glossary</a></li> 
+<li class="nav-item dropdown mx-1">
+<a class="nav-link" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</a>
+<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<li><a class="dropdown-item" href="5446555d5f88c32e.htm">Outcome Driven Metamodel</a></li> 
+<li><a class="dropdown-item" href="e1ccfc295f8f7b90.htm">Playbooks</a></li> 
+<li><a class="dropdown-item" href="42bc992862d20ea7.htm">Framework Mappings</a></li> 
+<li><a class="dropdown-item" href="e93aebb35fa20550.htm">Metamodel Patterns</a></li> 
+<li><a class="dropdown-item" href="d599fe87602b2b85.htm">References</a></li> 
+<li><a class="dropdown-item" href="333f3a7f5dde11de.htm">Legend</a></li> 
+</ul>									                                            
+</li>
+</ul>
+</div>
+<div class="col-sm-auto"><a class="nav-link search" href="#" onclick=showHideSearch("search-section-fuse")><i class="fa fa-search mr-1 form-control-feedback"></i></a></div>
+</div>
+</nav>
+<div id="search-section-fuse" style="display:none">>
+<div class="search_header"><span class="closesearch">&times;</span>
+<nav class="breadcrumb">
+<a class="breadcrumb-item" href="../index.htm">Home </a> 
+<span class="breadcrumb-item active">Search</span> 
+</nav>
+</div>
+<input id="search-fuse" placeholder="Search..."  name="q" onfocus="this.value=''" type="search">
+<div class="searchresults-fuse"></div>
+</div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>function showHideSearch(elementId) {var contentDivs = document.getElementsByClassName('content');var footerDivs = document.getElementsByClassName('footer'); var containerDivs = document.getElementsByClassName('container');var containerfluidDivs = document.getElementsByClassName('container-fluid');var x = document.getElementById(elementId);if (x.style.display === "none") {x.style.display = "block";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "none";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "none";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "none";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "none";}} else {x.style.display = "none";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "block";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "block";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "block";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "block";}}} ;<!-- END WIDGET DRILL DOWN --></script><script>$(document).ready(function() {$(window).scroll(function() {if ($(this).scrollTop() > 100) {$('.scrollup').fadeIn();} else {$('.scrollup').fadeOut();}});$('.scrollup').click(function() {$("html, body").animate({scrollTop: 0}, 600);return false;});});</script><script>
+var modal = document.getElementById("search-section-fuse");
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = "none";
+}
+}
+$(document).on('click', '.closesearch', function() {
+showHideSearch("search-section-fuse");
+
+
+
+
+
+});</script><div class="container-fluid col-lg-11" id="top"><nav class="breadcrumb"><a class="breadcrumb-item" href="../index.htm">Home</a> <span class="breadcrumb-item active">
+<a  href="02af0a215a1823ee.htm" target="_top">Dictionary of HOPEX patterns</a>&nbsp;/&nbsp;Encapsulated Aggregate (Individual)</span></nav></div>
+<div class="container-fluid col-lg-11 content">
+<section class="fadeInDown animated"><a href="#det" class="btn btn-d">DEFINITION</a><a href="#rel" class="btn btn-d">RELATIONSHIPS</a><a href="#str" class="btn btn-d">INTERNAL STRUCTURE</a>	 <a href="#shi" class="btn btn-d">SUPER-SUB TYPE HIERARCHY</a></section>
+<a class="object-section-anchor" id="det"></a>
+<section class="object-section">
+<h4>BUILDING BLOCK - Encapsulated Aggregate (Individual)</h4>
+<hr class="sectionbreak" />
+<table class="table table-vertical-headers table-set-col-width">
+<tr><th>Description</th><td class="description-text"><i>Abstract Concept</i><br/><div class="description-text">An&#160;<b> Encapsulated Aggregate (Individual)</b> is a <a href="514e623c620f2198.htm" target="_top"><b><u>Aggregate Block (Individual)</u></b></a> which has an internal structure and a boundary.</div><div><br/><i>References:</i><br/><a href="https://15926.blog/topics/data-model/index.htm#ArrangedIndividual" target="_blank">ISO 15926 - ArrangedIndividual</a></div></td></tr>		
+<tr><th>Version</th><td class="description-text"><i>Under construction</i></td></tr>		
+<tr><th>Super Types</th><td class="description-text><img src="../standard/dicdefinition.ico.gif">&nbsp;
+<a  href="514e623c620f2198.htm" target="_top">Aggregate Block (Individual)</a>&nbsp;&nbsp;<img src="../standard/dic_concept_syntax.ico.gif">&nbsp;
+<a  href="ae26fa7f5acd535b.htm" target="_top">Encapsulated Aggregate</a>&nbsp;&nbsp;</td></tr>   
+<tr><th>Definition Domain</th><td class="description-text"><img src="../standard/dic_graph.ico.gif">&nbsp;
+<a  href="36166b8c6157b6b4.htm" target="_top">Aggregate Syntax</a><br/>The purpose of the Aggregate Syntax is to provide mechanisms to support modular management of complex Building Blocks.
+</td></tr>
+<tr><th>Dictionary</th><td><img src="../standard/dicsubjectarea.ico.gif">&nbsp;
+<a  href="02af0a215a1823ee.htm" target="_top">Dictionary of HOPEX patterns</a></td></tr>
+<tr><th>Conceptualization Level</th><td><img src="../standard/category_data.ico.gif">&nbsp;
+<a  href="9d1da081642513e8.htm" target="_top">Block Syntax</a>&nbsp;</td></tr>
+<tr><th>Framework Mapping</th><td>
+<a  href="333f3a7f5dde11de.htm" target="_top">Meta-Model Legend</a>&nbsp;:&nbsp;Encapsulated Aggregate (Individual)</td></tr>
+</table>
+</section>
+<section class="object-section">
+<h4>RELATIONSHIPS</h4> 
+<hr class="sectionbreak" />
+<a href="#" class="btn btn-d" value="Relationship1" onclick="showDiagOnClick(this)">Simple Graph</a>
+<a href="#" class="btn btn-d" value="Relationship2" onclick="showDiagOnClick(this)">Graph & Hierarchy</a>
+<a href="#" class="btn btn-d" value="Relationship3" onclick="showDiagOnClick(this)">Graph by Domain</a>
+<a href="#" class="btn btn-d" value="Relationship4" onclick="showDiagOnClick(this)">Table</a>
+<a class="object-section-anchor" id="rel"></a>
+<div class="Relationship" id="Relationship1">
+<h3>Simple Graph</h3>
+<svg id="A4A5B31E55585B0A" height="430" width="1620" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" overflow="hidden">
+  <defs>
+    <marker id="Simple-A4A5B31E55585B0A__RelCircle" refX="3" refY="3" markerWidth="6" markerHeight="6">
+      <circle cx="3" cy="3" r="3" fill="#A52A00"></circle>
+    </marker>
+    <marker id="Simple-A4A5B31E55585B0A__RelArrowTip" refX="3" refY="3" markerWidth="8" markerHeight="6" orient="0">
+      <path d="M0,0 L6,2 L0,4" fill="#A52A00"></path>
+    </marker>
+  </defs>
+<g   transform="translate(585,210)">
+  <rect height="30"  width="150"  id="core-A4A5B31E55585B0A-0"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="150" height="30" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:12; text-align:center"><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-A4A5B31E55585B0A').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-A4A5B31E55585B0A').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="#Relationship1">Encapsulated Aggregate (Individual)</a>
+  <span id="Desc-A4A5B31E55585B0A" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">An Encapsulated Aggregate (Individual) is a Aggregate Block (Individual) which has an internal structure and a boundary.  </span>
+</div></div></foreignObject>
+</g>
+<g   transform="translate(50,182)">
+  <rect height="40"  width="325"  id="705983E063236AE9"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="705983E063236AE9.htm#Relationship1">&#60;Packaging&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(50,202)">
+  <rect height="20"  width="320"  id="In-CCB819705A564F33-4089423855572F23"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"gray"><a href="4089423855572F23.htm#Relationship1">Container</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="CCB819705A564F33.htm">[Packaged Building Block]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="CCB819705A564F33-4089423855572F23-4089423855572F23" class="Simple-A4A5B31E55585B0A_Rel-line" d="M370,202 C477.5,202 477.5,210 585,210" stroke="gray" fill="none" marker-start="url(#Simple-A4A5B31E55585B0A__RelCircle" marker-end="url(#Simple-A4A5B31E55585B0A__RelArrowTip"/>
+<g   transform="translate(50,232)">
+  <rect height="40"  width="325"  id="Other"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="">Other</a></div></foreignObject>
+</g>
+<g   transform="translate(50,252)">
+  <rect height="20"  width="320"  id="In-0CB7118B64585FDD-E8187ED464536599"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#F4DB6F"><a href="E8187ED464536599.htm#Relationship1">Block Collection</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="0CB7118B64585FDD.htm">[Grouped Building Block]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="0CB7118B64585FDD-E8187ED464536599-E8187ED464536599" class="Simple-A4A5B31E55585B0A_Rel-line" d="M370,252 C477.5,252 477.5,210 585,210" stroke="gray" fill="none" marker-start="url(#Simple-A4A5B31E55585B0A__RelCircle" marker-end="url(#Simple-A4A5B31E55585B0A__RelArrowTip"/>
+<g   transform="translate(945,149.75)">
+  <rect height="140"  width="325"  id="Other"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="140" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="">Other</a></div></foreignObject>
+</g>
+<g   transform="translate(950,169.75)">
+  <rect height="20"  width="320"  id="AE26FA7F5ACD535B"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-278C6EDF648F1D81-core-A4A5B31E55585B0A-1-AE26FA7F5ACD535B').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-278C6EDF648F1D81-core-A4A5B31E55585B0A-1-AE26FA7F5ACD535B').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="278C6EDF648F1D81.htm">[Contextual Encapsulated Aggregate]</a>  <div id="Desc-278C6EDF648F1D81-core-A4A5B31E55585B0A-1-AE26FA7F5ACD535B" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-AE26FA7F5ACD535B').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-AE26FA7F5ACD535B').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="ae26fa7f5acd535b.htm#Relationship1">Encapsulated Aggregate</a><div id="Desc-AE26FA7F5ACD535B" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">An Encapsulated Aggregate is a Aggregate Block where its internal structure and state changes are hidden from the outside world by means of a formal boundary.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="278C6EDF648F1D81-core-A4A5B31E55585B0A-1-AE26FA7F5ACD535B" class="Simple-A4A5B31E55585B0A_Rel-line" d="M735,210 C842.5,210 842.5,169.75 950,169.75" stroke="gray" fill="none" marker-start="url(#Simple-A4A5B31E55585B0A__RelCircle" marker-end="url(#Simple-A4A5B31E55585B0A__RelArrowTip"/>
+<g   transform="translate(950,189.75)">
+  <rect height="20"  width="320"  id="348F55F661962ECC"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-278C7CA2648D133E-core-A4A5B31E55585B0A-1-348F55F661962ECC').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-278C7CA2648D133E-core-A4A5B31E55585B0A-1-348F55F661962ECC').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="278C7CA2648D133E.htm">[Contextual Object (Individual)]</a>  <div id="Desc-278C7CA2648D133E-core-A4A5B31E55585B0A-1-348F55F661962ECC" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-348F55F661962ECC').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-348F55F661962ECC').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="348f55f661962ecc.htm#Relationship1">Individual</a><div id="Desc-348F55F661962ECC" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">Individuals are Entitys  which represent objects of the real world that exist over space and time. Examples are, the Oackland digital hospital in 2016, the registration process used at the Oackland digital hospital in 2021 or SAP S/4HANA deployed in Argentina since 2020.   </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="278C7CA2648D133E-core-A4A5B31E55585B0A-1-348F55F661962ECC" class="Simple-A4A5B31E55585B0A_Rel-line" d="M735,210 C842.5,210 842.5,189.75 950,189.75" stroke="gray" fill="none" marker-start="url(#Simple-A4A5B31E55585B0A__RelCircle" marker-end="url(#Simple-A4A5B31E55585B0A__RelArrowTip"/>
+<g   transform="translate(950,209.75)">
+  <rect height="20"  width="320"  id="514E623C620F2198"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-5B7A08E761F55DB3-core-A4A5B31E55585B0A-1-514E623C620F2198').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-5B7A08E761F55DB3-core-A4A5B31E55585B0A-1-514E623C620F2198').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="5B7A08E761F55DB3.htm">[Referenced Individual Block]</a>  <div id="Desc-5B7A08E761F55DB3-core-A4A5B31E55585B0A-1-514E623C620F2198" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-514E623C620F2198').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-514E623C620F2198').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="514e623c620f2198.htm#Relationship1">Aggregate Block (Individual)</a><div id="Desc-514E623C620F2198" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">An Aggregate Block (Individual) is an Individual which has an internal structure.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="5B7A08E761F55DB3-core-A4A5B31E55585B0A-1-514E623C620F2198" class="Simple-A4A5B31E55585B0A_Rel-line" d="M735,210 C842.5,210 842.5,209.75 950,209.75" stroke="gray" fill="none" marker-start="url(#Simple-A4A5B31E55585B0A__RelCircle" marker-end="url(#Simple-A4A5B31E55585B0A__RelArrowTip"/>
+<g   transform="translate(950,229.75)">
+  <rect height="20"  width="320"  id="C120C19A5EF11759"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-B53EC05C6227C21C-core-A4A5B31E55585B0A-0-C120C19A5EF11759').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-B53EC05C6227C21C-core-A4A5B31E55585B0A-0-C120C19A5EF11759').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/B53EC05C6227C21C.htm">[Individual Block Connection]</a>  <div id="Desc-B53EC05C6227C21C-core-A4A5B31E55585B0A-0-C120C19A5EF11759" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-C120C19A5EF11759').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-C120C19A5EF11759').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="c120c19a5ef11759.htm#Relationship1">Connection</a><div id="Desc-C120C19A5EF11759" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="B53EC05C6227C21C-core-A4A5B31E55585B0A-0-C120C19A5EF11759" class="Simple-A4A5B31E55585B0A_Rel-line" d="M735,210 C842.5,210 842.5,229.75 950,229.75" stroke="gray" fill="none" marker-start="url(#Simple-A4A5B31E55585B0A__RelCircle" marker-end="url(#Simple-A4A5B31E55585B0A__RelArrowTip"/>
+<g   transform="translate(950,249.75)">
+  <rect height="20"  width="320"  id="14431B565AD65914"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-A6DB698B600913FA-core-A4A5B31E55585B0A-0-14431B565AD65914').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-A6DB698B600913FA-core-A4A5B31E55585B0A-0-14431B565AD65914').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/A6DB698B600913FA.htm">[Encapsulated Aggregate (Type)]</a>  <div id="Desc-A6DB698B600913FA-core-A4A5B31E55585B0A-0-14431B565AD65914" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-14431B565AD65914').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-14431B565AD65914').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="14431b565ad65914.htm#Relationship1">Encapsulated Aggregate (Type)</a><div id="Desc-14431B565AD65914" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">An Encapsulated Aggregate (Type) is a class of Encapsulated Aggregate (Individual).  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="A6DB698B600913FA-core-A4A5B31E55585B0A-0-14431B565AD65914" class="Simple-A4A5B31E55585B0A_Rel-line" d="M735,210 C842.5,210 842.5,249.75 950,249.75" stroke="gray" fill="none" marker-start="url(#Simple-A4A5B31E55585B0A__RelCircle" marker-end="url(#Simple-A4A5B31E55585B0A__RelArrowTip"/>
+<g   transform="translate(950,269.75)">
+  <rect height="20"  width="320"  id="A4A5B31E55585B0A"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-4D9462AF5EC9F01F-core-A4A5B31E55585B0A-0-A4A5B31E55585B0A').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-4D9462AF5EC9F01F-core-A4A5B31E55585B0A-0-A4A5B31E55585B0A').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="4D9462AF5EC9F01F.htm">[Individual Component]</a>  <div id="Desc-4D9462AF5EC9F01F-core-A4A5B31E55585B0A-0-A4A5B31E55585B0A" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-A4A5B31E55585B0A').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-A4A5B31E55585B0A').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="#Relationship1">Encapsulated Aggregate (Individual)</a><div id="Desc-A4A5B31E55585B0A" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">An Encapsulated Aggregate (Individual) is a Aggregate Block (Individual) which has an internal structure and a boundary.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="4D9462AF5EC9F01F-core-A4A5B31E55585B0A-0-A4A5B31E55585B0A" class="Simple-A4A5B31E55585B0A_Rel-line" d="M735,210 C842.5,210 842.5,269.75 950,269.75" stroke="gray" fill="none" marker-start="url(#Simple-A4A5B31E55585B0A__RelCircle" marker-end="url(#Simple-A4A5B31E55585B0A__RelArrowTip"/>
+</svg>
+
+</div>
+<div class="Relationship" id="Relationship2" style="display:none">
+<h3>Graph & Hierarchy</h3>
+<svg id="A4A5B31E55585B0A" height="430" width="1620" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" overflow="hidden">
+  <defs>
+    <marker id="Full-A4A5B31E55585B0A__RelCircle" refX="3" refY="3" markerWidth="6" markerHeight="6">
+      <circle cx="3" cy="3" r="3" fill="#A52A00"></circle>
+    </marker>
+    <marker id="Full-A4A5B31E55585B0A__RelArrowTip" refX="3" refY="3" markerWidth="8" markerHeight="6" orient="0">
+      <path d="M0,0 L6,2 L0,4" fill="#A52A00"></path>
+    </marker>
+  </defs>
+<g   transform="translate(570,188)">
+  <rect height="114"  width="180"  id="core-A4A5B31E55585B0A-3"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="180" height="114" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:center"><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-AE26F8B05ACD5185').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-AE26F8B05ACD5185').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="ae26f8b05acd5185.htm#Relationship1">Entity</a>
+  <span id="Desc-AE26F8B05ACD5185" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.  </span>
+</div><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-CCB819645A564F12').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-CCB819645A564F12').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="ccb819645a564f12.htm#Relationship1">Building Block</a>
+  <span id="Desc-CCB819645A564F12" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">A Building Block is an autonomous, resusable Entity that contributes to the makeup of other Building Blocks.  </span>
+</div></div></foreignObject>
+</g>
+<g   transform="translate(580,226)">
+  <rect height="68"  width="160"  id="core-A4A5B31E55585B0A-1"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="160" height="68" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:center"><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-AE26FA7F5ACD535B').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-AE26FA7F5ACD535B').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="ae26fa7f5acd535b.htm#Relationship1">Encapsulated Aggregate</a>
+  <span id="Desc-AE26FA7F5ACD535B" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">An Encapsulated Aggregate is a Aggregate Block where its internal structure and state changes are hidden from the outside world by means of a formal boundary.  </span>
+</div><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-514E623C620F2198').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-514E623C620F2198').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="514e623c620f2198.htm#Relationship1">Aggregate Block (Individual)</a>
+  <span id="Desc-514E623C620F2198" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">An Aggregate Block (Individual) is an Individual which has an internal structure.  </span>
+</div></div></foreignObject>
+</g>
+<g   transform="translate(585,260)">
+  <rect height="30"  width="150"  id="core-A4A5B31E55585B0A-0"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="150" height="30" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:12; text-align:center"><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-A4A5B31E55585B0A').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-A4A5B31E55585B0A').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="#Relationship1">Encapsulated Aggregate (Individual)</a>
+  <span id="Desc-A4A5B31E55585B0A" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">An Encapsulated Aggregate (Individual) is a Aggregate Block (Individual) which has an internal structure and a boundary.  </span>
+</div></div></foreignObject>
+</g>
+<g   transform="translate(50,171.25)">
+  <rect height="40"  width="325"  id="705983E063236AE9"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="705983E063236AE9.htm#Relationship1">&#60;Packaging&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(50,191.25)">
+  <rect height="20"  width="320"  id="In-CCB819705A564F33-4089423855572F23"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"gray"><a href="4089423855572F23.htm#Relationship1">Container</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="CCB819705A564F33.htm">[Packaged Building Block]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="CCB819705A564F33-4089423855572F23-4089423855572F23" class="Full-A4A5B31E55585B0A_Rel-line" d="M370,191.25 C470,191.25 470,188 570,188" stroke="gray" fill="none" marker-start="url(#Full-A4A5B31E55585B0A__RelCircle" marker-end="url(#Full-A4A5B31E55585B0A__RelArrowTip"/>
+<g   transform="translate(50,221.25)">
+  <rect height="60"  width="325"  id="Other"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="60" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="">Other</a></div></foreignObject>
+</g>
+<g   transform="translate(50,241.25)">
+  <rect height="20"  width="320"  id="In-0CB7118B64585FDD-E8187ED464536599"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#F4DB6F"><a href="E8187ED464536599.htm#Relationship1">Block Collection</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="0CB7118B64585FDD.htm">[Grouped Building Block]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="0CB7118B64585FDD-E8187ED464536599-E8187ED464536599" class="Full-A4A5B31E55585B0A_Rel-line" d="M370,241.25 C470,241.25 470,188 570,188" stroke="gray" fill="none" marker-start="url(#Full-A4A5B31E55585B0A__RelCircle" marker-end="url(#Full-A4A5B31E55585B0A__RelArrowTip"/>
+<g   transform="translate(50,261.25)">
+  <rect height="20"  width="320"  id="In-27862AA35B251D4C-AE26F8D65ACD51AB"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"gray"><a href="ae26f8d65acd51ab.htm#Relationship1">Nesting Entity</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="27862aa35b251d4c.htm">[Nested Entity]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="27862AA35B251D4C-AE26F8D65ACD51AB-AE26F8D65ACD51AB" class="Full-A4A5B31E55585B0A_Rel-line" d="M370,261.25 C470,261.25 470,188 570,188" stroke="gray" fill="none" marker-start="url(#Full-A4A5B31E55585B0A__RelCircle" marker-end="url(#Full-A4A5B31E55585B0A__RelArrowTip"/>
+<g   transform="translate(945,149.75)">
+  <rect height="140"  width="325"  id="Other"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="140" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="">Other</a></div></foreignObject>
+</g>
+<g   transform="translate(950,169.75)">
+  <rect height="20"  width="320"  id="AE26FA7F5ACD535B"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-278C6EDF648F1D81-core-A4A5B31E55585B0A-1-AE26FA7F5ACD535B').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-278C6EDF648F1D81-core-A4A5B31E55585B0A-1-AE26FA7F5ACD535B').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="278C6EDF648F1D81.htm">[Contextual Encapsulated Aggregate]</a>  <div id="Desc-278C6EDF648F1D81-core-A4A5B31E55585B0A-1-AE26FA7F5ACD535B" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-AE26FA7F5ACD535B').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-AE26FA7F5ACD535B').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="ae26fa7f5acd535b.htm#Relationship1">Encapsulated Aggregate</a><div id="Desc-AE26FA7F5ACD535B" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">An Encapsulated Aggregate is a Aggregate Block where its internal structure and state changes are hidden from the outside world by means of a formal boundary.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="278C6EDF648F1D81-core-A4A5B31E55585B0A-1-AE26FA7F5ACD535B" class="Full-A4A5B31E55585B0A_Rel-line" d="M740,226 C845,226 845,169.75 950,169.75" stroke="gray" fill="none" marker-start="url(#Full-A4A5B31E55585B0A__RelCircle" marker-end="url(#Full-A4A5B31E55585B0A__RelArrowTip"/>
+<g   transform="translate(950,189.75)">
+  <rect height="20"  width="320"  id="514E623C620F2198"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-5B7A08E761F55DB3-core-A4A5B31E55585B0A-1-514E623C620F2198').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-5B7A08E761F55DB3-core-A4A5B31E55585B0A-1-514E623C620F2198').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="5B7A08E761F55DB3.htm">[Referenced Individual Block]</a>  <div id="Desc-5B7A08E761F55DB3-core-A4A5B31E55585B0A-1-514E623C620F2198" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-514E623C620F2198').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-514E623C620F2198').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="514e623c620f2198.htm#Relationship1">Aggregate Block (Individual)</a><div id="Desc-514E623C620F2198" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">An Aggregate Block (Individual) is an Individual which has an internal structure.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="5B7A08E761F55DB3-core-A4A5B31E55585B0A-1-514E623C620F2198" class="Full-A4A5B31E55585B0A_Rel-line" d="M740,226 C845,226 845,189.75 950,189.75" stroke="gray" fill="none" marker-start="url(#Full-A4A5B31E55585B0A__RelCircle" marker-end="url(#Full-A4A5B31E55585B0A__RelArrowTip"/>
+<g   transform="translate(950,209.75)">
+  <rect height="20"  width="320"  id="348F55F661962ECC"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-278C7CA2648D133E-core-A4A5B31E55585B0A-1-348F55F661962ECC').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-278C7CA2648D133E-core-A4A5B31E55585B0A-1-348F55F661962ECC').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="278C7CA2648D133E.htm">[Contextual Object (Individual)]</a>  <div id="Desc-278C7CA2648D133E-core-A4A5B31E55585B0A-1-348F55F661962ECC" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-348F55F661962ECC').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-348F55F661962ECC').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="348f55f661962ecc.htm#Relationship1">Individual</a><div id="Desc-348F55F661962ECC" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">Individuals are Entitys  which represent objects of the real world that exist over space and time. Examples are, the Oackland digital hospital in 2016, the registration process used at the Oackland digital hospital in 2021 or SAP S/4HANA deployed in Argentina since 2020.   </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="278C7CA2648D133E-core-A4A5B31E55585B0A-1-348F55F661962ECC" class="Full-A4A5B31E55585B0A_Rel-line" d="M740,226 C845,226 845,209.75 950,209.75" stroke="gray" fill="none" marker-start="url(#Full-A4A5B31E55585B0A__RelCircle" marker-end="url(#Full-A4A5B31E55585B0A__RelArrowTip"/>
+<g   transform="translate(950,229.75)">
+  <rect height="20"  width="320"  id="C120C19A5EF11759"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-B53EC05C6227C21C-core-A4A5B31E55585B0A-0-C120C19A5EF11759').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-B53EC05C6227C21C-core-A4A5B31E55585B0A-0-C120C19A5EF11759').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/B53EC05C6227C21C.htm">[Individual Block Connection]</a>  <div id="Desc-B53EC05C6227C21C-core-A4A5B31E55585B0A-0-C120C19A5EF11759" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-C120C19A5EF11759').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-C120C19A5EF11759').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="c120c19a5ef11759.htm#Relationship1">Connection</a><div id="Desc-C120C19A5EF11759" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="B53EC05C6227C21C-core-A4A5B31E55585B0A-0-C120C19A5EF11759" class="Full-A4A5B31E55585B0A_Rel-line" d="M735,260 C842.5,260 842.5,229.75 950,229.75" stroke="gray" fill="none" marker-start="url(#Full-A4A5B31E55585B0A__RelCircle" marker-end="url(#Full-A4A5B31E55585B0A__RelArrowTip"/>
+<g   transform="translate(950,249.75)">
+  <rect height="20"  width="320"  id="14431B565AD65914"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-A6DB698B600913FA-core-A4A5B31E55585B0A-0-14431B565AD65914').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-A6DB698B600913FA-core-A4A5B31E55585B0A-0-14431B565AD65914').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/A6DB698B600913FA.htm">[Encapsulated Aggregate (Type)]</a>  <div id="Desc-A6DB698B600913FA-core-A4A5B31E55585B0A-0-14431B565AD65914" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-14431B565AD65914').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-14431B565AD65914').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="14431b565ad65914.htm#Relationship1">Encapsulated Aggregate (Type)</a><div id="Desc-14431B565AD65914" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">An Encapsulated Aggregate (Type) is a class of Encapsulated Aggregate (Individual).  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="A6DB698B600913FA-core-A4A5B31E55585B0A-0-14431B565AD65914" class="Full-A4A5B31E55585B0A_Rel-line" d="M735,260 C842.5,260 842.5,249.75 950,249.75" stroke="gray" fill="none" marker-start="url(#Full-A4A5B31E55585B0A__RelCircle" marker-end="url(#Full-A4A5B31E55585B0A__RelArrowTip"/>
+<g   transform="translate(950,269.75)">
+  <rect height="20"  width="320"  id="A4A5B31E55585B0A"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-4D9462AF5EC9F01F-core-A4A5B31E55585B0A-0-A4A5B31E55585B0A').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-4D9462AF5EC9F01F-core-A4A5B31E55585B0A-0-A4A5B31E55585B0A').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="4D9462AF5EC9F01F.htm">[Individual Component]</a>  <div id="Desc-4D9462AF5EC9F01F-core-A4A5B31E55585B0A-0-A4A5B31E55585B0A" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-A4A5B31E55585B0A').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-A4A5B31E55585B0A').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="#Relationship1">Encapsulated Aggregate (Individual)</a><div id="Desc-A4A5B31E55585B0A" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">An Encapsulated Aggregate (Individual) is a Aggregate Block (Individual) which has an internal structure and a boundary.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="4D9462AF5EC9F01F-core-A4A5B31E55585B0A-0-A4A5B31E55585B0A" class="Full-A4A5B31E55585B0A_Rel-line" d="M735,260 C842.5,260 842.5,269.75 950,269.75" stroke="gray" fill="none" marker-start="url(#Full-A4A5B31E55585B0A__RelCircle" marker-end="url(#Full-A4A5B31E55585B0A__RelArrowTip"/>
+</svg>
+
+</div>
+<div class="Relationship" id="Relationship3" style="display:none">
+<h3>Graph by Domain</h3>
+<svg id="A4A5B31E55585B0A" height="430" width="1620" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" overflow="hidden">
+  <defs>
+    <marker id="Domain-A4A5B31E55585B0A__RelCircle" refX="3" refY="3" markerWidth="6" markerHeight="6">
+      <circle cx="3" cy="3" r="3" fill="#A52A00"></circle>
+    </marker>
+    <marker id="Domain-A4A5B31E55585B0A__RelArrowTip" refX="3" refY="3" markerWidth="8" markerHeight="6" orient="0">
+      <path d="M0,0 L6,2 L0,4" fill="#A52A00"></path>
+    </marker>
+  </defs>
+<g   transform="translate(585,210)">
+  <rect height="30"  width="150"  id="core-A4A5B31E55585B0A-0"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="150" height="30" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:12; text-align:center"><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-A4A5B31E55585B0A').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-A4A5B31E55585B0A').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="#Relationship1">Encapsulated Aggregate (Individual)</a>
+  <span id="Desc-A4A5B31E55585B0A" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">An Encapsulated Aggregate (Individual) is a Aggregate Block (Individual) which has an internal structure and a boundary.  </span>
+</div></div></foreignObject>
+</g>
+<g   transform="translate(945,139)">
+  <rect height="120"  width="325"  id="36166B8C6157B6B4"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="120" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="36166b8c6157b6b4.htm#Relationship1">{Aggregate Syntax}</a></div></foreignObject>
+</g>
+<g   transform="translate(950,159)">
+  <rect height="20"  width="320"  id="AE26FA7F5ACD535B"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-278C6EDF648F1D81-core-A4A5B31E55585B0A-1-AE26FA7F5ACD535B').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-278C6EDF648F1D81-core-A4A5B31E55585B0A-1-AE26FA7F5ACD535B').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="278C6EDF648F1D81.htm">[Contextual Encapsulated Aggregate]</a>  <div id="Desc-278C6EDF648F1D81-core-A4A5B31E55585B0A-1-AE26FA7F5ACD535B" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-AE26FA7F5ACD535B').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-AE26FA7F5ACD535B').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="ae26fa7f5acd535b.htm#Relationship1">Encapsulated Aggregate</a><div id="Desc-AE26FA7F5ACD535B" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">An Encapsulated Aggregate is a Aggregate Block where its internal structure and state changes are hidden from the outside world by means of a formal boundary.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="278C6EDF648F1D81-core-A4A5B31E55585B0A-1-AE26FA7F5ACD535B" class="Domain-A4A5B31E55585B0A_Rel-line" d="M735,210 C842.5,210 842.5,159 950,159" stroke="gray" fill="none" marker-start="url(#Domain-A4A5B31E55585B0A__RelCircle" marker-end="url(#Domain-A4A5B31E55585B0A__RelArrowTip"/>
+<g   transform="translate(950,179)">
+  <rect height="20"  width="320"  id="514E623C620F2198"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-5B7A08E761F55DB3-core-A4A5B31E55585B0A-1-514E623C620F2198').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-5B7A08E761F55DB3-core-A4A5B31E55585B0A-1-514E623C620F2198').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="5B7A08E761F55DB3.htm">[Referenced Individual Block]</a>  <div id="Desc-5B7A08E761F55DB3-core-A4A5B31E55585B0A-1-514E623C620F2198" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-514E623C620F2198').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-514E623C620F2198').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="514e623c620f2198.htm#Relationship1">Aggregate Block (Individual)</a><div id="Desc-514E623C620F2198" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">An Aggregate Block (Individual) is an Individual which has an internal structure.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="5B7A08E761F55DB3-core-A4A5B31E55585B0A-1-514E623C620F2198" class="Domain-A4A5B31E55585B0A_Rel-line" d="M735,210 C842.5,210 842.5,179 950,179" stroke="gray" fill="none" marker-start="url(#Domain-A4A5B31E55585B0A__RelCircle" marker-end="url(#Domain-A4A5B31E55585B0A__RelArrowTip"/>
+<g   transform="translate(950,199)">
+  <rect height="20"  width="320"  id="14431B565AD65914"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-A6DB698B600913FA-core-A4A5B31E55585B0A-0-14431B565AD65914').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-A6DB698B600913FA-core-A4A5B31E55585B0A-0-14431B565AD65914').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/A6DB698B600913FA.htm">[Encapsulated Aggregate (Type)]</a>  <div id="Desc-A6DB698B600913FA-core-A4A5B31E55585B0A-0-14431B565AD65914" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-14431B565AD65914').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-14431B565AD65914').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="14431b565ad65914.htm#Relationship1">Encapsulated Aggregate (Type)</a><div id="Desc-14431B565AD65914" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">An Encapsulated Aggregate (Type) is a class of Encapsulated Aggregate (Individual).  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="A6DB698B600913FA-core-A4A5B31E55585B0A-0-14431B565AD65914" class="Domain-A4A5B31E55585B0A_Rel-line" d="M735,210 C842.5,210 842.5,199 950,199" stroke="gray" fill="none" marker-start="url(#Domain-A4A5B31E55585B0A__RelCircle" marker-end="url(#Domain-A4A5B31E55585B0A__RelArrowTip"/>
+<g   transform="translate(950,219)">
+  <rect height="20"  width="320"  id="A4A5B31E55585B0A"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-4D9462AF5EC9F01F-core-A4A5B31E55585B0A-0-A4A5B31E55585B0A').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-4D9462AF5EC9F01F-core-A4A5B31E55585B0A-0-A4A5B31E55585B0A').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="4D9462AF5EC9F01F.htm">[Individual Component]</a>  <div id="Desc-4D9462AF5EC9F01F-core-A4A5B31E55585B0A-0-A4A5B31E55585B0A" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-A4A5B31E55585B0A').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-A4A5B31E55585B0A').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="#Relationship1">Encapsulated Aggregate (Individual)</a><div id="Desc-A4A5B31E55585B0A" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">An Encapsulated Aggregate (Individual) is a Aggregate Block (Individual) which has an internal structure and a boundary.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="4D9462AF5EC9F01F-core-A4A5B31E55585B0A-0-A4A5B31E55585B0A" class="Domain-A4A5B31E55585B0A_Rel-line" d="M735,210 C842.5,210 842.5,219 950,219" stroke="gray" fill="none" marker-start="url(#Domain-A4A5B31E55585B0A__RelCircle" marker-end="url(#Domain-A4A5B31E55585B0A__RelArrowTip"/>
+<g   transform="translate(950,239)">
+  <rect height="20"  width="320"  id="C120C19A5EF11759"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-B53EC05C6227C21C-core-A4A5B31E55585B0A-0-C120C19A5EF11759').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-B53EC05C6227C21C-core-A4A5B31E55585B0A-0-C120C19A5EF11759').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/B53EC05C6227C21C.htm">[Individual Block Connection]</a>  <div id="Desc-B53EC05C6227C21C-core-A4A5B31E55585B0A-0-C120C19A5EF11759" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-C120C19A5EF11759').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-C120C19A5EF11759').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="c120c19a5ef11759.htm#Relationship1">Connection</a><div id="Desc-C120C19A5EF11759" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="B53EC05C6227C21C-core-A4A5B31E55585B0A-0-C120C19A5EF11759" class="Domain-A4A5B31E55585B0A_Rel-line" d="M735,210 C842.5,210 842.5,239 950,239" stroke="gray" fill="none" marker-start="url(#Domain-A4A5B31E55585B0A__RelCircle" marker-end="url(#Domain-A4A5B31E55585B0A__RelArrowTip"/>
+<g   transform="translate(50,171.25)">
+  <rect height="60"  width="325"  id="36166C3A6157BB9B"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="60" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="36166c3a6157bb9b.htm#Relationship1">{Containers & Blocks}</a></div></foreignObject>
+</g>
+<g   transform="translate(50,191.25)">
+  <rect height="20"  width="320"  id="In-CCB819705A564F33-4089423855572F23"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"gray"><a href="4089423855572F23.htm#Relationship1">Container</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="CCB819705A564F33.htm">[Packaged Building Block]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="CCB819705A564F33-4089423855572F23-4089423855572F23" class="Domain-A4A5B31E55585B0A_Rel-line" d="M370,191.25 C477.5,191.25 477.5,210 585,210" stroke="gray" fill="none" marker-start="url(#Domain-A4A5B31E55585B0A__RelCircle" marker-end="url(#Domain-A4A5B31E55585B0A__RelArrowTip"/>
+<g   transform="translate(50,211.25)">
+  <rect height="20"  width="320"  id="In-0CB7118B64585FDD-E8187ED464536599"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#F4DB6F"><a href="E8187ED464536599.htm#Relationship1">Block Collection</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="0CB7118B64585FDD.htm">[Grouped Building Block]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="0CB7118B64585FDD-E8187ED464536599-E8187ED464536599" class="Domain-A4A5B31E55585B0A_Rel-line" d="M370,211.25 C477.5,211.25 477.5,210 585,210" stroke="gray" fill="none" marker-start="url(#Domain-A4A5B31E55585B0A__RelCircle" marker-end="url(#Domain-A4A5B31E55585B0A__RelArrowTip"/>
+<g   transform="translate(50,241.25)">
+  <rect height="40"  width="325"  id="AE26F9C25ACD52D4"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="ae26f9c25acd52d4.htm#Relationship1">{Elementary Graph}</a></div></foreignObject>
+</g>
+<g   transform="translate(50,261.25)">
+  <rect height="20"  width="320"  id="In-27862AA35B251D4C-AE26F8D65ACD51AB"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"gray"><a href="ae26f8d65acd51ab.htm#Relationship1">Nesting Entity</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="27862aa35b251d4c.htm">[Nested Entity]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="27862AA35B251D4C-AE26F8D65ACD51AB-AE26F8D65ACD51AB" class="Domain-A4A5B31E55585B0A_Rel-line" d="M370,261.25 C477.5,261.25 477.5,210 585,210" stroke="gray" fill="none" marker-start="url(#Domain-A4A5B31E55585B0A__RelCircle" marker-end="url(#Domain-A4A5B31E55585B0A__RelArrowTip"/>
+<g   transform="translate(945,269)">
+  <rect height="40"  width="325"  id="AE26F9C25ACD52D4"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="ae26f9c25acd52d4.htm#Relationship1">{Elementary Graph}</a></div></foreignObject>
+</g>
+<g   transform="translate(950,289)">
+  <rect height="20"  width="320"  id="348F55F661962ECC"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-278C7CA2648D133E-core-A4A5B31E55585B0A-1-348F55F661962ECC').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-278C7CA2648D133E-core-A4A5B31E55585B0A-1-348F55F661962ECC').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="278C7CA2648D133E.htm">[Contextual Object (Individual)]</a>  <div id="Desc-278C7CA2648D133E-core-A4A5B31E55585B0A-1-348F55F661962ECC" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-348F55F661962ECC').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-348F55F661962ECC').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="348f55f661962ecc.htm#Relationship1">Individual</a><div id="Desc-348F55F661962ECC" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">Individuals are Entitys  which represent objects of the real world that exist over space and time. Examples are, the Oackland digital hospital in 2016, the registration process used at the Oackland digital hospital in 2021 or SAP S/4HANA deployed in Argentina since 2020.   </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="278C7CA2648D133E-core-A4A5B31E55585B0A-1-348F55F661962ECC" class="Domain-A4A5B31E55585B0A_Rel-line" d="M735,210 C842.5,210 842.5,289 950,289" stroke="gray" fill="none" marker-start="url(#Domain-A4A5B31E55585B0A__RelCircle" marker-end="url(#Domain-A4A5B31E55585B0A__RelArrowTip"/>
+</svg>
+
+</div>
+<div class="Relationship" id="Relationship4" style="display:none">
+<h3>Relationship Table</h3>
+<table id="sortabletable" class="table table-sm  table-bordered table-cell-resizable table-index-set-col-width-4 table-custom-style table-scrollX" width="100%" cellspacing="0">
+<tr><th>Relationship</th><th>Cardinality</th><th>Target Entity</th><th>Source Entity</th><th>Description</th><th>Implementation</th></tr>
+<tr>
+<td><img src="../standard/ctx-concept.ico.gif"/>&nbsp;
+<a  href="278C6EDF648F1D81.htm" target="_top">Contextual Encapsulated Aggregate</a></td>
+<td>[0..*]</td>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="ae26fa7f5acd535b.htm" target="_top">Encapsulated Aggregate</a></td>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="ae26fa7f5acd535b.htm" target="_top">Encapsulated Aggregate</a></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/ctx-concept.ico.gif"/>&nbsp;
+<a  href="278C7CA2648D133E.htm" target="_top">Contextual Object (Individual)</a></td>
+<td>[0..*]</td>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="348f55f661962ecc.htm" target="_top">Individual</a></td>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="514e623c620f2198.htm" target="_top">Aggregate Block (Individual)</a></td>
+<td><i>Abstract Relationship</i><br/></td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_classification.ico.gif"/>&nbsp;Encapsulated Aggregate (Type)</td>
+<td>[1..1]</td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="14431b565ad65914.htm" target="_top">Encapsulated Aggregate (Type)</a></td>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="a4a5b31e55585b0a.htm" target="_top">Encapsulated Aggregate (Individual)</a></td>
+<td><i>Abstract Relationship</i><br/></td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/concept-connection.ico.gif"/>&nbsp;Individual Block Connection</td>
+<td>[0..*]</td>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="c120c19a5ef11759.htm" target="_top">Connection</a></td>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="a4a5b31e55585b0a.htm" target="_top">Encapsulated Aggregate (Individual)</a></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/ctx-concept.ico.gif"/>&nbsp;
+<a  href="4D9462AF5EC9F01F.htm" target="_top">Individual Component</a></td>
+<td>[0..*]</td>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="a4a5b31e55585b0a.htm" target="_top">Encapsulated Aggregate (Individual)</a></td>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="a4a5b31e55585b0a.htm" target="_top">Encapsulated Aggregate (Individual)</a></td>
+<td><i>Abstract Relationship</i><br/></td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_structuralcomponent.ico.gif"/>&nbsp;
+<a  href="5B7A080561F55C10.htm" target="_top">Referenced Building Block</a></td>
+<td>[0..*]</td>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="ccb819645a564f12.htm" target="_top">Building Block</a></td>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="ccb819645a564f12.htm" target="_top">Building Block</a></td>
+<td><i>Abstract Relationship</i><br/>Reference relationship between a source <a href="ccb819645a564f12.htm" target="_top"><b><u>Building Block</u></b></a> and a target <a href="ccb819645a564f12.htm" target="_top"><b><u>Building Block</u></b></a> (<b> Referenced Building Block</b>).</td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_structuralcomponent.ico.gif"/>&nbsp;
+<a  href="5B7A08E761F55DB3.htm" target="_top">Referenced Individual Block</a></td>
+<td>[0..*]</td>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="514e623c620f2198.htm" target="_top">Aggregate Block (Individual)</a></td>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="514e623c620f2198.htm" target="_top">Aggregate Block (Individual)</a></td>
+<td><i>Abstract Relationship</i><br/></td>
+<td></td>
+</tr>
+</table>
+</div>
+</section>
+<section class="object-section">
+<h4>INTERNAL STRUCTURE</h4> 
+<hr class="sectionbreak" />
+<a class="object-section-anchor" id="str"></a>
+<map  name="4D94629D5EC9EF9D">
+  <area  href=#OBMK278C3F9F648708C3 shape="polygon" coords="92, 27, 92, 14, 118, 14, 118, 27, 92, 27"   target="_top"  title="-">
+  
+  <area  href="278c3f9f648708b5.htm" shape="rect" coords="0, 0, 136, 46"   target="_top"  title="An&#160; Internal Object is an Aggregate Member that represent an internal characterisc of an Aggregate Block, that has no relationship to blocks outside the boundary of their nesting Aggregate Block.">
+  
+  <area  href=ae26fa7f5acd535b.htm#OBMKAE26FA7F5ACD535B shape="polygon" coords="20, 66, 20, 53, 87, 53, 87, 66, 79, 66, 79, 79, 28, 79, 28, 66, 20, 66"   target="_top"  title="An&#160; Encapsulated Aggregate is a Aggregate Block where its internal structure and state changes are hidden from the outside world by means of a formal boundary.">
+  
+  <area  href="278C6EDF648F1D81.htm" shape="rect" coords="0, 0, 106, 90"   target="_top"  title="-">
+  
+  <area  href=#OBMK278C7C04648D1251 shape="polygon" coords="252, 101, 252, 88, 278, 88, 278, 101, 252, 101"   target="_top"  title="-">
+  
+  <area  href="278c7c04648d1244.htm" shape="rect" coords="170, 68, 306, 113"   target="_top"  title="-">
+  
+  <area  href=#OBMK278C7B4A648D1037 shape="polygon" coords="460, 101, 460, 88, 486, 88, 486, 101, 460, 101"   target="_top"  title="-">
+  
+  <area  href="278c7b4a648d1028.htm" shape="rect" coords="377, 68, 513, 113"   target="_top"  title="-">
+  
+  <area  href=348f55f661962ecc.htm#OBMK348F55F661962ECC shape="polygon" coords="471, 209, 471, 196, 518, 196, 518, 209, 471, 209"   target="_top"  title="&#160;Individuals are Entitys&#160; which represent objects of the real world that exist over space and time. Examples are, the Oackland digital hospital in 2016, the registration process used at the Oackland digital hospital in 2021 or SAP S/4HANA deployed in Argentina since 2020. ">
+  
+  <area  href="278C7CA2648D133E.htm" shape="rect" coords="441, 143, 547, 234"   target="_top"  title="-">
+  
+  <area  href=#OBMKA4A5B31E55585B0A shape="polygon" coords="174, 187, 174, 174, 354, 174, 354, 187, 174, 187"   target="_top"  title="An&#160; Encapsulated Aggregate (Individual) is a Aggregate Block (Individual) which has an internal structure and a boundary.">
+  
+  <area  href="4D9462AF5EC9F01F.htm" shape="rect" coords="151, 149, 377, 197"   target="_top"  title="-">
+  
+  <area  href=514e623c620f2198.htm#OBMK514E623C620F2198 shape="polygon" coords="206, 36, 206, 23, 355, 23, 355, 36, 206, 36"   target="_top"  title="An&#160; Aggregate Block (Individual) is an Individual which has an internal structure.">
+  
+  <area  href=ae26fa7f5acd535b.htm#OBMKAE26FA7F5ACD535B shape="polygon" coords="361, 36, 361, 23, 493, 23, 493, 36, 361, 36"   target="_top"  title="An&#160; Encapsulated Aggregate is a Aggregate Block where its internal structure and state changes are hidden from the outside world by means of a formal boundary.">
+  
+  <area  href="a4a5b31e55585b0a.htm" shape="rect" coords="106, 21, 593, 349"   target="_top"  title="An&#160; Encapsulated Aggregate (Individual) is a Aggregate Block (Individual) which has an internal structure and a boundary.">
+  
+</map>
+<img  src="../images/a4a5b31e55585b0a_4d94629d5ec9ef9d_i.png" alt="../images/a4a5b31e55585b0a_4d94629d5ec9ef9d_i.png" usemap="#4D94629D5EC9EF9D" height="359" width="593" border=0>
+
+<a class="object-section-anchor" id="shi"></a>
+<section class="object-section">
+<h4>SUPER TYPES HIERARCHY</h4> 
+<hr class="sectionbreak" />
+<span>Left click on a node to toggle it. Right click to navigate through its page
+</section>
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<div id="categoryHierarchy"></div>
+ <script>
+var hierarchy = JSON.parse('{"name":"Encapsulated Aggregate (Individual)","comment":"An Encapsulated Aggregate (Individual) is a Aggregate Block (Individual) which has an internal structure and a boundary.","url":"A4A5B31E55585B0A.htm","parents":[{"name":"Encapsulated Aggregate","comment":"An Encapsulated Aggregate is a Aggregate Block where its internal structure and state changes are hidden from the outside world by means of a formal boundary.","url":"AE26FA7F5ACD535B.htm", "isparent":true,"parents":[{"name":"Aggregate Block","comment":"An Aggregate Block is a Building Block which has an internal structure.","url":"514E5F6C620F1EC6.htm", "isparent":true,"parents":[{"name":"Aggregate Entity","comment":"An Aggregate Entity is a Nesting Entity which has an internal structure made of Aggregate Entity Members.","url":"B13D31DE5EDF42D8.htm", "isparent":true,"parents":[{"name":"<Aspects>","isparent": true,"parents":[{"name":"Nesting Entity","comment":"A Nesting Entity is an Entity that nests other entities as sub-entities, serving as their lexical scope. The existence, visibility, and significance of Nested Entitys are confined within the boundaries of their Nesting Entity.","url":"AE26F8D65ACD51AB.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]}]},{"name":"Building Block","comment":"A Building Block is an autonomous, resusable Entity that contributes to the makeup of other Building Blocks.","url":"CCB819645A564F12.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]}]},{"name":"Aggregate Block (Individual)","comment":"An Aggregate Block (Individual) is an Individual which has an internal structure.","url":"514E623C620F2198.htm", "isparent":true,"parents":[{"name":"Aggregate Block","comment":"An Aggregate Block is a Building Block which has an internal structure.","url":"514E5F6C620F1EC6.htm", "isparent":true,"parents":[{"name":"Aggregate Entity","comment":"An Aggregate Entity is a Nesting Entity which has an internal structure made of Aggregate Entity Members.","url":"B13D31DE5EDF42D8.htm", "isparent":true,"parents":[{"name":"<Aspects>","isparent": true,"parents":[{"name":"Nesting Entity","comment":"A Nesting Entity is an Entity that nests other entities as sub-entities, serving as their lexical scope. The existence, visibility, and significance of Nested Entitys are confined within the boundaries of their Nesting Entity.","url":"AE26F8D65ACD51AB.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]}]},{"name":"Building Block","comment":"A Building Block is an autonomous, resusable Entity that contributes to the makeup of other Building Blocks.","url":"CCB819645A564F12.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]},{"name":"Individual","comment":"Individuals are Entitys  which represent objects of the real world that exist over space and time. Examples are, the Oackland digital hospital in 2016, the registration process used at the Oackland digital hospital in 2021 or SAP S/4HANA deployed in Argentina since 2020. ","url":"348F55F661962ECC.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]}],"children":[]}');
+$(document).ready(function(event) {
+var tree = CollapsibleTree("#categoryHierarchy");
+tree.init(hierarchy);
+});
+</script>
+</div>
+<button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button>
+<script>window.onscroll = function() {scrollFunction()};$(document).on('click', 'a[href^="#"]', function (event) {event.preventDefault();$('html, body').animate({scrollTop: $($.attr(this, 'href')).offset().top}, 500);});
+function showDiagOnClick(elem){ var x = document.getElementsByClassName('Relationship');var e = elem.getAttribute("value"); for (var i=0; i < x.length ;i++){x[i].style.display="none"; if (x[i].id == e){x[i].style.display="block";x[i].style.textAlign="left";}}}
+</script></html>

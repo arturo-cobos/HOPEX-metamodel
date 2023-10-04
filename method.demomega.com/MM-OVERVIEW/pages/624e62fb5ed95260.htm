@@ -1,0 +1,665 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="keywords" content="">
+<meta name="description" content="">    
+<LINK REL="icon" HREF="../standard/assets/img/favicon.ico">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/bootstrap.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nav.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/eaportal.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/font-awesome.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/animate.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/datatables.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/grid.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nae.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/custom.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/chosen.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/prism.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery.dataTables.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jsTreeStyle.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.theme.css" media="screen" />
+<script type="text/javascript" src="../standard/assets/js/jquery-3.2.1.min.js" ></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-ui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.columnFilter.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3-force.v2.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.gui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.search.js"></script> 
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.util.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-2.1.1.min.js"></script>
+<script src="../standard/assets/js/ws_zoomtemplate_firefox.js"></script>
+<script src="../standard/assets/js/bootstrap.min.js"></script>
+<script src="../standard/assets/js/datatables.min.js"></script>
+<script src="../standard/assets/js/moment.min.js"></script>
+<script src="../standard/assets/js/datetime-moment.js"></script>
+<script src="../standard/assets/js/chartjs.min.js"></script>
+<script src="../standard/assets/js/searchindexcontent.json"></script>
+<script src="../standard/assets/js/anls.js"></script>
+<script src="../../../cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script src="../standard/assets/js/gauge.js"></script> 
+<script src="../standard/assets/js/domesticApi.js"></script> 
+<script src="../standard/assets/js/piecelabel.js"></script>
+<script src="../standard/assets/js/popper.min.js"></script>
+<script src="../standard/assets/js/custom.js"></script>
+<script src="../standard/assets/js/chosen.jquery.js"></script>
+<script src="../standard/assets/js/prism.js"></script>
+<script src="../standard/assets/js/init-chosen.js"></script>
+<script src="../standard/assets/js/chart-data-flow.js"></script>
+<script src="../standard/assets/js/chart-data-gantt.js"></script>
+<script type="module" src="../standard/assets/js/Fuse.esm.min.js"></script>
+<script type="module">
+import Fuse from '../standard/assets/js/Fuse.esm.min.js';
+$(document).ready(function () {
+console.log('getjson');
+window.$.getJSON('../standard/assets/js/searchindexcontent.json', function (response) {
+console.log('getjson ok');
+var isIndex = "";
+var url = window.location.pathname;
+var filename = url.substring(url.lastIndexOf('/')+1);
+if( filename.includes("index") || filename === "" ){
+isIndex = "pages/";
+} else {
+isIndex = "";
+}
+const fuse = new Fuse(response, {
+keys: ['title','text'],
+shouldSort: true,
+includeMatches : true,
+findAllMatches : true
+});
+$('#search-fuse').on('keyup', function () {
+let result = fuse.search($(this).val());
+console.log(result);
+let resultdiv = $('div.searchresults-fuse');
+if (result.length === 0) {
+resultdiv.hide();
+} else {
+resultdiv.empty();
+resultdiv.append('<table class="table-search" width="100%" cellspacing="0"><thead ><tr><th>Name</th><th>Object Type</th><th>Modification date</th></tr></thead><tbody>');
+
+for (let obj in result.slice(0,10)) {
+
+let searchObj = '<tr><td><a href="./'+ isIndex + result[obj].item.url + '">' + result[obj].item.title +'</a></td><td>' + result[obj].item.ObjectType + '</td><td>' + result[obj].item.ModificationDate + '</td></tr>' ;
+
+
+resultdiv.find('tbody').append(searchObj);
+}
+resultdiv.append('</tbody></table>');
+resultdiv.show();
+}
+});
+});
+});
+</script>
+<title>HOPEX Metamodel Overview (Beta Version)</title>
+</head>
+<nav class="navbar navbar-expand-md navbar-dark  navbar-mega"><!-- Brand --><!--<a class="navbar-brand" href="#">Navbar</a>--><a class="" href="../index.htm"><img class="logo-mega" src="../standard/assets/img/logo.png"  alt="">(Beta Version)</a><!-- Toggler/collapsibe Button --><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><!-- Navbar links -->
+<div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsibleNavbar"><div class="col-sm-auto col-md-auto col-lg-5"></div>
+<div class="col-sm-auto">
+<ul class="navbar-nav">      
+<li><a class="dropdown-item" href="ad30ce115ebf7e90.htm">EA Grid</a></li> 
+<li><a class="dropdown-item" href="fdd5018459bc3c6a.htm">EA Domains</a></li> 
+<li><a class="dropdown-item" href="07e731775ecc93f4.htm">Solutions</a></li> 
+<li><a class="dropdown-item" href="c5dfc62c54810c2c.htm">Glossary</a></li> 
+<li class="nav-item dropdown mx-1">
+<a class="nav-link" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</a>
+<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<li><a class="dropdown-item" href="5446555d5f88c32e.htm">Outcome Driven Metamodel</a></li> 
+<li><a class="dropdown-item" href="e1ccfc295f8f7b90.htm">Playbooks</a></li> 
+<li><a class="dropdown-item" href="42bc992862d20ea7.htm">Framework Mappings</a></li> 
+<li><a class="dropdown-item" href="e93aebb35fa20550.htm">Metamodel Patterns</a></li> 
+<li><a class="dropdown-item" href="d599fe87602b2b85.htm">References</a></li> 
+<li><a class="dropdown-item" href="333f3a7f5dde11de.htm">Legend</a></li> 
+</ul>									                                            
+</li>
+</ul>
+</div>
+<div class="col-sm-auto"><a class="nav-link search" href="#" onclick=showHideSearch("search-section-fuse")><i class="fa fa-search mr-1 form-control-feedback"></i></a></div>
+</div>
+</nav>
+<div id="search-section-fuse" style="display:none">>
+<div class="search_header"><span class="closesearch">&times;</span>
+<nav class="breadcrumb">
+<a class="breadcrumb-item" href="../index.htm">Home </a> 
+<span class="breadcrumb-item active">Search</span> 
+</nav>
+</div>
+<input id="search-fuse" placeholder="Search..."  name="q" onfocus="this.value=''" type="search">
+<div class="searchresults-fuse"></div>
+</div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>function showHideSearch(elementId) {var contentDivs = document.getElementsByClassName('content');var footerDivs = document.getElementsByClassName('footer'); var containerDivs = document.getElementsByClassName('container');var containerfluidDivs = document.getElementsByClassName('container-fluid');var x = document.getElementById(elementId);if (x.style.display === "none") {x.style.display = "block";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "none";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "none";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "none";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "none";}} else {x.style.display = "none";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "block";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "block";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "block";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "block";}}} ;<!-- END WIDGET DRILL DOWN --></script><script>$(document).ready(function() {$(window).scroll(function() {if ($(this).scrollTop() > 100) {$('.scrollup').fadeIn();} else {$('.scrollup').fadeOut();}});$('.scrollup').click(function() {$("html, body").animate({scrollTop: 0}, 600);return false;});});</script><script>
+var modal = document.getElementById("search-section-fuse");
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = "none";
+}
+}
+$(document).on('click', '.closesearch', function() {
+showHideSearch("search-section-fuse");
+
+
+
+
+
+});</script><div class="container-fluid col-lg-11"><nav class="breadcrumb"><a class="breadcrumb-item" href="../index.htm">Home</a> <span class="breadcrumb-item active">
+<a  href="8a9fd5c15ee0be33.htm" target="_top">HOPEX Solutions</a>&nbsp;/&nbsp;HOPEX - Business Architecture / ITBM</span></nav></div>
+<div class="container-fluid col-lg-11 content">
+<section class="fadeInDown animated"><a href="#idt" class="btn btn-d">DEFINITION</a> <a href="#grf" class="btn btn-d">CONCEPT GRAPH</a> <a href="#sub" class="btn btn-d">SUB-DOMAINS</a> <a href="#des" class="btn btn-d">CONCEPT DESCRIPTIONS</a> 
+</section>
+<a class="object-section-anchor" id="idt"></a>
+<section class="object-section">
+<h4>CONCEPT DOMAIN - HOPEX - Business Architecture / ITBM</h4><hr class="sectionbreak" /><table class="table table-vertical-headers table-set-col-width"><tr><th>Description</th><td class="description-text"><div><br/><i>References:</i><br/><a href="https://www.mega.com/en/product-enterprise-architecture-pricing" target="_blank">HOPEX Solution - ITBM</a></div></td></tr><tr><th>Dictionary</th><td><img src="../standard/dicsubjectarea.ico.gif"/>&nbsp;
+<a  href="8a9fd5c15ee0be33.htm" target="_top">HOPEX Solutions</a></td></tr><tr><th>Parent Domain</th><td><img src="../standard/business%20information%20environment.ico.gif"/>&nbsp;
+<a  href="07e731775ecc93f4.htm" target="_top">HOPEX Solutions</a>&nbsp;</td></tr>
+<tr><th>Imported Domains</th><td><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="1ce356355c48c0e2.htm" target="_top">People &amp; Accountability</a>&nbsp;</td></tr>
+<tr><th>Domain dependencies</th><td><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="d5e6d6b05c4648d8.htm" target="_top">Application Functional Architecture</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="c30bd1505a5d97f9.htm" target="_top">Architecture Model Management</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="a951eec1619413a3.htm" target="_top">Deployed Facility Assets</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="c2dbd7985b02607c.htm" target="_top">EA Module - Enterprise Capabilites</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="e2ef086d62147802.htm" target="_top">EA Pattern - Business Operating Pattern</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="25c09f1b61e2f2a0.htm" target="_top">EA Pattern - Business Software System Pattern</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="255cd30862aa0da8.htm" target="_top">EA Pattern - Business System Operating Model</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="75ef50ab620fb787.htm" target="_top">EA Pattern - Physical Data Domain</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="76147feb6182230a.htm" target="_top">Enterprise Architecting &amp; Management Systems</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="02af08f05a1821d3.htm" target="_top">Enterprise Glossary</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="a951ee816194126b.htm" target="_top">Facility Asset Architecture</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="02af0a4b5a182417.htm" target="_top">Operating Semantic</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="1ce356355c48c0e2.htm" target="_top">People &amp; Accountability</a>&nbsp;</td></tr></table></section>
+<a class="object-section-anchor" id="grf"></a>
+<section class="object-section">
+<h4>DOMAIN CONCEPT GRAPH</h4>
+<hr class="sectionbreak" />
+<a href="#" class="btn btn-d" value="Relationship1" onclick="showDiagOnClick(this)">Diagram</a>
+<a href="#" class="btn btn-d" value="Relationship2" onclick="showDiagOnClick(this)">Graph</a>
+<div class="Relationship" id="Relationship1">
+
+<map  name="B51EB75860373F38">
+  <area  href="f4f4304a618e04ed.htm" shape="rect" coords="387, 492, 611, 572"   target="_top"  title="-">
+  
+  <area  href="f4f42f88618e0417.htm" shape="rect" coords="76, 490, 308, 570"   target="_top"  title="-">
+  
+  <area  href=#OBMK236C348C60070B4B shape="polygon" coords="74, 92, 74, 79, 265, 79, 265, 92, 74, 92"   target="_top"  title="-">
+  
+  <area  href=#OBMKF8E61474621DA493 shape="polygon" coords="74, 105, 74, 92, 265, 92, 265, 105, 74, 105"   target="_top"  title="-">
+  
+  <area  href=#OBMKAE7C9A1160234D9F shape="polygon" coords="74, 118, 74, 105, 265, 105, 265, 118, 74, 118"   target="_top"  title="-">
+  
+  <area  href=#OBMK07E73B7E5ECCE7F9 shape="polygon" coords="74, 131, 74, 118, 265, 118, 265, 131, 74, 131"   target="_top"  title="-">
+  
+  <area  href=#OBMK964FFFE761FA9FAC shape="polygon" coords="74, 144, 74, 131, 265, 131, 265, 144, 74, 144"   target="_top"  title="-">
+  
+  <area  href=#OBMK07E73B805ECCE83A shape="polygon" coords="74, 157, 74, 144, 265, 144, 265, 157, 74, 157"   target="_top"  title="-">
+  
+  <area  href=#OBMKAE7C99C160234C3B shape="polygon" coords="74, 171, 74, 157, 265, 157, 265, 171, 74, 171"   target="_top"  title="-">
+  
+  <area  href=#OBMK04304331600349EC shape="polygon" coords="74, 184, 74, 171, 265, 171, 265, 184, 74, 184"   target="_top"  title="-">
+  
+  <area  href=#OBMKF8E61487621DA501 shape="polygon" coords="74, 197, 74, 184, 265, 184, 265, 197, 74, 197"   target="_top"  title="-">
+  
+  <area  href=#OBMK0430431F600349A8 shape="polygon" coords="74, 210, 74, 197, 265, 197, 265, 210, 74, 210"   target="_top"  title="-">
+  
+  <area  href=#OBMKC581DBE560233495 shape="polygon" coords="74, 223, 74, 210, 265, 210, 265, 223, 74, 223"   target="_top"  title="-">
+  
+  <area  href=#OBMKC581DBEB602334D9 shape="polygon" coords="74, 236, 74, 223, 265, 223, 265, 236, 74, 236"   target="_top"  title="-">
+  
+  <area  href=#OBMK236C349860070B8F shape="polygon" coords="74, 249, 74, 236, 265, 236, 265, 249, 74, 249"   target="_top"  title="-">
+  
+  <area  href=#OBMKF8E61482621DA4CA shape="polygon" coords="74, 262, 74, 249, 265, 249, 265, 262, 74, 262"   target="_top"  title="-">
+  
+  <area  href=#OBMK215CCF98606C39D2 shape="polygon" coords="74, 275, 74, 262, 265, 262, 265, 275, 74, 275"   target="_top"  title="-">
+  
+  <area  href=#OBMK8FC90BDD640BA359 shape="polygon" coords="74, 288, 74, 275, 265, 275, 265, 288, 74, 288"   target="_top"  title="-">
+  
+  <area  href=#OBMKD8CF2A7961AAA839 shape="polygon" coords="74, 301, 74, 288, 265, 288, 265, 301, 74, 301"   target="_top"  title="-">
+  
+  <area  href=#OBMK3125808F61DCE3A5 shape="polygon" coords="74, 314, 74, 301, 265, 301, 265, 314, 74, 314"   target="_top"  title="-">
+  
+  <area  href=#OBMKABBA97D462A9460B shape="polygon" coords="74, 327, 74, 314, 265, 314, 265, 327, 74, 327"   target="_top"  title="-">
+  
+  <area  href="4026c9c4618a1a04.htm" shape="rect" coords="64, 50, 276, 442"   target="_top"  title="-">
+  
+  <area  href=#OBMK17DFDB3361D501BF shape="polygon" coords="469, 93, 469, 80, 657, 80, 657, 93, 469, 93"   target="_top"  title="-">
+  
+  <area  href=#OBMK6D3CA9CA5F8901A7 shape="polygon" coords="469, 106, 469, 93, 657, 93, 657, 106, 469, 106"   target="_top"  title="-">
+  
+  <area  href=#OBMK5D6F67335F19E232 shape="polygon" coords="469, 119, 469, 106, 657, 106, 657, 119, 469, 119"   target="_top"  title="-">
+  
+  <area  href=#OBMK6934736F6005E7DD shape="polygon" coords="469, 132, 469, 119, 657, 119, 657, 132, 469, 132"   target="_top"  title="-">
+  
+  <area  href=#OBMK5D6F671E5F19E1AD shape="polygon" coords="469, 145, 469, 132, 657, 132, 657, 145, 469, 145"   target="_top"  title="-">
+  
+  <area  href="4026c9a1618a19b8.htm" shape="rect" coords="458, 51, 668, 189"   target="_top"  title="-">
+  
+  <area  href=#OBMK1A0E35C65EBD4129 shape="polygon" coords="451, 317, 451, 304, 641, 304, 641, 317, 451, 317"   target="_top"  title="-">
+  
+  <area  href=#OBMK1A0E35C45EBD40E8 shape="polygon" coords="451, 331, 451, 317, 641, 317, 641, 331, 451, 331"   target="_top"  title="-">
+  
+  <area  href=#OBMK8E1396C45EBE496F shape="polygon" coords="451, 344, 451, 331, 641, 331, 641, 344, 451, 344"   target="_top"  title="-">
+  
+  <area  href=#OBMKF277F329601A5984 shape="polygon" coords="451, 357, 451, 344, 641, 344, 641, 357, 451, 357"   target="_top"  title="-">
+  
+  <area  href=#OBMKF97E3E43632B320B shape="polygon" coords="451, 370, 451, 357, 641, 357, 641, 370, 451, 370"   target="_top"  title="-">
+  
+  <area  href=#OBMK54178DB85F5838C4 shape="polygon" coords="451, 383, 451, 370, 641, 370, 641, 383, 451, 383"   target="_top"  title="-">
+  
+  <area  href=#OBMKF97E3E52632B3256 shape="polygon" coords="451, 396, 451, 383, 641, 383, 641, 396, 451, 396"   target="_top"  title="-">
+  
+  <area  href=#OBMKF97E433D632B392A shape="polygon" coords="451, 409, 451, 396, 641, 396, 641, 409, 451, 409"   target="_top"  title="-">
+  
+  <area  href=#OBMKF97E3E4B632B3231 shape="polygon" coords="451, 422, 451, 409, 641, 409, 641, 422, 451, 422"   target="_top"  title="-">
+  
+  <area  href=#OBMKE2EF0301621476EC shape="polygon" coords="451, 435, 451, 422, 641, 422, 641, 435, 451, 435"   target="_top"  title="-">
+  
+  <area  href=#OBMK46664A2864086BCF shape="polygon" coords="451, 448, 451, 435, 641, 435, 641, 448, 451, 448"   target="_top"  title="-">
+  
+  <area  href=#OBMK1A0E35C15EBD40A6 shape="polygon" coords="451, 461, 451, 448, 641, 448, 641, 461, 451, 461"   target="_top"  title="-">
+  
+  <area  href="4026c97d618a1967.htm" shape="rect" coords="440, 275, 652, 477"   target="_top"  title="-">
+  
+  <area  href="624e62fb5ed95260.htm" shape="rect" coords="0, 0, 702, 603"   target="_top"  title="-">
+  
+</map>
+<img  src="../images/624e62fb5ed95260_b51eb75860373f38_i.png" alt="../images/624e62fb5ed95260_b51eb75860373f38_i.png" usemap="#B51EB75860373F38" height="603" width="702" border=0>
+
+</div>
+<hr class="sectionbreak" />
+<table class="table  table-set-col-width">
+<tr><th>Name</th> <th>Description</th> </tr>
+<tr>
+<td><img src="../standard/dic_graph.ico.gif"> 
+<a  href="57df58ab55091a58.htm" target="_top">Enterprise Strategy &amp; Roadmapping</a></td>
+<td><div align="left" style="min-height: 12pt; ">The&#160;<b> Enterprise Strategy &amp; Roadmapping</b> domain supports the process of analysing and optimising the delivery of <a href="aea4936060645978.htm" target="_top"><b><u>Business Operating Capability</u></b></a>(ies) in line with the <a href="b181b82a54891668.htm" target="_top"><b><u>Enterprise</u></b></a> market analysis and strategic intent. </div><div align="left" style="min-height: 12pt; "><b>&#160;Enterprise Strategy &amp; Roadmapping</b> achieves this by capturing the capability policy / concepts, decomposing this into a capability taxonomy supported by appropriate measures of effectiveness that can be used for capability audit and gap / overlap analysis. </div><i><ul>References:<li><a href="https://felipecastro.com/en/okr/what-is-okr/"><img src="../standard/extr.ico.gif">&nbsp;Felipe Castro - The Beginner&rsquo;s Guide to OKRs</a></li> <li><a href="https://www.gartner.com/en/finance/glossary/strategic-planning"><img src="../standard/extr.ico.gif">&nbsp;Gartner - strategic-planning</a></li> <li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#page=40"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - View - Strategic Views</a></li> <li><a href="https://www.scaledagileframework.com/portfolio-safe/"><img src="../standard/extr.ico.gif">&nbsp;SAFe&copy; - Portfolio SAFe</a></li></ul></i> </td>
+</tr>  
+<tr>
+<td><img src="../standard/dic_graph.ico.gif"> 
+<a  href="19dc1a30555649d9.htm" target="_top">Conceptual Operating Model</a></td>
+<td><div align="left" style="min-height: 12pt; ">A&#160;<b> Conceptual Operating Model</b> serves as a strategic framework for the enterprise, directing its functional division of labor to fulfill its missions and purposes.</div><div align="left" style="min-height: 12pt; ">This model provides an ideal configuration of key <a href="9810b060551137d0.htm" target="_top"><b><u>Activity Domain</u></b></a>s and their value-added behaviors (<a href="57dfc5f555093444.htm" target="_top"><b><u>Value Stream</u></b></a>s) to deliver enterprise <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">Unlike a reflection of the current state of operations, a&#160;<b> Conceptual Operating Model</b> envisions the ideal operation landscape. It is a blueprint for the optimal functioning of <a href="2d1874635ac352f3.htm" target="_top"><b><u>Business Operations</u></b></a>.</div><div align="left" style="min-height: 12pt; ">While it is sometimes referred to as a &quot;business capability&quot; model (see Gartner reference below), a&#160;<b> Conceptual Operating Model</b> is not to be confused with a <a href="7c408e5c5527111a.htm" target="_top"><b><u>Business Capability Map</u></b></a>. Despite their shared aim of framing business operations, they are different tools and serve distinct purposes:</div><div align="left" style="min-height: 12pt; ">a) A <a href="7c408e5c5527111a.htm" target="_top"><b><u>Business Capability Map</u></b></a> is used to frame the services that business operations shall provide to internal or external customers. This aspect is often termed the &quot;WHAT&quot; in the architecture landscape.</div><div align="left" style="min-height: 12pt; ">b) A&#160;<b> Conceptual Operating Model</b> is used to frame the strategic way the enterprise should &quot;function&quot; to fulfill these <a href="9810abf3551135c4.htm" target="_top"><b><u>Business Capability</u></b></a>s. This aspect is often termed the &quot;HOW&quot; of the architecture landscape.</div><div align="left" style="min-height: 12pt; ">It&#39;s important to recognize that these &#39;HOW&#39; and &#39;WHAT&#39; aspects are contextual and should be viewed in conjunction with the <a href="08e70f1a64052192.htm" target="_top"><b><u>Conceptualization Level</u></b></a> classifications. For example, the&#160;<b> Conceptual Operating Model</b> is seen as the &quot;HOW&quot; at the <a href="08e70f63640521c8.htm" target="_top"><b><u>Conceptual Level</u></b></a> but is considered as the &quot;WHAT&quot; at the <a href="e7eeeef6642332f0.htm" target="_top"><b><u>Resource Level</u></b></a>.</div><i><ul>References:<li><a href="https://www.gartner.com/en/information-technology/glossary/business-capability-modeling"><img src="../standard/extr.ico.gif">&nbsp;Gartner - business-capability-modeling</a></li> <li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#page=50"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - View - Operational Views</a></li> <li><a href="../resources/Ackoff-Towards-a-system-of-systems-concepts.pdf#FunctionalDivisionOfLabor"><img src="../standard/extr.ico.gif">&nbsp;Russell Ackoff - System of concepts - FunctionalDivisionOfLabor</a></li> <li><a href="https://compliancedictionary.com/term/6683"><img src="../standard/extr.ico.gif">&nbsp;UCF Glossary - Business Model</a></li></ul></i> </td>
+</tr>  
+<tr>
+<td><img src="../standard/dic_graph.ico.gif"> 
+<a  href="d17029ff5be84c49.htm" target="_top">Product &nbsp;&amp; Customer Experience</a></td>
+<td><b>&#160;Product&#160; &amp; Customer Experience</b> domain describes the overall impression <a href="d6cdfdbc5ab86331.htm" target="_top"><b><u>Customer</u></b></a>s have of the company based on their interactions across multiple <a href="fb868df95ecee4db.htm" target="_top"><b><u>Touch Point</u></b></a>s (CX: customer experience) as well as the perception <a href="d6cdfdbc5ab86331.htm" target="_top"><b><u>Customer</u></b></a>s have of the enterprise&#39;s <a href="215cceda606c35c6.htm" target="_top"><b><u>Product</u></b></a> based on their engagement with the <a href="215cceda606c35c6.htm" target="_top"><b><u>Product</u></b></a>s (PX: product experience).<i><ul>References:<li><a href="https://cxuniversity.com/inside-out-vs-outside-in-thinking/"><img src="../standard/extr.ico.gif">&nbsp;CX University - Inside Out vs. Outside In Thinking</a></li> <li><a href="https://hbr.org/2007/02/understanding-customer-experience"><img src="../standard/extr.ico.gif">&nbsp;HBR - Understanding Customer Experience</a></li> <li><a href="https://pubs.opengroup.org/architecture/o-aa-standard/definitions.html#_customer_experience"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - OAA - Customer Experience</a></li> <li><a href="https://pubs.opengroup.org/architecture/o-aa-standard/experience-design.html"><img src="../standard/extr_htm.ico.gif">&nbsp;OpenGroup - OAA - Experience Design</a></li> <li><a href="https://pubs.opengroup.org/architecture/o-aa-standard/journey-mapping.html"><img src="../standard/extr_htm.ico.gif">&nbsp;OpenGroup - OAA - Journey Mapping</a></li> <li><a href="https://pubs.opengroup.org/architecture/o-aa-standard/product-architecture.html"><img src="../standard/extr_htm.ico.gif">&nbsp;OpenGroup - OAA - Product Architecture</a></li> <li><a href="https://www.youtube.com/watch?v=ReM1uqmVfP0&amp;ab_channel=Strategyzer"><img src="../standard/extr.ico.gif">&nbsp;Strategyzer - Value Proposition Canvas (YouTube)</a></li> <li><a href="https://compliancedictionary.com/term/6683"><img src="../standard/extr.ico.gif">&nbsp;UCF Glossary - Business Model</a></li> <li><a href="https://en.wikipedia.org/wiki/Customer_experience"><img src="../standard/extr.ico.gif">&nbsp;Wikipedia - Customer Experience</a></li></ul></i> </td>
+</tr>  
+<tr>
+<td><img src="../standard/dic_graph.ico.gif"> 
+<a  href="f4f328cc618ef184.htm" target="_top">ArchiMate - Motivation</a></td>
+<td>Motivation elements are used to model the motivations, or reasons, that guide the design or change of an Enterprise Architecture.<i><ul>References:<li><a href="https://pubs.opengroup.org/architecture/archimate32-doc/#_Toc112154935"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - ArchiMate - Motivation Elements</a></li></ul></i> </td>
+</tr>  
+<tr>
+<td><img src="../standard/dic_graph.ico.gif"> 
+<a  href="f4f328d7618ef269.htm" target="_top">ArchiMate - Strategy</a></td>
+<td>The strategy elements are typically used to model the strategic direction and choices of an enterprise, as far as the impact on its architecture is concerned. They can be used to express how the enterprise wants to create value for its stakeholders, the capabilities it needs for that, the resources needed to support these capabilities, and how it plans to configure and use these capabilities and resources to achieve its aims (see Chapter 6). Strategy elements are used to model the strategic direction and choices of the enterprise, whereas Business Layer elements (Chapter 8) are used to model the operational organization of an enterprise.<i><ul>References:<li><a href="https://pubs.opengroup.org/architecture/archimate32-doc/#_Ref437347760"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - ArchiMate - Layer - Strategy</a></li></ul></i> </td>
+</tr>  
+</table>
+</section>
+<div class="Relationship" id="Relationship1">
+
+<map  name="624E63E45ED95704">
+  <area  href=#OBMK5982734354C62428 shape="polygon" coords="325, 410, 568, 410, 568, 420, 325, 420"    title="Software System Environment of the enterprise or of one of its transformation stage.">
+  
+  <area  href="25c0a25061e2fd5a.htm" shape="rect" coords="569, 392, 794, 438"   target="_top"  title="A&#160; Software System Environment is an operating context in which a Software System defines its interactions with its partners (Partner System) in the form of API connections ( Software Interaction Channel).">
+  
+  <area  href=d5c9ef915ecf206a.htm#OBMKD5C9EF915ECF206A shape="polygon" coords="847, 682, 828, 682, 828, 696, 699, 696, 699, 682, 847, 682"   target="_top"  title="-">
+  
+  <area  href=D5C9EFE85ECF210D.htm shape="polygon" coords="687, 630, 687, 671, 873, 671, 873, 681, 676, 681, 676, 630"   target="_top"  title="-">
+  
+  <area  href="63f8870255ae1ba2.htm" shape="rect" coords="873, 644, 983, 708"   target="_top"  title="A&#160; Constraining Property expresses a type of constraint that can be applied to Architecture Blocks.">
+  
+  <area  href="24032c315fc6780a.htm" shape="rect" coords="149, 893, 275, 937"   target="_top"  title="A&#160; Transformation Program is an Initiative that is a temporary, flexible organisation created to co-ordinate, direct and oversee the implementation of a set of related Projects and Tasks in order to deliver outcomes and benefits related to the organisation&rsquo;s strategic objectives.">
+  
+  <area  href=#OBMK2B583C505EEBD40E shape="polygon" coords="208, 864, 208, 864, 210, 854, 220, 856, 218, 866, 218, 868"    title="-">
+  
+  <area  href="07ca18d25dd85477.htm" shape="rect" coords="150, 850, 277, 882"   target="_top"  title="An&#160; Assurance System is a Management System aimed at ensuring enterprise resilience against internal and external constraints:">
+  
+  <area  href=#OBMK6934759F60051CA1 shape="polygon" coords="220, 833, 220, 855, 210, 855, 210, 833"    title="-">
+  
+  <area  href="26b8889c5eea8ab7.htm" shape="rect" coords="152, 801, 279, 833"   target="_top"  title="An&#160; Asset Portfolio is a Management System aimed at developing and maintaining in operational conditions a set of Resource Operating Assets delivering functionalities required by Business Operations.">
+  
+  <area  href=#OBMK08570DC45ED12A4D shape="polygon" coords="324, 204, 495, 204, 495, 215, 324, 215"    title="-">
+  
+  <area  href=#OBMK085717445ED13E5D shape="polygon" coords="325, 230, 498, 230, 498, 241, 325, 241"    title="-">
+  
+  <area  href=#OBMK9DCEA49D5EC76F24 shape="polygon" coords="809, 608, 809, 595, 956, 595, 956, 608, 809, 608"    title="-">
+  
+  <area  href=#OBMK9DCEA7D35EC770D3 shape="polygon" coords="743, 609, 981, 609, 981, 620, 743, 620"    title="-">
+  
+  <area  href=5b7a0ecf61f5650a.htm#OBMK5B7A0ECF61F5650A shape="polygon" coords="309, 710, 253, 710, 253, 724, 179, 724, 179, 710, 309, 710"   target="_top"  title="-">
+  
+  <area  href=a67ddf8d5f8ecf44.htm shape="polygon" coords="221, 591, 221, 765, 211, 765, 211, 591"   target="_top"  title="Management System coordinated at the enterprise scale.">
+  
+  <area  href="d6cdfdbc5ab86331.htm" shape="rect" coords="363, 515, 483, 547"   target="_top"  title="A&#160; Customer is a Business Partner who orders and/or uses Products (goods or services) provides by the enterprise.">
+  
+  <area  href="aea4936060645978.htm" shape="rect" coords="615, 565, 748, 630"   target="_top"  title="A&#160; Business Operating Capability is a Capability that benefits to Customers (internal or external) of the enterprise. It expresses an ability to deliver Business Outcomes.This includes Business Capability, Functionality, Hardware Capability and Skill.">
+  
+  <area  href="8d5e986f552e28d5.htm" shape="rect" coords="343, 654, 493, 686"   target="_top"  title="A&#160; Location is a geopolitical location anywhere on the earth.">
+  
+  <area  href=#OBMKD26B6BCD5FE0C85B shape="polygon" coords="733, 909, 733, 864, 744, 864, 744, 909"    title="-">
+  
+  <area  href=d26b6bcd5fe0c851.htm shape="polygon" coords="733, 998, 733, 864, 744, 864, 744, 998"   target="_top"  title="A Project Portfolio line is defined to enable the assessment of a Project in a given Portfolio.">
+  
+  <area  href=#OBMKD26B6BCD5FE0C875 shape="polygon" coords="733, 998, 733, 953, 744, 953, 744, 998"    title="-">
+  
+  <area  href=#OBMKD26B6B725FE0C724 shape="polygon" coords="732, 998, 732, 898, 732, 888, 743, 888, 743, 899, 742, 998"    title="-">
+  
+  <area  href="d26b6b685fe0c6b9.htm" shape="rect" coords="632, 998, 841, 1032"   target="_top"  title="A Project Portfolio gathers all the projects of a given Project Domain in the defined project state (Demands, Candidate Projects, Ongoing Projects).">
+  
+  <area  href="60ab69425f896585.htm" shape="rect" coords="854, 74, 1006, 134"   target="_top"  title="Assessment of business capabilities.">
+  
+  <area  href=#OBMK137D32935EE27ADC shape="polygon" coords="325, 472, 568, 472, 568, 483, 325, 483"    title="Top level concept map of the enterprise or of one its transformation stages.">
+  
+  <area  href="203B8FDB5A5F43DD.htm" shape="rect" coords="569, 449, 792, 508"   target="_top"  title="A&#160; Concept Domain Map is a top level assembly of Concept Domains that defines the scope of information that Management System is responsible of.">
+  
+  <area  href=ca353eb75fc5e9b2.htm#OBMKCA353EB75FC5E9B2 shape="polygon" coords="446, 106, 445, 106, 445, 120, 295, 120, 295, 106, 446, 106"   target="_top"  title="-">
+  
+  <area  href=ff0500605b253f1b.htm shape="polygon" coords="299, 99, 470, 99, 470, 110, 299, 110"   target="_top"  title="-">
+  
+  <area  href="2d9a74745b2181cd.htm" shape="rect" coords="470, 60, 1034, 151"   target="_top"  title="&#160;Governance Blocks include all instruments used to monitor and steer transformation Initiatives. They include incidents, assessments, Workflows, indicators and their templates.">
+  
+  <area  href=#OBMK6D3CA59B5F89B3C1 shape="polygon" coords="928, 134, 928, 590, 747, 590, 747, 579, 917, 579, 917, 134"    title="-">
+  
+  <area  href=29df685860086c52.htm#OBMK29DF685860086C52 shape="polygon" coords="146, 603, 113, 603, 113, 617, 58, 617, 58, 603, 146, 603"   target="_top"  title="-">
+  
+  <area  href=d770dd345ef4c14f.htm shape="polygon" coords="127, 545, 82, 545, 82, 628, 107, 628, 107, 639, 71, 639, 71, 534, 127, 534"   target="_top"  title="-">
+  
+  <area  href=18a81ed15eeb5d60.htm#OBMK18A81ED15EEB5D60 shape="polygon" coords="150, 169, 137, 169, 137, 183, 37, 183, 37, 169, 150, 169"   target="_top"  title="-">
+  
+  <area  href=c77f7ead5b275de9.htm shape="polygon" coords="110, 113, 74, 113, 74, 459, 221, 459, 221, 502, 211, 502, 211, 469, 63, 469, 63, 102, 110, 102"   target="_top"  title="-">
+  
+  <area  href="ff0512935b254723.htm" shape="rect" coords="111, 70, 300, 144"   target="_top"  title="An&#160; Architecture Governance Committee is an organization of resources and people (persons and committees) who make up a body for the purpose of administering an Enterprise.">
+  
+  <area  href=#OBMK2B588A8A5EF08CDE shape="polygon" coords="818, 917, 818, 893, 737, 893, 737, 883, 829, 883, 829, 917"    title="-">
+  
+  <area  href=#OBMK2B588A4D5EF08C83 shape="polygon" coords="689, 912, 734, 883, 740, 892, 695, 921"    title="-">
+  
+  <area  href=#OBMK2B588A155EF08BF6 shape="polygon" coords="660, 864, 660, 917, 649, 917, 649, 864"    title="-">
+  
+  <area  href="24ac695354881cbe.htm" shape="rect" coords="759, 917, 887, 976"   target="_top"  title="A category of project.">
+  
+  <area  href="2d18f6705ac37b70.htm" shape="rect" coords="578, 917, 729, 981"   target="_top"  title="-">
+  
+  <area  href=#OBMKE89EEE335ECA65DC shape="polygon" coords="647, 700, 647, 655, 658, 655, 658, 700"    title="-">
+  
+  <area  href=#OBMKE89EEE335ECA65D8 shape="polygon" coords="647, 790, 647, 655, 658, 655, 658, 790"    title="-">
+  
+  <area  href=#OBMKE89EEE335ECA65F6 shape="polygon" coords="647, 790, 647, 745, 658, 745, 658, 790"    title="-">
+  
+  <area  href=#OBMK085718495ED14024 shape="polygon" coords="685, 257, 652, 257, 652, 219, 626, 219, 626, 208, 663, 208, 663, 246, 685, 246"    title="-">
+  
+  <area  href=#OBMK0857183F5ED13FEA shape="polygon" coords="685, 219, 626, 219, 626, 208, 685, 208"    title="-">
+  
+  <area  href=#OBMK0857181E5ED13FA1 shape="polygon" coords="685, 183, 662, 183, 662, 219, 626, 219, 626, 208, 651, 208, 651, 172, 685, 172"    title="-">
+  
+  <area  href="#OBMK085717EA5ED13F63" shape="rect" coords="685, 237, 801, 268"    title="-">
+  
+  <area  href="#OBMK085717E35ED13F34" shape="rect" coords="685, 199, 801, 230"    title="-">
+  
+  <area  href="#OBMK085717D25ED13F02" shape="rect" coords="685, 163, 801, 194"    title="-">
+  
+  <area  href=c31ce58f62158d82.htm#OBMKC31CE58F62158D82 shape="polygon" coords="528, 203, 528, 192, 593, 192, 593, 203, 528, 203"   target="_top"  title="An&#160; Initiative Block is a Model Building Block used to describe enterprise transformation.">
+  
+  <area  href="08570d835ed129a3.htm" shape="rect" coords="494, 190, 627, 253"   target="_top"  title="An&#160; Initiative Milestone is a calendar change that marks the end of an Initiative and possibly the beginning of another.">
+  
+  <area  href=d9fdded9582953e7.htm#OBMKD9FDDED9582953E7 shape="polygon" coords="991, 639, 991, 625, 1097, 625, 1097, 639, 991, 639"   target="_top"  title="-">
+  
+  <area  href=0185cc626221bb37.htm#OBMK0185CC626221BB37 shape="polygon" coords="1009, 601, 1009, 590, 1079, 590, 1079, 601, 1009, 601"   target="_top"  title="A&#160; Business Event is a type of business change that is used to coordinate Business Behaviors.">
+  
+  <area  href=30223b5c5ec90c01.htm#OBMK30223B5C5EC90C01 shape="polygon" coords="1021, 612, 1021, 601, 1067, 601, 1067, 612, 1021, 612"   target="_top"  title="An&#160; Outcome is an Event that indicates the availability of an expected change in the state of a Value Added Object brought about by a specific Behavior,">
+  
+  <area  href="9dcea4535ec76e6c.htm" shape="rect" coords="981, 560, 1108, 669"   target="_top"  title="A&#160; Business Outcome is a Business Event that indicates the availability of an expected change in the state of a Business Object, produced by a Business Operating Agent, for the benefits of an internal or external consumer (especially Customers).">
+  
+  <area  href="91be97ff54882d9f.htm" shape="rect" coords="609, 790, 840, 864"   target="_top"  title="A&#160; Project is a course of action that is being executed or has been selected for execution. An organization&#39;s Initiatives represent the choices the organization has made about how to pursue the change that allows it to achieve its objectives.">
+  
+  <area  href=#OBMK2D18CBB45AC35DAE shape="polygon" coords="325, 352, 568, 352, 568, 363, 325, 363"    title="Conceptual Environment of the enterprise or of one of its transformation stages.">
+  
+  <area  href="7c4097c855271c8e.htm" shape="rect" coords="567, 331, 787, 381"   target="_top"  title="A&#160; Conceptual Environment&#160; is an operating context which defines the interactions ( Business Interaction) of an Activity Domain with its partners (Customers).">
+  
+  <area  href=#OBMK7C408E945527118D shape="polygon" coords="325, 297, 568, 297, 568, 307, 325, 307"    title="Business Capability Map of the enterprise or of one of its transformation stages.">
+  
+  <area  href="7c408e5c5527111a.htm" shape="rect" coords="567, 276, 787, 326"   target="_top"  title="A&#160; Business Capability Map is a top level assembly of Business Capability(ies) and their dependencies that, together, provide a Business Capability scope for an Enterprise Stage.">
+  
+  <area  href="b181b82a54891668.htm" shape="rect" coords="127, 502, 305, 591"   target="_top"  title="An&#160; Enterprise is an Enduring Initiative that delivers added-value Products (goods &amp; services) to its target Customers.">
+  
+  <area  href="036a3de3548f229e.htm" shape="rect" coords="107, 190, 325, 671"   target="_top"  title="An&#160; Enterprise Stage is a past, current or future state of the enterprise. ">
+  
+  <area  href="b181b98c54891882.htm" shape="rect" coords="571, 521, 793, 655"   target="_top"  title="A&#160; Capability&#160; is an ability to produce an Outcome.">
+  
+  <area  href="2b5887d05ef07b3b.htm" shape="rect" coords="560, 735, 914, 1041"   target="_top"  title="A&#160; Program Asset is a resource used in the context of project management such as Project, Projet Risk Type, Project Portfolio,etc.">
+  
+  <area  href="29df3f4060084c07.htm" shape="rect" coords="125, 765, 305, 945"   target="_top"  title="A&#160; Management System is an Enduring Initiative within an Enterprise, aimed at creating, maintaining, evaluating, evolving, and operating a collection of essential Functional Assets of the Enterprise.">
+  
+  <area  href="624e62fb5ed95260.htm" shape="rect" coords="0, 0, 1210, 1070"   target="_top"  title="-">
+  
+</map>
+<img  src="../images/624e62fb5ed95260_624e63e45ed95704_i.png" alt="../images/624e62fb5ed95260_624e63e45ed95704_i.png" usemap="#624E63E45ED95704" height="1070" width="1210" border=0>
+
+</div>
+<div class="Relationship" id="Relationship2">
+<div id="klmm" style="width: 100vw; height: 100vh;" ></div>
+<!-- <script src="../standard/assets/js/keylines_domain.js"></script> -->
+<script >
+const data = {
+ type: 'LinkChart',
+  items: [
+  //nodes
+    {type: 'node', id:'624E62FB5ED95260', t:"HOPEX - Business Architecture / ITBM", sh:'box', d:""},
+  //edges
+
+  ]
+}
+</script>
+<script src="../standard/assets/js/keylines_domain.js" type="module"></script>
+</div>
+</section>
+<a class="object-section-anchor" id="des"></a>
+<section class="object-section">
+<h4>CONCEPT DESCRIPTIONS</h4> 
+<hr class="sectionbreak" />
+<h5>Concrete Concepts</h5>
+<table class="table  table-set-col-width">
+<thead>
+<tr><th>Concept</th><th>Description</th><th>HOPEX Metaclass</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="ff0512935b254723.htm" target="_top">Architecture Governance Committee</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Architecture Governance Committee</b> is an organization of resources and people (persons and committees) who make up a body for the purpose of administering an <a href="b181b82a54891668.htm" target="_top"><b><u>Enterprise</u></b></a>.</div><div align="left" style="min-height: 12pt; ">Enterprise stakeholders draw up the rules that govern the actions and conduct of an enterprise and ensure that these rules are followed.</div><div align="left" style="min-height: 12pt; ">An&#160;<b> Architecture Governance Committee</b> includes sets of dedicated resources and activities that support interactions and decision-making among the stakeholders involved in architecting the Enterprise.</div>       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="728a7d2c59fc72b3.htm" target="_top">Team</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="60ab69425f896585.htm" target="_top">Business Capability Assessment</a></td>
+<td class="description-text">Assessment of business capabilities.       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="afa914404daf43ac.htm" target="_top">Assessment Session</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="7c408e5c5527111a.htm" target="_top">Business Capability Map</a></td>
+<td class="description-text">A&#160;<b> Business Capability Map</b> is a top level assembly of <a href="9810abf3551135c4.htm" target="_top"><b><u>Business Capability</u></b></a>(ies) and their dependencies that, together, provide a <a href="9810abf3551135c4.htm" target="_top"><b><u>Business Capability</u></b></a> scope for an <a href="036a3de3548f229e.htm" target="_top"><b><u>Enterprise Stage</u></b></a>.       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="871432c3559e81ed.htm" target="_top">Business Capability Map</a></td>
+</tr>
+<tr>
+<td><img src="../standard/relationship-concepttype.ico.gif"/>&nbsp;
+<a  href="9dcea4535ec76e6c.htm" target="_top">Business Outcome</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Business Outcome</b> is a <a href="0185cc626221bb37.htm" target="_top"><b><u>Business Event</u></b></a> that indicates the availability of an expected change in the state of a <a href="43ee3c7963725899.htm" target="_top"><b><u>Business Object</u></b></a>, produced by a <a href="e2ef091962147ad7.htm" target="_top"><b><u>Business Operating Agent</u></b></a>, for the benefits of an internal or external consumer (especially <a href="d6cdfdbc5ab86331.htm" target="_top"><b><u>Customer</u></b></a>s).</div><div align="left" style="min-height: 12pt; "><a href="43ee3c7963725899.htm" target="_top"><b><u>Business Object</u></b></a>s range from <a href="e6f250185f772ee1.htm" target="_top"><b><u>Information Object</u></b></a>s to any organizational constructs (<a href="1ce356355c48c0e2.htm" target="_top"><b><u>People &amp; Accountability</u></b></a>) or <a href="62466ea661b80d09.htm" target="_top"><b><u>Resource Operating Asset</u></b></a>s offered, produced and delivered by an <a href="b181b82a54891668.htm" target="_top"><b><u>Enterprise</u></b></a>.</div><i><ul>References:<li><a href="../../../www.omg.org/spec/BACM/1.0/Beta1/dtc-22-06-01.pdf#page=28"><img src="../standard/extr.ico.gif">&nbsp;OMG - BACM - Outcome</a></li> <li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Effect"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - Effect</a></li> <li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#operationalsignal"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - OperationalSignal</a></li> <li><a href="https://publications.opengroup.org/w161"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - IT4IT - Defining Service Reference Architecture</a></li> <li><a href="https://pubs.opengroup.org/architecture/o-aa-standard/definitions.html#Outcome"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - OAA - Definition - Outcome</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="d9fdded9582953e7.htm" target="_top">Class of Work Product</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="7c4097c855271c8e.htm" target="_top">Conceptual Environment</a></td>
+<td class="description-text">A&#160;<b> Conceptual Environment</b>&#160; is an operating context which defines the interactions (<b> Business Interaction</b>) of an <a href="9810b060551137d0.htm" target="_top"><b><u>Activity Domain</u></b></a> with its partners (<a href="e8bfec5b5ebb80db.htm" target="_top"><b><u>Customer</u></b></a>s).<i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#OperationalArchitecture"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - OperationalArchitecture</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="99c2b5d055b05b0d.htm" target="_top">Business Architecture Environment</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="d6cdfdbc5ab86331.htm" target="_top">Customer</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Customer</b> is a <a href="bcebd65854913935.htm" target="_top"><b><u>Business Partner</u></b></a> who orders and/or uses <a href="215cceda606c35c6.htm" target="_top"><b><u>Product</u></b></a>s (goods or services) provides by the enterprise.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Customer</b> is part of an ecosystem and has the ability to choose between different <a href="215cceda606c35c6.htm" target="_top"><b><u>Product</u></b></a>s.</div><i><ul>References:<li><a href="https://marketbusinessnews.com/financial-glossary/customer-definition-meaning/#:~:text=A%20customer%20is%20a%20person,what%20they%20have%20on%20sale."><img src="../standard/extr.ico.gif">&nbsp;MBN - Customer</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="99c2b8f455b05cbf.htm" target="_top">Business Partner</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="b181b82a54891668.htm" target="_top">Enterprise</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Enterprise</b> is an <a href="d321c226601262ae.htm" target="_top"><b><u>Enduring Initiative</u></b></a> that delivers added-value <a href="215cceda606c35c6.htm" target="_top"><b><u>Product</u></b></a>s (goods &amp; services) to its target <a href="d6cdfdbc5ab86331.htm" target="_top"><b><u>Customer</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">It requires a formal organization of groups of people and resources to achieve its purposes.</div><i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#WholeLifeEnterprise"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - WholeLifeEnterprise</a></li> <li><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_42"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Definition - Enterprise</a></li> <li><a href="https://www.scaledagileframework.com/enterprise/"><img src="../standard/extr.ico.gif">&nbsp;SAFe&copy; - Enterprise</a></li> <li><a href="https://www.scaledagileframework.com/portfolio-safe/"><img src="../standard/extr.ico.gif">&nbsp;SAFe&copy; - Portfolio SAFe</a></li> <li><a href="http://wordnetweb.princeton.edu/perl/webwn?o2=&amp;o0=1&amp;o8=1&amp;o1=1&amp;o7=&amp;o5=&amp;o9=&amp;o6=&amp;o3=&amp;o4=&amp;r=1&amp;s=enterprise&amp;i=2&amp;h=100000#c"><img src="../standard/extr.ico.gif">&nbsp;WordNet - Enterprise</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="50666200529c2b9a.htm" target="_top">Enterprise</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="036a3de3548f229e.htm" target="_top">Enterprise Stage</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Enterprise Stage</b> is a past, current or future state of the enterprise. </div><div align="left" style="min-height: 12pt; ">Each stage represents an initiative comprising a purposeful set of activities whose primary purpose is focused on achieving a set of clearly defined objectives that may transcend organisational boundaries and consequently require integrated team working under the direction of an <a href="ff0512935b254723.htm" target="_top"><b><u>Architecture Governance Committee</u></b></a>.</div>       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="daf320b15e597a39.htm" target="_top">Business Undertaking</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="08570d835ed129a3.htm" target="_top">Initiative Milestone</a></td>
+<td class="description-text">An&#160;<b> Initiative Milestone</b> is a calendar change that marks the end of an <a href="0ffeec41600be08a.htm" target="_top"><b><u>Initiative</u></b></a> and possibly the beginning of another.       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="a788d3d256492b6e.htm" target="_top">Enterprise Event</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="8d5e986f552e28d5.htm" target="_top">Location</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Location</b> is a geopolitical location anywhere on the earth.</div><div align="left" style="min-height: 12pt; ">Examples: </div><div align="left" style="min-height: 12pt; ">- France</div><div align="left" style="min-height: 12pt; ">- Paris</div><div align="left" style="min-height: 12pt; ">- Washington DC</div><div align="left" style="min-height: 12pt; ">- Cairo</div><div align="left" style="min-height: 12pt; ">- Buenos-Aires</div><div align="left" style="min-height: 12pt; ">- Asia</div><i><ul>References:<li><a href="https://15926.blog/topics/data-model/index.htm#SpatialLocation"><img src="../standard/extr.ico.gif">&nbsp;ISO 15926 - SpatialLocation</a></li> <li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ActualLocation"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - ActualLocation</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="b1edb2612c1401d3.htm" target="_top">Site</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="91be97ff54882d9f.htm" target="_top">Project</a></td>
+<td class="description-text">A&#160;<b> Project</b> is a course of action that is being executed or has been selected for execution. An organization&#39;s <a href="0ffeec41600be08a.htm" target="_top"><b><u>Initiative</u></b></a>s represent the choices the organization has made about how to pursue the change that allows it to achieve its objectives.<i><ul>References:<li><a href="https://dodcio.defense.gov/Library/DoD-Architecture-Framework/dodaf20_project/"><img src="../standard/extr.ico.gif">&nbsp;DoDAF2 - Project Viewpoint</a></li> <li><a href="https://martinfowler.com/articles/products-over-projects.html"><img src="../standard/extr_htm.ico.gif">&nbsp;Martin Fowler - Products over Projects</a></li> <li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ActualProject"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - ActualProject</a></li> <li><a href="https://pubs.opengroup.org/architecture/togaf9-doc/m/chap03.html#tag_03_85"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Definitions - Work Package</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="8a1f952c585256cc.htm" target="_top">Project</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="d26b6b685fe0c6b9.htm" target="_top">Project Portfolio</a></td>
+<td class="description-text"><div align="left" style="min-height: 11pt; ">A Project Portfolio gathers all the projects of a given Project Domain in the defined project state (Demands, Candidate Projects, Ongoing Projects).</div><div align="left" style="min-height: 11pt; "></div><div align="left" style="min-height: 11pt; ">In a Portfolio, Projects can be assessed and compared against several criteria:</div><div align="left" style="min-height: 11pt; ">- Projects Criteria: these are derived from projects information (e.g. costs) or from project qualitative assessment (e.g. strategic alignment level, business value level)</div><div align="left" style="min-height: 11pt; ">- Portfolio criteria: these are additional criteria which can be defined at portfolio level on top of the projects criteria (ex : score, priority, rank)</div><div align="left" style="min-height: 11pt; "></div><div align="left" style="min-height: 11pt; ">The project workflow can be actioned from the project portfolio lines.</div><i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/UAFML/dtc-21-12-07.pdf#ProjectKind"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - ProjectKind</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="ba8fff38587c87b2.htm" target="_top">Projects Portfolio</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="24ac695354881cbe.htm" target="_top">Project Type</a></td>
+<td class="description-text">A category of project.<i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Project"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - Project</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="8a1f95a2585257a9.htm" target="_top">Project Category</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="2d18f6705ac37b70.htm" target="_top">Projet Risk Type</a></td>
+<td class="description-text">        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="8a1fa11158525ad6.htm" target="_top">Project Risk Type</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="24032c315fc6780a.htm" target="_top">Transformation Program</a></td>
+<td class="description-text"><div align="left" style="min-height: 11pt; ">A&#160;<b> Transformation Program</b> is an <a href="0ffeec41600be08a.htm" target="_top"><b><u>Initiative</u></b></a> that is a temporary, flexible organisation created to co-ordinate, direct and oversee the implementation of a set of related Projects and Tasks in order to deliver outcomes and benefits related to the organisation&rsquo;s strategic objectives.</div><div align="left" style="min-height: 11pt; ">A programme is likely to have a lifespan of several years. During a programme lifecycle, projects are initiated, executed, and closed.&#160; Programmes provide an umbrella under which these projects can be co-ordinated. The programme integrates the projects so that it can deliver an outcome greater than the sum of its parts.</div><div align="left" style="min-height: 11pt; ">Programs are defined upon a given domain (e.g. Business, Information Technology)</div><div align="left" style="min-height: 11pt; ">A program domain gathers all the projects managed from the same perspective in terms of portfolio management decisions. Project Portfolios are therefore also attached to programs; by default, one portfolio of each portfolio type is created when creating a new program.</div><i><ul>References:<li><a href="https://martinfowler.com/articles/products-over-projects.html"><img src="../standard/extr_htm.ico.gif">&nbsp;Martin Fowler - Products over Projects</a></li> <li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ProjectKind"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - ProjectKind</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="8a1f953b58525710.htm" target="_top">Project Domain</a></td>
+</tr>  
+</tbody>
+</table>
+<hr class="sectionbreak" />
+<h5>Abstract Concepts</h5>
+<table class="table  table-set-col-width">
+<thead >
+<tr><th>Concept</th><th>Description</th><th>HOPEX Metaclass</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="26b8889c5eea8ab7.htm" target="_top">Asset Portfolio</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Asset Portfolio</b> is a <a href="29df3f4060084c07.htm" target="_top"><b><u>Management System</u></b></a> aimed at developing and maintaining in operational conditions a set of <a href="62466ea661b80d09.htm" target="_top"><b><u>Resource Operating Asset</u></b></a>s delivering functionalities required by <a href="2d1874635ac352f3.htm" target="_top"><b><u>Business Operations</u></b></a>.</div><div align="left" style="min-height: 12pt; ">The purpose of&#160;<b> Asset Portfolio</b>s is <u>efficiency</u>: managed assets must provide expected functionalities in the best cost / performance ratio.</div>       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="b082b0d44e041967.htm" target="_top">Portfolio</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="07ca18d25dd85477.htm" target="_top">Assurance System</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Assurance System</b> is a <a href="29df3f4060084c07.htm" target="_top"><b><u>Management System</u></b></a> aimed at ensuring enterprise resilience against internal and external constraints:</div><div align="left" style="min-height: 12pt; ">a. Regulation constraints,</div><div align="left" style="min-height: 12pt; ">b. Internal policies and rules constraints,</div><div align="left" style="min-height: 12pt; ">c. Operational constraints: maintain operational capacities of the company (maintain ability to produce, maintain quality, ensure product development , ability to hire, to train, etc).</div>       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="c229e86a5d0c6cbc.htm" target="_top">Assurance Domain</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="aea4936060645978.htm" target="_top">Business Operating Capability</a></td>
+<td class="description-text">A&#160;<b> Business Operating Capability</b> is a <a href="b181b98c54891882.htm" target="_top"><b><u>Capability</u></b></a> that benefits to <a href="d6cdfdbc5ab86331.htm" target="_top"><b><u>Customer</u></b></a>s (internal or external) of the enterprise. It expresses an ability to deliver <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s.<br />This includes <a href="9810abf3551135c4.htm" target="_top"><b><u>Business Capability</u></b></a>, <a href="598272e954c622f4.htm" target="_top"><b><u>Functionality</u></b></a>, <a href="0b3016c05a1876d2.htm" target="_top"><b><u>Hardware Capability</u></b></a> and <a href="7c409e95552724ab.htm" target="_top"><b><u>Skill</u></b></a>.       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="90759f5559472c5e.htm" target="_top">Enterprise Capability</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="b181b98c54891882.htm" target="_top">Capability</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Capability</b>&#160; is an ability to produce an <a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>.</div><div align="left" style="min-height: 12pt; "><b>&#160;Capability</b>s are fulfilled by <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s performing <a href="d682ef5e56144e77.htm" target="_top"><b><u>Process</u></b></a>es and interacting with other <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s to produce the desired <a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>.</div><i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Capability"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - Capability</a></li> <li><a href="https://pubs.opengroup.org/architecture/o-aa-standard/definitions.html#_capability"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - OAA - Capability</a></li> <li><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_33"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Definition - Capability</a></li> <li><a href="../resources/Ackoff-Choice-Communication-and-Conflict.pdf#FunctionalClass"><img src="../standard/extr.ico.gif">&nbsp;Russell Ackoff - Choice &amp; Communication - FunctionalClass</a></li> <li><a href="http://wordnetweb.princeton.edu/perl/webwn?o2=&amp;o0=1&amp;o8=1&amp;o1=1&amp;o7=&amp;o5=&amp;o9=&amp;o6=&amp;o3=&amp;o4=&amp;r=1&amp;s=capability&amp;i=3&amp;h=10000000#c"><img src="../standard/extr.ico.gif">&nbsp;WordNet - Capabiity</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="77987c424f5f17c5.htm" target="_top">Capability</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="203B8FDB5A5F43DD.htm" target="_top">Concept Domain Map</a></td>
+<td class="description-text">A&#160;<b> Concept Domain Map</b> is a top level assembly of <a href="203b8ff05a5f43fe.htm" target="_top"><b><u>Concept Domain</u></b></a>s that defines the scope of information that <a href="29df3f4060084c07.htm" target="_top"><b><u>Management System</u></b></a> is responsible of.       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="0afb1de2588a1c15.htm" target="_top">Concept Domain Map</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="63f8870255ae1ba2.htm" target="_top">Constraining Property</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Constraining Property</b> expresses a type of constraint that can be applied to <a href="d342d88e5b121401.htm" target="_top"><b><u>Architecture Block</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">These constraints can be either <a href="48d2c45c63b57003.htm" target="_top"><b><u>Measurable Property (Abstract)</u></b></a> (Time, Mass, Cost, ..), <a href="f68d26e263b8e425.htm" target="_top"><b><u>Environmental Property</u></b></a>s (Terrain Type, Light conditions, Weather conditions) or a grouping of these (<a href="48d2bc1a63b567da.htm" target="_top"><b><u>Set of Constraining Properties</u></b></a>).</div><div align="left" style="min-height: 12pt; "><b>&#160;Constraining Property</b>s are used to constrain <a href="d342d88e5b121401.htm" target="_top"><b><u>Architecture Block</u></b></a>s in the context of non-functional requirement analysis and <a href="abba950e62a94390.htm" target="_top"><b><u>Value Proposition</u></b></a> analysis.</div><i><ul>References:<li><a href="https://method.demomega.com/MM-OVERVIEW/pages/architecture-content/chap02.html#tag_02_04"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Content Metamodel - Measure</a></li> <li><a href="../resources/Ackoff-Choice-Communication-and-Conflict.pdf#MorphologicalProperty"><img src="../standard/extr.ico.gif">&nbsp;Russell Ackoff - Choice &amp; Communication - MorphologicalProperty</a></li> <li><a href="https://en.wikipedia.org/wiki/List_of_system_quality_attributes"><img src="../standard/extr.ico.gif">&nbsp;Wikipeddia - List of quality attributes</a></li> <li><a href="https://en.wikipedia.org/wiki/Measurement"><img src="../standard/extr.ico.gif">&nbsp;Wikipedia - Measurement</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="4d035025569f42f3.htm" target="_top">KPI Dimension Building Block</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="2d9a74745b2181cd.htm" target="_top">Governance Block</a></td>
+<td class="description-text"><b>&#160;Governance Block</b>s include all instruments used to monitor and steer transformation <a href="0ffeec41600be08a.htm" target="_top"><b><u>Initiative</u></b></a>s. They include incidents, assessments, <a href="26b887fa5eea87e2.htm" target="_top"><b><u>Workflow</u></b></a>s, indicators and their templates.       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="2ea16d68565c3218.htm" target="_top">Governance Building Block</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="29df3f4060084c07.htm" target="_top">Management System</a></td>
+<td class="description-text">A&#160;<b> Management System</b> is an <a href="d321c226601262ae.htm" target="_top"><b><u>Enduring Initiative</u></b></a> within an <a href="b181b82a54891668.htm" target="_top"><b><u>Enterprise</u></b></a>, aimed at creating, maintaining, evaluating, evolving, and operating a collection of essential <a href="07ca0f015dd84efa.htm" target="_top"><b><u>Functional Asset</u></b></a>s of the <a href="b181b82a54891668.htm" target="_top"><b><u>Enterprise</u></b></a>.<i><ul>References:<li><a href="https://www.iso.org/obp/ui/#iso:std:iso:22301:ed-2:v1:en"><img src="../standard/extr.ico.gif">&nbsp;ISO 22301 - Management System</a></li> <li><a href="https://pubs.opengroup.org/togaf-standard/introduction/apdxb.html#tag_06_30"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Definition - Portfolio</a></li> <li><a href="https://www.scaledagileframework.com/large-solution-safe/"><img src="../standard/extr.ico.gif">&nbsp;SAFe&copy; - Large Solution SAFe</a></li> <li><a href="https://www.scaledagileframework.com/enterprise-solution-delivery/"><img src="../standard/extr.ico.gif">&nbsp;SAFe&copy; -Enterprise Solution Delivery</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="fa47fbab5e695547.htm" target="_top">Enterprise Portfolio</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="2b5887d05ef07b3b.htm" target="_top">Program Asset</a></td>
+<td class="description-text">A&#160;<b> Program Asset</b> is a resource used in the context of project management such as <a href="91be97ff54882d9f.htm" target="_top"><b><u>Project</u></b></a>, <a href="2d18f6705ac37b70.htm" target="_top"><b><u>Projet Risk Type</u></b></a>, <a href="d26b6b685fe0c6b9.htm" target="_top"><b><u>Project Portfolio</u></b></a>,etc.       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="fff70bdc5952665d.htm" target="_top">Project Building Block</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="25c0a25061e2fd5a.htm" target="_top">Software System Environment</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Software System Environment</b> is an operating context in which a <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a> defines its interactions with its partners (Partner System) in the form of API connections (<b> Software Interaction Channel</b>).</div><div align="left" style="min-height: 12pt; ">It also represents <a href="2dcea8705fc4827c.htm" target="_top"><b><u>End User</u></b></a>s that interact with the system.</div>       </td>
+<td></td>
+</tr>  
+</tbody>
+</table>
+<section>
+
+</div>
+<button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button>
+<script>window.onscroll = function() {scrollFunction()};$(document).on('click', 'a[href^="#"]', function (event) {event.preventDefault();$('html, body').animate({scrollTop: $($.attr(this, 'href')).offset().top}, 500);});function showDiagOnClick(elem){ var x = document.getElementsByClassName('Relationship');var e = elem.getAttribute("value"); for (var i=0; i < x.length ;i++){x[i].style.display="none"; if (x[i].id == e){x[i].style.display="block";x[i].style.textAlign="left";}}}
+</script></html>

@@ -1,0 +1,834 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="keywords" content="">
+<meta name="description" content="">    
+<LINK REL="icon" HREF="../standard/assets/img/favicon.ico">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/bootstrap.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nav.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/eaportal.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/font-awesome.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/animate.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/datatables.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/grid.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nae.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/custom.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/chosen.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/prism.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery.dataTables.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jsTreeStyle.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.theme.css" media="screen" />
+<script type="text/javascript" src="../standard/assets/js/jquery-3.2.1.min.js" ></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-ui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.columnFilter.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3-force.v2.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.gui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.search.js"></script> 
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.util.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-2.1.1.min.js"></script>
+<script src="../standard/assets/js/ws_zoomtemplate_firefox.js"></script>
+<script src="../standard/assets/js/bootstrap.min.js"></script>
+<script src="../standard/assets/js/datatables.min.js"></script>
+<script src="../standard/assets/js/moment.min.js"></script>
+<script src="../standard/assets/js/datetime-moment.js"></script>
+<script src="../standard/assets/js/chartjs.min.js"></script>
+<script src="../standard/assets/js/searchindexcontent.json"></script>
+<script src="../standard/assets/js/anls.js"></script>
+<script src="../../../cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script src="../standard/assets/js/gauge.js"></script> 
+<script src="../standard/assets/js/domesticApi.js"></script> 
+<script src="../standard/assets/js/piecelabel.js"></script>
+<script src="../standard/assets/js/popper.min.js"></script>
+<script src="../standard/assets/js/custom.js"></script>
+<script src="../standard/assets/js/chosen.jquery.js"></script>
+<script src="../standard/assets/js/prism.js"></script>
+<script src="../standard/assets/js/init-chosen.js"></script>
+<script src="../standard/assets/js/chart-data-flow.js"></script>
+<script src="../standard/assets/js/chart-data-gantt.js"></script>
+<script type="module" src="../standard/assets/js/Fuse.esm.min.js"></script>
+<script type="module">
+import Fuse from '../standard/assets/js/Fuse.esm.min.js';
+$(document).ready(function () {
+console.log('getjson');
+window.$.getJSON('../standard/assets/js/searchindexcontent.json', function (response) {
+console.log('getjson ok');
+var isIndex = "";
+var url = window.location.pathname;
+var filename = url.substring(url.lastIndexOf('/')+1);
+if( filename.includes("index") || filename === "" ){
+isIndex = "pages/";
+} else {
+isIndex = "";
+}
+const fuse = new Fuse(response, {
+keys: ['title','text'],
+shouldSort: true,
+includeMatches : true,
+findAllMatches : true
+});
+$('#search-fuse').on('keyup', function () {
+let result = fuse.search($(this).val());
+console.log(result);
+let resultdiv = $('div.searchresults-fuse');
+if (result.length === 0) {
+resultdiv.hide();
+} else {
+resultdiv.empty();
+resultdiv.append('<table class="table-search" width="100%" cellspacing="0"><thead ><tr><th>Name</th><th>Object Type</th><th>Modification date</th></tr></thead><tbody>');
+
+for (let obj in result.slice(0,10)) {
+
+let searchObj = '<tr><td><a href="./'+ isIndex + result[obj].item.url + '">' + result[obj].item.title +'</a></td><td>' + result[obj].item.ObjectType + '</td><td>' + result[obj].item.ModificationDate + '</td></tr>' ;
+
+
+resultdiv.find('tbody').append(searchObj);
+}
+resultdiv.append('</tbody></table>');
+resultdiv.show();
+}
+});
+});
+});
+</script>
+<title>HOPEX Metamodel Overview (Beta Version)</title>
+</head>
+<nav class="navbar navbar-expand-md navbar-dark  navbar-mega"><!-- Brand --><!--<a class="navbar-brand" href="#">Navbar</a>--><a class="" href="../index.htm"><img class="logo-mega" src="../standard/assets/img/logo.png"  alt="">(Beta Version)</a><!-- Toggler/collapsibe Button --><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><!-- Navbar links -->
+<div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsibleNavbar"><div class="col-sm-auto col-md-auto col-lg-5"></div>
+<div class="col-sm-auto">
+<ul class="navbar-nav">      
+<li><a class="dropdown-item" href="ad30ce115ebf7e90.htm">EA Grid</a></li> 
+<li><a class="dropdown-item" href="fdd5018459bc3c6a.htm">EA Domains</a></li> 
+<li><a class="dropdown-item" href="07e731775ecc93f4.htm">Solutions</a></li> 
+<li><a class="dropdown-item" href="c5dfc62c54810c2c.htm">Glossary</a></li> 
+<li class="nav-item dropdown mx-1">
+<a class="nav-link" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</a>
+<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<li><a class="dropdown-item" href="5446555d5f88c32e.htm">Outcome Driven Metamodel</a></li> 
+<li><a class="dropdown-item" href="e1ccfc295f8f7b90.htm">Playbooks</a></li> 
+<li><a class="dropdown-item" href="42bc992862d20ea7.htm">Framework Mappings</a></li> 
+<li><a class="dropdown-item" href="e93aebb35fa20550.htm">Metamodel Patterns</a></li> 
+<li><a class="dropdown-item" href="d599fe87602b2b85.htm">References</a></li> 
+<li><a class="dropdown-item" href="333f3a7f5dde11de.htm">Legend</a></li> 
+</ul>									                                            
+</li>
+</ul>
+</div>
+<div class="col-sm-auto"><a class="nav-link search" href="#" onclick=showHideSearch("search-section-fuse")><i class="fa fa-search mr-1 form-control-feedback"></i></a></div>
+</div>
+</nav>
+<div id="search-section-fuse" style="display:none">>
+<div class="search_header"><span class="closesearch">&times;</span>
+<nav class="breadcrumb">
+<a class="breadcrumb-item" href="../index.htm">Home </a> 
+<span class="breadcrumb-item active">Search</span> 
+</nav>
+</div>
+<input id="search-fuse" placeholder="Search..."  name="q" onfocus="this.value=''" type="search">
+<div class="searchresults-fuse"></div>
+</div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>function showHideSearch(elementId) {var contentDivs = document.getElementsByClassName('content');var footerDivs = document.getElementsByClassName('footer'); var containerDivs = document.getElementsByClassName('container');var containerfluidDivs = document.getElementsByClassName('container-fluid');var x = document.getElementById(elementId);if (x.style.display === "none") {x.style.display = "block";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "none";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "none";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "none";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "none";}} else {x.style.display = "none";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "block";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "block";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "block";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "block";}}} ;<!-- END WIDGET DRILL DOWN --></script><script>$(document).ready(function() {$(window).scroll(function() {if ($(this).scrollTop() > 100) {$('.scrollup').fadeIn();} else {$('.scrollup').fadeOut();}});$('.scrollup').click(function() {$("html, body").animate({scrollTop: 0}, 600);return false;});});</script><script>
+var modal = document.getElementById("search-section-fuse");
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = "none";
+}
+}
+$(document).on('click', '.closesearch', function() {
+showHideSearch("search-section-fuse");
+
+
+
+
+
+});</script><div class="container-fluid col-lg-11"><nav class="breadcrumb"><a class="breadcrumb-item" href="../index.htm">Home</a> <span class="breadcrumb-item active">
+<a  href="02af0a215a1823ee.htm" target="_top">Dictionary of HOPEX patterns</a>&nbsp;/&nbsp;Architecture Model Management</span></nav></div>
+<div class="container-fluid col-lg-11 content">
+<section class="fadeInDown animated"><a href="#idt" class="btn btn-d">DEFINITION</a> <a href="#grf" class="btn btn-d">CONCEPT GRAPH</a> <a href="#des" class="btn btn-d">CONCEPT DESCRIPTIONS</a> 
+</section>
+<a class="object-section-anchor" id="idt"></a>
+<section class="object-section">
+<h4>CONCEPT DOMAIN - Architecture Model Management</h4><hr class="sectionbreak" /><table class="table table-vertical-headers table-set-col-width"><tr><th>Description</th><td class="description-text"><i>Pattern Domain</i><br/>The&#160;<b> Architecture Model Management</b> domain defines top level constructs used in enterprise architecting: <a href="d342d88e5b121401.htm" target="_top"><b><u>Architecture Block</u></b></a>s, <a href="d342d91a5b121454.htm" target="_top"><b><u>Architecture Namespace</u></b></a>s, <a href="0dc20f4d5e9b5ca9.htm" target="_top"><b><u>Architecture Category</u></b></a>(ies), <a href="7c40a5b455272bb4.htm" target="_top"><b><u>Constraint Value</u></b></a>, <a href="8d5e986f552e28d5.htm" target="_top"><b><u>Location</u></b></a>.<div><br/><i>References:</i><br/><a href="https://pubs.opengroup.org/togaf-standard/architecture-content/chap04.html#tag_04_02_01" target="_blank">OpenGroup - TOGAF - Architecture Building Blocks</a></div></td></tr><tr><th>Dictionary</th><td><img src="../standard/dicsubjectarea.ico.gif"/>&nbsp;
+<a  href="02af0a215a1823ee.htm" target="_top">Dictionary of HOPEX patterns</a></td></tr><tr><th>Parent Domain</th><td><img src="../standard/business%20information%20environment.ico.gif"/>&nbsp;
+<a  href="e93aebb35fa20550.htm" target="_top">HOPEX Foundation Pattern Map</a>&nbsp;</td></tr>
+<tr><th>Domain dependencies</th><td><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="D6CD2C8B5AB98DA5.htm" target="_top">Information Pattern</a>&nbsp;</td></tr></table></section>
+<a class="object-section-anchor" id="grf"></a>
+<section class="object-section">
+<h4>DOMAIN CONCEPT GRAPH</h4>
+<hr class="sectionbreak" />
+<a href="#" class="btn btn-d" value="Relationship1" onclick="showDiagOnClick(this)">Diagram</a>
+<a href="#" class="btn btn-d" value="Relationship2" onclick="showDiagOnClick(this)">Graph</a>
+<div class="Relationship" id="Relationship1">
+
+<map  name="C30BD15F5A5D982A">
+  <area  href=#OBMK5920672064645619 shape="polygon" coords="152, 325, 152, 251, 219, 251, 219, 261, 162, 261, 162, 325"    title="-">
+  
+  <area  href=0dc20f885e9b5e29.htm#OBMK0DC20F885E9B5E29 shape="polygon" coords="967, 156, 1011, 156, 1011, 170, 853, 170, 853, 156, 967, 156"   target="_top"  title="-">
+  
+  <area  href=16B05351643577B3.htm shape="polygon" coords="807, 150, 1062, 150, 1062, 161, 807, 161"   target="_top"  title="-">
+  
+  <area  href=#OBMK16B051F4643576DD shape="polygon" coords="1121, 152, 1121, 130, 1132, 130, 1132, 152"    title="-">
+  
+  <area  href=0dc20f4d5e9b5ca9.htm#OBMK0DC20F4D5E9B5CA9 shape="polygon" coords="1078, 142, 1078, 131, 1175, 131, 1175, 142, 1078, 142"   target="_top"  title="An&#160; Architecture Category is a Categorization Block used to classify Architecture Blocks. Examples are Data Category, Business Line.">
+  
+  <area  href=A603361756841139.htm#OBMKA603361756841139 shape="polygon" coords="1080, 174, 1080, 161, 1173, 161, 1173, 174, 1080, 174"   target="_top"  title="General Category that can apply to any architecture building block (business, software, hardware, organization, ..).">
+  
+  <area  href="16B051ED64357695.htm" shape="rect" coords="1062, 129, 1191, 176"   target="_top"  title="An&#160; Asset Category is a general purpose Architecture Category used to classify any type of Architecture Block (Type).">
+  
+  <area  href=0dc210465e9b6156.htm#OBMK0DC210465E9B6156 shape="polygon" coords="1341, 114, 1342, 114, 1342, 127, 1219, 127, 1219, 114, 1341, 114"   target="_top"  title="-">
+  
+  <area  href=16b050a8643575b5.htm shape="polygon" coords="1198, 116, 1299, 116, 1299, 99, 1398, 99, 1398, 109, 1310, 109, 1310, 127, 1198, 127"   target="_top"  title="-">
+  
+  <area  href=16b0500d64357557.htm shape="polygon" coords="1477, 165, 1477, 122, 1487, 122, 1487, 165"   target="_top"  title="-">
+  
+  <area  href=0dc210465e9b6156.htm#OBMK0DC210465E9B6156 shape="polygon" coords="1351, 185, 1352, 185, 1352, 198, 1229, 198, 1229, 185, 1351, 185"   target="_top"  title="-">
+  
+  <area  href=16b04ad364357411.htm shape="polygon" coords="1194, 182, 1398, 182, 1398, 193, 1194, 193"   target="_top"  title="-">
+  
+  <area  href=#OBMK16B04A00643573B8 shape="polygon" coords="1477, 165, 1472, 94, 1472, 83, 1482, 82, 1482, 92, 1487, 164"    title="-">
+  
+  <area  href=#OBMK16B049F76435738C shape="polygon" coords="1483, 123, 1482, 130, 1472, 129, 1473, 121"    title="-">
+  
+  <area  href=16b049676435728e.htm#OBMK16B049676435728E shape="polygon" coords="1435, 178, 1435, 167, 1529, 167, 1529, 178, 1435, 178"   target="_top"  title="A is&#160; Category of Category a means to classify Architecture Categorys.">
+  
+  <area  href="16b049bf643572dc.htm" shape="rect" coords="1397, 165, 1567, 207"   target="_top"  title="A&#160; Category Partition is a split of Architecture Category(ies) in non-overlapping classifications of Architecture Block (Type)s.">
+  
+  <area  href=26CD28D363EF2DC6.htm#OBMK26CD28D363EF2DC6 shape="polygon" coords="1697, 505, 1697, 519, 1591, 519, 1591, 505, 1697, 505"   target="_top"  title="The Constraining Property Type that a Constraining Property belongs to.">
+  
+  <area  href=26cd2a5b63ef2ee3.htm shape="polygon" coords="1541, 523, 1751, 522, 1752, 532, 1541, 534"   target="_top"  title="The Environmental Constraint Type that a Environmental Property belongs to.">
+  
+  <area  href=26CD28D363EF2DC6.htm shape="polygon" coords="1570, 325, 1723, 325, 1723, 336, 1570, 336"   target="_top"  title="The Constraining Property Type that a Constraining Property belongs to.">
+  
+  <area  href=#OBMK26CD27A963EF2BC6 shape="polygon" coords="1805, 501, 1797, 441, 1808, 439, 1815, 500"    title="-">
+  
+  <area  href=#OBMK71E1DA6F63E44FE8 shape="polygon" coords="1809, 409, 1808, 441, 1797, 440, 1799, 408"    title="-">
+  
+  <area  href=26cd27c763ef2c1b.htm#OBMK26CD27C763EF2C1B shape="polygon" coords="1754, 514, 1754, 503, 1871, 503, 1871, 514, 1754, 514"   target="_top"  title="A&#160; Constraining Property Type is a class of&#160; Constraining Property.">
+  
+  <area  href="26cd279763ef2b46.htm" shape="rect" coords="1752, 501, 1874, 552"   target="_top"  title="An&#160; Environmental Constraint Type is a class of&#160; Environmental Property.">
+  
+  <area  href=#OBMK71E1F35663E45542 shape="polygon" coords="1089, 530, 1094, 498, 1104, 499, 1100, 531"    title="-">
+  
+  <area  href=#OBMK71E1DDB763E4521B shape="polygon" coords="1466, 497, 1466, 493, 1476, 492, 1477, 496"    title="-">
+  
+  <area  href=71e1daa563e4505b.htm shape="polygon" coords="1795, 297, 1795, 237, 1806, 237, 1806, 297"   target="_top"  title="-">
+  
+  <area  href=26cd27c763ef2c1b.htm#OBMK26CD27C763EF2C1B shape="polygon" coords="1748, 364, 1748, 353, 1865, 353, 1865, 364, 1748, 364"   target="_top"  title="A&#160; Constraining Property Type is a class of&#160; Constraining Property.">
+  
+  <area  href=20ae273156a14ac0.htm#OBMK20AE273156A14AC0 shape="polygon" coords="1775, 396, 1775, 382, 1837, 382, 1837, 396, 1775, 396"   target="_top"  title="-">
+  
+  <area  href="71e1da5b63e44f61.htm" shape="rect" coords="1742, 350, 1871, 409"   target="_top"  title="A&#160; Measurement Type is a class of&#160; measurement.">
+  
+  <area  href=#OBMK1BC14ACD63DA456F shape="polygon" coords="1471, 435, 1471, 409, 1481, 409, 1482, 435"    title="-">
+  
+  <area  href=48d2c76263b5722a.htm#OBMK48D2C76263B5722A shape="polygon" coords="1369, 436, 1331, 436, 1331, 450, 1234, 450, 1234, 436, 1369, 436"   target="_top"  title="The classification of Qualifying Value (Abstract) by Measurable Property (Abstract).">
+  
+  <area  href=1bc14ac163da4539.htm shape="polygon" coords="1166, 430, 1401, 430, 1401, 441, 1166, 441"   target="_top"  title="The classification of Qualifying Value by Measurable Property.">
+  
+  <area  href=48d2c45c63b57003.htm#OBMK48D2C45C63B57003 shape="polygon" coords="1409, 419, 1409, 408, 1545, 408, 1545, 419, 1409, 419"   target="_top"  title="A&#160; Measurable Property (Abstract) is a Constraining Property that expresses a type of measurement (Time, Mass, Cost, ..) and define the units used for measures (minutes, kg, euros, etc.).">
+  
+  <area  href=a474be28569f0b2e.htm#OBMKA474BE28569F0B2E shape="polygon" coords="1443, 451, 1443, 437, 1510, 437, 1510, 451, 1443, 451"   target="_top"  title="KPI dimensions express the nature of KPIs (Time, Mass, Cost, ..) and define the units used for KPI (minutes, kg, euros, etc.).">
+  
+  <area  href="1bc14a1963da448e.htm" shape="rect" coords="1402, 405, 1553, 466"   target="_top"  title="A&#160; Measurable Property is a concrete Measurable Property (Abstract) that can be applied to all Architecture Block (Type)s.">
+  
+  <area  href=#OBMK1BC13E1E63DA4462 shape="polygon" coords="1095, 429, 1094, 407, 1104, 406, 1106, 428"    title="-">
+  
+  <area  href=48d2c3a263b56f27.htm#OBMK48D2C3A263B56F27 shape="polygon" coords="1042, 412, 1042, 401, 1158, 401, 1158, 412, 1042, 412"   target="_top"  title="A&#160; Qualifying Value (Abstract) is a possible value of a Measurable Property (Abstract) such as a delivery time of 30 minutes, a weight of 20 kg, a high level of confidentiality.">
+  
+  <area  href=4d036564569f5110.htm#OBMK4D036564569F5110 shape="polygon" coords="1087, 444, 1087, 430, 1114, 430, 1114, 444, 1087, 444"   target="_top"  title="A KPI defines how much of something can be quantified, either as a singular value or as range of values, according to a KPI Dimension.">
+  
+  <area  href="1bc13e0d63da441c.htm" shape="rect" coords="1034, 399, 1167, 460"   target="_top"  title="A&#160; Qualifying Value is a Qualifying Value (Abstract) that can be applied to all Architecture Blocks.">
+  
+  <area  href=63F8871A55AE1C17.htm#OBMK63F8871A55AE1C17 shape="polygon" coords="1367, 526, 1334, 526, 1334, 539, 1226, 539, 1226, 526, 1367, 526"   target="_top"  title="The classification of a Constraint Value by a Constraining Property.">
+  
+  <area  href=f68d3c6d63b9e996.htm shape="polygon" coords="1165, 525, 1405, 524, 1405, 534, 1166, 536"   target="_top"  title="The classification of Environmental Value by Environmental Property.">
+  
+  <area  href=7c40a5b455272bb4.htm#OBMK7C40A5B455272BB4 shape="polygon" coords="1057, 512, 1057, 501, 1133, 501, 1133, 512, 1057, 512"   target="_top"  title="A&#160; Constraint Value is a possible value of a Constraining Property such as a delivery time of 30 minutes, a weight of 20 kg, a high level of confidentiality, stormy conditions.">
+  
+  <area  href="f68d3c3063b9e8f3.htm" shape="rect" coords="1023, 499, 1166, 563"   target="_top"  title="An&#160; Environmental Value is a specific value of an Environmental Property.">
+  
+  <area  href=63f8870255ae1ba2.htm#OBMK63F8870255AE1BA2 shape="polygon" coords="1425, 510, 1425, 499, 1521, 499, 1521, 510, 1425, 510"   target="_top"  title="A&#160; Constraining Property expresses a type of constraint that can be applied to Architecture Blocks.">
+  
+  <area  href="f68d26e263b8e425.htm" shape="rect" coords="1405, 497, 1541, 561"   target="_top"  title="An&#160; Environmental Property is a characteristic of the environment in which an Enterprise or its sub-systems are required to operate.">
+  
+  <area  href=63F8871A55AE1C17.htm#OBMK63F8871A55AE1C17 shape="polygon" coords="1339, 370, 1336, 370, 1336, 383, 1229, 383, 1229, 370, 1339, 370"   target="_top"  title="The classification of a Constraint Value by a Constraining Property.">
+  
+  <area  href=48d2c76263b5722a.htm shape="polygon" coords="1174, 364, 1392, 364, 1392, 374, 1174, 374"   target="_top"  title="The classification of Qualifying Value (Abstract) by Measurable Property (Abstract).">
+  
+  <area  href=#OBMK48D2C52D63B570D2 shape="polygon" coords="1477, 473, 1476, 492, 1466, 491, 1467, 472"    title="-">
+  
+  <area  href=63f8870255ae1ba2.htm#OBMK63F8870255AE1BA2 shape="polygon" coords="1428, 358, 1428, 347, 1524, 347, 1524, 358, 1428, 358"   target="_top"  title="A&#160; Constraining Property expresses a type of constraint that can be applied to Architecture Blocks.">
+  
+  <area  href=a474a69b569f0899.htm#OBMKA474A69B569F0899 shape="polygon" coords="1422, 385, 1422, 371, 1530, 371, 1530, 385, 1422, 385"   target="_top"  title="Elementary dimensions are described by KPI units: kg, Liter, Gallon, Hour, Minute.">
+  
+  <area  href="48d2c45c63b57003.htm" shape="rect" coords="1392, 346, 1560, 473"   target="_top"  title="A&#160; Measurable Property (Abstract) is a Constraining Property that expresses a type of measurement (Time, Mass, Cost, ..) and define the units used for measures (minutes, kg, euros, etc.).">
+  
+  <area  href=#OBMK48D2C3A863B56F6B shape="polygon" coords="1104, 471, 1104, 499, 1093, 499, 1094, 471"    title="-">
+  
+  <area  href=7c40a5b455272bb4.htm#OBMK7C40A5B455272BB4 shape="polygon" coords="1061, 354, 1061, 343, 1137, 343, 1137, 354, 1061, 354"   target="_top"  title="A&#160; Constraint Value is a possible value of a Constraining Property such as a delivery time of 30 minutes, a weight of 20 kg, a high level of confidentiality, stormy conditions.">
+  
+  <area  href=4d0355a2569f48c1.htm#OBMK4D0355A2569F48C1 shape="polygon" coords="1065, 381, 1065, 367, 1133, 367, 1133, 381, 1065, 381"   target="_top"  title="An elementary KPI defines the measured quantity of a monitored element according to a KPI Dimension">
+  
+  <area  href="48d2c3a263b56f27.htm" shape="rect" coords="1024, 342, 1174, 471"   target="_top"  title="A&#160; Qualifying Value (Abstract) is a possible value of a Measurable Property (Abstract) such as a delivery time of 30 minutes, a weight of 20 kg, a high level of confidentiality.">
+  
+  <area  href=63F8871A55AE1C17.htm#OBMK63F8871A55AE1C17 shape="polygon" coords="1346, 607, 1329, 607, 1329, 621, 1222, 621, 1222, 607, 1346, 607"   target="_top"  title="The classification of a Constraint Value by a Constraining Property.">
+  
+  <area  href=48d2c15663b56dc6.htm shape="polygon" coords="1169, 606, 1398, 606, 1398, 617, 1169, 617"   target="_top"  title="-">
+  
+  <area  href=#OBMK48D2C11E63B56D4F shape="polygon" coords="1250, 683, 1185, 683, 1185, 672, 1250, 672"    title="-">
+  
+  <area  href=48D2C11D63B56D42.htm shape="polygon" coords="1166, 633, 1258, 633, 1258, 683, 1185, 683, 1185, 672, 1247, 672, 1247, 643, 1166, 643"   target="_top"  title="Set of Constraint Values.">
+  
+  <area  href=#OBMK48D2C11F63B56D86 shape="polygon" coords="1166, 633, 1230, 633, 1230, 643, 1166, 643"    title="-">
+  
+  <area  href=7c40a5b455272bb4.htm#OBMK7C40A5B455272BB4 shape="polygon" coords="1059, 604, 1059, 593, 1135, 593, 1135, 604, 1059, 604"   target="_top"  title="A&#160; Constraint Value is a possible value of a Constraining Property such as a delivery time of 30 minutes, a weight of 20 kg, a high level of confidentiality, stormy conditions.">
+  
+  <area  href=4d035b07569f4c03.htm#OBMK4D035B07569F4C03 shape="polygon" coords="1063, 636, 1063, 622, 1131, 622, 1131, 636, 1063, 636"   target="_top"  title="A Composite KPI defines the grouping of elementary KPIs that should be examined together in order to appreciate the actual performance of a KPIed item.">
+  
+  <area  href="48d2be5c63b56abf.htm" shape="rect" coords="1025, 590, 1170, 654"   target="_top"  title="A&#160; Set of Constraint Values is a combination of Constraint Values.">
+  
+  <area  href=#OBMK48D2BC7463B568D0 shape="polygon" coords="1625, 651, 1625, 660, 1570, 660, 1570, 650, 1615, 650, 1615, 651"    title="-">
+  
+  <area  href=48D2BC7463B568C3.htm shape="polygon" coords="1545, 613, 1625, 613, 1625, 660, 1570, 660, 1570, 650, 1615, 650, 1615, 623, 1545, 623"   target="_top"  title="Set of Constraining Propertys">
+  
+  <area  href=#OBMK48D2BC7763B56907 shape="polygon" coords="1545, 613, 1599, 613, 1599, 623, 1545, 623"    title="-">
+  
+  <area  href=63f8870255ae1ba2.htm#OBMK63F8870255AE1BA2 shape="polygon" coords="1423, 599, 1423, 589, 1519, 589, 1519, 599, 1423, 599"   target="_top"  title="A&#160; Constraining Property expresses a type of constraint that can be applied to Architecture Blocks.">
+  
+  <area  href=4d035d28569f4d53.htm#OBMK4D035D28569F4D53 shape="polygon" coords="1418, 645, 1418, 631, 1525, 631, 1525, 645, 1418, 645"   target="_top"  title="A Composite KPI Dimension defines the grouping of elementary KPIs that should be examined together in order to appreciate the actual performance of a KPIed item.">
+  
+  <area  href="48d2bc1a63b567da.htm" shape="rect" coords="1397, 586, 1545, 647"   target="_top"  title="A&#160; Set of Constraining Properties is a combination of Constraining Propertys.">
+  
+  <area  href=#OBMK49935A5163907923 shape="polygon" coords="487, 503, 361, 503, 361, 492, 487, 492"    title="-">
+  
+  <area  href="49935a3a639078dc.htm" shape="rect" coords="252, 472, 361, 518"   target="_top"  title="A&#160; Description Note is an annotation or remark providing a comment or an explanation on a text or a drawing.&#160; Description Notes can be of different types: Remark, Question, Documentation, Evolution, Correction, Anomaly, Technical Specification , ...">
+  
+  <area  href=26CD28D363EF2DC6.htm#OBMK26CD28D363EF2DC6 shape="polygon" coords="1718, 362, 1702, 362, 1702, 376, 1596, 376, 1596, 362, 1718, 362"   target="_top"  title="The Constraining Property Type that a Constraining Property belongs to.">
+  
+  <area  href=499356ee639075e0.htm shape="polygon" coords="1560, 377, 1742, 377, 1742, 387, 1560, 387"   target="_top"  title="The Measurement Type that a Measurable Property (Abstract) belongs to.">
+  
+  <area  href=ca353b065fc5e146.htm#OBMKCA353B065FC5E146 shape="polygon" coords="1758, 179, 1758, 168, 1847, 168, 1847, 179, 1758, 179"   target="_top"  title="A&#160; Categorization Block is a Model Building Block used to provid classification and qualification of other Model Building Blocks.For instance, Tags are used for classification. Constraint Value are used for qualification or quantification.">
+  
+  <area  href=20ae26f556a14a5f.htm#OBMK20AE26F556A14A5F shape="polygon" coords="1762, 224, 1762, 211, 1843, 211, 1843, 224, 1817, 224, 1817, 234, 1788, 234, 1788, 224, 1762, 224"   target="_top"  title="-">
+  
+  <area  href="499356ab63907522.htm" shape="rect" coords="1747, 165, 1857, 237"   target="_top"  title="A&#160; Schema of Measurement is a top level grouping of Constraining Property(ies) that belong to a common domain.">
+  
+  <area  href=#OBMK5754805751545CA3 shape="polygon" coords="625, 425, 625, 411, 710, 411, 710, 425, 625, 425"    title="-">
+  
+  <area  href=#OBMKEF5DF91E632129AE shape="polygon" coords="683, 518, 683, 349, 694, 349, 694, 518"    title="-">
+  
+  <area  href=#OBMKEF5DF90C632126A6 shape="polygon" coords="708, 284, 712, 249, 713, 239, 724, 240, 722, 251, 718, 285"    title="-">
+  
+  <area  href=A4A5B3F855585CE1.htm#OBMKA4A5B3F855585CE1 shape="polygon" coords="659, 298, 659, 287, 768, 287, 768, 298, 659, 298"   target="_top"  title="An&#160; Architecture Block (Type) is a type of Architecture Block which is used in the description of the enterprise, such as Processes, Org-Units, Applications.">
+  
+  <area  href="ef5df90463212593.htm" shape="rect" coords="646, 285, 780, 349"   target="_top"  title="A&#160; Location Type is a type of Location that is a geopolitical location.">
+  
+  <area  href=d342e1b55b1215ac.htm#OBMKD342E1B55B1215AC shape="polygon" coords="267, 233, 309, 233, 309, 247, 143, 247, 143, 233, 267, 233"   target="_top"  title="-">
+  
+  <area  href=c31cee0c62147dd9.htm shape="polygon" coords="193, 198, 193, 209, 255, 209, 255, 198, 265, 198, 265, 219, 182, 219, 182, 198"   target="_top"  title="-">
+  
+  <area  href=f594f72e61f736e1.htm#OBMKF594F72E61F736E1 shape="polygon" coords="798, 712, 775, 712, 775, 726, 646, 726, 646, 712, 798, 712"   target="_top"  title="-">
+  
+  <area  href=7DB0E6BF61F87B78.htm shape="polygon" coords="597, 681, 597, 703, 815, 703, 815, 681, 826, 681, 826, 714, 586, 714, 586, 681"   target="_top"  title="-">
+  
+  <area  href=#OBMK918DD97E61E60472 shape="polygon" coords="1560, 422, 1605, 422, 1605, 433, 1560, 433"    title="-">
+  
+  <area  href="918dd97661e60417.htm" shape="rect" coords="1605, 408, 1687, 454"   target="_top"  title="A&#160; Measure Unit defines the units used for Measurable Property (Abstract)s.">
+  
+  <area  href=7DB0E6BF61F87B78.htm#OBMK7DB0E6BF61F87B78 shape="polygon" coords="983, 346, 983, 346, 983, 360, 824, 360, 824, 346, 983, 346"   target="_top"  title="-">
+  
+  <area  href=dc9407806025fc1c.htm shape="polygon" coords="805, 359, 1013, 359, 1013, 370, 805, 370"   target="_top"  title="Set of Constraint Values that constrain an Architecture Block (Type).">
+  
+  <area  href=167126a16008efeb.htm shape="polygon" coords="631, 495, 584, 495, 584, 541, 646, 541, 646, 551, 573, 551, 573, 485, 631, 485"   target="_top"  title="-">
+  
+  <area  href=167126a16008efeb.htm#OBMK167126A16008EFEB shape="polygon" coords="762, 621, 760, 621, 760, 634, 698, 634, 698, 621, 762, 621"   target="_top"  title="-">
+  
+  <area  href=d308d7165a2f67e3.htm shape="polygon" coords="693, 581, 693, 599, 761, 599, 761, 581, 771, 581, 771, 610, 682, 610, 682, 581"   target="_top"  title="-">
+  
+  <area  href=ebcfaeac5ad76ed7.htm#OBMKEBCFAEAC5AD76ED7 shape="polygon" coords="658, 532, 658, 521, 785, 521, 785, 532, 658, 532"   target="_top"  title="An Individual which is used in the description of the enterprise.">
+  
+  <area  href=b1edb2612c1401d3.htm#OBMKB1EDB2612C1401D3 shape="polygon" coords="707, 559, 707, 545, 736, 545, 736, 559, 707, 559"   target="_top"  title="A site is the geographical location of an organization. Examples: Boston subsidiary, Seattle plant, and more generally the headquarters, subsidiaries, plants, warehouses, etc.">
+  
+  <area  href="8d5e986f552e28d5.htm" shape="rect" coords="647, 519, 798, 582"   target="_top"  title="A&#160; Location is a geopolitical location anywhere on the earth.">
+  
+  <area  href=A67DCA4F5F8EB365.htm shape="polygon" coords="316, 318, 385, 318, 385, 370, 300, 370, 300, 359, 374, 359, 374, 328, 316, 328"   target="_top"  title="-">
+  
+  <area  href=d342d91a5b121454.htm#OBMKD342D91A5B121454 shape="polygon" coords="165, 336, 165, 325, 275, 325, 275, 336, 165, 336"   target="_top"  title="An&#160; Architecture Namespace is a Model Namespace&#160; that packages Architecture Blocks used to describe the architecture of the enterprise.">
+  
+  <area  href=506b838c6442b46c.htm#OBMK506B838C6442B46C shape="polygon" coords="182, 347, 182, 336, 258, 336, 258, 347, 182, 347"   target="_top"  title="A&#160; Model Dictionary is a Model Namespace which sole purpose is model management.">
+  
+  <area  href=317c47ff5ea8636e.htm#OBMK317C47FF5EA8636E shape="polygon" coords="144, 378, 144, 365, 295, 365, 295, 378, 144, 378"   target="_top"  title="-">
+  
+  <area  href="a67dc9f45f8eb2a9.htm" shape="rect" coords="138, 322, 301, 388"   target="_top"  title="A&#160; Reference Dictionary is an aspect of Model Namespace that are used as reference libraries used to hold reference materials used to develop architectures.">
+  
+  <area  href=5C2D6377622B1CED.htm#OBMK5C2D6377622B1CED shape="polygon" coords="1186, 23, 1177, 23, 1177, 37, 1064, 37, 1064, 23, 1186, 23"   target="_top"  title="-">
+  
+  <area  href=d8260a155f037e30.htm shape="polygon" coords="1072, 63, 1072, 40, 1162, 40, 1162, 63, 1152, 63, 1152, 50, 1083, 50, 1083, 63"   target="_top"  title="-">
+  
+  <area  href=#OBMK0F67194C5EBDF6FC shape="polygon" coords="880, 552, 807, 552, 807, 542, 880, 542"    title="-">
+  
+  <area  href=0f67194c5ebdf6f8.htm shape="polygon" coords="807, 475, 889, 475, 889, 552, 807, 552, 807, 542, 878, 542, 878, 486, 807, 486"   target="_top"  title="-">
+  
+  <area  href=#OBMK0F67194C5EBDF727 shape="polygon" coords="807, 475, 880, 475, 880, 486, 807, 486"    title="-">
+  
+  <area  href=63F8871A55AE1C17.htm shape="polygon" coords="1185, 313, 1374, 313, 1374, 323, 1185, 323"   target="_top"  title="The classification of a Constraint Value by a Constraining Property.">
+  
+  <area  href=#OBMKD342DA165B121507 shape="polygon" coords="719, 234, 729, 234, 729, 365, 718, 365, 718, 245, 719, 245"    title="-">
+  
+  <area  href=348f6fb6619631ec.htm#OBMK348F6FB6619631EC shape="polygon" coords="1352, 62, 1322, 62, 1322, 76, 1242, 76, 1242, 62, 1352, 62"   target="_top"  title="Kind of classification of ">
+  
+  <area  href=0dc210465e9b6156.htm shape="polygon" coords="1197, 75, 1375, 75, 1375, 86, 1197, 86"   target="_top"  title="-">
+  
+  <area  href=16b049676435728e.htm#OBMK16B049676435728E shape="polygon" coords="1435, 89, 1435, 78, 1529, 78, 1529, 89, 1435, 89"   target="_top"  title="A is&#160; Category of Category a means to classify Architecture Categorys.">
+  
+  <area  href=c417c63c56733d5e.htm#OBMKC417C63C56733D5E shape="polygon" coords="1433, 121, 1433, 108, 1531, 108, 1531, 121, 1433, 121"   target="_top"  title="Top level group of categories that belong to a common domain.">
+  
+  <area  href="0dc2102f5e9b612d.htm" shape="rect" coords="1397, 76, 1567, 123"   target="_top"  title="A&#160; Schema of Category is a Top level group of categories that belong to a common domain.">
+  
+  <area  href=348f6fb6619631ec.htm#OBMK348F6FB6619631EC shape="polygon" coords="1010, 117, 1010, 131, 835, 131, 835, 117, 1010, 117"   target="_top"  title="Kind of classification of ">
+  
+  <area  href=0dc20f885e9b5e29.htm shape="polygon" coords="805, 109, 1055, 109, 1055, 120, 805, 120"   target="_top"  title="-">
+  
+  <area  href=ca353b065fc5e146.htm#OBMKCA353B065FC5E146 shape="polygon" coords="1082, 76, 1082, 65, 1172, 65, 1172, 76, 1082, 76"   target="_top"  title="A&#160; Categorization Block is a Model Building Block used to provid classification and qualification of other Model Building Blocks.For instance, Tags are used for classification. Constraint Value are used for qualification or quantification.">
+  
+  <area  href=efdcf3f456721e72.htm#OBMKEFDCF3F456721E72 shape="polygon" coords="1067, 102, 1067, 89, 1186, 89, 1186, 102, 1067, 102"   target="_top"  title="Abstract meta-class that is the root of all categories used to classify ~3d9Lzar9BvC0[Class of Enterprise Description Building Block].">
+  
+  <area  href="0dc20f4d5e9b5ca9.htm" shape="rect" coords="1056, 63, 1199, 197"   target="_top"  title="An&#160; Architecture Category is a Categorization Block used to classify Architecture Blocks. Examples are Data Category, Business Line.">
+  
+  <area  href=89E38E275C918176.htm shape="polygon" coords="887, 680, 887, 790, 876, 790, 876, 680"   target="_top"  title="-">
+  
+  <area  href=514e5f6c620f1ec6.htm#OBMK514E5F6C620F1EC6 shape="polygon" coords="844, 804, 844, 793, 918, 793, 918, 804, 844, 804"   target="_top"  title="An&#160; Aggregate Block is a Building Block which has an internal structure.">
+  
+  <area  href=CA3538D45FC5D6F6.htm#OBMKCA3538D45FC5D6F6 shape="polygon" coords="843, 815, 843, 804, 919, 804, 919, 815, 843, 815"   target="_top"  title="An&#160; Annotation Block is a Building Block used to provided additional characteristics such as sketching, reports, description notes.">
+  
+  <area  href=3870391B57E561E8.htm#OBMK3870391B57E561E8 shape="polygon" coords="859, 847, 859, 833, 902, 833, 902, 847, 859, 847"   target="_top"  title="Rough draft of a model; unformal representation">
+  
+  <area  href="89E38D7D5C918091.htm" shape="rect" coords="815, 790, 948, 854"   target="_top"  title="A&#160; Sketch is a rough draft of a model; unformal representation.">
+  
+  <area  href=#OBMK1CE348BC5C48A6C4 shape="polygon" coords="759, 440, 759, 245, 721, 245, 721, 234, 769, 234, 769, 440"    title="-">
+  
+  <area  href=CACED8645BD7404B.htm shape="polygon" coords="631, 294, 578, 294, 578, 219, 631, 219, 631, 229, 589, 229, 589, 283, 631, 283"   target="_top"  title="-">
+  
+  <area  href=67db5ccd61c075cc.htm#OBMK67DB5CCD61C075CC shape="polygon" coords="616, 177, 606, 177, 606, 191, 511, 191, 511, 177, 616, 177"   target="_top"  title="-">
+  
+  <area  href=CACED79A5BD73F9B.htm shape="polygon" coords="631, 203, 580, 203, 580, 136, 631, 136, 631, 147, 591, 147, 591, 193, 631, 193"   target="_top"  title="-">
+  
+  <area  href=#OBMK9597D7C1620AB7A9 shape="polygon" coords="1169, 249, 1162, 249, 1162, 263, 1049, 263, 1049, 249, 1169, 249"   target="_top"  title="-">
+  
+  <area  href=83BB8C1A5B3765B5.htm shape="polygon" coords="807, 243, 1464, 243, 1464, 293, 1453, 293, 1453, 254, 807, 254"   target="_top"  title="Set of Constraining Propertys that can be applied to an Architecture Block (Type) .">
+  
+  <area  href=81f182ab646c0dfa.htm#OBMK81F182AB646C0DFA shape="polygon" coords="423, 253, 442, 253, 442, 267, 329, 267, 329, 253, 423, 253"   target="_top"  title="-">
+  
+  <area  href=d342e1b55b1215ac.htm shape="polygon" coords="316, 195, 404, 195, 404, 299, 316, 299, 316, 288, 393, 288, 393, 206, 316, 206"   target="_top"  title="-">
+  
+  <area  href=67DB5BDC61C073B4.htm#OBMK67DB5BDC61C073B4 shape="polygon" coords="79, 285, 66, 285, 66, 299, 69, 299, 69, 313, 17, 313, 17, 299, 19, 299, 19, 285, 79, 285"   target="_top"  title="-">
+  
+  <area  href=D342E13D5B12157D.htm shape="polygon" coords="121, 184, 91, 184, 91, 298, 121, 298, 121, 308, 81, 308, 81, 173, 121, 173"   target="_top"  title="-">
+  
+  <area  href=ca353eb75fc5e9b2.htm#OBMKCA353EB75FC5E9B2 shape="polygon" coords="476, 127, 474, 127, 474, 141, 325, 141, 325, 127, 476, 127"   target="_top"  title="-">
+  
+  <area  href=D342D97F5B1214BB.htm shape="polygon" coords="316, 140, 487, 140, 487, 151, 316, 151"   target="_top"  title="-">
+  
+  <area  href=#OBMKD342D9725B1214AA shape="polygon" coords="167, 197, 167, 251, 219, 251, 219, 261, 156, 261, 156, 197"    title="-">
+  
+  <area  href=d342d91a5b121454.htm#OBMKD342D91A5B121454 shape="polygon" coords="166, 154, 166, 143, 276, 143, 276, 154, 166, 154"   target="_top"  title="An&#160; Architecture Namespace is a Model Namespace&#160; that packages Architecture Blocks used to describe the architecture of the enterprise.">
+  
+  <area  href=506b838c6442b46c.htm#OBMK506B838C6442B46C shape="polygon" coords="183, 165, 183, 154, 259, 154, 259, 165, 183, 165"   target="_top"  title="A&#160; Model Dictionary is a Model Namespace which sole purpose is model management.">
+  
+  <area  href=7221815F3D210049.htm#OBMK7221815F3D210049 shape="polygon" coords="200, 197, 200, 183, 242, 183, 242, 197, 200, 197"   target="_top"  title="Libraries are collections of objects used to split MEGA repository content into several independent parts.">
+  
+  <area  href="d342d96c5b12148e.htm" shape="rect" coords="149, 140, 293, 198"   target="_top"  title="A&#160; Library is a kind of Architecture Namespace used to split HOPEX repository content into several independent modules (aka package).">
+  
+  <area  href=#OBMKEBCFB9CF5AD77347 shape="polygon" coords="807, 574, 980, 574, 980, 494, 1013, 494, 1013, 505, 991, 505, 991, 585, 807, 585"    title="The classification of Architecture Block (Individual)&#160; by Constraint Values.">
+  
+  <area  href=#OBMK5754805751545CA3 shape="polygon" coords="720, 424, 720, 410, 805, 410, 805, 424, 720, 424"    title="-">
+  
+  <area  href=#OBMKEBCFB6435AD772E9 shape="polygon" coords="760, 440, 760, 385, 770, 385, 770, 440"    title="-">
+  
+  <area  href=d342d88e5b121401.htm#OBMKD342D88E5B121401 shape="polygon" coords="678, 453, 678, 442, 760, 442, 760, 453, 678, 453"   target="_top"  title="An&#160; Architecture Block is any Model Building Block used to describe an enterprise architecture. This includes types (applications, org-units, ...) and individuals (physical persons, software installations, sites, ...).">
+  
+  <area  href=348f55f661962ecc.htm#OBMK348F55F661962ECC shape="polygon" coords="696, 464, 696, 453, 742, 453, 742, 464, 696, 464"   target="_top"  title="&#160;Individuals are Entitys&#160; which represent objects of the real world that exist over space and time. Examples are, the Oackland digital hospital in 2016, the registration process used at the Oackland digital hospital in 2021 or SAP S/4HANA deployed in Argentina since 2020. ">
+  
+  <area  href=BE06BEE259C84713.htm#OBMKBE06BEE259C84713 shape="polygon" coords="643, 490, 643, 477, 794, 477, 794, 490, 643, 490"   target="_top"  title="The super-class of all ~wFeAvRpIMb3H[Enterprise Description Building Block]s that are individual blocks.">
+  
+  <area  href="ebcfaeac5ad76ed7.htm" shape="rect" coords="631, 441, 807, 660"   target="_top"  title="An Individual which is used in the description of the enterprise.">
+  
+  <area  href=ca353b065fc5e146.htm#OBMKCA353B065FC5E146 shape="polygon" coords="1054, 307, 1054, 297, 1144, 297, 1144, 307, 1054, 307"   target="_top"  title="A&#160; Categorization Block is a Model Building Block used to provid classification and qualification of other Model Building Blocks.For instance, Tags are used for classification. Constraint Value are used for qualification or quantification.">
+  
+  <area  href=4d035344569f43cd.htm#OBMK4D035344569F43CD shape="polygon" coords="1060, 334, 1060, 321, 1138, 321, 1138, 334, 1060, 334"   target="_top"  title="A KPI can be elementary or composite.">
+  
+  <area  href="7c40a5b455272bb4.htm" shape="rect" coords="1013, 295, 1185, 703"   target="_top"  title="A&#160; Constraint Value is a possible value of a Constraining Property such as a delivery time of 30 minutes, a weight of 20 kg, a high level of confidentiality, stormy conditions.">
+  
+  <area  href=d342d88e5b121401.htm#OBMKD342D88E5B121401 shape="polygon" coords="678, 108, 678, 97, 760, 97, 760, 108, 678, 108"   target="_top"  title="An&#160; Architecture Block is any Model Building Block used to describe an enterprise architecture. This includes types (applications, org-units, ...) and individuals (physical persons, software installations, sites, ...).">
+  
+  <area  href=3492c53e619642ed.htm#OBMK3492C53E619642ED shape="polygon" coords="678, 119, 678, 108, 759, 108, 759, 119, 678, 119"   target="_top"  title="A&#160; Class of Individual is a Class whose members are instances of&#160; Individual .">
+  
+  <area  href=9597d7b3620ab751.htm#OBMK9597D7B3620AB751 shape="polygon" coords="673, 130, 673, 119, 765, 119, 765, 130, 673, 130"   target="_top"  title="A&#160; Class of Model Block is a Class that classifies Model Building Blocks.">
+  
+  <area  href=5499593D4B2700CE.htm#OBMK5499593D4B2700CE shape="polygon" coords="642, 159, 642, 146, 796, 146, 796, 159, 729, 159, 729, 169, 709, 169, 709, 159, 642, 159"   target="_top"  title="-">
+  
+  <area  href="A4A5B3F855585CE1.htm" shape="rect" coords="631, 94, 807, 384"   target="_top"  title="An&#160; Architecture Block (Type) is a type of Architecture Block which is used in the description of the enterprise, such as Processes, Org-Units, Applications.">
+  
+  <area  href=ca353b065fc5e146.htm#OBMKCA353B065FC5E146 shape="polygon" coords="1426, 305, 1426, 294, 1516, 294, 1516, 305, 1426, 305"   target="_top"  title="A&#160; Categorization Block is a Model Building Block used to provid classification and qualification of other Model Building Blocks.For instance, Tags are used for classification. Constraint Value are used for qualification or quantification.">
+  
+  <area  href=4d035025569f42f3.htm#OBMK4D035025569F42F3 shape="polygon" coords="1413, 332, 1413, 318, 1529, 318, 1529, 332, 1413, 332"   target="_top"  title="KPI dimensions can be elementary or composite.">
+  
+  <area  href="63f8870255ae1ba2.htm" shape="rect" coords="1373, 293, 1570, 692"   target="_top"  title="A&#160; Constraining Property expresses a type of constraint that can be applied to Architecture Blocks.">
+  
+  <area  href=CA353E6D5FC5E8AF.htm#OBMKCA353E6D5FC5E8AF shape="polygon" coords="676, 62, 676, 51, 766, 51, 766, 62, 676, 62"   target="_top"  title="A&#160; Model Building Block is a Building Block used to describe and manage the enterprise. It comprises:">
+  
+  <area  href=2a8336f9564b4439.htm#OBMK2A8336F9564B4439 shape="polygon" coords="638, 89, 638, 75, 803, 75, 803, 89, 638, 89"   target="_top"  title="Root abstraction for all the elements used to describe an enterprise architecture. This includes types (applications, org-units) and individuals (enterprise step, software installations)">
+  
+  <area  href="d342d88e5b121401.htm" shape="rect" coords="488, 49, 955, 681"   target="_top"  title="An&#160; Architecture Block is any Model Building Block used to describe an enterprise architecture. This includes types (applications, org-units, ...) and individuals (physical persons, software installations, sites, ...).">
+  
+  <area  href=209c29bb5ed23342.htm#OBMK209C29BB5ED23342 shape="polygon" coords="176, 91, 176, 80, 261, 80, 261, 91, 176, 91"   target="_top"  title="A&#160; Model Namespace is a namespace of Model Building Blocks used to describe both the architecture of the enterprise and Initiatives aimed at designing, developing, running, adapting and maintaining this architecture over time.">
+  
+  <area  href=2ea133cd565c2f7d.htm#OBMK2EA133CD565C2F7D shape="polygon" coords="135, 118, 135, 104, 302, 104, 302, 118, 135, 118"   target="_top"  title="-">
+  
+  <area  href="d342d91a5b121454.htm" shape="rect" coords="121, 78, 316, 434"   target="_top"  title="An&#160; Architecture Namespace is a Model Namespace&#160; that packages Architecture Blocks used to describe the architecture of the enterprise.">
+  
+  <area  href=ca353b065fc5e146.htm#OBMKCA353B065FC5E146 shape="polygon" coords="1758, 310, 1758, 299, 1847, 299, 1847, 310, 1758, 310"   target="_top"  title="A&#160; Categorization Block is a Model Building Block used to provid classification and qualification of other Model Building Blocks.For instance, Tags are used for classification. Constraint Value are used for qualification or quantification.">
+  
+  <area  href="26cd27c763ef2c1b.htm" shape="rect" coords="1723, 297, 1882, 583"   target="_top"  title="A&#160; Constraining Property Type is a class of&#160; Constraining Property.">
+  
+  <area  href=ca353b065fc5e146.htm#OBMKCA353B065FC5E146 shape="polygon" coords="1432, 48, 1432, 37, 1522, 37, 1522, 48, 1432, 48"   target="_top"  title="A&#160; Categorization Block is a Model Building Block used to provid classification and qualification of other Model Building Blocks.For instance, Tags are used for classification. Constraint Value are used for qualification or quantification.">
+  
+  <area  href="16b049676435728e.htm" shape="rect" coords="1375, 36, 1579, 225"   target="_top"  title="A is&#160; Category of Category a means to classify Architecture Categorys.">
+  
+  <area  href="c30bd1505a5d97f9.htm" shape="rect" coords="0, 1, 1909, 880"   target="_top"  title="The&#160; Architecture Model Management domain defines top level constructs used in enterprise architecting: Architecture Blocks, Architecture Namespaces, Architecture Category(ies), Constraint Value, Location.">
+  
+</map>
+<img  src="../images/c30bd1505a5d97f9_c30bd15f5a5d982a_i.png" alt="../images/c30bd1505a5d97f9_c30bd15f5a5d982a_i.png" usemap="#C30BD15F5A5D982A" height="879" width="1909" border=0>
+
+</div>
+<div class="Relationship" id="Relationship2">
+<div id="klmm" style="width: 100vw; height: 100vh;" ></div>
+<!-- <script src="../standard/assets/js/keylines_domain.js"></script> -->
+<script >
+const data = {
+ type: 'LinkChart',
+  items: [
+  //nodes
+    {type: 'node', id:'C30BD1505A5D97F9', t:"Architecture Model Management", sh:'box', d:"The Architecture Model Management domain defines top level constructs used in enterprise architecting: Architecture Blocks, Architecture Namespaces, Architecture Category(ies), Constraint Value, Location."},
+    {type: 'node', id:'7C40A5B455272BB4', t:"Constraint Value", parentId:'C30BD1505A5D97F9', sh:'circle', d:"A Constraint Value is a possible value of a Constraining Property such as a delivery time of 30 minutes, a weight of 20 kg, a high level of confidentiality, stormy conditions."},
+    {type: 'node', id:'D342D91A5B121454', t:"Architecture Namespace", parentId:'209C29BB5ED23342', sh:'circle', d:"An Architecture Namespace is a Model Namespace  that packages Architecture Blocks used to describe the architecture of the enterprise."},
+    {type: 'node', id:'D6CD2C8B5AB98DA5', t:"Information Pattern", sh:'box', d:"The Information Pattern domain describes top level concepts used to describe information."},
+    {type: 'node', id:'24AE4A185ED16AAA', t:"Information Dictionary", parentId:'D6CD2C8B5AB98DA5', sh:'circle', d:"An Information Dictionary is a dictionary of Information Assets used to describe an information architecture. This includes:"},
+    {type: 'node', id:'D342D96C5B12148E', t:"Library", parentId:'D342D91A5B121454', sh:'circle', d:"A Library is a kind of Architecture Namespace used to split HOPEX repository content into several independent modules (aka package)."},
+    {type: 'node', id:'D342D88E5B121401', t:"Architecture Block", parentId:'CA353E6D5FC5E8AF', sh:'circle', d:"An Architecture Block is any Model Building Block used to describe an enterprise architecture. This includes types (applications, org-units, ...) and individuals (physical persons, software installations, sites, ...)."},
+    {type: 'node', id:'EF5DF90463212593', t:"Location Type", parentId:'A4A5B3F855585CE1', sh:'circle', d:"A Location Type is a type of Location that is a geopolitical location."},
+    {type: 'node', id:'8D5E986F552E28D5', t:"Location", parentId:'EBCFAEAC5AD76ED7', sh:'circle', d:"A Location is a geopolitical location anywhere on the earth."},
+    {type: 'node', id:'A67DC9F45F8EB2A9', t:"Reference Dictionary", parentId:'D342D91A5B121454', sh:'circle', d:"A Reference Dictionary is an aspect of Model Namespace that are used as reference libraries used to hold reference materials used to develop architectures."},
+    {type: 'node', id:'F68D26E263B8E425', t:"Environmental Property", parentId:'63F8870255AE1BA2', sh:'circle', d:"An Environmental Property is a characteristic of the environment in which an Enterprise or its sub-systems are required to operate."},
+    {type: 'node', id:'26CD279763EF2B46', t:"Environmental Constraint Type", parentId:'C30BD1505A5D97F9', sh:'circle', d:"An Environmental Constraint Type is a class of  Environmental Property."},
+    {type: 'node', id:'A4A5B3F855585CE1', t:"Architecture Block (Type)", parentId:'D342D88E5B121401', sh:'circle', d:"An Architecture Block (Type) is a type of Architecture Block which is used in the description of the enterprise, such as Processes, Org-Units, Applications."},
+    {type: 'node', id:'16B049676435728E', t:"Category of Category", parentId:'C30BD1505A5D97F9', sh:'circle', d:"A is Category of Category a means to classify Architecture Categorys."},
+    {type: 'node', id:'16B051ED64357695', t:"Asset Category", parentId:'0DC20F4D5E9B5CA9', sh:'circle', d:"An Asset Category is a general purpose Architecture Category used to classify any type of Architecture Block (Type)."},
+    {type: 'node', id:'1BC13E0D63DA441C', t:"Qualifying Value", parentId:'48D2C3A263B56F27', sh:'circle', d:"A Qualifying Value is a Qualifying Value (Abstract) that can be applied to all Architecture Blocks."},
+    {type: 'node', id:'1BC14A1963DA448E', t:"Measurable Property", parentId:'48D2C45C63B57003', sh:'circle', d:"A Measurable Property is a concrete Measurable Property (Abstract) that can be applied to all Architecture Block (Type)s."},
+    {type: 'node', id:'0DC2102F5E9B612D', t:"Schema of Category", parentId:'16B049676435728E', sh:'circle', d:"A Schema of Category is a Top level group of categories that belong to a common domain."},
+    {type: 'node', id:'0DC20F4D5E9B5CA9', t:"Architecture Category", parentId:'C30BD1505A5D97F9', sh:'circle', d:"An Architecture Category is a Categorization Block used to classify Architecture Blocks. Examples are Data Category, Business Line."},
+    {type: 'node', id:'16B049BF643572DC', t:"Category Partition", parentId:'C30BD1505A5D97F9', sh:'circle', d:"A Category Partition is a split of Architecture Category(ies) in non-overlapping classifications of Architecture Block (Type)s."},
+    {type: 'node', id:'EBCFAEAC5AD76ED7', t:"Architecture Block (Individual)", parentId:'D342D88E5B121401', sh:'circle', d:"An Individual which is used in the description of the enterprise."},
+    {type: 'node', id:'48D2BC1A63B567DA', t:"Set of Constraining Properties", parentId:'63F8870255AE1BA2', sh:'circle', d:"A Set of Constraining Properties is a combination of Constraining Propertys."},
+    {type: 'node', id:'48D2BE5C63B56ABF', t:"Set of Constraint Values", parentId:'7C40A5B455272BB4', sh:'circle', d:"A Set of Constraint Values is a combination of Constraint Values."},
+    {type: 'node', id:'48D2C45C63B57003', t:"Measurable Property (Abstract)", parentId:'63F8870255AE1BA2', sh:'circle', d:"A Measurable Property (Abstract) is a Constraining Property that expresses a type of measurement (Time, Mass, Cost, ..) and define the units used for measures (minutes, kg, euros, etc.)."},
+    {type: 'node', id:'71E1DA5B63E44F61', t:"Measurement Type", parentId:'C30BD1505A5D97F9', sh:'circle', d:"A Measurement Type is a class of  measurement."},
+    {type: 'node', id:'48D2C3A263B56F27', t:"Qualifying Value (Abstract)", parentId:'7C40A5B455272BB4', sh:'circle', d:"A Qualifying Value (Abstract) is a possible value of a Measurable Property (Abstract) such as a delivery time of 30 minutes, a weight of 20 kg, a high level of confidentiality."},
+    {type: 'node', id:'89E38D7D5C918091', t:"Sketch", parentId:'C30BD1505A5D97F9', sh:'circle', d:"A Sketch is a rough draft of a model; unformal representation."},
+    {type: 'node', id:'63F8870255AE1BA2', t:"Constraining Property", parentId:'C30BD1505A5D97F9', sh:'circle', d:"A Constraining Property expresses a type of constraint that can be applied to Architecture Blocks."},
+    {type: 'node', id:'26CD27C763EF2C1B', t:"Constraining Property Type", parentId:'C30BD1505A5D97F9', sh:'circle', d:"A Constraining Property Type is a class of  Constraining Property."},
+    {type: 'node', id:'CA353E6D5FC5E8AF', t:"Model Building Block", parentId:'C30BD1505A5D97F9', sh:'circle', d:"A Model Building Block is a Building Block used to describe and manage the enterprise. It comprises:"},
+    {type: 'node', id:'AF4DB12D62993434', t:"Model Block Management", sh:'box', d:""},
+    {type: 'node', id:'9597D7B3620AB751', t:"Class of Model Block", parentId:'AF4DB12D62993434', sh:'circle', d:"A Class of Model Block is a Class that classifies Model Building Blocks."},
+    {type: 'node', id:'AFFEE0F15F60898A', t:"Business Document", parentId:'AF4DB12D62993434', sh:'circle', d:"A Business Document is a document whose lifecycle can be synched to the MEGA repository content: it may be attached to mega objects and a document version bound to a mega object timestamp in the Time Machine. This document can be of any given file format."},
+    {type: 'node', id:'AFFEE0765F6086D4', t:"Tag", parentId:'AF4DB12D62993434', sh:'circle', d:"A Tag is a general classification description which permits characterization of Entitys."},
+    {type: 'node', id:'209C29BB5ED23342', t:"Model Namespace", parentId:'C30BD1505A5D97F9', sh:'circle', d:"A Model Namespace is a namespace of Model Building Blocks used to describe both the architecture of the enterprise and Initiatives aimed at designing, developing, running, adapting and maintaining this architecture over time."},
+    {type: 'node', id:'CA353B065FC5E146', t:"Categorization Block", parentId:'AF4DB12D62993434', sh:'circle', d:"A Categorization Block is a Model Building Block used to provid classification and qualification of other Model Building Blocks."},
+  //edges
+    { type: 'link', id:'7C40A5B455272BB4-63F8871A55AE1C17', id1:'7C40A5B455272BB4', id2:'63F8870255AE1BA2', t:"Qualified Constraint"},
+    { type: 'link', id:'D342D91A5B121454-2B588C2B5EF08EEF', id1:'D342D91A5B121454', id2:'24AE4A185ED16AAA', t:"Included Information Dictionary"},
+    { type: 'link', id:'D342D91A5B121454-A67DCA4F5F8EB365', id1:'D342D91A5B121454', id2:'A67DC9F45F8EB2A9', t:"Included Reference Dictionary"},
+    { type: 'link', id:'D342D91A5B121454-D342D97F5B1214BB', id1:'D342D91A5B121454', id2:'D342D88E5B121401', t:"Owned Architecture Block"},
+    { type: 'link', id:'D342D91A5B121454-D342E13D5B12157D', id1:'D342D91A5B121454', id2:'D342D91A5B121454', t:"Imported Architecture Dictionary"},
+    { type: 'link', id:'D342D91A5B121454-D342E1B55B1215AC', id1:'D342D91A5B121454', id2:'D342D91A5B121454', t:"Included Architecture Dictionary"},
+    { type: 'link', id:'D342D96C5B12148E-C31CEE0C62147DD9', id1:'D342D96C5B12148E', id2:'D342D96C5B12148E', t:"Sub-Library"},
+    { type: 'link', id:'D342D88E5B121401-89E38E275C918176', id1:'D342D88E5B121401', id2:'89E38D7D5C918091', t:"Sketch Description"},
+    { type: 'link', id:'D342D88E5B121401-7DB0E6BF61F87B78', id1:'D342D88E5B121401', id2:'D342D88E5B121401', t:"Referenced Architecture Block"},
+    { type: 'link', id:'8D5E986F552E28D5-EF5DF91E632129AE', id1:'8D5E986F552E28D5', id2:'EF5DF90463212593', t:"Location Type"},
+    { type: 'link', id:'8D5E986F552E28D5-D308D7165A2F67E3', id1:'8D5E986F552E28D5', id2:'8D5E986F552E28D5', t:"Sub-Site"},
+    { type: 'link', id:'F68D26E263B8E425-26CD2A5B63EF2EE3', id1:'F68D26E263B8E425', id2:'26CD279763EF2B46', t:"Environmental Category"},
+    { type: 'link', id:'A4A5B3F855585CE1-DC9407806025FC1C', id1:'A4A5B3F855585CE1', id2:'7C40A5B455272BB4', t:"Qualifying Constraint Value"},
+    { type: 'link', id:'A4A5B3F855585CE1-0DC20F885E9B5E29', id1:'A4A5B3F855585CE1', id2:'0DC20F4D5E9B5CA9', t:"Category of Architecture Block"},
+    { type: 'link', id:'A4A5B3F855585CE1-16B05351643577B3', id1:'A4A5B3F855585CE1', id2:'16B051ED64357695', t:"Category of Asset"},
+    { type: 'link', id:'A4A5B3F855585CE1-83BB8C1A5B3765B5', id1:'A4A5B3F855585CE1', id2:'63F8870255AE1BA2', t:"Applicable Constraint"},
+    { type: 'link', id:'A4A5B3F855585CE1-CACED79A5BD73F9B', id1:'A4A5B3F855585CE1', id2:'A4A5B3F855585CE1', t:"Specialized Block"},
+    { type: 'link', id:'A4A5B3F855585CE1-CACED8645BD7404B', id1:'A4A5B3F855585CE1', id2:'A4A5B3F855585CE1', t:"Realized Block"},
+    { type: 'link', id:'1BC13E0D63DA441C-1BC14AC163DA4539', id1:'1BC13E0D63DA441C', id2:'1BC14A1963DA448E', t:"Qualified Measurable Property"},
+    { type: 'link', id:'0DC20F4D5E9B5CA9-D8260A155F037E30', id1:'0DC20F4D5E9B5CA9', id2:'0DC20F4D5E9B5CA9', t:"Specialized Category"},
+    { type: 'link', id:'0DC20F4D5E9B5CA9-0DC210465E9B6156', id1:'0DC20F4D5E9B5CA9', id2:'16B049676435728E', t:"Category Classification"},
+    { type: 'link', id:'0DC20F4D5E9B5CA9-16B04AD364357411', id1:'0DC20F4D5E9B5CA9', id2:'16B049BF643572DC', t:"Classifying Partition"},
+    { type: 'link', id:'0DC20F4D5E9B5CA9-16B050A8643575B5', id1:'0DC20F4D5E9B5CA9', id2:'0DC2102F5E9B612D', t:"Classifying Schema"},
+    { type: 'link', id:'EBCFAEAC5AD76ED7-EBCFB6435AD772E9', id1:'EBCFAEAC5AD76ED7', id2:'A4A5B3F855585CE1', t:"Architecture Block (Type)"},
+    { type: 'link', id:'EBCFAEAC5AD76ED7-EBCFB9CF5AD77347', id1:'EBCFAEAC5AD76ED7', id2:'7C40A5B455272BB4', t:"Qualifying Constraint Value"},
+    { type: 'link', id:'EBCFAEAC5AD76ED7-167126A16008EFEB', id1:'EBCFAEAC5AD76ED7', id2:'8D5E986F552E28D5', t:"Location at"},
+    { type: 'link', id:'EBCFAEAC5AD76ED7-0F67194C5EBDF6F8', id1:'EBCFAEAC5AD76ED7', id2:'EBCFAEAC5AD76ED7', t:"architecture component"},
+    { type: 'link', id:'48D2BC1A63B567DA-48D2BC7463B568C3', id1:'48D2BC1A63B567DA', id2:'63F8870255AE1BA2', t:"Combined Constraining Property"},
+    { type: 'link', id:'48D2BE5C63B56ABF-48D2C15663B56DC6', id1:'48D2BE5C63B56ABF', id2:'48D2BC1A63B567DA', t:"Qualified Constraint Set"},
+    { type: 'link', id:'48D2BE5C63B56ABF-48D2C11D63B56D42', id1:'48D2BE5C63B56ABF', id2:'7C40A5B455272BB4', t:"Combined Constraint Value"},
+    { type: 'link', id:'48D2C45C63B57003-499356EE639075E0', id1:'48D2C45C63B57003', id2:'71E1DA5B63E44F61', t:"Measurement Category"},
+    { type: 'link', id:'48D2C3A263B56F27-48D2C76263B5722A', id1:'48D2C3A263B56F27', id2:'48D2C45C63B57003', t:"Qualified Property"},
+    { type: 'link', id:'89E38D7D5C918091-6712697E5EC92663', id1:'89E38D7D5C918091', id2:'D342D88E5B121401', t:"Sketch Item"},
+    { type: 'link', id:'63F8870255AE1BA2-26CD28D363EF2DC6', id1:'63F8870255AE1BA2', id2:'26CD27C763EF2C1B', t:"Constraint Category"},
+    { type: 'link', id:'CA353E6D5FC5E8AF-9597D7C1620AB7A9', id1:'CA353E6D5FC5E8AF', id2:'9597D7B3620AB751', t:"Class of Model Block"},
+    { type: 'link', id:'CA353E6D5FC5E8AF-05B0DF0C6006C0D8', id1:'CA353E6D5FC5E8AF', id2:'AFFEE0F15F60898A', t:"Attached Document"},
+    { type: 'link', id:'CA353E6D5FC5E8AF-05B0DF7E6006C158', id1:'CA353E6D5FC5E8AF', id2:'AFFEE0765F6086D4', t:"Annotation Tag"},
+    { type: 'link', id:'CA353E6D5FC5E8AF-F594F72E61F736E1', id1:'CA353E6D5FC5E8AF', id2:'CA353E6D5FC5E8AF', t:"Referenced Model Block"},
+    { type: 'link', id:'209C29BB5ED23342-CA353B355FC5E1B6', id1:'209C29BB5ED23342', id2:'CA353B065FC5E146', t:"Owned Categorization Block"},
+    { type: 'link', id:'209C29BB5ED23342-CA353EB75FC5E9B2', id1:'209C29BB5ED23342', id2:'CA353E6D5FC5E8AF', t:"Owned Model Building Block"}
+  ]
+}
+</script>
+<script src="../standard/assets/js/keylines_domain.js" type="module"></script>
+</div>
+</section>
+<a class="object-section-anchor" id="des"></a>
+<section class="object-section">
+<h4>CONCEPT DESCRIPTIONS</h4> 
+<hr class="sectionbreak" />
+<h5>Concrete Concepts</h5>
+<table class="table  table-set-col-width">
+<thead>
+<tr><th>Concept</th><th>Description</th><th>HOPEX Metaclass</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="16B051ED64357695.htm" target="_top">Asset Category</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Asset Category</b> is a general purpose <a href="0dc20f4d5e9b5ca9.htm" target="_top"><b><u>Architecture Category</u></b></a> used to classify any type of <a href="A4A5B3F855585CE1.htm" target="_top"><b><u>Architecture Block (Type)</u></b></a>.</div><div align="left" style="min-height: 12pt; ">The &quot;Strategic&quot;, &quot;Operational&quot; and &quot;Support&quot; categories are examples of&#160;<b> Asset Category</b> that can be applied to <a href="b181b98c54891882.htm" target="_top"><b><u>Capability</u></b></a>, <a href="d682ef5e56144e77.htm" target="_top"><b><u>Process</u></b></a>, <a href="e6f250185f772ee1.htm" target="_top"><b><u>Information Object</u></b></a>, <a href="959320325ee7fe24.htm" target="_top"><b><u>Policy</u></b></a>, etc.</div>       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="A603361756841139.htm" target="_top">Architecture Category</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_representation_type.ico.gif"/>&nbsp;
+<a  href="49935a3a639078dc.htm" target="_top">Description Note</a></td>
+<td class="description-text">A&#160;<b> Description Note</b> is an annotation or remark providing a comment or an explanation on a text or a drawing.&#160;<b> Description Note</b>s can be of different types: Remark, Question, Documentation, Evolution, Correction, Anomaly, Technical Specification , ...       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="EBB2EBC2328A0001.htm" target="_top">Note</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="26cd279763ef2b46.htm" target="_top">Environmental Constraint Type</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Environmental Constraint Type</b> is a class of&#160; <a href="f68d26e263b8e425.htm" target="_top"><b><u>Environmental Property</u></b></a>.</div><div align="left" style="min-height: 12pt; ">Example: PESTEL (political, economic, social, environmental, legal),&#160; physical conditions (weather conditions, terrain conditions,)</div><div align="left" style="min-height: 12pt; ">It is used to group <a href="f68d26e263b8e425.htm" target="_top"><b><u>Environmental Property</u></b></a>(ies) by domain of concerns represented by <a href="499356ab63907522.htm" target="_top"><b><u>Schema of Measurement</u></b></a>.</div>       </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="f68d26e263b8e425.htm" target="_top">Environmental Property</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Environmental Property</b> is a characteristic of the environment in which an Enterprise or its sub-systems are required to operate.</div><div align="left" style="min-height: 12pt; ">Examples are Terrain Type (e.g. muddy, frozen ground, deep snow, etc.), light conditions (e.g. broad daylight, dusk, moonlit, etc.), weather condition, polical conditions (political stability, level of education), economical conditions (exchange rates, inflation rate).</div>       </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="f68d3c3063b9e8f3.htm" target="_top">Environmental Value</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Environmental Value</b> is a specific value of an <a href="f68d26e263b8e425.htm" target="_top"><b><u>Environmental Property</u></b></a>.</div><div align="left" style="min-height: 12pt; "><b>&#160;Environmental Value</b>s are used as constraints on <a href="d342d88e5b121401.htm" target="_top"><b><u>Architecture Block</u></b></a>s in the context of non-functional requirement analysis and <a href="abba950e62a94390.htm" target="_top"><b><u>Value Proposition</u></b></a> analysis.</div><div align="left" style="min-height: 12pt; ">Examples:</div><div align="left" style="min-height: 12pt; ">- Muddy, frozen ground, deep snow (Terrain Type)</div><div align="left" style="min-height: 12pt; ">- Broad daylight, dusk, moonlit&#160; (Light condition)</div><div align="left" style="min-height: 12pt; ">- </div>       </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="d342d96c5b12148e.htm" target="_top">Library</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Library</b> is a kind of <a href="d342d91a5b121454.htm" target="_top"><b><u>Architecture Namespace</u></b></a> used to split HOPEX repository content into several independent modules (aka package).</div><div align="left" style="min-height: 12pt; ">They allow virtual partitions of the repository. In particular, <a href="d342d88e5b121401.htm" target="_top"><b><u>Architecture Block</u></b></a>s owned by different&#160;<b> Library</b>(ies) can have the same name (namespacing).</div>       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="7221815F3D210049.htm" target="_top">Library</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="8d5e986f552e28d5.htm" target="_top">Location</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Location</b> is a geopolitical location anywhere on the earth.</div><div align="left" style="min-height: 12pt; ">Examples: </div><div align="left" style="min-height: 12pt; ">- France</div><div align="left" style="min-height: 12pt; ">- Paris</div><div align="left" style="min-height: 12pt; ">- Washington DC</div><div align="left" style="min-height: 12pt; ">- Cairo</div><div align="left" style="min-height: 12pt; ">- Buenos-Aires</div><div align="left" style="min-height: 12pt; ">- Asia</div><i><ul>References:<li><a href="https://15926.blog/topics/data-model/index.htm#SpatialLocation"><img src="../standard/extr.ico.gif">&nbsp;ISO 15926 - SpatialLocation</a></li> <li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ActualLocation"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - ActualLocation</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="b1edb2612c1401d3.htm" target="_top">Site</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="ef5df90463212593.htm" target="_top">Location Type</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Location Type</b> is a type of <a href="8d5e986f552e28d5.htm" target="_top"><b><u>Location</u></b></a> that is a geopolitical location.</div><div align="left" style="min-height: 12pt; ">Example:</div><div align="left" style="min-height: 12pt; ">- Continent</div><div align="left" style="min-height: 12pt; ">- Country</div><div align="left" style="min-height: 12pt; ">- City</div><div align="left" style="min-height: 12pt; ">- District</div><div align="left" style="min-height: 12pt; ">- Street</div><i><ul>References:<li><a href="https://15926.blog/topics/data-model/index.htm#ClassOfRelativeLocation"><img src="../standard/extr.ico.gif">&nbsp;ISO 15926 - ClassOfRelativeLocation</a></li> <li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Location"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - Location</a></li></ul></i>        </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="1bc14a1963da448e.htm" target="_top">Measurable Property</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Measurable Property</b> is a concrete <a href="48d2c45c63b57003.htm" target="_top"><b><u>Measurable Property (Abstract)</u></b></a> that can be applied to all <a href="A4A5B3F855585CE1.htm" target="_top"><b><u>Architecture Block (Type)</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">For instance, &quot;Cost&quot; can be applied to all <a href="d342d88e5b121401.htm" target="_top"><b><u>Architecture Block</u></b></a>s, while &quot;weight&quot; likely applies only to <a href="c30bf4015a5da72b.htm" target="_top"><b><u>Hardware System</u></b></a>s.</div>       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="a474be28569f0b2e.htm" target="_top">KPI Dimension</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_representation_type.ico.gif"/>&nbsp;
+<a  href="918dd97661e60417.htm" target="_top">Measure Unit</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Measure Unit</b> defines the units used for <a href="48d2c45c63b57003.htm" target="_top"><b><u>Measurable Property (Abstract)</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">Examples are minutes (Time Measure Type), kg (Mass Measure Type) , euros (Amount Measure Type)&#160;&#160; etc.</div>       </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="71e1da5b63e44f61.htm" target="_top">Measurement Type</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Measurement Type</b> is a class of&#160; measurement.</div><div align="left" style="min-height: 12pt; ">Example: Performance, Security, Cost.</div><div align="left" style="min-height: 12pt; ">It is used to group <a href="48d2c45c63b57003.htm" target="_top"><b><u>Measurable Property (Abstract)</u></b></a>(ies) by domain of concerns represented by <a href="499356ab63907522.htm" target="_top"><b><u>Schema of Measurement</u></b></a>.</div>       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="20ae273156a14ac0.htm" target="_top">KPI Category</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="1bc13e0d63da441c.htm" target="_top">Qualifying Value</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Qualifying Value</b> is a <a href="48d2c3a263b56f27.htm" target="_top"><b><u>Qualifying Value (Abstract)</u></b></a> that can be applied to all <a href="d342d88e5b121401.htm" target="_top"><b><u>Architecture Block</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">For instance, &quot;Cost&quot; is a&#160;<b> Qualifying Value</b>.</div>       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="4d036564569f5110.htm" target="_top">KPI</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="499356ab63907522.htm" target="_top">Schema of Measurement</a></td>
+<td class="description-text">A&#160;<b> Schema of Measurement</b> is a top level grouping of <a href="63f8870255ae1ba2.htm" target="_top"><b><u>Constraining Property</u></b></a>(ies) that belong to a common domain.       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="20ae26f556a14a5f.htm" target="_top">KPI Categorization Schema</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="48d2bc1a63b567da.htm" target="_top">Set of Constraining Properties</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Set of Constraining Properties</b> is a combination of <a href="63f8870255ae1ba2.htm" target="_top"><b><u>Constraining Property</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">For example, &quot;delivery time&quot; at &quot;appropriate cost&quot; in &quot;stormy conditions&quot; is a&#160;<b> Set of Constraining Properties</b>.</div><i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#MeasurementSet"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - MeasurementSet</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="4d035d28569f4d53.htm" target="_top">Composite KPI Dimension</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="48d2be5c63b56abf.htm" target="_top">Set of Constraint Values</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Set of Constraint Values</b> is a combination of <a href="7c40a5b455272bb4.htm" target="_top"><b><u>Constraint Value</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">Example: delivery time of 30 minutes, at a cost ranging between $8.50 and $10, in stormy conditions.</div><i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ActualMeasurementSet"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - ActualMeasurementSet</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="4d035b07569f4c03.htm" target="_top">Composite KPI</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="89E38D7D5C918091.htm" target="_top">Sketch</a></td>
+<td class="description-text">A&#160;<b> Sketch</b> is a rough draft of a model; unformal representation.<i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#highleveloperationalconcept"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - HighLevelOperationalConcept</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="3870391B57E561E8.htm" target="_top">Sketch</a></td>
+</tr>  
+</tbody>
+</table>
+<hr class="sectionbreak" />
+<h5>Abstract Concepts</h5>
+<table class="table  table-set-col-width">
+<thead >
+<tr><th>Concept</th><th>Description</th><th>HOPEX Metaclass</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="d342d88e5b121401.htm" target="_top">Architecture Block</a></td>
+<td class="description-text">An&#160;<b> Architecture Block</b> is any <a href="CA353E6D5FC5E8AF.htm" target="_top"><b><u>Model Building Block</u></b></a> used to describe an enterprise architecture. This includes types (applications, org-units, ...) and individuals (physical persons, software installations, sites, ...).<i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#UAFElement"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - UAFElement</a></li> <li><a href="https://pubs.opengroup.org/togaf-standard/architecture-content/chap04.html#tag_04_02_01"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Architecture Building Blocks</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="2a8336f9564b4439.htm" target="_top">Enterprise Description Building Block</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="ebcfaeac5ad76ed7.htm" target="_top">Architecture Block (Individual)</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An <a href="348f55f661962ecc.htm" target="_top"><b><u>Individual</u></b></a> which is used in the description of the enterprise.</div><div align="left" style="min-height: 12pt; "><b>&#160;Architecture Block (Individual)</b> can be classified by <a href="7c40a5b455272bb4.htm" target="_top"><b><u>Constraint Value</u></b></a></div><div align="left" style="min-height: 12pt; "></div><div align="left" style="min-height: 12pt; "></div><i><ul>References:<li><a href="https://pubs.opengroup.org/togaf-standard/architecture-content/chap04.html#tag_04_02_01"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Architecture Building Blocks</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="BE06BEE259C84713.htm" target="_top">Individual Enterprise Description Block</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="A4A5B3F855585CE1.htm" target="_top">Architecture Block (Type)</a></td>
+<td class="description-text">An&#160;<b> Architecture Block (Type)</b> is a type of <a href="d342d88e5b121401.htm" target="_top"><b><u>Architecture Block</u></b></a> which is used in the description of the enterprise, such as <a href="d682ef5e56144e77.htm" target="_top"><b><u>Process</u></b></a>es, <a href="7c408aa155270eea.htm" target="_top"><b><u>Org-Unit</u></b></a>s, <a href="bcebd8e9549144db.htm" target="_top"><b><u>Application</u></b></a>s.<i><ul>References:<li><a href="https://pubs.opengroup.org/togaf-standard/architecture-content/chap04.html#tag_04_02_01"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Architecture Building Blocks</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="5499593D4B2700CE.htm" target="_top">Class of Enterprise Description Building Block</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="0dc20f4d5e9b5ca9.htm" target="_top">Architecture Category</a></td>
+<td class="description-text">An&#160;<b> Architecture Category</b> is a <a href="ca353b065fc5e146.htm" target="_top"><b><u>Categorization Block</u></b></a> used to classify <a href="d342d88e5b121401.htm" target="_top"><b><u>Architecture Block</u></b></a>s. Examples are <a href="6cce7d6d5a2e4834.htm" target="_top"><b><u>Data Category</u></b></a>, <a href="ae7c99be60234bcf.htm" target="_top"><b><u>Business Line</u></b></a>.       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="efdcf3f456721e72.htm" target="_top">Category of Architecture Block</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="d342d91a5b121454.htm" target="_top">Architecture Namespace</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Architecture Namespace</b> is a <a href="209c29bb5ed23342.htm" target="_top"><b><u>Model Namespace</u></b></a>&#160; that packages <a href="d342d88e5b121401.htm" target="_top"><b><u>Architecture Block</u></b></a>s used to describe the architecture of the enterprise.</div><div align="left" style="min-height: 12pt; ">This includes&#160;<b> Information Asset</b>, <a href="d682ef5e56144e77.htm" target="_top"><b><u>Process</u></b></a>es, <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a>s, <a href="c30bf4015a5da72b.htm" target="_top"><b><u>Hardware System</u></b></a>s, <a href="910196ca550a2ec2.htm" target="_top"><b><u>Organization</u></b></a>s, etc.</div><div align="left" style="min-height: 12pt; "><b>&#160;Architecture Namespace</b>s are used to split HOPEX repository content into several independent modules (aka package).</div><div align="left" style="min-height: 12pt; ">They allow virtual partitions of the repository. In particular, <a href="d342d88e5b121401.htm" target="_top"><b><u>Architecture Block</u></b></a>s owned by different&#160;<b> Architecture Namespace</b>(ies) can have the same name (namespacing).</div><div align="left" style="min-height: 12pt; ">There are two main kinds of&#160;<b> Architecture Namespace</b>: <a href="b181b82a54891668.htm" target="_top"><b><u>Enterprise</u></b></a> and <a href="d342d96c5b12148e.htm" target="_top"><b><u>Library</u></b></a>.</div>       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="2ea133cd565c2f7d.htm" target="_top">Architecture Building Block Container</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="16b049676435728e.htm" target="_top">Category of Category</a></td>
+<td class="description-text">A is&#160;<b> Category of Category</b> a means to classify <a href="0dc20f4d5e9b5ca9.htm" target="_top"><b><u>Architecture Category</u></b></a>s.       </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="16b049bf643572dc.htm" target="_top">Category Partition</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Category Partition</b> is a split of <a href="0dc20f4d5e9b5ca9.htm" target="_top"><b><u>Architecture Category</u></b></a>(ies) in non-overlapping classifications of <a href="A4A5B3F855585CE1.htm" target="_top"><b><u>Architecture Block (Type)</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">For instance, the &quot;Strategic&quot;, &quot;Operational&quot; and &quot;Support&quot; categories are exclusive categories that belongs to the &quot;Asset Functional Classification&quot; partition.</div>       </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="63f8870255ae1ba2.htm" target="_top">Constraining Property</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Constraining Property</b> expresses a type of constraint that can be applied to <a href="d342d88e5b121401.htm" target="_top"><b><u>Architecture Block</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">These constraints can be either <a href="48d2c45c63b57003.htm" target="_top"><b><u>Measurable Property (Abstract)</u></b></a> (Time, Mass, Cost, ..), <a href="f68d26e263b8e425.htm" target="_top"><b><u>Environmental Property</u></b></a>s (Terrain Type, Light conditions, Weather conditions) or a grouping of these (<a href="48d2bc1a63b567da.htm" target="_top"><b><u>Set of Constraining Properties</u></b></a>).</div><div align="left" style="min-height: 12pt; "><b>&#160;Constraining Property</b>s are used to constrain <a href="d342d88e5b121401.htm" target="_top"><b><u>Architecture Block</u></b></a>s in the context of non-functional requirement analysis and <a href="abba950e62a94390.htm" target="_top"><b><u>Value Proposition</u></b></a> analysis.</div><i><ul>References:<li><a href="https://method.demomega.com/MM-OVERVIEW/pages/architecture-content/chap02.html#tag_02_04"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Content Metamodel - Measure</a></li> <li><a href="../resources/Ackoff-Choice-Communication-and-Conflict.pdf#MorphologicalProperty"><img src="../standard/extr.ico.gif">&nbsp;Russell Ackoff - Choice &amp; Communication - MorphologicalProperty</a></li> <li><a href="https://en.wikipedia.org/wiki/List_of_system_quality_attributes"><img src="../standard/extr.ico.gif">&nbsp;Wikipeddia - List of quality attributes</a></li> <li><a href="https://en.wikipedia.org/wiki/Measurement"><img src="../standard/extr.ico.gif">&nbsp;Wikipedia - Measurement</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="4d035025569f42f3.htm" target="_top">KPI Dimension Building Block</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="26cd27c763ef2c1b.htm" target="_top">Constraining Property Type</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Constraining Property Type</b> is a class of&#160; <a href="63f8870255ae1ba2.htm" target="_top"><b><u>Constraining Property</u></b></a>.</div><div align="left" style="min-height: 12pt; ">Example: measurement types (Performance, Security, Cost), PESTEL (political, economic, social, environmental, legal)</div><div align="left" style="min-height: 12pt; ">It is used to group <a href="63f8870255ae1ba2.htm" target="_top"><b><u>Constraining Property</u></b></a>(ies) by domain of concerns represented by <a href="499356ab63907522.htm" target="_top"><b><u>Schema of Measurement</u></b></a>.</div><i><ul>References:<li><a href="https://15926.blog/topics/data-model/index.htm#ClassOfProperty"><img src="../standard/extr.ico.gif">&nbsp;ISO 15926 - ClassOfProperty</a></li> <li><a href="../resources/Ackoff-Choice-Communication-and-Conflict.pdf#FunctionalClass"><img src="../standard/extr.ico.gif">&nbsp;Russell Ackoff - Choice &amp; Communication - FunctionalClass</a></li></ul></i>        </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="7c40a5b455272bb4.htm" target="_top">Constraint Value</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Constraint Value</b> is a possible value of a <a href="63f8870255ae1ba2.htm" target="_top"><b><u>Constraining Property</u></b></a> such as a delivery time of 30 minutes, a weight of 20 kg, a high level of confidentiality, stormy conditions.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Constraint Value</b> is either a single measure (<a href="48d2c3a263b56f27.htm" target="_top"><b><u>Qualifying Value (Abstract)</u></b></a>: a weight of 20 kg), an <a href="f68d3c3063b9e8f3.htm" target="_top"><b><u>Environmental Value</u></b></a> (stormy conditions.) or a <a href="48d2be5c63b56abf.htm" target="_top"><b><u>Set of Constraint Values</u></b></a>.</div><div align="left" style="min-height: 12pt; "><b>&#160;Constraint Value</b>s are used to constrain <a href="d342d88e5b121401.htm" target="_top"><b><u>Architecture Block</u></b></a>s in the context of non-functional requirement analysis and <a href="abba950e62a94390.htm" target="_top"><b><u>Value Proposition</u></b></a> analysis.</div><i><ul>References:<li><a href="https://www.britannica.com/topic/measurement-scale"><img src="../standard/extr.ico.gif">&nbsp;Britannica - Measurement scale</a></li> <li><a href="https://15926.blog/topics/data-model/index.htm#Property"><img src="../standard/extr.ico.gif">&nbsp;ISO 15926 - Property</a></li> <li><a href="https://en.wikipedia.org/wiki/List_of_system_quality_attributes"><img src="../standard/extr.ico.gif">&nbsp;Wikipeddia - List of quality attributes</a></li> <li><a href="https://en.wikipedia.org/wiki/Level_of_measurement"><img src="../standard/extr.ico.gif">&nbsp;Wikipedia - Level of measurement</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="4d035344569f43cd.htm" target="_top">KPI Building Block</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="48d2c45c63b57003.htm" target="_top">Measurable Property (Abstract)</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Measurable Property (Abstract)</b> is a <a href="63f8870255ae1ba2.htm" target="_top"><b><u>Constraining Property</u></b></a> that expresses a type of measurement (Time, Mass, Cost, ..) and define the units used for measures (minutes, kg, euros, etc.).</div><div align="left" style="min-height: 12pt; ">Example:</div><div align="left" style="min-height: 12pt; ">- Time to deliver in minutes.</div><div align="left" style="min-height: 12pt; ">- Delivery cost in kilo Euros.</div><div align="left" style="min-height: 12pt; "><b>&#160;Measurable Property (Abstract)</b>s are described by <a href="918dd97661e60417.htm" target="_top"><b><u>Measure Unit</u></b></a>: kg, Liter, Gallon, Hour, Minute.</div><div align="left" style="min-height: 12pt; ">HOPEX provides multiple concrete implementation of&#160;<b> Measurable Property (Abstract)</b> such as <a href="1bc14a1963da448e.htm" target="_top"><b><u>Measurable Property</u></b></a> or <a href="019148f660103c7d.htm" target="_top"><b><u>Flow Measure Type</u></b></a>.</div><div align="left" style="min-height: 12pt; "><b>&#160;Measurable Property (Abstract)</b>s are used to constrain <a href="d342d88e5b121401.htm" target="_top"><b><u>Architecture Block</u></b></a>s in the context of non-functional requirement analysis and <a href="abba950e62a94390.htm" target="_top"><b><u>Value Proposition</u></b></a> analysis.</div><i><ul>References:<li><a href="https://15926.blog/topics/data-model/index.htm#ClassOfProperty"><img src="../standard/extr.ico.gif">&nbsp;ISO 15926 - ClassOfProperty</a></li> <li><a href="https://en.wikipedia.org/wiki/List_of_system_quality_attributes"><img src="../standard/extr.ico.gif">&nbsp;Wikipeddia - List of quality attributes</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="a474a69b569f0899.htm" target="_top">Elementary KPI Dimension</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="48d2c3a263b56f27.htm" target="_top">Qualifying Value (Abstract)</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Qualifying Value (Abstract)</b> is a possible value of a <a href="48d2c45c63b57003.htm" target="_top"><b><u>Measurable Property (Abstract)</u></b></a> such as a delivery time of 30 minutes, a weight of 20 kg, a high level of confidentiality.</div><div align="left" style="min-height: 12pt; ">It represents how much there is or how many there are of something that you can quantify according to its <a href="48d2c45c63b57003.htm" target="_top"><b><u>Measurable Property (Abstract)</u></b></a>.</div><div align="left" style="min-height: 12pt; "><b>&#160;Qualifying Value (Abstract)</b>s are used as constraints on <a href="d342d88e5b121401.htm" target="_top"><b><u>Architecture Block</u></b></a>s in the context of non-functional requirement analysis and <a href="abba950e62a94390.htm" target="_top"><b><u>Value Proposition</u></b></a> analysis.</div><i><ul>References:<li><a href="https://15926.blog/topics/data-model/index.htm#Property"><img src="../standard/extr.ico.gif">&nbsp;ISO 15926 - Property</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="4d0355a2569f48c1.htm" target="_top">Elementary KPI</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="a67dc9f45f8eb2a9.htm" target="_top">Reference Dictionary</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Reference Dictionary</b> is an aspect of <a href="209c29bb5ed23342.htm" target="_top"><b><u>Model Namespace</u></b></a> that are used as reference libraries used to hold reference materials used to develop architectures.</div><div align="left" style="min-height: 12pt; ">Example:</div><div align="left" style="min-height: 12pt; ">- <a href="81c3ab5a6054f637.htm" target="_top"><b><u>Vendor Catalog</u></b></a></div><div align="left" style="min-height: 12pt; ">- <a href="445e5c3360ec693d.htm" target="_top"><b><u>Regulatory Framework</u></b></a></div><div align="left" style="min-height: 12pt; ">- </div><i><ul>References:<li><a href="https://pubs.opengroup.org/togaf-standard/architecture-content/chap07.html#tag_07_03"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Method - Reference Libraries</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="317c47ff5ea8636e.htm" target="_top">Reference Architecture Container</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="0dc2102f5e9b612d.htm" target="_top">Schema of Category</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Schema of Category</b> is a Top level group of categories that belong to a common domain.</div><div align="left" style="min-height: 12pt; ">For instance, the GDPR categorization schema groups all categories relevant to GDPR such as data categories, sensitive activities.</div>       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="c417c63c56733d5e.htm" target="_top">Categorization Schema</a></td>
+</tr>  
+</tbody>
+</table>
+<section>
+
+</div>
+<button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button>
+<script>window.onscroll = function() {scrollFunction()};$(document).on('click', 'a[href^="#"]', function (event) {event.preventDefault();$('html, body').animate({scrollTop: $($.attr(this, 'href')).offset().top}, 500);});function showDiagOnClick(elem){ var x = document.getElementsByClassName('Relationship');var e = elem.getAttribute("value"); for (var i=0; i < x.length ;i++){x[i].style.display="none"; if (x[i].id == e){x[i].style.display="block";x[i].style.textAlign="left";}}}
+</script></html>

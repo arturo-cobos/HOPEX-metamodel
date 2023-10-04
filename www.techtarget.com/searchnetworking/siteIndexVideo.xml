@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
+    <url>
+        <loc>https://www.techtarget.com/searchnetworking/video/Gauge-some-of-the-top-SD-WAN-pros-and-cons</loc>
+        <video:video>
+            <video:title>Gauge some of the top SD-WAN pros and cons</video:title>
+            <video:publication_date>2019-11-26T14:19:00-05:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/GNpIMU8naik/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=GNpIMU8naik</video:player_loc>
+            <video:duration>163</video:duration>
+            <video:description>This video explains some of the major SD-WAN pros and cons, including improved application performance, security and troubleshooting.</video:description>
+        </video:video>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchnetworking/video/An-overview-of-how-BGP-works</loc>
+        <video:video>
+            <video:title>An overview of how BGP works</video:title>
+            <video:publication_date>2019-10-31T10:57:00-04:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/A1KXPpqlNZ4/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=A1KXPpqlNZ4</video:player_loc>
+            <video:duration>128</video:duration>
+            <video:description>Border Gateway Protocol makes the internet work, but how does BGP work? This animated video explains the basics of BGP and discusses its role in the internet.</video:description>
+        </video:video>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchnetworking/video/The-pros-and-cons-of-SD-WAN-vs-MPLS</loc>
+        <video:video>
+            <video:title>The pros and cons of SD-WAN vs. MPLS</video:title>
+            <video:publication_date>2019-09-25T14:55:00-04:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/-vOcMthz9CQ/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=-vOcMthz9CQ</video:player_loc>
+            <video:duration>231</video:duration>
+            <video:description>This video discusses the differences between SD-WAN and MPLS and explains why a hybrid WAN architecture -- that uses both technologies -- might be the best fit.</video:description>
+        </video:video>
+    </url>
+</urlset>

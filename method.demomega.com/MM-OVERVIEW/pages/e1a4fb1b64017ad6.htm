@@ -1,0 +1,937 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="keywords" content="">
+<meta name="description" content="">    
+<LINK REL="icon" HREF="../standard/assets/img/favicon.ico">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/bootstrap.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nav.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/eaportal.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/font-awesome.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/animate.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/datatables.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/grid.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nae.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/custom.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/chosen.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/prism.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery.dataTables.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jsTreeStyle.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.theme.css" media="screen" />
+<script type="text/javascript" src="../standard/assets/js/jquery-3.2.1.min.js" ></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-ui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.columnFilter.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3-force.v2.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.gui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.search.js"></script> 
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.util.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-2.1.1.min.js"></script>
+<script src="../standard/assets/js/ws_zoomtemplate_firefox.js"></script>
+<script src="../standard/assets/js/bootstrap.min.js"></script>
+<script src="../standard/assets/js/datatables.min.js"></script>
+<script src="../standard/assets/js/moment.min.js"></script>
+<script src="../standard/assets/js/datetime-moment.js"></script>
+<script src="../standard/assets/js/chartjs.min.js"></script>
+<script src="../standard/assets/js/searchindexcontent.json"></script>
+<script src="../standard/assets/js/anls.js"></script>
+<script src="../../../cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script src="../standard/assets/js/gauge.js"></script> 
+<script src="../standard/assets/js/domesticApi.js"></script> 
+<script src="../standard/assets/js/piecelabel.js"></script>
+<script src="../standard/assets/js/popper.min.js"></script>
+<script src="../standard/assets/js/custom.js"></script>
+<script src="../standard/assets/js/chosen.jquery.js"></script>
+<script src="../standard/assets/js/prism.js"></script>
+<script src="../standard/assets/js/init-chosen.js"></script>
+<script src="../standard/assets/js/chart-data-flow.js"></script>
+<script src="../standard/assets/js/chart-data-gantt.js"></script>
+<script type="module" src="../standard/assets/js/Fuse.esm.min.js"></script>
+<script type="module">
+import Fuse from '../standard/assets/js/Fuse.esm.min.js';
+$(document).ready(function () {
+console.log('getjson');
+window.$.getJSON('../standard/assets/js/searchindexcontent.json', function (response) {
+console.log('getjson ok');
+var isIndex = "";
+var url = window.location.pathname;
+var filename = url.substring(url.lastIndexOf('/')+1);
+if( filename.includes("index") || filename === "" ){
+isIndex = "pages/";
+} else {
+isIndex = "";
+}
+const fuse = new Fuse(response, {
+keys: ['title','text'],
+shouldSort: true,
+includeMatches : true,
+findAllMatches : true
+});
+$('#search-fuse').on('keyup', function () {
+let result = fuse.search($(this).val());
+console.log(result);
+let resultdiv = $('div.searchresults-fuse');
+if (result.length === 0) {
+resultdiv.hide();
+} else {
+resultdiv.empty();
+resultdiv.append('<table class="table-search" width="100%" cellspacing="0"><thead ><tr><th>Name</th><th>Object Type</th><th>Modification date</th></tr></thead><tbody>');
+
+for (let obj in result.slice(0,10)) {
+
+let searchObj = '<tr><td><a href="./'+ isIndex + result[obj].item.url + '">' + result[obj].item.title +'</a></td><td>' + result[obj].item.ObjectType + '</td><td>' + result[obj].item.ModificationDate + '</td></tr>' ;
+
+
+resultdiv.find('tbody').append(searchObj);
+}
+resultdiv.append('</tbody></table>');
+resultdiv.show();
+}
+});
+});
+});
+</script>
+<title>HOPEX Metamodel Overview (Beta Version)</title>
+</head>
+<nav class="navbar navbar-expand-md navbar-dark  navbar-mega"><!-- Brand --><!--<a class="navbar-brand" href="#">Navbar</a>--><a class="" href="../index.htm"><img class="logo-mega" src="../standard/assets/img/logo.png"  alt="">(Beta Version)</a><!-- Toggler/collapsibe Button --><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><!-- Navbar links -->
+<div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsibleNavbar"><div class="col-sm-auto col-md-auto col-lg-5"></div>
+<div class="col-sm-auto">
+<ul class="navbar-nav">      
+<li><a class="dropdown-item" href="ad30ce115ebf7e90.htm">EA Grid</a></li> 
+<li><a class="dropdown-item" href="fdd5018459bc3c6a.htm">EA Domains</a></li> 
+<li><a class="dropdown-item" href="07e731775ecc93f4.htm">Solutions</a></li> 
+<li><a class="dropdown-item" href="c5dfc62c54810c2c.htm">Glossary</a></li> 
+<li class="nav-item dropdown mx-1">
+<a class="nav-link" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</a>
+<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<li><a class="dropdown-item" href="5446555d5f88c32e.htm">Outcome Driven Metamodel</a></li> 
+<li><a class="dropdown-item" href="e1ccfc295f8f7b90.htm">Playbooks</a></li> 
+<li><a class="dropdown-item" href="42bc992862d20ea7.htm">Framework Mappings</a></li> 
+<li><a class="dropdown-item" href="e93aebb35fa20550.htm">Metamodel Patterns</a></li> 
+<li><a class="dropdown-item" href="d599fe87602b2b85.htm">References</a></li> 
+<li><a class="dropdown-item" href="333f3a7f5dde11de.htm">Legend</a></li> 
+</ul>									                                            
+</li>
+</ul>
+</div>
+<div class="col-sm-auto"><a class="nav-link search" href="#" onclick=showHideSearch("search-section-fuse")><i class="fa fa-search mr-1 form-control-feedback"></i></a></div>
+</div>
+</nav>
+<div id="search-section-fuse" style="display:none">>
+<div class="search_header"><span class="closesearch">&times;</span>
+<nav class="breadcrumb">
+<a class="breadcrumb-item" href="../index.htm">Home </a> 
+<span class="breadcrumb-item active">Search</span> 
+</nav>
+</div>
+<input id="search-fuse" placeholder="Search..."  name="q" onfocus="this.value=''" type="search">
+<div class="searchresults-fuse"></div>
+</div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>function showHideSearch(elementId) {var contentDivs = document.getElementsByClassName('content');var footerDivs = document.getElementsByClassName('footer'); var containerDivs = document.getElementsByClassName('container');var containerfluidDivs = document.getElementsByClassName('container-fluid');var x = document.getElementById(elementId);if (x.style.display === "none") {x.style.display = "block";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "none";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "none";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "none";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "none";}} else {x.style.display = "none";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "block";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "block";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "block";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "block";}}} ;<!-- END WIDGET DRILL DOWN --></script><script>$(document).ready(function() {$(window).scroll(function() {if ($(this).scrollTop() > 100) {$('.scrollup').fadeIn();} else {$('.scrollup').fadeOut();}});$('.scrollup').click(function() {$("html, body").animate({scrollTop: 0}, 600);return false;});});</script><script>
+var modal = document.getElementById("search-section-fuse");
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = "none";
+}
+}
+$(document).on('click', '.closesearch', function() {
+showHideSearch("search-section-fuse");
+
+
+
+
+
+});</script><div class="container-fluid col-lg-11" id="top"><nav class="breadcrumb"><a class="breadcrumb-item" href="../index.htm">Home</a> <span class="breadcrumb-item active">
+<a  href="c5dfc62c54810c2c.htm" target="_top">Dictionary of HOPEX concepts</a>&nbsp;/&nbsp;Wifi Hotspot</span></nav></div>
+<div class="container-fluid col-lg-11 content">
+<section class="fadeInDown animated"><a href="#det" class="btn btn-d">DEFINITION</a><a href="#rel" class="btn btn-d">RELATIONSHIPS</a>	 <a href="#shi" class="btn btn-d">SUPER-SUB TYPE HIERARCHY</a></section>
+<a class="object-section-anchor" id="det"></a>
+<section class="object-section">
+<h4>BUILDING BLOCK - Wifi Hotspot</h4>
+<hr class="sectionbreak" />
+<table class="table table-vertical-headers table-set-col-width">
+<tr><th>Description</th><td class="description-text"><div class="description-text">A&#160;<b> Wifi Hotspot</b> is <a href="f4be0fba5ee1d935.htm" target="_top"><b><u>Network Device</u></b></a> that allows multiple devices to connect to a Wi-Fi network.</div><div></div></td></tr>		
+<tr><th>Version</th><td class="description-text">Available since: HOPEX V3.0<br/>Last Update: HOPEX V3.0</td></tr>		
+<tr><th>Super Types</th><td class="description-text><img src="../standard/dic_concepttype.ico.gif">&nbsp;
+<a  href="f4be0fba5ee1d935.htm" target="_top">Network Device</a>&nbsp;&nbsp;</td></tr>   
+<tr><th>Dictionary</th><td><img src="../standard/dicsubjectarea.ico.gif">&nbsp;
+<a  href="c5dfc62c54810c2c.htm" target="_top">Dictionary of HOPEX concepts</a></td></tr>
+<tr><th>Conceptualization Level</th><td><img src="../standard/category_data.ico.gif">&nbsp;
+<a  href="08e71d9a64053995.htm" target="_top">Infrastructure Level</a>&nbsp;</td></tr>
+<tr><th>Systemic Level</th><td><img src="../standard/application%20level%202.ico.gif">&nbsp;
+<a  href="5c43888764103e54.htm" target="_top">Micro</a>&nbsp;</td></tr>
+<tr><th>Implementing MetaClass</th><td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="a688a88f60044e93.htm" target="_top">Wifi Hotspot</a></td></tr>
+</table>
+</section>
+<section class="object-section">
+<h4>RELATIONSHIPS</h4> 
+<hr class="sectionbreak" />
+<a href="#" class="btn btn-d" value="Relationship1" onclick="showDiagOnClick(this)">Simple Graph</a>
+<a href="#" class="btn btn-d" value="Relationship2" onclick="showDiagOnClick(this)">Graph & Hierarchy</a>
+<a href="#" class="btn btn-d" value="Relationship3" onclick="showDiagOnClick(this)">Graph by Domain</a>
+<a href="#" class="btn btn-d" value="Relationship4" onclick="showDiagOnClick(this)">Table</a>
+<a class="object-section-anchor" id="rel"></a>
+<div class="Relationship" id="Relationship1">
+<h3>Simple Graph</h3>
+<svg id="E1A4FB1B64017AD6" height="516" width="1650" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" overflow="hidden">
+  <defs>
+    <marker id="Simple-E1A4FB1B64017AD6__RelCircle" refX="3" refY="3" markerWidth="6" markerHeight="6">
+      <circle cx="3" cy="3" r="3" fill="#A52A00"></circle>
+    </marker>
+    <marker id="Simple-E1A4FB1B64017AD6__RelArrowTip" refX="3" refY="3" markerWidth="8" markerHeight="6" orient="0">
+      <path d="M0,0 L6,2 L0,4" fill="#A52A00"></path>
+    </marker>
+  </defs>
+<g   transform="translate(585,250)">
+  <rect height="30"  width="150"  id="core-E1A4FB1B64017AD6-0"  rx="3"  ry="3"  x="0"  y="-10"  stroke="#A52A00"/>
+<foreignObject x="0" y="-10" width="150" height="30" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:12; text-align:center"><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-E1A4FB1B64017AD6').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-E1A4FB1B64017AD6').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="#Relationship1">Wifi Hotspot</a>
+  <span id="Desc-E1A4FB1B64017AD6" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">A Wifi Hotspot is Network Device that allows multiple devices to connect to a Wi-Fi network.  </span>
+</div></div></foreignObject>
+</g>
+<g   transform="translate(50,106.75)">
+  <rect height="40"  width="325"  id="E7CDCCC7643F5185"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="E7CDCCC7643F5185.htm#Relationship1">&#60;Agents&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(50,126.75)">
+  <rect height="20"  width="320"  id="In-F4BE0FD85EE1DA9D-A41AB2D25B378B12"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#A52A00"><a href="a41ab2d25b378b12.htm#Relationship1">Computer Network</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="f4be0fd85ee1da9d.htm">[Network Node]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="F4BE0FD85EE1DA9D-A41AB2D25B378B12-A41AB2D25B378B12" class="Simple-E1A4FB1B64017AD6_Rel-line" d="M370,126.75 C477.5,126.75 477.5,250 585,250" stroke="gray" fill="none" marker-start="url(#Simple-E1A4FB1B64017AD6__RelCircle" marker-end="url(#Simple-E1A4FB1B64017AD6__RelArrowTip"/>
+<g   transform="translate(50,156.75)">
+  <rect height="40"  width="325"  id="4C7853C35FCB7CEF"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="4C7853C35FCB7CEF.htm#Relationship1">&#60;Transformations&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(50,176.75)">
+  <rect height="20"  width="320"  id="In-5B7A913861F41A59-F4BE1C025EE10085"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#F4DB6F"><a href="F4BE1C025EE10085.htm#Relationship1">Action Plan</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="https://method.demomega.com/MM-OVERVIEW/pages/5B7A913861F41A59.htm">[Action Plan Outcome]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="5B7A913861F41A59-F4BE1C025EE10085-F4BE1C025EE10085" class="Simple-E1A4FB1B64017AD6_Rel-line" d="M370,176.75 C477.5,176.75 477.5,250 585,250" stroke="gray" fill="none" marker-start="url(#Simple-E1A4FB1B64017AD6__RelCircle" marker-end="url(#Simple-E1A4FB1B64017AD6__RelArrowTip"/>
+<g   transform="translate(945,149.75)">
+  <rect height="40"  width="325"  id="AD30DF2A5EBF803C"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="AD30DF2A5EBF803C.htm#Relationship1">&#60;Directives&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(950,169.75)">
+  <rect height="20"  width="320"  id="959320325EE7FE24"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-8E1393E85EBE476F-core-E1A4FB1B64017AD6-6-959320325EE7FE24').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-8E1393E85EBE476F-core-E1A4FB1B64017AD6-6-959320325EE7FE24').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="8E1393E85EBE476F.htm">[Policy Conformance]</a>  <div id="Desc-8E1393E85EBE476F-core-E1A4FB1B64017AD6-6-959320325EE7FE24" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Policy Conformance is a statement that a Functional Asset is designed to comply with a Policy.  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-959320325EE7FE24').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-959320325EE7FE24').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="959320325ee7fe24.htm#Relationship1">Policy</a><div id="Desc-959320325EE7FE24" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Policy is a Directive that is not directly enforceable whose purpose is to govern, guide or constrain the structure and behavior of Agents in the enterprise.   </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="8E1393E85EBE476F-core-E1A4FB1B64017AD6-6-959320325EE7FE24" class="Simple-E1A4FB1B64017AD6_Rel-line" d="M735,250 C842.5,250 842.5,169.75 950,169.75" stroke="gray" fill="none" marker-start="url(#Simple-E1A4FB1B64017AD6__RelCircle" marker-end="url(#Simple-E1A4FB1B64017AD6__RelArrowTip"/>
+<g   transform="translate(50,206.75)">
+  <rect height="120"  width="325"  id="938E3ED362024F5B"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="120" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="938E3ED362024F5B.htm#Relationship1">&#60;Governance&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(50,226.75)">
+  <rect height="20"  width="320"  id="In-8F46F2A964B776BD-8F46E8EB64B7719A"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#F4DB6F"><a href="8F46E8EB64B7719A.htm#Relationship1">Key Indicator</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="https://method.demomega.com/MM-OVERVIEW/pages/8F46F2A964B776BD.htm">[Indicator Subject]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="8F46F2A964B776BD-8F46E8EB64B7719A-8F46E8EB64B7719A" class="Simple-E1A4FB1B64017AD6_Rel-line" d="M370,226.75 C477.5,226.75 477.5,250 585,250" stroke="gray" fill="none" marker-start="url(#Simple-E1A4FB1B64017AD6__RelCircle" marker-end="url(#Simple-E1A4FB1B64017AD6__RelArrowTip"/>
+<g   transform="translate(50,246.75)">
+  <rect height="20"  width="320"  id="In-9BB4A2DB626A9622-D7F9FCC95F720EE0"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#F4DB6F"><a href="D7F9FCC95F720EE0.htm#Relationship1">Decision</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="https://method.demomega.com/MM-OVERVIEW/pages/9BB4A2DB626A9622.htm">[decision subject]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="9BB4A2DB626A9622-D7F9FCC95F720EE0-D7F9FCC95F720EE0" class="Simple-E1A4FB1B64017AD6_Rel-line" d="M370,246.75 C477.5,246.75 477.5,250 585,250" stroke="gray" fill="none" marker-start="url(#Simple-E1A4FB1B64017AD6__RelCircle" marker-end="url(#Simple-E1A4FB1B64017AD6__RelArrowTip"/>
+<g   transform="translate(50,266.75)">
+  <rect height="20"  width="320"  id="In-7327A29F64364B2E-732799D364364423"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#F4DB6F"><a href="732799D364364423.htm#Relationship1">Policy Decision</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="https://method.demomega.com/MM-OVERVIEW/pages/7327A29F64364B2E.htm">[Applicability Domain]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="7327A29F64364B2E-732799D364364423-732799D364364423" class="Simple-E1A4FB1B64017AD6_Rel-line" d="M370,266.75 C477.5,266.75 477.5,250 585,250" stroke="gray" fill="none" marker-start="url(#Simple-E1A4FB1B64017AD6__RelCircle" marker-end="url(#Simple-E1A4FB1B64017AD6__RelArrowTip"/>
+<g   transform="translate(50,286.75)">
+  <rect height="20"  width="320"  id="In-9BB4A184626A922C-3B539CBB551E4C2A"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#F4DB6F"><a href="3B539CBB551E4C2A.htm#Relationship1">Assessment</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="https://method.demomega.com/MM-OVERVIEW/pages/9BB4A184626A922C.htm">[Assessed Asset]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="9BB4A184626A922C-3B539CBB551E4C2A-3B539CBB551E4C2A" class="Simple-E1A4FB1B64017AD6_Rel-line" d="M370,286.75 C477.5,286.75 477.5,250 585,250" stroke="gray" fill="none" marker-start="url(#Simple-E1A4FB1B64017AD6__RelCircle" marker-end="url(#Simple-E1A4FB1B64017AD6__RelArrowTip"/>
+<g   transform="translate(50,306.75)">
+  <rect height="20"  width="320"  id="In-2CC9977D55264886-91BE945354882B15"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#F4DB6F"><a href="91be945354882b15.htm#Relationship1">Architectural Driver</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="https://method.demomega.com/MM-OVERVIEW/pages/2CC9977D55264886.htm">[Subject Asset]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="2CC9977D55264886-91BE945354882B15-91BE945354882B15" class="Simple-E1A4FB1B64017AD6_Rel-line" d="M370,306.75 C477.5,306.75 477.5,250 585,250" stroke="gray" fill="none" marker-start="url(#Simple-E1A4FB1B64017AD6__RelCircle" marker-end="url(#Simple-E1A4FB1B64017AD6__RelArrowTip"/>
+<g   transform="translate(945,199.75)">
+  <rect height="60"  width="325"  id="E7CDD1F0643F5BD8"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="60" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="E7CDD1F0643F5BD8.htm#Relationship1">&#60;Qualification&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(950,219.75)">
+  <rect height="20"  width="320"  id="63F8870255AE1BA2"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-83BB8C1A5B3765B5-core-E1A4FB1B64017AD6-6-63F8870255AE1BA2').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-83BB8C1A5B3765B5-core-E1A4FB1B64017AD6-6-63F8870255AE1BA2').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="83BB8C1A5B3765B5.htm">[Applicable Constraint]</a>  <div id="Desc-83BB8C1A5B3765B5-core-E1A4FB1B64017AD6-6-63F8870255AE1BA2" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">Set of Constraining Propertys that can be applied to an Architecture Block (Type) .  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-63F8870255AE1BA2').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-63F8870255AE1BA2').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="63f8870255ae1ba2.htm#Relationship1">Constraining Property</a><div id="Desc-63F8870255AE1BA2" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Constraining Property expresses a type of constraint that can be applied to Architecture Blocks.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="83BB8C1A5B3765B5-core-E1A4FB1B64017AD6-6-63F8870255AE1BA2" class="Simple-E1A4FB1B64017AD6_Rel-line" d="M735,250 C842.5,250 842.5,219.75 950,219.75" stroke="gray" fill="none" marker-start="url(#Simple-E1A4FB1B64017AD6__RelCircle" marker-end="url(#Simple-E1A4FB1B64017AD6__RelArrowTip"/>
+<g   transform="translate(950,239.75)">
+  <rect height="20"  width="320"  id="16B051ED64357695"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-16B05351643577B3-core-E1A4FB1B64017AD6-6-16B051ED64357695').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-16B05351643577B3-core-E1A4FB1B64017AD6-6-16B051ED64357695').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="16B05351643577B3.htm">[Category of Asset]</a>  <div id="Desc-16B05351643577B3-core-E1A4FB1B64017AD6-6-16B051ED64357695" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-16B051ED64357695').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-16B051ED64357695').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="16B051ED64357695.htm#Relationship1">Asset Category</a><div id="Desc-16B051ED64357695" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">An Asset Category is a general purpose Architecture Category used to classify any type of Architecture Block (Type).  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="16B05351643577B3-core-E1A4FB1B64017AD6-6-16B051ED64357695" class="Simple-E1A4FB1B64017AD6_Rel-line" d="M735,250 C842.5,250 842.5,239.75 950,239.75" stroke="gray" fill="none" marker-start="url(#Simple-E1A4FB1B64017AD6__RelCircle" marker-end="url(#Simple-E1A4FB1B64017AD6__RelArrowTip"/>
+<g   transform="translate(50,336.75)">
+  <rect height="40"  width="325"  id="3D908C805FFC642C"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="3D908C805FFC642C.htm#Relationship1">&#60;Annotation&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(50,356.75)">
+  <rect height="20"  width="320"  id="In-6712697E5EC92663-89E38D7D5C918091"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"gray"><a href="89E38D7D5C918091.htm#Relationship1">Sketch</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="6712697E5EC92663.htm">[Sketch Item]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="6712697E5EC92663-89E38D7D5C918091-89E38D7D5C918091" class="Simple-E1A4FB1B64017AD6_Rel-line" d="M370,356.75 C477.5,356.75 477.5,250 585,250" stroke="gray" fill="none" marker-start="url(#Simple-E1A4FB1B64017AD6__RelCircle" marker-end="url(#Simple-E1A4FB1B64017AD6__RelArrowTip"/>
+<g   transform="translate(945,269.75)">
+  <rect height="80"  width="325"  id="3D908C805FFC642C"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="80" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="3D908C805FFC642C.htm#Relationship1">&#60;Annotation&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(950,289.75)">
+  <rect height="20"  width="320"  id="AFFEE0765F6086D4"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-05B0DF7E6006C158-core-E1A4FB1B64017AD6-8-AFFEE0765F6086D4').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-05B0DF7E6006C158-core-E1A4FB1B64017AD6-8-AFFEE0765F6086D4').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/05B0DF7E6006C158.htm">[Annotation Tag]</a>  <div id="Desc-05B0DF7E6006C158-core-E1A4FB1B64017AD6-8-AFFEE0765F6086D4" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-AFFEE0765F6086D4').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-AFFEE0765F6086D4').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="AFFEE0765F6086D4.htm#Relationship1">Tag</a><div id="Desc-AFFEE0765F6086D4" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Tag is a general classification description which permits characterization of Entitys.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="05B0DF7E6006C158-core-E1A4FB1B64017AD6-8-AFFEE0765F6086D4" class="Simple-E1A4FB1B64017AD6_Rel-line" d="M735,250 C842.5,250 842.5,289.75 950,289.75" stroke="gray" fill="none" marker-start="url(#Simple-E1A4FB1B64017AD6__RelCircle" marker-end="url(#Simple-E1A4FB1B64017AD6__RelArrowTip"/>
+<g   transform="translate(950,309.75)">
+  <rect height="20"  width="320"  id="AFFEE0F15F60898A"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-05B0DF0C6006C0D8-core-E1A4FB1B64017AD6-8-AFFEE0F15F60898A').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-05B0DF0C6006C0D8-core-E1A4FB1B64017AD6-8-AFFEE0F15F60898A').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/05B0DF0C6006C0D8.htm">[Attached Document]</a>  <div id="Desc-05B0DF0C6006C0D8-core-E1A4FB1B64017AD6-8-AFFEE0F15F60898A" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-AFFEE0F15F60898A').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-AFFEE0F15F60898A').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="AFFEE0F15F60898A.htm#Relationship1">Business Document</a><div id="Desc-AFFEE0F15F60898A" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Business Document is a document whose lifecycle can be synched to the MEGA repository content: it may be attached to mega objects and a document version bound to a mega object timestamp in the Time Machine. This document can be of any given file format.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="05B0DF0C6006C0D8-core-E1A4FB1B64017AD6-8-AFFEE0F15F60898A" class="Simple-E1A4FB1B64017AD6_Rel-line" d="M735,250 C842.5,250 842.5,309.75 950,309.75" stroke="gray" fill="none" marker-start="url(#Simple-E1A4FB1B64017AD6__RelCircle" marker-end="url(#Simple-E1A4FB1B64017AD6__RelArrowTip"/>
+<g   transform="translate(950,329.75)">
+  <rect height="20"  width="320"  id="89E38D7D5C918091"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-89E38E275C918176-core-E1A4FB1B64017AD6-7-89E38D7D5C918091').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-89E38E275C918176-core-E1A4FB1B64017AD6-7-89E38D7D5C918091').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="89E38E275C918176.htm">[Sketch Description]</a>  <div id="Desc-89E38E275C918176-core-E1A4FB1B64017AD6-7-89E38D7D5C918091" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-89E38D7D5C918091').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-89E38D7D5C918091').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="89E38D7D5C918091.htm#Relationship1">Sketch</a><div id="Desc-89E38D7D5C918091" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Sketch is a rough draft of a model; unformal representation.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="89E38E275C918176-core-E1A4FB1B64017AD6-7-89E38D7D5C918091" class="Simple-E1A4FB1B64017AD6_Rel-line" d="M735,250 C842.5,250 842.5,329.75 950,329.75" stroke="gray" fill="none" marker-start="url(#Simple-E1A4FB1B64017AD6__RelCircle" marker-end="url(#Simple-E1A4FB1B64017AD6__RelArrowTip"/>
+<g   transform="translate(50,386.75)">
+  <rect height="60"  width="325"  id="705983E063236AE9"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="60" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="705983E063236AE9.htm#Relationship1">&#60;Packaging&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(50,406.75)">
+  <rect height="20"  width="320"  id="In-D342D97F5B1214BB-D342D91A5B121454"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"gray"><a href="d342d91a5b121454.htm#Relationship1">Architecture Namespace</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="D342D97F5B1214BB.htm">[Owned Architecture Block]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="D342D97F5B1214BB-D342D91A5B121454-D342D91A5B121454" class="Simple-E1A4FB1B64017AD6_Rel-line" d="M370,406.75 C477.5,406.75 477.5,250 585,250" stroke="gray" fill="none" marker-start="url(#Simple-E1A4FB1B64017AD6__RelCircle" marker-end="url(#Simple-E1A4FB1B64017AD6__RelArrowTip"/>
+<g   transform="translate(50,426.75)">
+  <rect height="20"  width="320"  id="In-9BB49F52626A675B-D34222C65B131D09"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#F4DB6F"><a href="d34222c65b131d09.htm#Relationship1">Architecture Project</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="https://method.demomega.com/MM-OVERVIEW/pages/9BB49F52626A675B.htm">[Architecture Deliverable]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="9BB49F52626A675B-D34222C65B131D09-D34222C65B131D09" class="Simple-E1A4FB1B64017AD6_Rel-line" d="M370,426.75 C477.5,426.75 477.5,250 585,250" stroke="gray" fill="none" marker-start="url(#Simple-E1A4FB1B64017AD6__RelCircle" marker-end="url(#Simple-E1A4FB1B64017AD6__RelArrowTip"/>
+<g   transform="translate(945,359.75)">
+  <rect height="40"  width="325"  id="Other"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="">Other</a></div></foreignObject>
+</g>
+<g   transform="translate(950,379.75)">
+  <rect height="20"  width="320"  id="D160042562E08353"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-26B839785EEAE7D2-core-E1A4FB1B64017AD6-3-D160042562E08353').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-26B839785EEAE7D2-core-E1A4FB1B64017AD6-3-D160042562E08353').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/26B839785EEAE7D2.htm">[Network Connection]</a>  <div id="Desc-26B839785EEAE7D2-core-E1A4FB1B64017AD6-3-D160042562E08353" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Network Connection is  a Communication channel that represent physical/virtual connections between Network connectivitys.  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-D160042562E08353').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-D160042562E08353').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="d160042562e08353.htm#Relationship1">Network Interface</a><div id="Desc-D160042562E08353" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Network Interface is a set of rules and conventions that govern the communication between devices on a Computer Network.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="26B839785EEAE7D2-core-E1A4FB1B64017AD6-3-D160042562E08353" class="Simple-E1A4FB1B64017AD6_Rel-line" d="M735,250 C842.5,250 842.5,379.75 950,379.75" stroke="gray" fill="none" marker-start="url(#Simple-E1A4FB1B64017AD6__RelCircle" marker-end="url(#Simple-E1A4FB1B64017AD6__RelArrowTip"/>
+</svg>
+
+</div>
+<div class="Relationship" id="Relationship2" style="display:none">
+<h3>Graph & Hierarchy</h3>
+<svg id="E1A4FB1B64017AD6" height="516" width="1650" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" overflow="hidden">
+  <defs>
+    <marker id="Full-E1A4FB1B64017AD6__RelCircle" refX="3" refY="3" markerWidth="6" markerHeight="6">
+      <circle cx="3" cy="3" r="3" fill="#A52A00"></circle>
+    </marker>
+    <marker id="Full-E1A4FB1B64017AD6__RelArrowTip" refX="3" refY="3" markerWidth="8" markerHeight="6" orient="0">
+      <path d="M0,0 L6,2 L0,4" fill="#A52A00"></path>
+    </marker>
+  </defs>
+<g   transform="translate(545,213)">
+  <rect height="169"  width="230"  id="core-E1A4FB1B64017AD6-8"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="230" height="169" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:center"><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-CA353E6D5FC5E8AF').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-CA353E6D5FC5E8AF').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="CA353E6D5FC5E8AF.htm#Relationship1">Model Building Block</a>
+  <span id="Desc-CA353E6D5FC5E8AF" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">A Model Building Block is a Building Block used to describe and manage the enterprise. It comprises:  </span>
+</div></div></foreignObject>
+</g>
+<g   transform="translate(550,232)">
+  <rect height="146"  width="220"  id="core-E1A4FB1B64017AD6-7"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="220" height="146" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:center"><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-D342D88E5B121401').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-D342D88E5B121401').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="d342d88e5b121401.htm#Relationship1">Architecture Block</a>
+  <span id="Desc-D342D88E5B121401" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">An Architecture Block is any Model Building Block used to describe an enterprise architecture. This includes types (applications, org-units, ...) and individuals (physical persons, software installations, sites, ...).  </span>
+</div></div></foreignObject>
+</g>
+<g   transform="translate(555,251)">
+  <rect height="123"  width="210"  id="core-E1A4FB1B64017AD6-6"  rx="3"  ry="3"  x="0"  y="-10"  stroke="#A9A9A9"/>
+<foreignObject x="0" y="-10" width="210" height="123" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:center"><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-A4A5B3F855585CE1').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-A4A5B3F855585CE1').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="A4A5B3F855585CE1.htm#Relationship1">Architecture Block (Type)</a>
+  <span id="Desc-A4A5B3F855585CE1" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">An Architecture Block (Type) is a type of Architecture Block which is used in the description of the enterprise, such as Processes, Org-Units, Applications.  </span>
+</div><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-07CA0F015DD84EFA').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-07CA0F015DD84EFA').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="07ca0f015dd84efa.htm#Relationship1">Functional Asset</a>
+  <span id="Desc-07CA0F015DD84EFA" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">Functional Assets encompasse Architecture Blocks used to describe how an enterprise function. This includes the purposes of an enterprise (Capability) and the way the enterprise operates to fulfill these purposes (Agents and their  Behaviors).  </span>
+</div></div></foreignObject>
+</g>
+<g   transform="translate(570,293)">
+  <rect height="69"  width="180"  id="core-E1A4FB1B64017AD6-3"  rx="3"  ry="3"  x="0"  y="-10"  stroke="#A52A00"/>
+<foreignObject x="0" y="-10" width="180" height="69" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:center"><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-26B8384F5EEAE33C').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-26B8384F5EEAE33C').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="26b8384f5eeae33c.htm#Relationship1">Network connectivity</a>
+  <span id="Desc-26B8384F5EEAE33C" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">Network connectivity is an aspect of Technology Operating Asset that provides networking capabilites through the use of Network Interfaces.  </span>
+</div></div></foreignObject>
+</g>
+<g   transform="translate(580,316)">
+  <rect height="38"  width="160"  id="core-E1A4FB1B64017AD6-1"  rx="3"  ry="3"  x="0"  y="-10"  stroke="#A52A00"/>
+<foreignObject x="0" y="-10" width="160" height="38" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:center"><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-F4BE0FBA5EE1D935').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-F4BE0FBA5EE1D935').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="f4be0fba5ee1d935.htm#Relationship1">Network Device</a>
+  <span id="Desc-F4BE0FBA5EE1D935" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">A Network Device is any piece of physical or virtual hardware that is used to connect Computational Aspects (Computer Devices, Computer Servers) and other devices to a Computer Network.  </span>
+</div></div></foreignObject>
+</g>
+<g   transform="translate(585,320)">
+  <rect height="30"  width="150"  id="core-E1A4FB1B64017AD6-0"  rx="3"  ry="3"  x="0"  y="-10"  stroke="#A52A00"/>
+<foreignObject x="0" y="-10" width="150" height="30" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:12; text-align:center"><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-E1A4FB1B64017AD6').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-E1A4FB1B64017AD6').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="#Relationship1">Wifi Hotspot</a>
+  <span id="Desc-E1A4FB1B64017AD6" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">A Wifi Hotspot is Network Device that allows multiple devices to connect to a Wi-Fi network.  </span>
+</div></div></foreignObject>
+</g>
+<g   transform="translate(50,106.75)">
+  <rect height="40"  width="325"  id="E7CDCCC7643F5185"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="E7CDCCC7643F5185.htm#Relationship1">&#60;Agents&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(50,126.75)">
+  <rect height="20"  width="320"  id="In-F4BE0FD85EE1DA9D-A41AB2D25B378B12"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#A52A00"><a href="a41ab2d25b378b12.htm#Relationship1">Computer Network</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="f4be0fd85ee1da9d.htm">[Network Node]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="F4BE0FD85EE1DA9D-A41AB2D25B378B12-A41AB2D25B378B12" class="Full-E1A4FB1B64017AD6_Rel-line" d="M370,126.75 C475,126.75 475,316 580,316" stroke="gray" fill="none" marker-start="url(#Full-E1A4FB1B64017AD6__RelCircle" marker-end="url(#Full-E1A4FB1B64017AD6__RelArrowTip"/>
+<g   transform="translate(50,156.75)">
+  <rect height="40"  width="325"  id="4C7853C35FCB7CEF"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="4C7853C35FCB7CEF.htm#Relationship1">&#60;Transformations&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(50,176.75)">
+  <rect height="20"  width="320"  id="In-5B7A913861F41A59-F4BE1C025EE10085"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#F4DB6F"><a href="F4BE1C025EE10085.htm#Relationship1">Action Plan</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="https://method.demomega.com/MM-OVERVIEW/pages/5B7A913861F41A59.htm">[Action Plan Outcome]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="5B7A913861F41A59-F4BE1C025EE10085-F4BE1C025EE10085" class="Full-E1A4FB1B64017AD6_Rel-line" d="M370,176.75 C462.5,176.75 462.5,251 555,251" stroke="gray" fill="none" marker-start="url(#Full-E1A4FB1B64017AD6__RelCircle" marker-end="url(#Full-E1A4FB1B64017AD6__RelArrowTip"/>
+<g   transform="translate(945,149.75)">
+  <rect height="40"  width="325"  id="AD30DF2A5EBF803C"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="AD30DF2A5EBF803C.htm#Relationship1">&#60;Directives&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(950,169.75)">
+  <rect height="20"  width="320"  id="959320325EE7FE24"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-8E1393E85EBE476F-core-E1A4FB1B64017AD6-6-959320325EE7FE24').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-8E1393E85EBE476F-core-E1A4FB1B64017AD6-6-959320325EE7FE24').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="8E1393E85EBE476F.htm">[Policy Conformance]</a>  <div id="Desc-8E1393E85EBE476F-core-E1A4FB1B64017AD6-6-959320325EE7FE24" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Policy Conformance is a statement that a Functional Asset is designed to comply with a Policy.  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-959320325EE7FE24').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-959320325EE7FE24').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="959320325ee7fe24.htm#Relationship1">Policy</a><div id="Desc-959320325EE7FE24" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Policy is a Directive that is not directly enforceable whose purpose is to govern, guide or constrain the structure and behavior of Agents in the enterprise.   </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="8E1393E85EBE476F-core-E1A4FB1B64017AD6-6-959320325EE7FE24" class="Full-E1A4FB1B64017AD6_Rel-line" d="M765,251 C857.5,251 857.5,169.75 950,169.75" stroke="gray" fill="none" marker-start="url(#Full-E1A4FB1B64017AD6__RelCircle" marker-end="url(#Full-E1A4FB1B64017AD6__RelArrowTip"/>
+<g   transform="translate(50,206.75)">
+  <rect height="140"  width="325"  id="938E3ED362024F5B"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="140" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="938E3ED362024F5B.htm#Relationship1">&#60;Governance&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(50,226.75)">
+  <rect height="20"  width="320"  id="In-9BB49F52626A675B-D34222C65B131D09"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#F4DB6F"><a href="d34222c65b131d09.htm#Relationship1">Architecture Project</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="https://method.demomega.com/MM-OVERVIEW/pages/9BB49F52626A675B.htm">[Architecture Deliverable]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="9BB49F52626A675B-D34222C65B131D09-D34222C65B131D09" class="Full-E1A4FB1B64017AD6_Rel-line" d="M370,226.75 C462.5,226.75 462.5,251 555,251" stroke="gray" fill="none" marker-start="url(#Full-E1A4FB1B64017AD6__RelCircle" marker-end="url(#Full-E1A4FB1B64017AD6__RelArrowTip"/>
+<g   transform="translate(50,246.75)">
+  <rect height="20"  width="320"  id="In-8F46F2A964B776BD-8F46E8EB64B7719A"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#F4DB6F"><a href="8F46E8EB64B7719A.htm#Relationship1">Key Indicator</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="https://method.demomega.com/MM-OVERVIEW/pages/8F46F2A964B776BD.htm">[Indicator Subject]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="8F46F2A964B776BD-8F46E8EB64B7719A-8F46E8EB64B7719A" class="Full-E1A4FB1B64017AD6_Rel-line" d="M370,246.75 C462.5,246.75 462.5,251 555,251" stroke="gray" fill="none" marker-start="url(#Full-E1A4FB1B64017AD6__RelCircle" marker-end="url(#Full-E1A4FB1B64017AD6__RelArrowTip"/>
+<g   transform="translate(50,266.75)">
+  <rect height="20"  width="320"  id="In-9BB4A2DB626A9622-D7F9FCC95F720EE0"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#F4DB6F"><a href="D7F9FCC95F720EE0.htm#Relationship1">Decision</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="https://method.demomega.com/MM-OVERVIEW/pages/9BB4A2DB626A9622.htm">[decision subject]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="9BB4A2DB626A9622-D7F9FCC95F720EE0-D7F9FCC95F720EE0" class="Full-E1A4FB1B64017AD6_Rel-line" d="M370,266.75 C462.5,266.75 462.5,251 555,251" stroke="gray" fill="none" marker-start="url(#Full-E1A4FB1B64017AD6__RelCircle" marker-end="url(#Full-E1A4FB1B64017AD6__RelArrowTip"/>
+<g   transform="translate(50,286.75)">
+  <rect height="20"  width="320"  id="In-7327A29F64364B2E-732799D364364423"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#F4DB6F"><a href="732799D364364423.htm#Relationship1">Policy Decision</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="https://method.demomega.com/MM-OVERVIEW/pages/7327A29F64364B2E.htm">[Applicability Domain]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="7327A29F64364B2E-732799D364364423-732799D364364423" class="Full-E1A4FB1B64017AD6_Rel-line" d="M370,286.75 C462.5,286.75 462.5,251 555,251" stroke="gray" fill="none" marker-start="url(#Full-E1A4FB1B64017AD6__RelCircle" marker-end="url(#Full-E1A4FB1B64017AD6__RelArrowTip"/>
+<g   transform="translate(50,306.75)">
+  <rect height="20"  width="320"  id="In-9BB4A184626A922C-3B539CBB551E4C2A"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#F4DB6F"><a href="3B539CBB551E4C2A.htm#Relationship1">Assessment</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="https://method.demomega.com/MM-OVERVIEW/pages/9BB4A184626A922C.htm">[Assessed Asset]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="9BB4A184626A922C-3B539CBB551E4C2A-3B539CBB551E4C2A" class="Full-E1A4FB1B64017AD6_Rel-line" d="M370,306.75 C462.5,306.75 462.5,251 555,251" stroke="gray" fill="none" marker-start="url(#Full-E1A4FB1B64017AD6__RelCircle" marker-end="url(#Full-E1A4FB1B64017AD6__RelArrowTip"/>
+<g   transform="translate(50,326.75)">
+  <rect height="20"  width="320"  id="In-2CC9977D55264886-91BE945354882B15"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#F4DB6F"><a href="91be945354882b15.htm#Relationship1">Architectural Driver</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="https://method.demomega.com/MM-OVERVIEW/pages/2CC9977D55264886.htm">[Subject Asset]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="2CC9977D55264886-91BE945354882B15-91BE945354882B15" class="Full-E1A4FB1B64017AD6_Rel-line" d="M370,326.75 C462.5,326.75 462.5,251 555,251" stroke="gray" fill="none" marker-start="url(#Full-E1A4FB1B64017AD6__RelCircle" marker-end="url(#Full-E1A4FB1B64017AD6__RelArrowTip"/>
+<g   transform="translate(945,199.75)">
+  <rect height="60"  width="325"  id="E7CDD1F0643F5BD8"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="60" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="E7CDD1F0643F5BD8.htm#Relationship1">&#60;Qualification&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(950,219.75)">
+  <rect height="20"  width="320"  id="63F8870255AE1BA2"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-83BB8C1A5B3765B5-core-E1A4FB1B64017AD6-6-63F8870255AE1BA2').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-83BB8C1A5B3765B5-core-E1A4FB1B64017AD6-6-63F8870255AE1BA2').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="83BB8C1A5B3765B5.htm">[Applicable Constraint]</a>  <div id="Desc-83BB8C1A5B3765B5-core-E1A4FB1B64017AD6-6-63F8870255AE1BA2" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">Set of Constraining Propertys that can be applied to an Architecture Block (Type) .  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-63F8870255AE1BA2').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-63F8870255AE1BA2').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="63f8870255ae1ba2.htm#Relationship1">Constraining Property</a><div id="Desc-63F8870255AE1BA2" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Constraining Property expresses a type of constraint that can be applied to Architecture Blocks.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="83BB8C1A5B3765B5-core-E1A4FB1B64017AD6-6-63F8870255AE1BA2" class="Full-E1A4FB1B64017AD6_Rel-line" d="M765,251 C857.5,251 857.5,219.75 950,219.75" stroke="gray" fill="none" marker-start="url(#Full-E1A4FB1B64017AD6__RelCircle" marker-end="url(#Full-E1A4FB1B64017AD6__RelArrowTip"/>
+<g   transform="translate(950,239.75)">
+  <rect height="20"  width="320"  id="16B051ED64357695"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-16B05351643577B3-core-E1A4FB1B64017AD6-6-16B051ED64357695').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-16B05351643577B3-core-E1A4FB1B64017AD6-6-16B051ED64357695').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="16B05351643577B3.htm">[Category of Asset]</a>  <div id="Desc-16B05351643577B3-core-E1A4FB1B64017AD6-6-16B051ED64357695" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-16B051ED64357695').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-16B051ED64357695').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="16B051ED64357695.htm#Relationship1">Asset Category</a><div id="Desc-16B051ED64357695" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">An Asset Category is a general purpose Architecture Category used to classify any type of Architecture Block (Type).  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="16B05351643577B3-core-E1A4FB1B64017AD6-6-16B051ED64357695" class="Full-E1A4FB1B64017AD6_Rel-line" d="M765,251 C857.5,251 857.5,239.75 950,239.75" stroke="gray" fill="none" marker-start="url(#Full-E1A4FB1B64017AD6__RelCircle" marker-end="url(#Full-E1A4FB1B64017AD6__RelArrowTip"/>
+<g   transform="translate(50,356.75)">
+  <rect height="40"  width="325"  id="3D908C805FFC642C"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="3D908C805FFC642C.htm#Relationship1">&#60;Annotation&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(50,376.75)">
+  <rect height="20"  width="320"  id="In-6712697E5EC92663-89E38D7D5C918091"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"gray"><a href="89E38D7D5C918091.htm#Relationship1">Sketch</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="6712697E5EC92663.htm">[Sketch Item]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="6712697E5EC92663-89E38D7D5C918091-89E38D7D5C918091" class="Full-E1A4FB1B64017AD6_Rel-line" d="M370,376.75 C460,376.75 460,232 550,232" stroke="gray" fill="none" marker-start="url(#Full-E1A4FB1B64017AD6__RelCircle" marker-end="url(#Full-E1A4FB1B64017AD6__RelArrowTip"/>
+<g   transform="translate(945,269.75)">
+  <rect height="80"  width="325"  id="3D908C805FFC642C"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="80" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="3D908C805FFC642C.htm#Relationship1">&#60;Annotation&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(950,289.75)">
+  <rect height="20"  width="320"  id="AFFEE0F15F60898A"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-05B0DF0C6006C0D8-core-E1A4FB1B64017AD6-8-AFFEE0F15F60898A').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-05B0DF0C6006C0D8-core-E1A4FB1B64017AD6-8-AFFEE0F15F60898A').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/05B0DF0C6006C0D8.htm">[Attached Document]</a>  <div id="Desc-05B0DF0C6006C0D8-core-E1A4FB1B64017AD6-8-AFFEE0F15F60898A" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-AFFEE0F15F60898A').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-AFFEE0F15F60898A').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="AFFEE0F15F60898A.htm#Relationship1">Business Document</a><div id="Desc-AFFEE0F15F60898A" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Business Document is a document whose lifecycle can be synched to the MEGA repository content: it may be attached to mega objects and a document version bound to a mega object timestamp in the Time Machine. This document can be of any given file format.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="05B0DF0C6006C0D8-core-E1A4FB1B64017AD6-8-AFFEE0F15F60898A" class="Full-E1A4FB1B64017AD6_Rel-line" d="M775,213 C862.5,213 862.5,289.75 950,289.75" stroke="gray" fill="none" marker-start="url(#Full-E1A4FB1B64017AD6__RelCircle" marker-end="url(#Full-E1A4FB1B64017AD6__RelArrowTip"/>
+<g   transform="translate(950,309.75)">
+  <rect height="20"  width="320"  id="AFFEE0765F6086D4"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-05B0DF7E6006C158-core-E1A4FB1B64017AD6-8-AFFEE0765F6086D4').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-05B0DF7E6006C158-core-E1A4FB1B64017AD6-8-AFFEE0765F6086D4').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/05B0DF7E6006C158.htm">[Annotation Tag]</a>  <div id="Desc-05B0DF7E6006C158-core-E1A4FB1B64017AD6-8-AFFEE0765F6086D4" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-AFFEE0765F6086D4').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-AFFEE0765F6086D4').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="AFFEE0765F6086D4.htm#Relationship1">Tag</a><div id="Desc-AFFEE0765F6086D4" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Tag is a general classification description which permits characterization of Entitys.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="05B0DF7E6006C158-core-E1A4FB1B64017AD6-8-AFFEE0765F6086D4" class="Full-E1A4FB1B64017AD6_Rel-line" d="M775,213 C862.5,213 862.5,309.75 950,309.75" stroke="gray" fill="none" marker-start="url(#Full-E1A4FB1B64017AD6__RelCircle" marker-end="url(#Full-E1A4FB1B64017AD6__RelArrowTip"/>
+<g   transform="translate(950,329.75)">
+  <rect height="20"  width="320"  id="89E38D7D5C918091"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-89E38E275C918176-core-E1A4FB1B64017AD6-7-89E38D7D5C918091').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-89E38E275C918176-core-E1A4FB1B64017AD6-7-89E38D7D5C918091').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="89E38E275C918176.htm">[Sketch Description]</a>  <div id="Desc-89E38E275C918176-core-E1A4FB1B64017AD6-7-89E38D7D5C918091" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-89E38D7D5C918091').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-89E38D7D5C918091').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="89E38D7D5C918091.htm#Relationship1">Sketch</a><div id="Desc-89E38D7D5C918091" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Sketch is a rough draft of a model; unformal representation.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="89E38E275C918176-core-E1A4FB1B64017AD6-7-89E38D7D5C918091" class="Full-E1A4FB1B64017AD6_Rel-line" d="M770,232 C860,232 860,329.75 950,329.75" stroke="gray" fill="none" marker-start="url(#Full-E1A4FB1B64017AD6__RelCircle" marker-end="url(#Full-E1A4FB1B64017AD6__RelArrowTip"/>
+<g   transform="translate(50,406.75)">
+  <rect height="40"  width="325"  id="705983E063236AE9"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="705983E063236AE9.htm#Relationship1">&#60;Packaging&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(50,426.75)">
+  <rect height="20"  width="320"  id="In-D342D97F5B1214BB-D342D91A5B121454"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"gray"><a href="d342d91a5b121454.htm#Relationship1">Architecture Namespace</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="D342D97F5B1214BB.htm">[Owned Architecture Block]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="D342D97F5B1214BB-D342D91A5B121454-D342D91A5B121454" class="Full-E1A4FB1B64017AD6_Rel-line" d="M370,426.75 C460,426.75 460,232 550,232" stroke="gray" fill="none" marker-start="url(#Full-E1A4FB1B64017AD6__RelCircle" marker-end="url(#Full-E1A4FB1B64017AD6__RelArrowTip"/>
+<g   transform="translate(945,359.75)">
+  <rect height="40"  width="325"  id="Other"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="">Other</a></div></foreignObject>
+</g>
+<g   transform="translate(950,379.75)">
+  <rect height="20"  width="320"  id="D160042562E08353"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-26B839785EEAE7D2-core-E1A4FB1B64017AD6-3-D160042562E08353').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-26B839785EEAE7D2-core-E1A4FB1B64017AD6-3-D160042562E08353').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/26B839785EEAE7D2.htm">[Network Connection]</a>  <div id="Desc-26B839785EEAE7D2-core-E1A4FB1B64017AD6-3-D160042562E08353" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Network Connection is  a Communication channel that represent physical/virtual connections between Network connectivitys.  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-D160042562E08353').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-D160042562E08353').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="d160042562e08353.htm#Relationship1">Network Interface</a><div id="Desc-D160042562E08353" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Network Interface is a set of rules and conventions that govern the communication between devices on a Computer Network.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="26B839785EEAE7D2-core-E1A4FB1B64017AD6-3-D160042562E08353" class="Full-E1A4FB1B64017AD6_Rel-line" d="M750,293 C850,293 850,379.75 950,379.75" stroke="gray" fill="none" marker-start="url(#Full-E1A4FB1B64017AD6__RelCircle" marker-end="url(#Full-E1A4FB1B64017AD6__RelArrowTip"/>
+</svg>
+
+</div>
+<div class="Relationship" id="Relationship3" style="display:none">
+<h3>Graph by Domain</h3>
+<svg id="E1A4FB1B64017AD6" height="516" width="1650" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" overflow="hidden">
+  <defs>
+    <marker id="Domain-E1A4FB1B64017AD6__RelCircle" refX="3" refY="3" markerWidth="6" markerHeight="6">
+      <circle cx="3" cy="3" r="3" fill="#A52A00"></circle>
+    </marker>
+    <marker id="Domain-E1A4FB1B64017AD6__RelArrowTip" refX="3" refY="3" markerWidth="8" markerHeight="6" orient="0">
+      <path d="M0,0 L6,2 L0,4" fill="#A52A00"></path>
+    </marker>
+  </defs>
+<g   transform="translate(585,250)">
+  <rect height="30"  width="150"  id="core-E1A4FB1B64017AD6-0"  rx="3"  ry="3"  x="0"  y="-10"  stroke="#A52A00"/>
+<foreignObject x="0" y="-10" width="150" height="30" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:12; text-align:center"><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-E1A4FB1B64017AD6').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-E1A4FB1B64017AD6').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="#Relationship1">Wifi Hotspot</a>
+  <span id="Desc-E1A4FB1B64017AD6" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">A Wifi Hotspot is Network Device that allows multiple devices to connect to a Wi-Fi network.  </span>
+</div></div></foreignObject>
+</g>
+<g   transform="translate(50,85.25)">
+  <rect height="40"  width="325"  id="83BB9D706192357B"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="83BB9D706192357B.htm#Relationship1">{Appraisal Pattern}</a></div></foreignObject>
+</g>
+<g   transform="translate(50,105.25)">
+  <rect height="20"  width="320"  id="In-9BB4A184626A922C-3B539CBB551E4C2A"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#F4DB6F"><a href="3B539CBB551E4C2A.htm#Relationship1">Assessment</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="https://method.demomega.com/MM-OVERVIEW/pages/9BB4A184626A922C.htm">[Assessed Asset]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="9BB4A184626A922C-3B539CBB551E4C2A-3B539CBB551E4C2A" class="Domain-E1A4FB1B64017AD6_Rel-line" d="M370,105.25 C477.5,105.25 477.5,250 585,250" stroke="gray" fill="none" marker-start="url(#Domain-E1A4FB1B64017AD6__RelCircle" marker-end="url(#Domain-E1A4FB1B64017AD6__RelArrowTip"/>
+<g   transform="translate(50,135.25)">
+  <rect height="60"  width="325"  id="C30BD1505A5D97F9"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="60" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="c30bd1505a5d97f9.htm#Relationship1">{Architecture Model Management}</a></div></foreignObject>
+</g>
+<g   transform="translate(50,155.25)">
+  <rect height="20"  width="320"  id="In-6712697E5EC92663-89E38D7D5C918091"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"gray"><a href="89E38D7D5C918091.htm#Relationship1">Sketch</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="6712697E5EC92663.htm">[Sketch Item]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="6712697E5EC92663-89E38D7D5C918091-89E38D7D5C918091" class="Domain-E1A4FB1B64017AD6_Rel-line" d="M370,155.25 C477.5,155.25 477.5,250 585,250" stroke="gray" fill="none" marker-start="url(#Domain-E1A4FB1B64017AD6__RelCircle" marker-end="url(#Domain-E1A4FB1B64017AD6__RelArrowTip"/>
+<g   transform="translate(50,175.25)">
+  <rect height="20"  width="320"  id="In-D342D97F5B1214BB-D342D91A5B121454"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"gray"><a href="d342d91a5b121454.htm#Relationship1">Architecture Namespace</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="D342D97F5B1214BB.htm">[Owned Architecture Block]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="D342D97F5B1214BB-D342D91A5B121454-D342D91A5B121454" class="Domain-E1A4FB1B64017AD6_Rel-line" d="M370,175.25 C477.5,175.25 477.5,250 585,250" stroke="gray" fill="none" marker-start="url(#Domain-E1A4FB1B64017AD6__RelCircle" marker-end="url(#Domain-E1A4FB1B64017AD6__RelArrowTip"/>
+<g   transform="translate(945,149.75)">
+  <rect height="80"  width="325"  id="C30BD1505A5D97F9"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="80" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="c30bd1505a5d97f9.htm#Relationship1">{Architecture Model Management}</a></div></foreignObject>
+</g>
+<g   transform="translate(950,169.75)">
+  <rect height="20"  width="320"  id="89E38D7D5C918091"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-89E38E275C918176-core-E1A4FB1B64017AD6-7-89E38D7D5C918091').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-89E38E275C918176-core-E1A4FB1B64017AD6-7-89E38D7D5C918091').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="89E38E275C918176.htm">[Sketch Description]</a>  <div id="Desc-89E38E275C918176-core-E1A4FB1B64017AD6-7-89E38D7D5C918091" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-89E38D7D5C918091').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-89E38D7D5C918091').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="89E38D7D5C918091.htm#Relationship1">Sketch</a><div id="Desc-89E38D7D5C918091" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Sketch is a rough draft of a model; unformal representation.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="89E38E275C918176-core-E1A4FB1B64017AD6-7-89E38D7D5C918091" class="Domain-E1A4FB1B64017AD6_Rel-line" d="M735,250 C842.5,250 842.5,169.75 950,169.75" stroke="gray" fill="none" marker-start="url(#Domain-E1A4FB1B64017AD6__RelCircle" marker-end="url(#Domain-E1A4FB1B64017AD6__RelArrowTip"/>
+<g   transform="translate(950,189.75)">
+  <rect height="20"  width="320"  id="63F8870255AE1BA2"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-83BB8C1A5B3765B5-core-E1A4FB1B64017AD6-6-63F8870255AE1BA2').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-83BB8C1A5B3765B5-core-E1A4FB1B64017AD6-6-63F8870255AE1BA2').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="83BB8C1A5B3765B5.htm">[Applicable Constraint]</a>  <div id="Desc-83BB8C1A5B3765B5-core-E1A4FB1B64017AD6-6-63F8870255AE1BA2" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">Set of Constraining Propertys that can be applied to an Architecture Block (Type) .  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-63F8870255AE1BA2').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-63F8870255AE1BA2').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="63f8870255ae1ba2.htm#Relationship1">Constraining Property</a><div id="Desc-63F8870255AE1BA2" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Constraining Property expresses a type of constraint that can be applied to Architecture Blocks.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="83BB8C1A5B3765B5-core-E1A4FB1B64017AD6-6-63F8870255AE1BA2" class="Domain-E1A4FB1B64017AD6_Rel-line" d="M735,250 C842.5,250 842.5,189.75 950,189.75" stroke="gray" fill="none" marker-start="url(#Domain-E1A4FB1B64017AD6__RelCircle" marker-end="url(#Domain-E1A4FB1B64017AD6__RelArrowTip"/>
+<g   transform="translate(950,209.75)">
+  <rect height="20"  width="320"  id="16B051ED64357695"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-16B05351643577B3-core-E1A4FB1B64017AD6-6-16B051ED64357695').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-16B05351643577B3-core-E1A4FB1B64017AD6-6-16B051ED64357695').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="16B05351643577B3.htm">[Category of Asset]</a>  <div id="Desc-16B05351643577B3-core-E1A4FB1B64017AD6-6-16B051ED64357695" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-16B051ED64357695').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-16B051ED64357695').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="16B051ED64357695.htm#Relationship1">Asset Category</a><div id="Desc-16B051ED64357695" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">An Asset Category is a general purpose Architecture Category used to classify any type of Architecture Block (Type).  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="16B05351643577B3-core-E1A4FB1B64017AD6-6-16B051ED64357695" class="Domain-E1A4FB1B64017AD6_Rel-line" d="M735,250 C842.5,250 842.5,209.75 950,209.75" stroke="gray" fill="none" marker-start="url(#Domain-E1A4FB1B64017AD6__RelCircle" marker-end="url(#Domain-E1A4FB1B64017AD6__RelArrowTip"/>
+<g   transform="translate(50,205.25)">
+  <rect height="40"  width="325"  id="57DF9E2B550928B8"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="57df9e2b550928b8.htm#Relationship1">{Drivers & Stakeholders}</a></div></foreignObject>
+</g>
+<g   transform="translate(50,225.25)">
+  <rect height="20"  width="320"  id="In-2CC9977D55264886-91BE945354882B15"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#F4DB6F"><a href="91be945354882b15.htm#Relationship1">Architectural Driver</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="https://method.demomega.com/MM-OVERVIEW/pages/2CC9977D55264886.htm">[Subject Asset]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="2CC9977D55264886-91BE945354882B15-91BE945354882B15" class="Domain-E1A4FB1B64017AD6_Rel-line" d="M370,225.25 C477.5,225.25 477.5,250 585,250" stroke="gray" fill="none" marker-start="url(#Domain-E1A4FB1B64017AD6__RelCircle" marker-end="url(#Domain-E1A4FB1B64017AD6__RelArrowTip"/>
+<g   transform="translate(50,255.25)">
+  <rect height="60"  width="325"  id="76147FEB6182230A"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="60" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="76147feb6182230a.htm#Relationship1">{Enterprise Architecting & Management Systems}</a></div></foreignObject>
+</g>
+<g   transform="translate(50,275.25)">
+  <rect height="20"  width="320"  id="In-9BB49F52626A675B-D34222C65B131D09"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#F4DB6F"><a href="d34222c65b131d09.htm#Relationship1">Architecture Project</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="https://method.demomega.com/MM-OVERVIEW/pages/9BB49F52626A675B.htm">[Architecture Deliverable]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="9BB49F52626A675B-D34222C65B131D09-D34222C65B131D09" class="Domain-E1A4FB1B64017AD6_Rel-line" d="M370,275.25 C477.5,275.25 477.5,250 585,250" stroke="gray" fill="none" marker-start="url(#Domain-E1A4FB1B64017AD6__RelCircle" marker-end="url(#Domain-E1A4FB1B64017AD6__RelArrowTip"/>
+<g   transform="translate(50,295.25)">
+  <rect height="20"  width="320"  id="In-5B7A913861F41A59-F4BE1C025EE10085"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#F4DB6F"><a href="F4BE1C025EE10085.htm#Relationship1">Action Plan</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="https://method.demomega.com/MM-OVERVIEW/pages/5B7A913861F41A59.htm">[Action Plan Outcome]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="5B7A913861F41A59-F4BE1C025EE10085-F4BE1C025EE10085" class="Domain-E1A4FB1B64017AD6_Rel-line" d="M370,295.25 C477.5,295.25 477.5,250 585,250" stroke="gray" fill="none" marker-start="url(#Domain-E1A4FB1B64017AD6__RelCircle" marker-end="url(#Domain-E1A4FB1B64017AD6__RelArrowTip"/>
+<g   transform="translate(50,325.25)">
+  <rect height="40"  width="325"  id="A951EE816194126B"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="a951ee816194126b.htm#Relationship1">{Facility Asset Architecture}</a></div></foreignObject>
+</g>
+<g   transform="translate(50,345.25)">
+  <rect height="20"  width="320"  id="In-F4BE0FD85EE1DA9D-A41AB2D25B378B12"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#A52A00"><a href="a41ab2d25b378b12.htm#Relationship1">Computer Network</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="f4be0fd85ee1da9d.htm">[Network Node]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="F4BE0FD85EE1DA9D-A41AB2D25B378B12-A41AB2D25B378B12" class="Domain-E1A4FB1B64017AD6_Rel-line" d="M370,345.25 C477.5,345.25 477.5,250 585,250" stroke="gray" fill="none" marker-start="url(#Domain-E1A4FB1B64017AD6__RelCircle" marker-end="url(#Domain-E1A4FB1B64017AD6__RelArrowTip"/>
+<g   transform="translate(945,239.75)">
+  <rect height="40"  width="325"  id="C30BF38F5A5DA645"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="c30bf38f5a5da645.htm#Relationship1">{Hardware System ArcDevOps}</a></div></foreignObject>
+</g>
+<g   transform="translate(950,259.75)">
+  <rect height="20"  width="320"  id="D160042562E08353"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-26B839785EEAE7D2-core-E1A4FB1B64017AD6-3-D160042562E08353').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-26B839785EEAE7D2-core-E1A4FB1B64017AD6-3-D160042562E08353').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/26B839785EEAE7D2.htm">[Network Connection]</a>  <div id="Desc-26B839785EEAE7D2-core-E1A4FB1B64017AD6-3-D160042562E08353" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Network Connection is  a Communication channel that represent physical/virtual connections between Network connectivitys.  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-D160042562E08353').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-D160042562E08353').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="d160042562e08353.htm#Relationship1">Network Interface</a><div id="Desc-D160042562E08353" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Network Interface is a set of rules and conventions that govern the communication between devices on a Computer Network.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="26B839785EEAE7D2-core-E1A4FB1B64017AD6-3-D160042562E08353" class="Domain-E1A4FB1B64017AD6_Rel-line" d="M735,250 C842.5,250 842.5,259.75 950,259.75" stroke="gray" fill="none" marker-start="url(#Domain-E1A4FB1B64017AD6__RelCircle" marker-end="url(#Domain-E1A4FB1B64017AD6__RelArrowTip"/>
+<g   transform="translate(50,375.25)">
+  <rect height="40"  width="325"  id="9D3B121261CFB66B"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="9D3B121261CFB66B.htm#Relationship1">{Indicator Pattern}</a></div></foreignObject>
+</g>
+<g   transform="translate(50,395.25)">
+  <rect height="20"  width="320"  id="In-8F46F2A964B776BD-8F46E8EB64B7719A"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#F4DB6F"><a href="8F46E8EB64B7719A.htm#Relationship1">Key Indicator</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="https://method.demomega.com/MM-OVERVIEW/pages/8F46F2A964B776BD.htm">[Indicator Subject]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="8F46F2A964B776BD-8F46E8EB64B7719A-8F46E8EB64B7719A" class="Domain-E1A4FB1B64017AD6_Rel-line" d="M370,395.25 C477.5,395.25 477.5,250 585,250" stroke="gray" fill="none" marker-start="url(#Domain-E1A4FB1B64017AD6__RelCircle" marker-end="url(#Domain-E1A4FB1B64017AD6__RelArrowTip"/>
+<g   transform="translate(945,289.75)">
+  <rect height="60"  width="325"  id="AF4DB12D62993434"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="60" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="af4db12d62993434.htm#Relationship1">{Model Block Management}</a></div></foreignObject>
+</g>
+<g   transform="translate(950,309.75)">
+  <rect height="20"  width="320"  id="AFFEE0765F6086D4"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-05B0DF7E6006C158-core-E1A4FB1B64017AD6-8-AFFEE0765F6086D4').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-05B0DF7E6006C158-core-E1A4FB1B64017AD6-8-AFFEE0765F6086D4').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/05B0DF7E6006C158.htm">[Annotation Tag]</a>  <div id="Desc-05B0DF7E6006C158-core-E1A4FB1B64017AD6-8-AFFEE0765F6086D4" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-AFFEE0765F6086D4').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-AFFEE0765F6086D4').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="AFFEE0765F6086D4.htm#Relationship1">Tag</a><div id="Desc-AFFEE0765F6086D4" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Tag is a general classification description which permits characterization of Entitys.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="05B0DF7E6006C158-core-E1A4FB1B64017AD6-8-AFFEE0765F6086D4" class="Domain-E1A4FB1B64017AD6_Rel-line" d="M735,250 C842.5,250 842.5,309.75 950,309.75" stroke="gray" fill="none" marker-start="url(#Domain-E1A4FB1B64017AD6__RelCircle" marker-end="url(#Domain-E1A4FB1B64017AD6__RelArrowTip"/>
+<g   transform="translate(950,329.75)">
+  <rect height="20"  width="320"  id="AFFEE0F15F60898A"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-05B0DF0C6006C0D8-core-E1A4FB1B64017AD6-8-AFFEE0F15F60898A').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-05B0DF0C6006C0D8-core-E1A4FB1B64017AD6-8-AFFEE0F15F60898A').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/05B0DF0C6006C0D8.htm">[Attached Document]</a>  <div id="Desc-05B0DF0C6006C0D8-core-E1A4FB1B64017AD6-8-AFFEE0F15F60898A" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-AFFEE0F15F60898A').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-AFFEE0F15F60898A').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="AFFEE0F15F60898A.htm#Relationship1">Business Document</a><div id="Desc-AFFEE0F15F60898A" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Business Document is a document whose lifecycle can be synched to the MEGA repository content: it may be attached to mega objects and a document version bound to a mega object timestamp in the Time Machine. This document can be of any given file format.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="05B0DF0C6006C0D8-core-E1A4FB1B64017AD6-8-AFFEE0F15F60898A" class="Domain-E1A4FB1B64017AD6_Rel-line" d="M735,250 C842.5,250 842.5,329.75 950,329.75" stroke="gray" fill="none" marker-start="url(#Domain-E1A4FB1B64017AD6__RelCircle" marker-end="url(#Domain-E1A4FB1B64017AD6__RelArrowTip"/>
+<g   transform="translate(945,359.75)">
+  <rect height="40"  width="325"  id="02F70FDC600F4179"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="02F70FDC600F4179.htm#Relationship1">{Policy Pattern}</a></div></foreignObject>
+</g>
+<g   transform="translate(950,379.75)">
+  <rect height="20"  width="320"  id="959320325EE7FE24"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-8E1393E85EBE476F-core-E1A4FB1B64017AD6-6-959320325EE7FE24').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-8E1393E85EBE476F-core-E1A4FB1B64017AD6-6-959320325EE7FE24').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="8E1393E85EBE476F.htm">[Policy Conformance]</a>  <div id="Desc-8E1393E85EBE476F-core-E1A4FB1B64017AD6-6-959320325EE7FE24" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Policy Conformance is a statement that a Functional Asset is designed to comply with a Policy.  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-959320325EE7FE24').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-959320325EE7FE24').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="959320325ee7fe24.htm#Relationship1">Policy</a><div id="Desc-959320325EE7FE24" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Policy is a Directive that is not directly enforceable whose purpose is to govern, guide or constrain the structure and behavior of Agents in the enterprise.   </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="8E1393E85EBE476F-core-E1A4FB1B64017AD6-6-959320325EE7FE24" class="Domain-E1A4FB1B64017AD6_Rel-line" d="M735,250 C842.5,250 842.5,379.75 950,379.75" stroke="gray" fill="none" marker-start="url(#Domain-E1A4FB1B64017AD6__RelCircle" marker-end="url(#Domain-E1A4FB1B64017AD6__RelArrowTip"/>
+<g   transform="translate(50,425.25)">
+  <rect height="60"  width="325"  id="E073FB4561D211A3"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="60" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="E073FB4561D211A3.htm#Relationship1">{Resolution Pattern}</a></div></foreignObject>
+</g>
+<g   transform="translate(50,445.25)">
+  <rect height="20"  width="320"  id="In-9BB4A2DB626A9622-D7F9FCC95F720EE0"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#F4DB6F"><a href="D7F9FCC95F720EE0.htm#Relationship1">Decision</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="https://method.demomega.com/MM-OVERVIEW/pages/9BB4A2DB626A9622.htm">[decision subject]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="9BB4A2DB626A9622-D7F9FCC95F720EE0-D7F9FCC95F720EE0" class="Domain-E1A4FB1B64017AD6_Rel-line" d="M370,445.25 C477.5,445.25 477.5,250 585,250" stroke="gray" fill="none" marker-start="url(#Domain-E1A4FB1B64017AD6__RelCircle" marker-end="url(#Domain-E1A4FB1B64017AD6__RelArrowTip"/>
+<g   transform="translate(50,465.25)">
+  <rect height="20"  width="320"  id="In-7327A29F64364B2E-732799D364364423"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#F4DB6F"><a href="732799D364364423.htm#Relationship1">Policy Decision</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="https://method.demomega.com/MM-OVERVIEW/pages/7327A29F64364B2E.htm">[Applicability Domain]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="7327A29F64364B2E-732799D364364423-732799D364364423" class="Domain-E1A4FB1B64017AD6_Rel-line" d="M370,465.25 C477.5,465.25 477.5,250 585,250" stroke="gray" fill="none" marker-start="url(#Domain-E1A4FB1B64017AD6__RelCircle" marker-end="url(#Domain-E1A4FB1B64017AD6__RelArrowTip"/>
+</svg>
+
+</div>
+<div class="Relationship" id="Relationship4" style="display:none">
+<h3>Relationship Table</h3>
+<table id="sortabletable" class="table table-sm  table-bordered table-cell-resizable table-index-set-col-width-4 table-custom-style table-scrollX" width="100%" cellspacing="0">
+<tr><th>Relationship</th><th>Cardinality</th><th>Target Entity</th><th>Source Entity</th><th>Description</th><th>Implementation</th></tr>
+<tr>
+<td><img src="../standard/concepttype-connection.ico.gif"/>&nbsp;Network Connection</td>
+<td>[0..*]</td>
+<td><img src="../standard/relationship-concepttype.ico.gif"/>&nbsp;
+<a  href="d160042562e08353.htm" target="_top">Network Interface</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="26b8384f5eeae33c.htm" target="_top">Network connectivity</a></td>
+<td><div align="left" style="min-height: 12pt; ">A&#160;<b> Network Connection</b> is&#160; a Communication channel that represent physical/virtual connections between <a href="26b8384f5eeae33c.htm" target="_top"><b><u>Network connectivity</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">They connect <a href="26b8384f5eeae33c.htm" target="_top"><b><u>Network connectivity</u></b></a>s through their Network Ports.</div><div align="left" style="min-height: 12pt; ">They convey interactions between physical resources.</div></td>
+<td><img src="../standard/metaclasspart_concrete.ico.gif"/>&nbsp;
+<a  href="52e053f64a2e007e.htm" target="_top">Communication Channel</a></td>
+</tr>
+<tr>
+<td><img src="../standard/ctx-concepttype.ico.gif"/>&nbsp;
+<a  href="26B8386E5EEAE4A4.htm" target="_top">Networking Component</a></td>
+<td>[0..*]</td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="26b8384f5eeae33c.htm" target="_top">Network connectivity</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="26b8384f5eeae33c.htm" target="_top">Network connectivity</a></td>
+<td><i>Abstract Relationship</i><br/></td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="52e054b14a2e00f2.htm" target="_top">Communicating Element</a></td>
+</tr>
+</table>
+</div>
+</section>
+<a class="object-section-anchor" id="shi"></a>
+<section class="object-section">
+<h4>SUPER TYPES HIERARCHY</h4> 
+<hr class="sectionbreak" />
+<span>Left click on a node to toggle it. Right click to navigate through its page
+</section>
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<div id="categoryHierarchy"></div>
+ <script>
+var hierarchy = JSON.parse('{"name":"Wifi Hotspot","comment":"A Wifi Hotspot is Network Device that allows multiple devices to connect to a Wi-Fi network.","url":"E1A4FB1B64017AD6.htm","parents":[{"name":"Network Device","comment":"A Network Device is any piece of physical or virtual hardware that is used to connect Computational Aspects (Computer Devices, Computer Servers) and other devices to a Computer Network.","url":"F4BE0FBA5EE1D935.htm", "isparent":true,"parents":[{"name":"Networking System","comment":"A Networking System is a Technology System that provides networking capabilities offered through Network Interfaces.","url":"070B0D5564011DBB.htm", "isparent":true,"parents":[{"name":"Technology System","comment":"A Technology System is an Agent which produces Technology Outcomes through Technology Interfaces. Technology Systems are enabler of Business Systems. They do not directly deliver Business Outcomes to internal or external customers.","url":"0CBD1FA663FE18AC.htm", "isparent":true,"parents":[{"name":"Agent","comment":"An Agent is an Operating Asset which is able to participate actively to Processes (Active Participant) and/or to conduct Processes (Performed Process) to produce Outcomes that benefit to other Agents or affect other Agents.","url":"79368381561716A6.htm", "isparent":true,"parents":[{"name":"Encapsulated Aggregate (Type)","comment":"An Encapsulated Aggregate (Type) is a class of Encapsulated Aggregate (Individual).","url":"14431B565AD65914.htm", "isparent":true,"parents":[{"name":"Encapsulated Aggregate","comment":"An Encapsulated Aggregate is a Aggregate Block where its internal structure and state changes are hidden from the outside world by means of a formal boundary.","url":"AE26FA7F5ACD535B.htm", "isparent":true,"parents":[{"name":"Aggregate Block","comment":"An Aggregate Block is a Building Block which has an internal structure.","url":"514E5F6C620F1EC6.htm", "isparent":true,"parents":[{"name":"Aggregate Entity","comment":"An Aggregate Entity is a Nesting Entity which has an internal structure made of Aggregate Entity Members.","url":"B13D31DE5EDF42D8.htm", "isparent":true,"parents":[{"name":"<Aspects>","isparent": true,"parents":[{"name":"Nesting Entity","comment":"A Nesting Entity is an Entity that nests other entities as sub-entities, serving as their lexical scope. The existence, visibility, and significance of Nested Entitys are confined within the boundaries of their Nesting Entity.","url":"AE26F8D65ACD51AB.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]}]},{"name":"Building Block","comment":"A Building Block is an autonomous, resusable Entity that contributes to the makeup of other Building Blocks.","url":"CCB819645A564F12.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]}]},{"name":"Aggregate Block (Type)","comment":"An Aggregate Block (Type) is a class of  Aggregate Blocks.","url":"514E62CE620F22C1.htm", "isparent":true,"parents":[{"name":"Aggregate Block","comment":"An Aggregate Block is a Building Block which has an internal structure.","url":"514E5F6C620F1EC6.htm", "isparent":true,"parents":[{"name":"Aggregate Entity","comment":"An Aggregate Entity is a Nesting Entity which has an internal structure made of Aggregate Entity Members.","url":"B13D31DE5EDF42D8.htm", "isparent":true,"parents":[{"name":"<Aspects>","isparent": true,"parents":[{"name":"Nesting Entity","comment":"A Nesting Entity is an Entity that nests other entities as sub-entities, serving as their lexical scope. The existence, visibility, and significance of Nested Entitys are confined within the boundaries of their Nesting Entity.","url":"AE26F8D65ACD51AB.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]}]},{"name":"Building Block","comment":"A Building Block is an autonomous, resusable Entity that contributes to the makeup of other Building Blocks.","url":"CCB819645A564F12.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]},{"name":"Class of Building Block","comment":"A Class of Building Block is a Class that classifies Building Blocks.","url":"9597C202620AAA9D.htm", "isparent":true,"parents":[{"name":"Building Block","comment":"A Building Block is an autonomous, resusable Entity that contributes to the makeup of other Building Blocks.","url":"CCB819645A564F12.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]},{"name":"Class","comment":"A Class is collection of Entitys which it classifies according to one or more criteria.","url":"744B935D5FBFE0F9.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]},{"name":"Class of Individual","comment":"A Class of Individual is a Class whose members are instances of  Individual .","url":"3492C53E619642ED.htm", "isparent":true,"parents":[{"name":"Class","comment":"A Class is collection of Entitys which it classifies according to one or more criteria.","url":"744B935D5FBFE0F9.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]}]}]},{"name":"Operating Asset","comment":"An Operating Asset is a Functional Asset used to describes the way Outcomes are produced and consumed: how  (Behaviors) and by whom (Agents).","url":"A371A43B5B865817.htm", "isparent":true,"parents":[{"name":"Functional Asset","comment":"Functional Assets encompasse Architecture Blocks used to describe how an enterprise function. This includes the purposes of an enterprise (Capability) and the way the enterprise operates to fulfill these purposes (Agents and their  Behaviors).","url":"07CA0F015DD84EFA.htm", "isparent":true,"parents":[{"name":"Architecture Block (Type)","comment":"An Architecture Block (Type) is a type of Architecture Block which is used in the description of the enterprise, such as Processes, Org-Units, Applications.","url":"A4A5B3F855585CE1.htm", "isparent":true,"parents":[{"name":"Class of Individual","comment":"A Class of Individual is a Class whose members are instances of  Individual .","url":"3492C53E619642ED.htm", "isparent":true,"parents":[{"name":"Class","comment":"A Class is collection of Entitys which it classifies according to one or more criteria.","url":"744B935D5FBFE0F9.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]},{"name":"Architecture Block","comment":"An Architecture Block is any Model Building Block used to describe an enterprise architecture. This includes types (applications, org-units, ...) and individuals (physical persons, software installations, sites, ...).","url":"D342D88E5B121401.htm", "isparent":true,"parents":[{"name":"Model Building Block","comment":"A Model Building Block is a Building Block used to describe and manage the enterprise. It comprises:","url":"CA353E6D5FC5E8AF.htm", "isparent":true,"parents":[{"name":"Building Block","comment":"A Building Block is an autonomous, resusable Entity that contributes to the makeup of other Building Blocks.","url":"CCB819645A564F12.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]}]},{"name":"Class of Model Block","comment":"A Class of Model Block is a Class that classifies Model Building Blocks.","url":"9597D7B3620AB751.htm", "isparent":true,"parents":[{"name":"Class of Building Block","comment":"A Class of Building Block is a Class that classifies Building Blocks.","url":"9597C202620AAA9D.htm", "isparent":true,"parents":[{"name":"Building Block","comment":"A Building Block is an autonomous, resusable Entity that contributes to the makeup of other Building Blocks.","url":"CCB819645A564F12.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]},{"name":"Class","comment":"A Class is collection of Entitys which it classifies according to one or more criteria.","url":"744B935D5FBFE0F9.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]}]}]},{"name":"Aggregate Block (Type)","comment":"An Aggregate Block (Type) is a class of  Aggregate Blocks.","url":"514E62CE620F22C1.htm", "isparent":true,"parents":[{"name":"Aggregate Block","comment":"An Aggregate Block is a Building Block which has an internal structure.","url":"514E5F6C620F1EC6.htm", "isparent":true,"parents":[{"name":"Aggregate Entity","comment":"An Aggregate Entity is a Nesting Entity which has an internal structure made of Aggregate Entity Members.","url":"B13D31DE5EDF42D8.htm", "isparent":true,"parents":[{"name":"<Aspects>","isparent": true,"parents":[{"name":"Nesting Entity","comment":"A Nesting Entity is an Entity that nests other entities as sub-entities, serving as their lexical scope. The existence, visibility, and significance of Nested Entitys are confined within the boundaries of their Nesting Entity.","url":"AE26F8D65ACD51AB.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]}]},{"name":"Building Block","comment":"A Building Block is an autonomous, resusable Entity that contributes to the makeup of other Building Blocks.","url":"CCB819645A564F12.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]},{"name":"Class of Building Block","comment":"A Class of Building Block is a Class that classifies Building Blocks.","url":"9597C202620AAA9D.htm", "isparent":true,"parents":[{"name":"Building Block","comment":"A Building Block is an autonomous, resusable Entity that contributes to the makeup of other Building Blocks.","url":"CCB819645A564F12.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]},{"name":"Class","comment":"A Class is collection of Entitys which it classifies according to one or more criteria.","url":"744B935D5FBFE0F9.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]},{"name":"Class of Individual","comment":"A Class of Individual is a Class whose members are instances of  Individual .","url":"3492C53E619642ED.htm", "isparent":true,"parents":[{"name":"Class","comment":"A Class is collection of Entitys which it classifies according to one or more criteria.","url":"744B935D5FBFE0F9.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]}]}]}, {"name":"<Aspects>","isparent": true,"parents":[{"name":"Value Added Object","comment":"A Value Added Object is an aspect of Architecture Block (Type)s which can be the subject of business transactions.","url":"43EE620E63725A56.htm", "isparent":true,"parents":[{"name":"Architecture Block (Type)","comment":"An Architecture Block (Type) is a type of Architecture Block which is used in the description of the enterprise, such as Processes, Org-Units, Applications.","url":"A4A5B3F855585CE1.htm", "isparent":true,"parents":[{"name":"Class of Individual","comment":"A Class of Individual is a Class whose members are instances of  Individual .","url":"3492C53E619642ED.htm", "isparent":true,"parents":[{"name":"Class","comment":"A Class is collection of Entitys which it classifies according to one or more criteria.","url":"744B935D5FBFE0F9.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]},{"name":"Architecture Block","comment":"An Architecture Block is any Model Building Block used to describe an enterprise architecture. This includes types (applications, org-units, ...) and individuals (physical persons, software installations, sites, ...).","url":"D342D88E5B121401.htm", "isparent":true,"parents":[{"name":"Model Building Block","comment":"A Model Building Block is a Building Block used to describe and manage the enterprise. It comprises:","url":"CA353E6D5FC5E8AF.htm", "isparent":true,"parents":[{"name":"Building Block","comment":"A Building Block is an autonomous, resusable Entity that contributes to the makeup of other Building Blocks.","url":"CCB819645A564F12.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]}]},{"name":"Class of Model Block","comment":"A Class of Model Block is a Class that classifies Model Building Blocks.","url":"9597D7B3620AB751.htm", "isparent":true,"parents":[{"name":"Class of Building Block","comment":"A Class of Building Block is a Class that classifies Building Blocks.","url":"9597C202620AAA9D.htm", "isparent":true,"parents":[{"name":"Building Block","comment":"A Building Block is an autonomous, resusable Entity that contributes to the makeup of other Building Blocks.","url":"CCB819645A564F12.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]},{"name":"Class","comment":"A Class is collection of Entitys which it classifies according to one or more criteria.","url":"744B935D5FBFE0F9.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]}]}]}]}]}]}]}, {"name":"<Aspects>","isparent": true,"parents":[{"name":"Technology Operating Asset","comment":"A Technology Operating Asset is an Operating Asset that describes how technologies (Behaviors) and by whom (Technology System) Technology Outcomes are produced and consumed.","url":"D16006D362E085F2.htm", "isparent":true,"parents":[{"name":"Operating Asset","comment":"An Operating Asset is a Functional Asset used to describes the way Outcomes are produced and consumed: how  (Behaviors) and by whom (Agents).","url":"A371A43B5B865817.htm", "isparent":true,"parents":[{"name":"Functional Asset","comment":"Functional Assets encompasse Architecture Blocks used to describe how an enterprise function. This includes the purposes of an enterprise (Capability) and the way the enterprise operates to fulfill these purposes (Agents and their  Behaviors).","url":"07CA0F015DD84EFA.htm", "isparent":true,"parents":[{"name":"Architecture Block (Type)","comment":"An Architecture Block (Type) is a type of Architecture Block which is used in the description of the enterprise, such as Processes, Org-Units, Applications.","url":"A4A5B3F855585CE1.htm", "isparent":true,"parents":[{"name":"Class of Individual","comment":"A Class of Individual is a Class whose members are instances of  Individual .","url":"3492C53E619642ED.htm", "isparent":true,"parents":[{"name":"Class","comment":"A Class is collection of Entitys which it classifies according to one or more criteria.","url":"744B935D5FBFE0F9.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]},{"name":"Architecture Block","comment":"An Architecture Block is any Model Building Block used to describe an enterprise architecture. This includes types (applications, org-units, ...) and individuals (physical persons, software installations, sites, ...).","url":"D342D88E5B121401.htm", "isparent":true,"parents":[{"name":"Model Building Block","comment":"A Model Building Block is a Building Block used to describe and manage the enterprise. It comprises:","url":"CA353E6D5FC5E8AF.htm", "isparent":true,"parents":[{"name":"Building Block","comment":"A Building Block is an autonomous, resusable Entity that contributes to the makeup of other Building Blocks.","url":"CCB819645A564F12.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]}]},{"name":"Class of Model Block","comment":"A Class of Model Block is a Class that classifies Model Building Blocks.","url":"9597D7B3620AB751.htm", "isparent":true,"parents":[{"name":"Class of Building Block","comment":"A Class of Building Block is a Class that classifies Building Blocks.","url":"9597C202620AAA9D.htm", "isparent":true,"parents":[{"name":"Building Block","comment":"A Building Block is an autonomous, resusable Entity that contributes to the makeup of other Building Blocks.","url":"CCB819645A564F12.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]},{"name":"Class","comment":"A Class is collection of Entitys which it classifies according to one or more criteria.","url":"744B935D5FBFE0F9.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]}]}]},{"name":"Aggregate Block (Type)","comment":"An Aggregate Block (Type) is a class of  Aggregate Blocks.","url":"514E62CE620F22C1.htm", "isparent":true,"parents":[{"name":"Aggregate Block","comment":"An Aggregate Block is a Building Block which has an internal structure.","url":"514E5F6C620F1EC6.htm", "isparent":true,"parents":[{"name":"Aggregate Entity","comment":"An Aggregate Entity is a Nesting Entity which has an internal structure made of Aggregate Entity Members.","url":"B13D31DE5EDF42D8.htm", "isparent":true,"parents":[{"name":"<Aspects>","isparent": true,"parents":[{"name":"Nesting Entity","comment":"A Nesting Entity is an Entity that nests other entities as sub-entities, serving as their lexical scope. The existence, visibility, and significance of Nested Entitys are confined within the boundaries of their Nesting Entity.","url":"AE26F8D65ACD51AB.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]}]},{"name":"Building Block","comment":"A Building Block is an autonomous, resusable Entity that contributes to the makeup of other Building Blocks.","url":"CCB819645A564F12.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]},{"name":"Class of Building Block","comment":"A Class of Building Block is a Class that classifies Building Blocks.","url":"9597C202620AAA9D.htm", "isparent":true,"parents":[{"name":"Building Block","comment":"A Building Block is an autonomous, resusable Entity that contributes to the makeup of other Building Blocks.","url":"CCB819645A564F12.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]},{"name":"Class","comment":"A Class is collection of Entitys which it classifies according to one or more criteria.","url":"744B935D5FBFE0F9.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]},{"name":"Class of Individual","comment":"A Class of Individual is a Class whose members are instances of  Individual .","url":"3492C53E619642ED.htm", "isparent":true,"parents":[{"name":"Class","comment":"A Class is collection of Entitys which it classifies according to one or more criteria.","url":"744B935D5FBFE0F9.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]}]}]}, {"name":"<Aspects>","isparent": true,"parents":[{"name":"Value Added Object","comment":"A Value Added Object is an aspect of Architecture Block (Type)s which can be the subject of business transactions.","url":"43EE620E63725A56.htm", "isparent":true,"parents":[{"name":"Architecture Block (Type)","comment":"An Architecture Block (Type) is a type of Architecture Block which is used in the description of the enterprise, such as Processes, Org-Units, Applications.","url":"A4A5B3F855585CE1.htm", "isparent":true,"parents":[{"name":"Class of Individual","comment":"A Class of Individual is a Class whose members are instances of  Individual .","url":"3492C53E619642ED.htm", "isparent":true,"parents":[{"name":"Class","comment":"A Class is collection of Entitys which it classifies according to one or more criteria.","url":"744B935D5FBFE0F9.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]},{"name":"Architecture Block","comment":"An Architecture Block is any Model Building Block used to describe an enterprise architecture. This includes types (applications, org-units, ...) and individuals (physical persons, software installations, sites, ...).","url":"D342D88E5B121401.htm", "isparent":true,"parents":[{"name":"Model Building Block","comment":"A Model Building Block is a Building Block used to describe and manage the enterprise. It comprises:","url":"CA353E6D5FC5E8AF.htm", "isparent":true,"parents":[{"name":"Building Block","comment":"A Building Block is an autonomous, resusable Entity that contributes to the makeup of other Building Blocks.","url":"CCB819645A564F12.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]}]},{"name":"Class of Model Block","comment":"A Class of Model Block is a Class that classifies Model Building Blocks.","url":"9597D7B3620AB751.htm", "isparent":true,"parents":[{"name":"Class of Building Block","comment":"A Class of Building Block is a Class that classifies Building Blocks.","url":"9597C202620AAA9D.htm", "isparent":true,"parents":[{"name":"Building Block","comment":"A Building Block is an autonomous, resusable Entity that contributes to the makeup of other Building Blocks.","url":"CCB819645A564F12.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]},{"name":"Class","comment":"A Class is collection of Entitys which it classifies according to one or more criteria.","url":"744B935D5FBFE0F9.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]}]}]}]}]}]}]},{"name":"Technology Object","comment":"A Technology Object represents any tangible or intanglible Technology System or state of such system, that can be the subject of a technology transaction.","url":"70BAEDBC642259E5.htm", "isparent":true,"parents":[{"name":"<Aspects>","isparent": true,"parents":[{"name":"Value Added Object","comment":"A Value Added Object is an aspect of Architecture Block (Type)s which can be the subject of business transactions.","url":"43EE620E63725A56.htm", "isparent":true,"parents":[{"name":"Architecture Block (Type)","comment":"An Architecture Block (Type) is a type of Architecture Block which is used in the description of the enterprise, such as Processes, Org-Units, Applications.","url":"A4A5B3F855585CE1.htm", "isparent":true,"parents":[{"name":"Class of Individual","comment":"A Class of Individual is a Class whose members are instances of  Individual .","url":"3492C53E619642ED.htm", "isparent":true,"parents":[{"name":"Class","comment":"A Class is collection of Entitys which it classifies according to one or more criteria.","url":"744B935D5FBFE0F9.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]},{"name":"Architecture Block","comment":"An Architecture Block is any Model Building Block used to describe an enterprise architecture. This includes types (applications, org-units, ...) and individuals (physical persons, software installations, sites, ...).","url":"D342D88E5B121401.htm", "isparent":true,"parents":[{"name":"Model Building Block","comment":"A Model Building Block is a Building Block used to describe and manage the enterprise. It comprises:","url":"CA353E6D5FC5E8AF.htm", "isparent":true,"parents":[{"name":"Building Block","comment":"A Building Block is an autonomous, resusable Entity that contributes to the makeup of other Building Blocks.","url":"CCB819645A564F12.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]}]},{"name":"Class of Model Block","comment":"A Class of Model Block is a Class that classifies Model Building Blocks.","url":"9597D7B3620AB751.htm", "isparent":true,"parents":[{"name":"Class of Building Block","comment":"A Class of Building Block is a Class that classifies Building Blocks.","url":"9597C202620AAA9D.htm", "isparent":true,"parents":[{"name":"Building Block","comment":"A Building Block is an autonomous, resusable Entity that contributes to the makeup of other Building Blocks.","url":"CCB819645A564F12.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]},{"name":"Class","comment":"A Class is collection of Entitys which it classifies according to one or more criteria.","url":"744B935D5FBFE0F9.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]}]}]}]}]}]}]}]}, {"name":"<Aspects>","isparent": true,"parents":[{"name":"Network connectivity","comment":"Network connectivity is an aspect of Technology Operating Asset that provides networking capabilites through the use of Network Interfaces.","url":"26B8384F5EEAE33C.htm", "isparent":true,"parents":[{"name":"<Aspects>","isparent": true,"parents":[{"name":"Technology Operating Asset","comment":"A Technology Operating Asset is an Operating Asset that describes how technologies (Behaviors) and by whom (Technology System) Technology Outcomes are produced and consumed.","url":"D16006D362E085F2.htm", "isparent":true,"parents":[{"name":"Operating Asset","comment":"An Operating Asset is a Functional Asset used to describes the way Outcomes are produced and consumed: how  (Behaviors) and by whom (Agents).","url":"A371A43B5B865817.htm", "isparent":true,"parents":[{"name":"Functional Asset","comment":"Functional Assets encompasse Architecture Blocks used to describe how an enterprise function. This includes the purposes of an enterprise (Capability) and the way the enterprise operates to fulfill these purposes (Agents and their  Behaviors).","url":"07CA0F015DD84EFA.htm", "isparent":true,"parents":[{"name":"Architecture Block (Type)","comment":"An Architecture Block (Type) is a type of Architecture Block which is used in the description of the enterprise, such as Processes, Org-Units, Applications.","url":"A4A5B3F855585CE1.htm", "isparent":true,"parents":[{"name":"Class of Individual","comment":"A Class of Individual is a Class whose members are instances of  Individual .","url":"3492C53E619642ED.htm", "isparent":true,"parents":[{"name":"Class","comment":"A Class is collection of Entitys which it classifies according to one or more criteria.","url":"744B935D5FBFE0F9.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]},{"name":"Architecture Block","comment":"An Architecture Block is any Model Building Block used to describe an enterprise architecture. This includes types (applications, org-units, ...) and individuals (physical persons, software installations, sites, ...).","url":"D342D88E5B121401.htm", "isparent":true,"parents":[{"name":"Model Building Block","comment":"A Model Building Block is a Building Block used to describe and manage the enterprise. It comprises:","url":"CA353E6D5FC5E8AF.htm", "isparent":true,"parents":[{"name":"Building Block","comment":"A Building Block is an autonomous, resusable Entity that contributes to the makeup of other Building Blocks.","url":"CCB819645A564F12.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]}]},{"name":"Class of Model Block","comment":"A Class of Model Block is a Class that classifies Model Building Blocks.","url":"9597D7B3620AB751.htm", "isparent":true,"parents":[{"name":"Class of Building Block","comment":"A Class of Building Block is a Class that classifies Building Blocks.","url":"9597C202620AAA9D.htm", "isparent":true,"parents":[{"name":"Building Block","comment":"A Building Block is an autonomous, resusable Entity that contributes to the makeup of other Building Blocks.","url":"CCB819645A564F12.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]},{"name":"Class","comment":"A Class is collection of Entitys which it classifies according to one or more criteria.","url":"744B935D5FBFE0F9.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]}]}]},{"name":"Aggregate Block (Type)","comment":"An Aggregate Block (Type) is a class of  Aggregate Blocks.","url":"514E62CE620F22C1.htm", "isparent":true,"parents":[{"name":"Aggregate Block","comment":"An Aggregate Block is a Building Block which has an internal structure.","url":"514E5F6C620F1EC6.htm", "isparent":true,"parents":[{"name":"Aggregate Entity","comment":"An Aggregate Entity is a Nesting Entity which has an internal structure made of Aggregate Entity Members.","url":"B13D31DE5EDF42D8.htm", "isparent":true,"parents":[{"name":"<Aspects>","isparent": true,"parents":[{"name":"Nesting Entity","comment":"A Nesting Entity is an Entity that nests other entities as sub-entities, serving as their lexical scope. The existence, visibility, and significance of Nested Entitys are confined within the boundaries of their Nesting Entity.","url":"AE26F8D65ACD51AB.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]}]},{"name":"Building Block","comment":"A Building Block is an autonomous, resusable Entity that contributes to the makeup of other Building Blocks.","url":"CCB819645A564F12.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]},{"name":"Class of Building Block","comment":"A Class of Building Block is a Class that classifies Building Blocks.","url":"9597C202620AAA9D.htm", "isparent":true,"parents":[{"name":"Building Block","comment":"A Building Block is an autonomous, resusable Entity that contributes to the makeup of other Building Blocks.","url":"CCB819645A564F12.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]},{"name":"Class","comment":"A Class is collection of Entitys which it classifies according to one or more criteria.","url":"744B935D5FBFE0F9.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]},{"name":"Class of Individual","comment":"A Class of Individual is a Class whose members are instances of  Individual .","url":"3492C53E619642ED.htm", "isparent":true,"parents":[{"name":"Class","comment":"A Class is collection of Entitys which it classifies according to one or more criteria.","url":"744B935D5FBFE0F9.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]}]}]}, {"name":"<Aspects>","isparent": true,"parents":[{"name":"Value Added Object","comment":"A Value Added Object is an aspect of Architecture Block (Type)s which can be the subject of business transactions.","url":"43EE620E63725A56.htm", "isparent":true,"parents":[{"name":"Architecture Block (Type)","comment":"An Architecture Block (Type) is a type of Architecture Block which is used in the description of the enterprise, such as Processes, Org-Units, Applications.","url":"A4A5B3F855585CE1.htm", "isparent":true,"parents":[{"name":"Class of Individual","comment":"A Class of Individual is a Class whose members are instances of  Individual .","url":"3492C53E619642ED.htm", "isparent":true,"parents":[{"name":"Class","comment":"A Class is collection of Entitys which it classifies according to one or more criteria.","url":"744B935D5FBFE0F9.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]},{"name":"Architecture Block","comment":"An Architecture Block is any Model Building Block used to describe an enterprise architecture. This includes types (applications, org-units, ...) and individuals (physical persons, software installations, sites, ...).","url":"D342D88E5B121401.htm", "isparent":true,"parents":[{"name":"Model Building Block","comment":"A Model Building Block is a Building Block used to describe and manage the enterprise. It comprises:","url":"CA353E6D5FC5E8AF.htm", "isparent":true,"parents":[{"name":"Building Block","comment":"A Building Block is an autonomous, resusable Entity that contributes to the makeup of other Building Blocks.","url":"CCB819645A564F12.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]}]},{"name":"Class of Model Block","comment":"A Class of Model Block is a Class that classifies Model Building Blocks.","url":"9597D7B3620AB751.htm", "isparent":true,"parents":[{"name":"Class of Building Block","comment":"A Class of Building Block is a Class that classifies Building Blocks.","url":"9597C202620AAA9D.htm", "isparent":true,"parents":[{"name":"Building Block","comment":"A Building Block is an autonomous, resusable Entity that contributes to the makeup of other Building Blocks.","url":"CCB819645A564F12.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]},{"name":"Class","comment":"A Class is collection of Entitys which it classifies according to one or more criteria.","url":"744B935D5FBFE0F9.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]}]}]}]}]}]}]}]}]}]}]}]}],"children":[]}');
+$(document).ready(function(event) {
+var tree = CollapsibleTree("#categoryHierarchy");
+tree.init(hierarchy);
+});
+</script>
+</div>
+<button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button>
+<script>window.onscroll = function() {scrollFunction()};$(document).on('click', 'a[href^="#"]', function (event) {event.preventDefault();$('html, body').animate({scrollTop: $($.attr(this, 'href')).offset().top}, 500);});
+function showDiagOnClick(elem){ var x = document.getElementsByClassName('Relationship');var e = elem.getAttribute("value"); for (var i=0; i < x.length ;i++){x[i].style.display="none"; if (x[i].id == e){x[i].style.display="block";x[i].style.textAlign="left";}}}
+</script></html>

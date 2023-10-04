@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <sitemap>
+    <loc>https://www.gartner.com/ngw/commonassets/code/xml/sitemap/global/gartner-en-sitemap.xml</loc>
+  </sitemap>
+  <sitemap>
+    <loc>https://www.gartner.com/ngw/commonassets/code/xml/sitemap/conference/conference-en-sitemap.xml</loc>
+  </sitemap>
+  <sitemap>
+    <loc>https://www.gartner.com/ngw/commonassets/code/xml/sitemap/global/marketing-reader-2023-sitemap.xml</loc>
+  </sitemap>
+  <sitemap>
+    <loc>https://www.gartner.com/ngw/commonassets/code/xml/sitemap/global/marketing-reader-2022-sitemap.xml</loc>
+  </sitemap>
+  <sitemap>
+    <loc>https://www.gartner.com/ngw/commonassets/code/xml/sitemap/global/gartner-intl-cn-zh-cn-sitemap.xml</loc>
+  </sitemap>
+</sitemapindex>

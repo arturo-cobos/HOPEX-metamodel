@@ -1,0 +1,844 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="keywords" content="">
+<meta name="description" content="">    
+<LINK REL="icon" HREF="../standard/assets/img/favicon.ico">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/bootstrap.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nav.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/eaportal.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/font-awesome.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/animate.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/datatables.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/grid.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nae.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/custom.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/chosen.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/prism.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery.dataTables.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jsTreeStyle.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.theme.css" media="screen" />
+<script type="text/javascript" src="../standard/assets/js/jquery-3.2.1.min.js" ></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-ui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.columnFilter.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3-force.v2.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.gui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.search.js"></script> 
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.util.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-2.1.1.min.js"></script>
+<script src="../standard/assets/js/ws_zoomtemplate_firefox.js"></script>
+<script src="../standard/assets/js/bootstrap.min.js"></script>
+<script src="../standard/assets/js/datatables.min.js"></script>
+<script src="../standard/assets/js/moment.min.js"></script>
+<script src="../standard/assets/js/datetime-moment.js"></script>
+<script src="../standard/assets/js/chartjs.min.js"></script>
+<script src="../standard/assets/js/searchindexcontent.json"></script>
+<script src="../standard/assets/js/anls.js"></script>
+<script src="../../../cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script src="../standard/assets/js/gauge.js"></script> 
+<script src="../standard/assets/js/domesticApi.js"></script> 
+<script src="../standard/assets/js/piecelabel.js"></script>
+<script src="../standard/assets/js/popper.min.js"></script>
+<script src="../standard/assets/js/custom.js"></script>
+<script src="../standard/assets/js/chosen.jquery.js"></script>
+<script src="../standard/assets/js/prism.js"></script>
+<script src="../standard/assets/js/init-chosen.js"></script>
+<script src="../standard/assets/js/chart-data-flow.js"></script>
+<script src="../standard/assets/js/chart-data-gantt.js"></script>
+<script type="module" src="../standard/assets/js/Fuse.esm.min.js"></script>
+<script type="module">
+import Fuse from '../standard/assets/js/Fuse.esm.min.js';
+$(document).ready(function () {
+console.log('getjson');
+window.$.getJSON('../standard/assets/js/searchindexcontent.json', function (response) {
+console.log('getjson ok');
+var isIndex = "";
+var url = window.location.pathname;
+var filename = url.substring(url.lastIndexOf('/')+1);
+if( filename.includes("index") || filename === "" ){
+isIndex = "pages/";
+} else {
+isIndex = "";
+}
+const fuse = new Fuse(response, {
+keys: ['title','text'],
+shouldSort: true,
+includeMatches : true,
+findAllMatches : true
+});
+$('#search-fuse').on('keyup', function () {
+let result = fuse.search($(this).val());
+console.log(result);
+let resultdiv = $('div.searchresults-fuse');
+if (result.length === 0) {
+resultdiv.hide();
+} else {
+resultdiv.empty();
+resultdiv.append('<table class="table-search" width="100%" cellspacing="0"><thead ><tr><th>Name</th><th>Object Type</th><th>Modification date</th></tr></thead><tbody>');
+
+for (let obj in result.slice(0,10)) {
+
+let searchObj = '<tr><td><a href="./'+ isIndex + result[obj].item.url + '">' + result[obj].item.title +'</a></td><td>' + result[obj].item.ObjectType + '</td><td>' + result[obj].item.ModificationDate + '</td></tr>' ;
+
+
+resultdiv.find('tbody').append(searchObj);
+}
+resultdiv.append('</tbody></table>');
+resultdiv.show();
+}
+});
+});
+});
+</script>
+<title>HOPEX Metamodel Overview (Beta Version)</title>
+</head>
+<nav class="navbar navbar-expand-md navbar-dark  navbar-mega"><!-- Brand --><!--<a class="navbar-brand" href="#">Navbar</a>--><a class="" href="../index.htm"><img class="logo-mega" src="../standard/assets/img/logo.png"  alt="">(Beta Version)</a><!-- Toggler/collapsibe Button --><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><!-- Navbar links -->
+<div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsibleNavbar"><div class="col-sm-auto col-md-auto col-lg-5"></div>
+<div class="col-sm-auto">
+<ul class="navbar-nav">      
+<li><a class="dropdown-item" href="ad30ce115ebf7e90.htm">EA Grid</a></li> 
+<li><a class="dropdown-item" href="fdd5018459bc3c6a.htm">EA Domains</a></li> 
+<li><a class="dropdown-item" href="07e731775ecc93f4.htm">Solutions</a></li> 
+<li><a class="dropdown-item" href="c5dfc62c54810c2c.htm">Glossary</a></li> 
+<li class="nav-item dropdown mx-1">
+<a class="nav-link" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</a>
+<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<li><a class="dropdown-item" href="5446555d5f88c32e.htm">Outcome Driven Metamodel</a></li> 
+<li><a class="dropdown-item" href="e1ccfc295f8f7b90.htm">Playbooks</a></li> 
+<li><a class="dropdown-item" href="42bc992862d20ea7.htm">Framework Mappings</a></li> 
+<li><a class="dropdown-item" href="e93aebb35fa20550.htm">Metamodel Patterns</a></li> 
+<li><a class="dropdown-item" href="d599fe87602b2b85.htm">References</a></li> 
+<li><a class="dropdown-item" href="333f3a7f5dde11de.htm">Legend</a></li> 
+</ul>									                                            
+</li>
+</ul>
+</div>
+<div class="col-sm-auto"><a class="nav-link search" href="#" onclick=showHideSearch("search-section-fuse")><i class="fa fa-search mr-1 form-control-feedback"></i></a></div>
+</div>
+</nav>
+<div id="search-section-fuse" style="display:none">>
+<div class="search_header"><span class="closesearch">&times;</span>
+<nav class="breadcrumb">
+<a class="breadcrumb-item" href="../index.htm">Home </a> 
+<span class="breadcrumb-item active">Search</span> 
+</nav>
+</div>
+<input id="search-fuse" placeholder="Search..."  name="q" onfocus="this.value=''" type="search">
+<div class="searchresults-fuse"></div>
+</div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>function showHideSearch(elementId) {var contentDivs = document.getElementsByClassName('content');var footerDivs = document.getElementsByClassName('footer'); var containerDivs = document.getElementsByClassName('container');var containerfluidDivs = document.getElementsByClassName('container-fluid');var x = document.getElementById(elementId);if (x.style.display === "none") {x.style.display = "block";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "none";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "none";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "none";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "none";}} else {x.style.display = "none";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "block";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "block";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "block";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "block";}}} ;<!-- END WIDGET DRILL DOWN --></script><script>$(document).ready(function() {$(window).scroll(function() {if ($(this).scrollTop() > 100) {$('.scrollup').fadeIn();} else {$('.scrollup').fadeOut();}});$('.scrollup').click(function() {$("html, body").animate({scrollTop: 0}, 600);return false;});});</script><script>
+var modal = document.getElementById("search-section-fuse");
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = "none";
+}
+}
+$(document).on('click', '.closesearch', function() {
+showHideSearch("search-section-fuse");
+
+
+
+
+
+});</script><div class="container-fluid col-lg-11"><nav class="breadcrumb"><a class="breadcrumb-item" href="../index.htm">Home</a> <span class="breadcrumb-item active">
+<a  href="c5dfc62c54810c2c.htm" target="_top">Dictionary of HOPEX concepts</a>&nbsp;/&nbsp;IT Asset Management</span></nav></div>
+<div class="container-fluid col-lg-11 content">
+<section class="fadeInDown animated"><a href="#idt" class="btn btn-d">DEFINITION</a> <a href="#grf" class="btn btn-d">CONCEPT GRAPH</a> <a href="#des" class="btn btn-d">CONCEPT DESCRIPTIONS</a> 
+</section>
+<a class="object-section-anchor" id="idt"></a>
+<section class="object-section">
+<h4>CONCEPT DOMAIN - IT Asset Management</h4><hr class="sectionbreak" /><table class="table table-vertical-headers table-set-col-width"><tr><th>Description</th><td class="description-text">IT asset management (also known as ITAM) is the process of ensuring an organization&#39;s assets are accounted for, deployed, maintained, upgraded, and disposed of when the time comes. ... Defined simply, an IT asset includes hardware, software systems, or information an organization values.<div></div></td></tr><tr><th>Dictionary</th><td><img src="../standard/dicsubjectarea.ico.gif"/>&nbsp;
+<a  href="c5dfc62c54810c2c.htm" target="_top">Dictionary of HOPEX concepts</a></td></tr><tr><th>Parent Domain</th><td><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="f8e671d5621feded.htm" target="_top">Business System ArcDevOps</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="2cff2dc65eda768f.htm" target="_top">HOPEX - ITPM</a>&nbsp;</td></tr>
+<tr><th>Imported Domains</th><td><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="fe663f0d61817c3e.htm" target="_top">Asset Portfolio Pattern</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="8ddea4de6037fd99.htm" target="_top">EA Module - Capability Models</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="c2dbe1db5b026b30.htm" target="_top">Software Technology ArcDevOps</a>&nbsp;</td></tr>
+<tr><th>Domain dependencies</th><td><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="d5e6d6b05c4648d8.htm" target="_top">Application Functional Architecture</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="255cd30862aa0da8.htm" target="_top">EA Pattern - Business System Operating Model</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="c2dbe1db5b026b30.htm" target="_top">Software Technology ArcDevOps</a>&nbsp;</td></tr>
+<tr><th>Consuming Method</th><td><img src="../standard/bpmn_subprocessfun.ico.gif"/>&nbsp;
+<a  href="8b6c995d5f8e7ab6.htm" target="_top">Define the governance framework</a>&nbsp;<br/><img src="../standard/bpmn_subprocessfun.ico.gif"/>&nbsp;
+<a  href="a619a8a85fbf7654.htm" target="_top">Evaluate applications</a>&nbsp;<br/><img src="../standard/bpmn_subprocessfun.ico.gif"/>&nbsp;
+<a  href="a619a8945fbf75e2.htm" target="_top">Inventory applications</a>&nbsp;<br/><img src="../standard/bpmn_subprocessfun.ico.gif"/>&nbsp;
+<a  href="a619a7f45fbf7396.htm" target="_top">Application Rationalization</a>&nbsp;</td></tr></table></section>
+<a class="object-section-anchor" id="grf"></a>
+<section class="object-section">
+<h4>DOMAIN CONCEPT GRAPH</h4>
+<hr class="sectionbreak" />
+<a href="#" class="btn btn-d" value="Relationship1" onclick="showDiagOnClick(this)">Diagram</a>
+<a href="#" class="btn btn-d" value="Relationship2" onclick="showDiagOnClick(this)">Graph</a>
+<div class="Relationship" id="Relationship1">
+
+<map  name="9152114D5ED649DE">
+  <area  href=f277fa24601bef67.htm#OBMKF277FA24601BEF67 shape="polygon" coords="273, 666, 297, 666, 297, 680, 180, 680, 180, 666, 273, 666"   target="_top"  title="-">
+  
+  <area  href=5b7a06e961f5595c.htm shape="polygon" coords="143, 647, 143, 660, 320, 660, 320, 671, 132, 671, 132, 647"   target="_top"  title="-">
+  
+  <area  href=6123633261dd757a.htm#OBMK6123633261DD757A shape="polygon" coords="343, 655, 343, 644, 451, 644, 451, 655, 343, 655"   target="_top"  title="An&#160; Enterprise Porfolio Stage is a past, current or future state of Management System. ">
+  
+  <area  href="5b7a067561f55876.htm" shape="rect" coords="320, 641, 474, 689"   target="_top"  title="-">
+  
+  <area  href=#OBMKBCDBBD42617A4F79 shape="polygon" coords="337, 797, 352, 797, 352, 811, 214, 811, 214, 797, 337, 797"    title="-">
+  
+  <area  href=#OBMK5B7A04CF61F55564 shape="polygon" coords="143, 791, 143, 807, 360, 807, 360, 818, 132, 818, 132, 791"    title="-">
+  
+  <area  href=7c4085db552708a4.htm#OBMK7C4085DB552708A4 shape="polygon" coords="398, 798, 398, 787, 466, 787, 466, 798, 398, 798"   target="_top"  title="Top level assembly of Capabilityies and their dependencies which, together, provide a scope of added value (Outcomes) pursued by Enduring Initiatives.">
+  
+  <area  href=0ab1340a58b40ae9.htm#OBMK0AB1340A58B40AE9 shape="polygon" coords="375, 843, 375, 830, 488, 830, 488, 843, 375, 843"   target="_top"  title="Assembly of technical functionalities and their dependencies that, together, defines the scope of a hardware or software architecture.">
+  
+  <area  href="0b3013675a1875c5.htm" shape="rect" coords="360, 784, 504, 847"   target="_top"  title="A&#160; Software Technology Capability Map is an assembly of Software Technology Capability(ies) and their dependencies that, together, provide a Software Technology Capability scope for an Enterprise Porfolio Stage.">
+  
+  <area  href=#OBMK5B7A01E761F5511D shape="polygon" coords="145, 577, 145, 555, 320, 555, 320, 566, 155, 566, 155, 577"    title="-">
+  
+  <area  href=fc96001c601c54d0.htm#OBMKFC96001C601C54D0 shape="polygon" coords="338, 542, 338, 531, 449, 531, 449, 542, 338, 542"   target="_top"  title="Top level assembly of&#160; Resource Capabilityies&#160; and their dependencies that, together, provide a functional scope for asset portfolios and solution roadmaps.">
+  
+  <area  href=99c201c855b171ad.htm#OBMK99C201C855B171AD shape="polygon" coords="354, 574, 354, 561, 432, 561, 432, 574, 354, 574"   target="_top"  title="Assembly of functionalities and their dependencies that, together, defines the scope of a hardware or software architecture.">
+  
+  <area  href="7c4085c355270831.htm" shape="rect" coords="320, 529, 466, 594"   target="_top"  title="Assembly of functionnalities and their dependencies that, together, defines the scope of a hardware or software architecture.">
+  
+  <area  href=#OBMK5754805751545CA3 shape="polygon" coords="1099, 309, 1099, 295, 1184, 295, 1184, 309, 1099, 309"    title="-">
+  
+  <area  href=#OBMKA951F14261941CAD shape="polygon" coords="1136, 331, 1136, 262, 1146, 262, 1146, 331"    title="-">
+  
+  <area  href=f4be11b15ee1e0fa.htm#OBMKF4BE11B15EE1E0FA shape="polygon" coords="1089, 228, 1089, 217, 1183, 217, 1183, 228, 1089, 228"   target="_top"  title="A&#160; System of Resources is a Mezzo Capability Configuration that combines Human Resources, Hardware Systems and Software Systems to provide a Business Capability.">
+  
+  <area  href=8eb8944a58e307fa.htm#OBMK8EB8944A58E307FA shape="polygon" coords="1116, 260, 1116, 246, 1157, 246, 1157, 260, 1116, 260"   target="_top"  title="A facility is a model of site of interest for the enterprise.">
+  
+  <area  href="f4be0e865ee1d53b.htm" shape="rect" coords="1072, 214, 1201, 262"   target="_top"  title="A&#160; Facility is a System of Resources used to model factories, buildings, or outdoor constructions that provides a particular Business Capability or is used for a particular industry.">
+  
+  <area  href=5b7a0ecf61f5650a.htm#OBMK5B7A0ECF61F5650A shape="polygon" coords="447, 343, 391, 343, 391, 356, 318, 356, 318, 343, 447, 343"   target="_top"  title="-">
+  
+  <area  href=a67ddf8d5f8ecf44.htm shape="polygon" coords="445, 366, 246, 366, 246, 355, 445, 355"   target="_top"  title="Management System coordinated at the enterprise scale.">
+  
+  <area  href=bcdbc52b617a5d27.htm#OBMKBCDBC52B617A5D27 shape="polygon" coords="703, 234, 703, 223, 792, 223, 792, 234, 703, 234"   target="_top"  title="A&#160; Team Responsibility is an assignment of a Functional Asset to a Stakeholder for management or governance purposes.">
+  
+  <area  href=0000000080000040.htm#OBMK0000000080000040 shape="polygon" coords="694, 260, 694, 247, 801, 247, 801, 260, 694, 260"   target="_top"  title="-">
+  
+  <area  href="BCDBC555617A5DCC.htm" shape="rect" coords="657, 220, 838, 277"   target="_top"  title="A&#160; Responsibility Assignment is a governing duty assigned to a Individual Stakeholder on a particular asset (Functional Asset).">
+  
+  <area  href=#OBMK9BB4A184626A922C shape="polygon" coords="690, 446, 669, 446, 669, 460, 580, 460, 580, 446, 690, 446"    title="-">
+  
+  <area  href=#OBMK83BBA53B61924743 shape="polygon" coords="477, 241, 632, 241, 632, 604, 622, 604, 622, 251, 477, 251"    title="-">
+  
+  <area  href=9e396903619214a2.htm shape="polygon" coords="1390, 666, 1390, 759, 1167, 759, 1167, 749, 1379, 749, 1379, 666"   target="_top"  title="-">
+  
+  <area  href=#OBMK5754805751545CA3 shape="polygon" coords="871, 763, 871, 749, 956, 749, 956, 763, 871, 763"    title="-">
+  
+  <area  href=#OBMK9E39417E619207A8 shape="polygon" coords="1025, 761, 790, 761, 790, 750, 1025, 750"    title="-">
+  
+  <area  href=ca353eb75fc5e9b2.htm#OBMKCA353EB75FC5E9B2 shape="polygon" coords="891, 885, 890, 885, 890, 899, 740, 899, 740, 885, 891, 885"   target="_top"  title="-">
+  
+  <area  href=D342D97F5B1214BB.htm shape="polygon" coords="775, 920, 775, 847, 786, 847, 786, 920"   target="_top"  title="-">
+  
+  <area  href=#OBMK5754805751545CA3 shape="polygon" coords="847, 635, 847, 621, 932, 621, 932, 635, 847, 635"    title="-">
+  
+  <area  href=#OBMK9E39416B61920742 shape="polygon" coords="1022, 634, 778, 634, 778, 624, 1022, 624"    title="-">
+  
+  <area  href=9e393faa619205dc.htm shape="polygon" coords="1145, 394, 1145, 432, 1389, 432, 1389, 596, 1379, 596, 1379, 443, 1135, 443, 1135, 394"   target="_top"  title="-">
+  
+  <area  href=9e393d6f619203ee.htm shape="polygon" coords="1102, 394, 1102, 598, 1091, 598, 1091, 394"   target="_top"  title="-">
+  
+  <area  href=9e393a7f61920129.htm shape="polygon" coords="926, 359, 1064, 358, 1064, 368, 926, 369"   target="_top"  title="-">
+  
+  <area  href=9E3837606192F9C5.htm shape="polygon" coords="595, 356, 778, 358, 778, 368, 594, 366"   target="_top"  title="-">
+  
+  <area  href=66f8685a620b1440.htm#OBMK66F8685A620B1440 shape="polygon" coords="796, 341, 796, 330, 908, 330, 908, 341, 796, 341"   target="_top"  title="-">
+  
+  <area  href=ddd1eb5d607f7086.htm#OBMKDDD1EB5D607F7086 shape="polygon" coords="782, 368, 782, 354, 922, 354, 922, 368, 782, 368"   target="_top"  title="-">
+  
+  <area  href="9e38361d6192f8da.htm" shape="rect" coords="778, 327, 926, 401"   target="_top"  title="Set of human and physical resources (hardware and software) required for the existence, operation and management of an enterprise in its environment.">
+  
+  <area  href=66f8685a620b1440.htm#OBMK66F8685A620B1440 shape="polygon" coords="1091, 345, 1091, 334, 1203, 334, 1203, 345, 1091, 345"   target="_top"  title="-">
+  
+  <area  href=ddd1e39b607f6d98.htm#OBMKDDD1E39B607F6D98 shape="polygon" coords="1118, 372, 1118, 358, 1175, 358, 1175, 372, 1118, 372"   target="_top"  title="-">
+  
+  <area  href="9e38352f6192f750.htm" shape="rect" coords="1065, 332, 1230, 395"   target="_top"  title="A&#160; Data Center is a Facility composed of networked computers, storage systems and computing infrastructure that enterprises use to organize, process, store and disseminate large amounts of data. ">
+  
+  <area  href=bcdbc5a3617a5e6a.htm shape="polygon" coords="182, 112, 727, 112, 727, 168, 716, 168, 716, 123, 182, 123"   target="_top"  title="-">
+  
+  <area  href=bcdbc6c6617a5fe1.htm shape="polygon" coords="822, 226, 822, 83, 739, 83, 739, 72, 833, 72, 833, 226"   target="_top"  title="-">
+  
+  <area  href=#OBMKBCDBC563617A5E24 shape="polygon" coords="742, 245, 741, 241, 738, 228, 748, 226, 750, 233, 753, 241"    title="-">
+  
+  <area  href=8a228c0e550a3122.htm#OBMK8A228C0E550A3122 shape="polygon" coords="695, 182, 695, 171, 792, 171, 792, 182, 695, 182"   target="_top"  title="&#160;Governance Resources include Governing Teams, Governance Activitys, Governance Events and Measures used to guide and steer Initiatives.">
+  
+  <area  href=c9a2db04605d623b.htm#OBMKC9A2DB04605D623B shape="polygon" coords="697, 208, 697, 195, 789, 195, 789, 208, 697, 208"   target="_top"  title="-">
+  
+  <area  href="bcdbc52b617a5d27.htm" shape="rect" coords="636, 168, 850, 284"   target="_top"  title="A&#160; Team Responsibility is an assignment of a Functional Asset to a Stakeholder for management or governance purposes.">
+  
+  <area  href=18a81ed15eeb5d60.htm#OBMK18A81ED15EEB5D60 shape="polygon" coords="211, 190, 173, 190, 173, 204, 73, 204, 73, 190, 211, 190"   target="_top"  title="-">
+  
+  <area  href=ae7c9c45602351bc.htm shape="polygon" coords="121, 136, 121, 303, 110, 303, 110, 136"   target="_top"  title="-">
+  
+  <area  href=3B539CBB551E4C2A.htm#OBMK3B539CBB551E4C2A shape="polygon" coords="378, 231, 378, 220, 439, 220, 439, 231, 378, 231"   target="_top"  title="An&#160; Assessment is the result of the act of judging or assessing an aspect of the enterprise, based on an enterprise description and on the comparison of this description with the actual state of the enterprise.">
+  
+  <area  href=9500e0484e37c835.htm#OBMK9500E0484E37C835 shape="polygon" coords="369, 258, 369, 244, 449, 244, 449, 258, 369, 258"   target="_top"  title="Objects of this type are created either at assessment session deployment or at aggregation. Objects created at deployment are owned by the session and enable determination of the object that will be evaluated, by whom and where. It is also associated with values calculated from answers given in the assessor questionnaire for each of the assessed characteristics. ">
+  
+  <area  href="e57e0a415fb820e5.htm" shape="rect" coords="341, 218, 477, 275"   target="_top"  title="-">
+  
+  <area  href=d342d91a5b121454.htm#OBMKD342D91A5B121454 shape="polygon" coords="465, 340, 465, 329, 575, 329, 575, 340, 465, 340"   target="_top"  title="An&#160; Architecture Namespace is a Model Namespace&#160; that packages Architecture Blocks used to describe the architecture of the enterprise.">
+  
+  <area  href=d321c226601262ae.htm#OBMKD321C226601262AE shape="polygon" coords="481, 351, 481, 340, 559, 340, 559, 351, 481, 351"   target="_top"  title="An&#160; Enduring Initiative is a long term Initiative which involves roadmapping and governance. Enterprises and their Management Systems are typical&#160; Enduring Initiatives.">
+  
+  <area  href=50666200529c2b9a.htm#OBMK50666200529C2B9A shape="polygon" coords="494, 377, 494, 364, 546, 364, 546, 377, 494, 377"   target="_top"  title="An Enterprise is a purposeful undertaking, conducted by one or more organizations, aiming at delivering goods and services, in accordance with the enterprise mission in its changing environment.">
+  
+  <area  href="b181b82a54891668.htm" shape="rect" coords="445, 326, 595, 396"   target="_top"  title="An&#160; Enterprise is an Enduring Initiative that delivers added-value Products (goods &amp; services) to its target Customers.">
+  
+  <area  href=ff0500605b253f1b.htm#OBMKFF0500605B253F1B shape="polygon" coords="463, 140, 471, 140, 471, 154, 335, 154, 335, 140, 463, 140"   target="_top"  title="-">
+  
+  <area  href=1737b6025fe27ee8.htm shape="polygon" coords="182, 112, 413, 112, 413, 168, 402, 168, 402, 123, 182, 123"   target="_top"  title="-">
+  
+  <area  href=8a228c0e550a3122.htm#OBMK8A228C0E550A3122 shape="polygon" coords="359, 181, 359, 170, 456, 170, 456, 181, 359, 181"   target="_top"  title="&#160;Governance Resources include Governing Teams, Governance Activitys, Governance Events and Measures used to guide and steer Initiatives.">
+  
+  <area  href=15c050c95ffc4c53.htm#OBMK15C050C95FFC4C53 shape="polygon" coords="378, 208, 378, 194, 436, 194, 436, 208, 378, 208"   target="_top"  title="-">
+  
+  <area  href="1737b50b5fe27cba.htm" shape="rect" coords="303, 168, 511, 286"   target="_top"  title="A&#160; Governance Event is any event that has an impact on the management and governance of an Enduring Initiative.">
+  
+  <area  href=f594f72e61f736e1.htm#OBMKF594F72E61F736E1 shape="polygon" coords="308, 67, 320, 67, 320, 81, 191, 81, 191, 67, 308, 67"   target="_top"  title="-">
+  
+  <area  href=b0d7b34f5ea02f2c.htm shape="polygon" coords="188, 74, 324, 74, 324, 85, 188, 85"   target="_top"  title="-">
+  
+  <area  href=ff0501b65b253fdd.htm#OBMKFF0501B65B253FDD shape="polygon" coords="70, 65, 70, 54, 144, 54, 144, 65, 70, 65"   target="_top"  title="A&#160; Governing Team consists of a collection of individuals and resources, including personnel and committees, assembled to effectively manage and sustain an Enduring Initiative.">
+  
+  <area  href=7cae244a5a739f96.htm#OBMK7CAE244A5A739F96 shape="polygon" coords="71, 92, 71, 78, 142, 78, 142, 92, 71, 92"   target="_top"  title="-">
+  
+  <area  href="05b091f46006f913.htm" shape="rect" coords="25, 52, 189, 137"   target="_top"  title="A&#160; Solution Team is a Governing Team&#160; responsible for overseeing the administration of a Management System.">
+  
+  <area  href=#OBMK24AE430D5ED1F6B1 shape="polygon" coords="573, 74, 614, 74, 614, 85, 573, 85"    title="-">
+  
+  <area  href=24ae430d5ed1f6aa.htm shape="polygon" coords="491, 74, 614, 74, 614, 85, 491, 85"   target="_top"  title="Role of a person in a Governance Committee.">
+  
+  <area  href=#OBMK24AE430E5ED1F81C shape="polygon" coords="491, 74, 531, 74, 531, 85, 491, 85"    title="-">
+  
+  <area  href=bcebd0175491272a.htm#OBMKBCEBD0175491272A shape="polygon" coords="648, 62, 648, 51, 704, 51, 704, 62, 648, 62"   target="_top"  title="A&#160; Stakeholder is an individual, team, organization, or classes thereof, having an interest in the enterprise.">
+  
+  <area  href=000000008000001d.htm#OBMK000000008000001D shape="polygon" coords="638, 88, 638, 75, 714, 75, 714, 88, 638, 88"   target="_top"  title="A Person is defined by her/his name and email.">
+  
+  <area  href="2cc9718655263c44.htm" shape="rect" coords="613, 48, 739, 108"   target="_top"  title="An&#160; Individual Stakeholder is a person with a Stakeholder role in architecture &amp; assurance activities.">
+  
+  <area  href=bcebd0175491272a.htm#OBMKBCEBD0175491272A shape="polygon" coords="379, 61, 379, 50, 435, 50, 435, 61, 379, 61"   target="_top"  title="A&#160; Stakeholder is an individual, team, organization, or classes thereof, having an interest in the enterprise.">
+  
+  <area  href=b09fc6ae56bd201e.htm#OBMKB09FC6AE56BD201E shape="polygon" coords="371, 87, 371, 74, 443, 74, 443, 87, 371, 87"   target="_top"  title="An EA Organization is a governance body regrouping several persons or organizations.">
+  
+  <area  href="2cc9717155263b89.htm" shape="rect" coords="324, 47, 491, 107"   target="_top"  title="A&#160; Governance Committee is a group of Stakeholders that contributes to architecture and assurance activities and governs Enduring Initiatives.">
+  
+  <area  href=81c3abf66054f980.htm shape="polygon" coords="914, 993, 1041, 993, 1041, 1004, 914, 1004"   target="_top"  title="-">
+  
+  <area  href=a67dc9f45f8eb2a9.htm#OBMKA67DC9F45F8EB2A9 shape="polygon" coords="800, 978, 800, 967, 892, 967, 892, 978, 800, 978"   target="_top"  title="A&#160; Reference Dictionary is an aspect of Model Namespace that are used as reference libraries used to hold reference materials used to develop architectures.">
+  
+  <area  href=335c34b75f7c65e5.htm#OBMK335C34B75F7C65E5 shape="polygon" coords="807, 1010, 807, 996, 885, 996, 885, 1010, 807, 1010"   target="_top"  title="-">
+  
+  <area  href="81c3ab5a6054f637.htm" shape="rect" coords="777, 965, 915, 1024"   target="_top"  title="A&#160; Vendor Catalog is a package of resources offered by a Vendor.">
+  
+  <area  href=05b0ffd76006dac0.htm#OBMK05B0FFD76006DAC0 shape="polygon" coords="360, 896, 362, 896, 362, 910, 225, 910, 225, 896, 360, 896"   target="_top"  title="-">
+  
+  <area  href=2b5887fc5ef07c71.htm shape="polygon" coords="203, 908, 390, 908, 390, 918, 203, 918"   target="_top"  title="-">
+  
+  <area  href=0ffeec41600be08a.htm#OBMK0FFEEC41600BE08A shape="polygon" coords="109, 885, 109, 874, 150, 874, 150, 885, 109, 885"   target="_top"  title="An&#160; Initiative is any piece of work that is undertaken or attempted under the responsibility of a Steering Authority.">
+  
+  <area  href=8a1f953b58525710.htm#OBMK8A1F953B58525710 shape="polygon" coords="94, 911, 94, 898, 165, 898, 165, 911, 94, 911"   target="_top"  title="A project is defined upon a given domain (e.g. Business, Information Technology)">
+  
+  <area  href="24032c315fc6780a.htm" shape="rect" coords="55, 871, 203, 946"   target="_top"  title="A&#160; Transformation Program is an Initiative that is a temporary, flexible organisation created to co-ordinate, direct and oversee the implementation of a set of related Projects and Tasks in order to deliver outcomes and benefits related to the organisation&rsquo;s strategic objectives.">
+  
+  <area  href=26b8889c5eea8ab7.htm#OBMK26B8889C5EEA8AB7 shape="polygon" coords="103, 737, 103, 726, 172, 726, 172, 737, 103, 737"   target="_top"  title="An&#160; Asset Portfolio is a Management System aimed at developing and maintaining in operational conditions a set of Resource Operating Assets delivering functionalities required by Business Operations.">
+  
+  <area  href=b082b0d44e041967.htm#OBMKB082B0D44E041967 shape="polygon" coords="113, 764, 113, 750, 162, 750, 162, 764, 113, 764"   target="_top"  title="A portfolio enables representation of all investments of an enterprise (or department) necessary to carry out changes required to achieve strategic objectives. It comprises a set of initiatives to be compared based on comparison criteria associated with the portfolio.">
+  
+  <area  href="6ce61b9d5ef382cf.htm" shape="rect" coords="72, 723, 203, 791"   target="_top"  title="&#160;Technology Portfolios are&#160; Technology Portfolio aimed at managing a set of Software Technologys delivering functionalities required by enterprise operations.">
+  
+  <area  href=26b8889c5eea8ab7.htm#OBMK26B8889C5EEA8AB7 shape="polygon" coords="103, 591, 103, 580, 172, 580, 172, 591, 103, 591"   target="_top"  title="An&#160; Asset Portfolio is a Management System aimed at developing and maintaining in operational conditions a set of Resource Operating Assets delivering functionalities required by Business Operations.">
+  
+  <area  href=b082b0d44e041967.htm#OBMKB082B0D44E041967 shape="polygon" coords="113, 618, 113, 604, 162, 604, 162, 618, 113, 618"   target="_top"  title="A portfolio enables representation of all investments of an enterprise (or department) necessary to carry out changes required to achieve strategic objectives. It comprises a set of initiatives to be compared based on comparison criteria associated with the portfolio.">
+  
+  <area  href="1ce3429d5c48982e.htm" shape="rect" coords="72, 577, 203, 647"   target="_top"  title="&#160;Application Portfolios are Enduring Initiatives aimed at managing a set of Applications delivering functionalities required by enterprise operations.">
+  
+  <area  href=#OBMK6CE61B895EF3827B shape="polygon" coords="123, 609, 126, 604, 131, 594, 140, 599, 135, 609, 132, 614"    title="-">
+  
+  <area  href=#OBMK6CE61BAC5EF383D0 shape="polygon" coords="135, 723, 131, 608, 130, 597, 141, 597, 141, 607, 146, 723"    title="-">
+  
+  <area  href=29df3f4060084c07.htm#OBMK29DF3F4060084C07 shape="polygon" coords="88, 384, 88, 373, 183, 373, 183, 384, 88, 384"   target="_top"  title="A&#160; Management System is an Enduring Initiative within an Enterprise, aimed at creating, maintaining, evaluating, evolving, and operating a collection of essential Functional Assets of the Enterprise.">
+  
+  <area  href=b082b0d44e041967.htm#OBMKB082B0D44E041967 shape="polygon" coords="111, 411, 111, 397, 160, 397, 160, 411, 111, 411"   target="_top"  title="A portfolio enables representation of all investments of an enterprise (or department) necessary to carry out changes required to achieve strategic objectives. It comprises a set of initiatives to be compared based on comparison criteria associated with the portfolio.">
+  
+  <area  href="26b8889c5eea8ab7.htm" shape="rect" coords="45, 371, 225, 820"   target="_top"  title="An&#160; Asset Portfolio is a Management System aimed at developing and maintaining in operational conditions a set of Resource Operating Assets delivering functionalities required by Business Operations.">
+  
+  <area  href=#OBMKE9B802705F512012 shape="polygon" coords="471, 751, 605, 751, 605, 762, 471, 762"    title="-">
+  
+  <area  href=#OBMKE9B802705F51200E shape="polygon" coords="203, 751, 605, 751, 605, 762, 203, 762"    title="A&#160; Managed Software Technology represents the characterics of a Software Technology under the management of a Technology Portfolio.">
+  
+  <area  href=#OBMKE9B802745F51206C shape="polygon" coords="203, 751, 337, 751, 337, 762, 203, 762"    title="-">
+  
+  <area  href=#OBMK2B588A8A5EF08CDE shape="polygon" coords="621, 1036, 621, 993, 546, 993, 546, 982, 632, 982, 632, 1036"    title="-">
+  
+  <area  href=#OBMK2B588A4D5EF08C83 shape="polygon" coords="493, 1030, 542, 984, 550, 991, 501, 1038"    title="-">
+  
+  <area  href=#OBMK2B588A155EF08BF6 shape="polygon" coords="487, 989, 487, 1034, 476, 1034, 476, 989"    title="-">
+  
+  <area  href=ca353b065fc5e146.htm#OBMKCA353B065FC5E146 shape="polygon" coords="582, 1049, 582, 1038, 672, 1038, 672, 1049, 582, 1049"   target="_top"  title="A&#160; Categorization Block is a Model Building Block used to provid classification and qualification of other Model Building Blocks.For instance, Tags are used for classification. Constraint Value are used for qualification or quantification.">
+  
+  <area  href=2b5887d05ef07b3b.htm#OBMK2B5887D05EF07B3B shape="polygon" coords="592, 1060, 592, 1049, 662, 1049, 662, 1060, 592, 1060"   target="_top"  title="A&#160; Program Asset is a resource used in the context of project management such as Project, Projet Risk Type, Project Portfolio,etc.">
+  
+  <area  href=8a1f95a2585257a9.htm#OBMK8A1F95A2585257A9 shape="polygon" coords="589, 1092, 589, 1079, 664, 1079, 664, 1092, 589, 1092"   target="_top"  title="A Project may fit into one or several categories, depending on its purpose and breadth or depth of coverage regarding the architectural landscape (e.g. Strategic Business Initiatives, Maintenance-driven activities, Technology initiatives, IT management initiatives, etc.).">
+  
+  <area  href="24ac695354881cbe.htm" shape="rect" coords="563, 1036, 692, 1095"   target="_top"  title="A category of project.">
+  
+  <area  href=ca353b065fc5e146.htm#OBMKCA353B065FC5E146 shape="polygon" coords="427, 1047, 427, 1036, 517, 1036, 517, 1047, 427, 1047"   target="_top"  title="A&#160; Categorization Block is a Model Building Block used to provid classification and qualification of other Model Building Blocks.For instance, Tags are used for classification. Constraint Value are used for qualification or quantification.">
+  
+  <area  href=2b5887d05ef07b3b.htm#OBMK2B5887D05EF07B3B shape="polygon" coords="437, 1058, 437, 1047, 507, 1047, 507, 1058, 437, 1058"   target="_top"  title="A&#160; Program Asset is a resource used in the context of project management such as Project, Projet Risk Type, Project Portfolio,etc.">
+  
+  <area  href=8a1fa11158525ad6.htm#OBMK8A1FA11158525AD6 shape="polygon" coords="433, 1090, 433, 1077, 511, 1077, 511, 1090, 433, 1090"   target="_top"  title="A Project Risk Type is a kind of risk which can be faced by a project (e.g. delays, budgeted costs increase, inadequate deliverables quality).">
+  
+  <area  href="2d18f6705ac37b70.htm" shape="rect" coords="403, 1034, 541, 1093"   target="_top"  title="-">
+  
+  <area  href=0ffeec41600be08a.htm#OBMK0FFEEC41600BE08A shape="polygon" coords="507, 928, 507, 918, 549, 918, 549, 928, 507, 928"   target="_top"  title="An&#160; Initiative is any piece of work that is undertaken or attempted under the responsibility of a Steering Authority.">
+  
+  <area  href=2b5887d05ef07b3b.htm#OBMK2B5887D05EF07B3B shape="polygon" coords="493, 939, 493, 928, 563, 928, 563, 939, 493, 939"   target="_top"  title="A&#160; Program Asset is a resource used in the context of project management such as Project, Projet Risk Type, Project Portfolio,etc.">
+  
+  <area  href=8a1f952c585256cc.htm#OBMK8A1F952C585256CC shape="polygon" coords="507, 966, 507, 952, 549, 952, 549, 966, 507, 966"   target="_top"  title="A Project is a temporary endeavor undertaken by a specific team, to create a unique product, service or result (see project deliverable).">
+  
+  <area  href="91be97ff54882d9f.htm" shape="rect" coords="413, 915, 644, 989"   target="_top"  title="A&#160; Project is a course of action that is being executed or has been selected for execution. An organization&#39;s Initiatives represent the choices the organization has made about how to pursue the change that allows it to achieve its objectives.">
+  
+  <area  href=05b0f6d56006cc8a.htm#OBMK05B0F6D56006CC8A shape="polygon" coords="505, 886, 505, 875, 587, 875, 587, 886, 505, 886"   target="_top"  title="An&#160; Initiative Resource is a resource and course of actions defined by Enduring Initiatives&#160; to achieve its objectives.">
+  
+  <area  href=fff70bdc5952665d.htm#OBMKFFF70BDC5952665D shape="polygon" coords="494, 913, 494, 899, 598, 899, 598, 913, 494, 913"   target="_top"  title="-">
+  
+  <area  href="2b5887d05ef07b3b.htm" shape="rect" coords="390, 874, 702, 1103"   target="_top"  title="A&#160; Program Asset is a resource used in the context of project management such as Project, Projet Risk Type, Project Portfolio,etc.">
+  
+  <area  href=#OBMKC334EC9B5ECBB0D8 shape="polygon" coords="465, 611, 596, 611, 596, 622, 465, 622"    title="-">
+  
+  <area  href=#OBMKC334EC9B5ECBB0D4 shape="polygon" coords="202, 611, 596, 611, 596, 622, 202, 622"    title="A&#160; Managed Application represents the characterics of an Application under the management of an Application Portfolio.">
+  
+  <area  href=#OBMKC334EC9B5ECBB116 shape="polygon" coords="202, 611, 334, 611, 334, 622, 202, 622"    title="-">
+  
+  <area  href=#OBMKC334D73C5ECB5D70 shape="polygon" coords="554, 562, 615, 562, 615, 606, 605, 606, 605, 573, 554, 573"    title="-">
+  
+  <area  href=c334d73c5ecb5d6a.htm shape="polygon" coords="496, 433, 547, 433, 547, 562, 615, 562, 615, 606, 605, 606, 605, 573, 536, 573, 536, 443, 496, 443"   target="_top"  title="A contributing application represents the appearance of an application in a global application flow map.">
+  
+  <area  href=#OBMKC334D73D5ECB5DA8 shape="polygon" coords="496, 433, 547, 433, 547, 486, 536, 486, 536, 443, 496, 443"    title="-">
+  
+  <area  href=9152210a5ed65ccd.htm shape="polygon" coords="786, 456, 765, 456, 765, 605, 754, 605, 754, 446, 786, 446"   target="_top"  title="-">
+  
+  <area  href=63f8870255ae1ba2.htm#OBMK63F8870255AE1BA2 shape="polygon" coords="804, 440, 804, 429, 900, 429, 900, 440, 804, 440"   target="_top"  title="A&#160; Constraining Property expresses a type of constraint that can be applied to Architecture Blocks.">
+  
+  <area  href=87298d7d4fa34a00.htm#OBMK87298D7D4FA34A00 shape="polygon" coords="828, 472, 828, 458, 876, 458, 876, 472, 828, 472"   target="_top"  title="A Cost Line is a set of expenses identified by a cost type (capital or operating) and a nature (Infrastructure, manpower, Software licenses, ...). ">
+  
+  <area  href="9e77a0325c51443f.htm" shape="rect" coords="786, 427, 918, 476"   target="_top"  title="-">
+  
+  <area  href=c30bdac25a5d9eaf.htm#OBMKC30BDAC25A5D9EAF shape="polygon" coords="647, 618, 647, 607, 724, 607, 724, 618, 647, 618"   target="_top"  title="A&#160; Software Module is a Software System that is part of an application system. ">
+  
+  <area  href=b1edb2562c14016f.htm#OBMKB1EDB2562C14016F shape="polygon" coords="658, 650, 658, 636, 713, 636, 713, 650, 658, 650"   target="_top"  title="An application is a software component that can be deployed and provides users with a set of functionalities.">
+  
+  <area  href="bcebd8e9549144db.htm" shape="rect" coords="594, 604, 779, 654"   target="_top"  title="An Application is a Software System that provides a set of Functionality(ies) that End Users see as a single unit.">
+  
+  <area  href=4edf5eab5fc58ef3.htm#OBMK4EDF5EAB5FC58EF3 shape="polygon" coords="318, 421, 318, 410, 489, 410, 489, 421, 318, 421"   target="_top"  title="A&#160; Business System Environment Sxcenario is a story involving the partners of a Business System (Partner System), interacting in order to achieve Business Outcomes in a specific Eco-System (Business System Environment).">
+  
+  <area  href=9aa09fa0594717b2.htm#OBMK9AA09FA0594717B2 shape="polygon" coords="346, 453, 346, 440, 461, 440, 461, 453, 346, 453"   target="_top"  title="A global application flow map presents a global view of the flows exchanged between the main application systems or applications of the company.">
+  
+  <area  href="7a0a06fd5ddf96c3.htm" shape="rect" coords="311, 408, 496, 471"   target="_top"  title="A global application flow map presents a global view of the flows exchanged between the main application systems or applications of the company.">
+  
+  <area  href=0463ea9a63fd8b6c.htm#OBMK0463EA9A63FD8B6C shape="polygon" coords="635, 744, 635, 734, 760, 734, 760, 744, 635, 744"   target="_top"  title="A&#160; Software Technology System is a Technology System that provides Software Technology Capabilitys to other Software Systems by delivering Software Technology Outcome.">
+  
+  <area  href=2885299152a85717.htm#OBMK2885299152A85717 shape="polygon" coords="651, 776, 651, 763, 743, 763, 743, 776, 651, 776"   target="_top"  title="A software technology is a basic component necessary for operation of business applications.">
+  
+  <area  href="d5e6ddd05c46547c.htm" shape="rect" coords="604, 732, 790, 781"   target="_top"  title="A&#160; Software Technology is an elementary Software Technology System&#160; used as an enabler by Software Modules.">
+  
+  <area  href=c7dad03f5ae92ae9.htm#OBMKC7DAD03F5AE92AE9 shape="polygon" coords="1054, 984, 1054, 974, 1167, 974, 1167, 984, 1054, 984"   target="_top"  title="A Person or Organisation.">
+  
+  <area  href=b1edb2562c140173.htm#OBMKB1EDB2562C140173 shape="polygon" coords="1089, 1011, 1089, 998, 1133, 998, 1133, 1011, 1089, 1011"   target="_top"  title="An org-unit represents a person or a group of persons that intervenes in the enterprise business processes or information system. An org-unit can be internal or external to the enterprise.">
+  
+  <area  href="1ce330c55c4879bd.htm" shape="rect" coords="1041, 971, 1181, 1031"   target="_top"  title="Entity who provides and maintains resources used in the enterprise operating system.">
+  
+  <area  href=9e77a2ac5c5146eb.htm shape="polygon" coords="1229, 358, 1367, 360, 1367, 370, 1229, 369"   target="_top"  title="-">
+  
+  <area  href=ebcfaeac5ad76ed7.htm#OBMKEBCFAEAC5AD76ED7 shape="polygon" coords="1381, 350, 1381, 339, 1507, 339, 1507, 350, 1381, 350"   target="_top"  title="An Individual which is used in the description of the enterprise.">
+  
+  <area  href=b1edb2612c1401d3.htm#OBMKB1EDB2612C1401D3 shape="polygon" coords="1429, 377, 1429, 363, 1459, 363, 1459, 377, 1429, 377"   target="_top"  title="A site is the geographical location of an organization. Examples: Boston subsidiary, Seattle plant, and more generally the headquarters, subsidiaries, plants, warehouses, etc.">
+  
+  <area  href="8d5e986f552e28d5.htm" shape="rect" coords="1367, 336, 1521, 394"   target="_top"  title="A&#160; Location is a geopolitical location anywhere on the earth.">
+  
+  <area  href=56cd63ce5c513c40.htm shape="polygon" coords="1102, 660, 1102, 723, 1091, 723, 1091, 660"   target="_top"  title="-">
+  
+  <area  href=56cd63b25c513bd7.htm shape="polygon" coords="1324, 632, 1189, 632, 1189, 622, 1324, 622"   target="_top"  title="-">
+  
+  <area  href=df118f645d5f65bb.htm#OBMKDF118F645D5F65BB shape="polygon" coords="1361, 610, 1361, 599, 1427, 599, 1427, 610, 1361, 610"   target="_top"  title="A&#160; Computer Server is a Computing System which provides processing, storage, and network connectivity services to other Computing Systems on a Computer Network.">
+  
+  <area  href=db48ddd7512d060c.htm#OBMKDB48DDD7512D060C shape="polygon" coords="1345, 637, 1345, 623, 1424, 623, 1424, 637, 1345, 637"   target="_top"  title="A server is a computer . This computer run applications.">
+  
+  <area  href="56cd60f85c513b04.htm" shape="rect" coords="1323, 596, 1445, 666"   target="_top"  title="A&#160; Deployed Server is an Computer Server deployed in a Data Center.">
+  
+  <area  href=111a11da512e21a8.htm#OBMK111A11DA512E21A8 shape="polygon" coords="1050, 753, 1050, 740, 1141, 740, 1141, 753, 1050, 753"   target="_top"  title="Instance of a software technoloy deployed on a server or a site ">
+  
+  <area  href="56cd60c05c513ad9.htm" shape="rect" coords="1025, 724, 1168, 785"   target="_top"  title="Instance of a software technoloy deployed on a server or a site ">
+  
+  <area  href=66f870ce620b2d8c.htm#OBMK66F870CE620B2D8C shape="polygon" coords="1048, 612, 1048, 601, 1164, 601, 1164, 612, 1048, 612"   target="_top"  title="-">
+  
+  <area  href=621f6d474f8d12d8.htm#OBMK621F6D474F8D12D8 shape="polygon" coords="1061, 638, 1061, 625, 1151, 625, 1151, 638, 1061, 638"   target="_top"  title="An Software instalation to a site offers a set of functionalities to different populations of users. ">
+  
+  <area  href="56cd60a95c513aaf.htm" shape="rect" coords="1022, 598, 1190, 660"   target="_top"  title="A&#160; Deployed Application offers a set of functionalities to users.">
+  
+  <area  href=d321c226601262ae.htm#OBMKD321C226601262AE shape="polygon" coords="96, 316, 96, 305, 175, 305, 175, 316, 96, 316"   target="_top"  title="An&#160; Enduring Initiative is a long term Initiative which involves roadmapping and governance. Enterprises and their Management Systems are typical&#160; Enduring Initiatives.">
+  
+  <area  href=fa47fbab5e695547.htm#OBMKFA47FBAB5E695547 shape="polygon" coords="92, 343, 92, 329, 179, 329, 179, 343, 92, 343"   target="_top"  title="-">
+  
+  <area  href="29df3f4060084c07.htm" shape="rect" coords="25, 303, 246, 964"   target="_top"  title="A&#160; Management System is an Enduring Initiative within an Enterprise, aimed at creating, maintaining, evaluating, evolving, and operating a collection of essential Functional Assets of the Enterprise.">
+  
+  <area  href=CA353E6D5FC5E8AF.htm#OBMKCA353E6D5FC5E8AF shape="polygon" coords="648, 506, 648, 495, 738, 495, 738, 506, 648, 506"   target="_top"  title="A&#160; Model Building Block is a Building Block used to describe and manage the enterprise. It comprises:">
+  
+  <area  href=2a8336f9564b4439.htm#OBMK2A8336F9564B4439 shape="polygon" coords="610, 532, 610, 519, 776, 519, 776, 532, 610, 532"   target="_top"  title="Root abstraction for all the elements used to describe an enterprise architecture. This includes types (applications, org-units) and individuals (enterprise step, software installations)">
+  
+  <area  href="d342d88e5b121401.htm" shape="rect" coords="574, 493, 813, 848"   target="_top"  title="An&#160; Architecture Block is any Model Building Block used to describe an enterprise architecture. This includes types (applications, org-units, ...) and individuals (physical persons, software installations, sites, ...).">
+  
+  <area  href=209c29bb5ed23342.htm#OBMK209C29BB5ED23342 shape="polygon" coords="802, 933, 802, 922, 887, 922, 887, 933, 802, 933"   target="_top"  title="A&#160; Model Namespace is a namespace of Model Building Blocks used to describe both the architecture of the enterprise and Initiatives aimed at designing, developing, running, adapting and maintaining this architecture over time.">
+  
+  <area  href=2ea133cd565c2f7d.htm#OBMK2EA133CD565C2F7D shape="polygon" coords="761, 960, 761, 946, 928, 946, 928, 960, 761, 960"   target="_top"  title="-">
+  
+  <area  href="d342d91a5b121454.htm" shape="rect" coords="748, 920, 943, 1056"   target="_top"  title="An&#160; Architecture Namespace is a Model Namespace&#160; that packages Architecture Blocks used to describe the architecture of the enterprise.">
+  
+  <area  href="1ce330355c4878d7.htm" shape="rect" coords="0, 0, 1538, 1127"   target="_top"  title="IT asset management (also known as ITAM) is the process of ensuring an organization&#39;s assets are accounted for, deployed, maintained, upgraded, and disposed of when the time comes. ... Defined simply, an IT asset includes hardware, software systems, or information an organization values.">
+  
+</map>
+<img  src="../images/1ce330355c4878d7_9152114d5ed649de_i.png" alt="../images/1ce330355c4878d7_9152114d5ed649de_i.png" usemap="#9152114D5ED649DE" height="1127" width="1538" border=0>
+
+</div>
+<div class="Relationship" id="Relationship2">
+<div id="klmm" style="width: 100vw; height: 100vh;" ></div>
+<!-- <script src="../standard/assets/js/keylines_domain.js"></script> -->
+<script >
+const data = {
+ type: 'LinkChart',
+  items: [
+  //nodes
+    {type: 'node', id:'1CE330355C4878D7', t:"IT Asset Management", sh:'box', d:"IT asset management (also known as ITAM) is the process of ensuring an organizations assets are accounted for, deployed, maintained, upgraded, and disposed of when the time comes. ... Defined simply, an IT asset includes hardware, software systems, or information an organization values."},
+    {type: 'node', id:'7A0A06FD5DDF96C3', t:"Global Application Flow Map", parentId:'1CE330355C4878D7', sh:'circle', d:"A global application flow map presents a global view of the flows exchanged between the main application systems or applications of the company."},
+    {type: 'node', id:'D5E6D6B05C4648D8', t:"Application Functional Architecture", sh:'box', d:"The Application Functional Architecture domain is used to describe the functional structure and behavior of Software Systems."},
+    {type: 'node', id:'BCEBD8E9549144DB', t:"Application", parentId:'D5E6D6B05C4648D8', sh:'circle', d:"An Application is a Software System that provides a set of Functionality(ies) that End Users see as a single unit."},
+    {type: 'node', id:'9E77A0325C51443F', t:"Cost Line", parentId:'1CE330355C4878D7', sh:'circle', d:""},
+    {type: 'node', id:'E57E0A415FB820E5', t:"IT Asset Assessment", parentId:'3B539CBB551E4C2A', sh:'circle', d:""},
+    {type: 'node', id:'81C3AB5A6054F637', t:"Vendor Catalog", parentId:'1CE330355C4878D7', sh:'circle', d:"A Vendor Catalog is a package of resources offered by a Vendor."},
+    {type: 'node', id:'1CE3429D5C48982E', t:"Application Portfolio", parentId:'26B8889C5EEA8AB7', sh:'circle', d:"Application Portfolios are Enduring Initiatives aimed at managing a set of Applications delivering functionalities required by enterprise operations."},
+    {type: 'node', id:'255CD30862AA0DA8', t:"EA Pattern - Business System Operating Model", sh:'box', d:"The EA Pattern - Business System Operating Model domain defines concepts and relationships used to model how a Business System operates/functions in its Operating Eco-System.."},
+    {type: 'node', id:'7C4085C355270831', t:"Functionality Map", parentId:'255CD30862AA0DA8', sh:'circle', d:"Assembly of functionnalities and their dependencies that, together, defines the scope of a hardware or software architecture."},
+    {type: 'node', id:'5B7A067561F55876', t:"Application Portfolio Stage", parentId:'1CE330355C4878D7', sh:'circle', d:""},
+    {type: 'node', id:'1CE330C55C4879BD', t:"Vendor", parentId:'1CE330355C4878D7', sh:'circle', d:"Entity who provides and maintains resources used in the enterprise operating system."},
+    {type: 'node', id:'6CE61B9D5EF382CF', t:"Technology Portfolio", parentId:'26B8889C5EEA8AB7', sh:'circle', d:"Technology Portfolios are Technology Portfolio aimed at managing a set of Software Technologys delivering functionalities required by enterprise operations."},
+    {type: 'node', id:'C2DBE1DB5B026B30', t:"Software Technology ArcDevOps", sh:'box', d:"The Software Technology ArcDevOps domain describes a set of concepts used in practices that combines Software Technology System development (Dev) and Software Technology System operations (Ops). "},
+    {type: 'node', id:'0B3013675A1875C5', t:"Software Technology Capability Map", parentId:'C2DBE1DB5B026B30', sh:'circle', d:"A Software Technology Capability Map is an assembly of Software Technology Capability(ies) and their dependencies that, together, provide a Software Technology Capability scope for an Enterprise Porfolio Stage."},
+    {type: 'node', id:'D5E6DDD05C46547C', t:"Software Technology", parentId:'C2DBE1DB5B026B30', sh:'circle', d:"A Software Technology is an elementary Software Technology System  used as an enabler by Software Modules."},
+    {type: 'node', id:'3B539CBB551E4C2A', t:"Assessment", parentId:'1CE330355C4878D7', sh:'circle', d:"An Assessment is the result of the act of judging or assessing an aspect of the enterprise, based on an enterprise description and on the comparison of this description with the actual state of the enterprise."},
+    {type: 'node', id:'83BB9D706192357B', t:"Appraisal Pattern", sh:'box', d:"The Appraisal Pattern domain defines constructs used by stakeholders to asses and qualify Architecture Blocks."},
+    {type: 'node', id:'83BBA14F619242E6', t:"Assessment Value", parentId:'83BB9D706192357B', sh:'circle', d:""},
+    {type: 'node', id:'02AF0A4B5A182417', t:"Operating Semantic", sh:'box', d:"The Operating Semantic domain is used to model how a system (Agent) operates/functions (Behavior) in its Operating Eco-System to produce Outcomes that benefit (value) to other Agents or affect (have an effect upon) these Agents."},
+    {type: 'node', id:'07CA0F015DD84EFA', t:"Functional Asset", parentId:'02AF0A4B5A182417', sh:'circle', d:"Functional Assets encompasse Architecture Blocks used to describe how an enterprise function. This includes the purposes of an enterprise (Capability) and the way the enterprise operates to fulfill these purposes (Agents and their  Behaviors)."},
+    {type: 'node', id:'DC0BED9D5AE95BC0', t:"Teams Pattern", sh:'box', d:"The Teams Pattern domain defines organization structure and behavior as well as instrurments required to govern Enduring Initiatives."},
+    {type: 'node', id:'BCEBD0175491272A', t:"Stakeholder", parentId:'DC0BED9D5AE95BC0', sh:'circle', d:"A Stakeholder is an individual, team, organization, or classes thereof, having an interest in the enterprise."},
+    {type: 'node', id:'26B8889C5EEA8AB7', t:"Asset Portfolio", parentId:'1CE330355C4878D7', sh:'circle', d:"An Asset Portfolio is a Management System aimed at developing and maintaining in operational conditions a set of Resource Operating Assets delivering functionalities required by Business Operations."},
+    {type: 'node', id:'FC96001C601C54D0', t:"Enterprise Capability Map", parentId:'1CE330355C4878D7', sh:'circle', d:"Top level assembly of Resource Capabilityies  and their dependencies that, together, provide a functional scope for asset portfolios and solution roadmaps."},
+    {type: 'node', id:'FE663F0D61817C3E', t:"Asset Portfolio Pattern", sh:'box', d:""},
+    {type: 'node', id:'F277F5EE601BE715', t:"Asset Portfolio Stage", parentId:'FE663F0D61817C3E', sh:'circle', d:""},
+  //edges
+    { type: 'link', id:'7A0A06FD5DDF96C3-C334D73C5ECB5D6A', id1:'7A0A06FD5DDF96C3', id2:'BCEBD8E9549144DB', t:"Contributing Application"},
+    { type: 'link', id:'9E77A0325C51443F-9152210A5ED65CCD', id1:'9E77A0325C51443F', id2:'BCEBD8E9549144DB', t:"Evaluated Application"},
+    { type: 'link', id:'E57E0A415FB820E5-83BBA53B61924743', id1:'E57E0A415FB820E5', id2:'BCEBD8E9549144DB', t:"Assessed Application"},
+    { type: 'link', id:'81C3AB5A6054F637-81C3ABF66054F980', id1:'81C3AB5A6054F637', id2:'1CE330C55C4879BD', t:"Provider"},
+    { type: 'link', id:'1CE3429D5C48982E-5B7A01E761F5511D', id1:'1CE3429D5C48982E', id2:'7C4085C355270831', t:"Functional Scope"},
+    { type: 'link', id:'1CE3429D5C48982E-5B7A06E961F5595C', id1:'1CE3429D5C48982E', id2:'5B7A067561F55876', t:"Roadmap"},
+    { type: 'link', id:'1CE3429D5C48982E-C334EC9B5ECBB0D4', id1:'1CE3429D5C48982E', id2:'BCEBD8E9549144DB', t:"Managed Application"},
+    { type: 'link', id:'6CE61B9D5EF382CF-5B7A04CF61F55564', id1:'6CE61B9D5EF382CF', id2:'0B3013675A1875C5', t:"Functional Scope"},
+    { type: 'link', id:'6CE61B9D5EF382CF-E9B802705F51200E', id1:'6CE61B9D5EF382CF', id2:'D5E6DDD05C46547C', t:"Managed Software Technology"},
+    { type: 'link', id:'3B539CBB551E4C2A-83BBA17A61924460', id1:'3B539CBB551E4C2A', id2:'83BBA14F619242E6', t:"Assessment Value"},
+    { type: 'link', id:'3B539CBB551E4C2A-9BB4A184626A922C', id1:'3B539CBB551E4C2A', id2:'07CA0F015DD84EFA', t:"Assessed Asset"},
+    { type: 'link', id:'3B539CBB551E4C2A-FBD63AA15500B4C4', id1:'3B539CBB551E4C2A', id2:'BCEBD0175491272A', t:"assessor"},
+    { type: 'link', id:'26B8889C5EEA8AB7-BCDBBD42617A4F79', id1:'26B8889C5EEA8AB7', id2:'FC96001C601C54D0', t:"Portfolio Functional Scope"},
+    { type: 'link', id:'26B8889C5EEA8AB7-F277FA24601BEF67', id1:'26B8889C5EEA8AB7', id2:'F277F5EE601BE715', t:"Owned Portfolio Stage"},
+    { type: 'link', id:'26B8889C5EEA8AB7-F57AF6CA62D21904', id1:'26B8889C5EEA8AB7', id2:'07CA0F015DD84EFA', t:"Managed Asset"}
+  ]
+}
+</script>
+<script src="../standard/assets/js/keylines_domain.js" type="module"></script>
+</div>
+</section>
+<a class="object-section-anchor" id="des"></a>
+<section class="object-section">
+<h4>CONCEPT DESCRIPTIONS</h4> 
+<hr class="sectionbreak" />
+<h5>Concrete Concepts</h5>
+<table class="table  table-set-col-width">
+<thead>
+<tr><th>Concept</th><th>Description</th><th>HOPEX Metaclass</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="bcebd8e9549144db.htm" target="_top">Application</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An <a href="b1edb2562c14016f.htm" target="_top"><b><u>Application</u></b></a> is a <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a> that provides a set of <a href="598272e954c622f4.htm" target="_top"><b><u>Functionality</u></b></a>(ies) that <a href="2dcea8705fc4827c.htm" target="_top"><b><u>End User</u></b></a>s see as a single unit.</div><div align="left" style="min-height: 12pt; ">Essentially&#160;<b> Application</b>s are architectural constructions resulting from the combinaison of the following four criteria:</div><div align="left" style="min-height: 12pt; ">1) A group of <a href="598272e954c622f4.htm" target="_top"><b><u>Functionality</u></b></a> that <a href="2dcea8705fc4827c.htm" target="_top"><b><u>End User</u></b></a>s see as a single unit.</div><div align="left" style="min-height: 12pt; ">2) A managed asset (<b> Managed Application</b>) associated with a budget line in the context of an <a href="1ce3429d5c48982e.htm" target="_top"><b><u>Application Portfolio</u></b></a>.</div><div align="left" style="min-height: 12pt; ">3) A body of code that is seen by developers as a single unit.</div><div align="left" style="min-height: 12pt; ">4) A group of deployable software units (<a href="d5e6d7eb5c464b21.htm" target="_top"><b><u>Deployable Application Package</u></b></a>s) that must be installed together on one or multiple execution nodes (<a href="f4be0eda5ee1d6c0.htm" target="_top"><b><u>Computational Aspect</u></b></a>).</div><div align="left" style="min-height: 12pt; "><b>&#160;Application</b> is a <a href="5c43887c64103e30.htm" target="_top"><b><u>Mezzo</u></b></a> enterprise asset&#160; that sits between <a href="46194ca7560d3a45.htm" target="_top"><b><u>Application System</u></b></a> and <a href="46194ce9560d3ab8.htm" target="_top"><b><u>IT Service</u></b></a> in the decomposition of <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">Example: &quot;Payroll&quot; is an&#160;<b> Application</b> that is part an &quot;HR system&quot; which is an <a href="46194ca7560d3a45.htm" target="_top"><b><u>Application System</u></b></a>.</div><div align="left" style="min-height: 12pt; ">The &quot;Payroll&quot;&#160;<b> Application</b> includes, among other things, the &quot;Salary and Wage Calculation&quot; <a href="46194ce9560d3ab8.htm" target="_top"><b><u>IT Service</u></b></a>.</div><i><ul>References:<li><a href="https://c4model.com/#Abstractions"><img src="../standard/extr.ico.gif">&nbsp;C4 Model - Software System</a></li> <li><a href="https://martinfowler.com/bliki/ApplicationBoundary.html"><img src="../standard/extr_htm.ico.gif">&nbsp;Martin Fowler - Application Boundary</a></li> <li><a href="https://learn.microsoft.com/en-us/azure/architecture/guide/architecture-styles"><img src="../standard/extr.ico.gif">&nbsp;Microsoft - Architecture Design - Architecture Styles</a></li> <li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Software"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - Software</a></li> <li><a href="https://pubs.opengroup.org/architecture/archimate32-doc/#_Toc112154993"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - ArchiMate - Application Component</a></li> <li><a href="https://method.demomega.com/MM-OVERVIEW/pages/architecture-content/chap02.html#tag_02_04"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Content MetaModel - Physical Application Component</a></li> <li><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_04"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Definition - Application Component</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="b1edb2562c14016f.htm" target="_top">Application</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="1ce3429d5c48982e.htm" target="_top">Application Portfolio</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; "><b>&#160;Application Portfolio</b>s are <a href="d321c226601262ae.htm" target="_top"><b><u>Enduring Initiative</u></b></a>s aimed at managing a set of <a href="bcebd8e9549144db.htm" target="_top"><b><u>Application</u></b></a>s delivering functionalities required by enterprise operations.</div><div align="left" style="min-height: 12pt; ">The purpose of&#160;<b> Application Portfolio</b>s is efficiency: managed <a href="bcebd8e9549144db.htm" target="_top"><b><u>Application</u></b></a>s must provide expected functionalities in the best cost / performance ratio.</div>       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="b082b0d44e041967.htm" target="_top">Portfolio</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="5b7a067561f55876.htm" target="_top">Application Portfolio Stage</a></td>
+<td class="description-text">        </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="9e77a0325c51443f.htm" target="_top">Cost Line</a></td>
+<td class="description-text">        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="87298d7d4fa34a00.htm" target="_top">Cost Line</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="9e38352f6192f750.htm" target="_top">Data Center</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Data Center</b> is a <a href="f4be0e865ee1d53b.htm" target="_top"><b><u>Facility</u></b></a> composed of networked computers, storage systems and computing infrastructure that enterprises use to organize, process, store and disseminate large amounts of data. </div><div align="left" style="min-height: 12pt; "><a href="2d1874635ac352f3.htm" target="_top"><b><u>Business Operations</u></b></a> rely heavily upon the applications, services and data contained within a&#160;<b> Data Center</b>, making it a focal point and critical asset for everyday operations.</div><i><ul>References:<li><a href="https://c4model.com/#SystemLandscapeDiagram"><img src="../standard/extr.ico.gif">&nbsp;C4 Model - Supplementary diagrams - System Landscape diagram</a></li> <li><a href="https://www.gartner.com/en/information-technology/glossary/data-center"><img src="../standard/extr.ico.gif">&nbsp;Gartner - Data Center</a></li> <li><a href="https://searchdatacenter.techtarget.com/definition/data-center"><img src="../standard/extr.ico.gif">&nbsp;TechTarget - Data Center</a></li> <li><a href="https://compliancedictionary.com/term/708"><img src="../standard/extr.ico.gif">&nbsp;UCF Glossary - Data Center</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="ddd1e39b607f6d98.htm" target="_top">Data Center</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="56cd60a95c513aaf.htm" target="_top">Deployed Application</a></td>
+<td class="description-text">A&#160;<b> Deployed Application</b> offers a set of functionalities to users.       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="621f6d474f8d12d8.htm" target="_top">Software Installation</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="56cd60f85c513b04.htm" target="_top">Deployed Server</a></td>
+<td class="description-text">A&#160;<b> Deployed Server</b> is an <a href="df118f645d5f65bb.htm" target="_top"><b><u>Computer Server</u></b></a> deployed in a <a href="9e38352f6192f750.htm" target="_top"><b><u>Data Center</u></b></a>.       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="db48ddd7512d060c.htm" target="_top">Server (Deployed)</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="56cd60c05c513ad9.htm" target="_top">Deployed Technology</a></td>
+<td class="description-text">Instance of a software technoloy deployed on a server or a site        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="111a11da512e21a8.htm" target="_top">Deployed Technology</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="b181b82a54891668.htm" target="_top">Enterprise</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Enterprise</b> is an <a href="d321c226601262ae.htm" target="_top"><b><u>Enduring Initiative</u></b></a> that delivers added-value <a href="215cceda606c35c6.htm" target="_top"><b><u>Product</u></b></a>s (goods &amp; services) to its target <a href="d6cdfdbc5ab86331.htm" target="_top"><b><u>Customer</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">It requires a formal organization of groups of people and resources to achieve its purposes.</div><i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#WholeLifeEnterprise"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - WholeLifeEnterprise</a></li> <li><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_42"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Definition - Enterprise</a></li> <li><a href="https://www.scaledagileframework.com/enterprise/"><img src="../standard/extr.ico.gif">&nbsp;SAFe&copy; - Enterprise</a></li> <li><a href="https://www.scaledagileframework.com/portfolio-safe/"><img src="../standard/extr.ico.gif">&nbsp;SAFe&copy; - Portfolio SAFe</a></li> <li><a href="http://wordnetweb.princeton.edu/perl/webwn?o2=&amp;o0=1&amp;o8=1&amp;o1=1&amp;o7=&amp;o5=&amp;o9=&amp;o6=&amp;o3=&amp;o4=&amp;r=1&amp;s=enterprise&amp;i=2&amp;h=100000#c"><img src="../standard/extr.ico.gif">&nbsp;WordNet - Enterprise</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="50666200529c2b9a.htm" target="_top">Enterprise</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="f4be0e865ee1d53b.htm" target="_top">Facility</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Facility</b> is a <a href="f4be11b15ee1e0fa.htm" target="_top"><b><u>System of Resources</u></b></a> used to model factories, buildings, or outdoor constructions that provides a particular <a href="9810abf3551135c4.htm" target="_top"><b><u>Business Capability</u></b></a> or is used for a particular industry.</div><div align="left" style="min-height: 12pt; ">Examples: </div><div align="left" style="min-height: 12pt; ">- Data Center</div><div align="left" style="min-height: 12pt; ">- Factory</div><div align="left" style="min-height: 12pt; ">- Outlet</div><i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Facility"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - Facility</a></li> <li><a href="https://pubs.opengroup.org/architecture/archimate32-doc/#_Toc112155034"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - ArchiMate - Facility</a></li> <li><a href="https://compliancedictionary.com/term/3826"><img src="../standard/extr.ico.gif">&nbsp;UCF Glossary - Facility</a></li> <li><a href="http://wordnetweb.princeton.edu/perl/webwn?o2=&amp;o0=1&amp;o8=1&amp;o1=1&amp;o7=&amp;o5=&amp;o9=&amp;o6=&amp;o3=&amp;o4=&amp;s=facility&amp;i=0&amp;h=00000#c"><img src="../standard/extr.ico.gif">&nbsp;WordNet - Facility</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="8eb8944a58e307fa.htm" target="_top">Facility</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="7c4085c355270831.htm" target="_top">Functionality Map</a></td>
+<td class="description-text">Assembly of functionnalities and their dependencies that, together, defines the scope of a hardware or software architecture.<i><ul>References:<li><a href="https://www.modernanalyst.com/Resources/Articles/tabid/115/ID/6061/Using-Feature-Trees-to-Depict-Scope.aspx"><img src="../standard/extr.ico.gif">&nbsp;Modern Analyst - Using Feature Trees to Depict Scope</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="99c201c855b171ad.htm" target="_top">Functionality Map</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="7a0a06fd5ddf96c3.htm" target="_top">Global Application Flow Map</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A global application flow map presents a global view of the flows exchanged between the main application systems or applications of the company.</div><div align="left" style="min-height: 12pt; "></div>       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="9aa09fa0594717b2.htm" target="_top">Global Application Flow Map</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="2cc9717155263b89.htm" target="_top">Governance Committee</a></td>
+<td class="description-text">A&#160;<b> Governance Committee</b> is a group of <a href="bcebd0175491272a.htm" target="_top"><b><u>Stakeholder</u></b></a>s that contributes to architecture and assurance activities and governs <a href="d321c226601262ae.htm" target="_top"><b><u>Enduring Initiative</u></b></a>s.       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="b09fc6ae56bd201e.htm" target="_top">EA Organization</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="2cc9718655263c44.htm" target="_top">Individual Stakeholder</a></td>
+<td class="description-text">An&#160;<b> Individual Stakeholder</b> is a person with a <a href="bcebd0175491272a.htm" target="_top"><b><u>Stakeholder</u></b></a> role in architecture &amp; assurance activities.       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="000000008000001d.htm" target="_top">Person (System)</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="9e38361d6192f8da.htm" target="_top">Infrastructure Landscape</a></td>
+<td class="description-text">Set of human and physical resources (hardware and software) required for the existence, operation and management of an enterprise in its environment.<i><ul>References:<li><a href="https://c4model.com/#SystemLandscapeDiagram"><img src="../standard/extr.ico.gif">&nbsp;C4 Model - Supplementary diagrams - System Landscape diagram</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="ddd1eb5d607f7086.htm" target="_top">Enterprise Infrastructure Landscape</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="e57e0a415fb820e5.htm" target="_top">IT Asset Assessment</a></td>
+<td class="description-text">        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="9500e0484e37c835.htm" target="_top">Assessment Node</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="8d5e986f552e28d5.htm" target="_top">Location</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Location</b> is a geopolitical location anywhere on the earth.</div><div align="left" style="min-height: 12pt; ">Examples: </div><div align="left" style="min-height: 12pt; ">- France</div><div align="left" style="min-height: 12pt; ">- Paris</div><div align="left" style="min-height: 12pt; ">- Washington DC</div><div align="left" style="min-height: 12pt; ">- Cairo</div><div align="left" style="min-height: 12pt; ">- Buenos-Aires</div><div align="left" style="min-height: 12pt; ">- Asia</div><i><ul>References:<li><a href="https://15926.blog/topics/data-model/index.htm#SpatialLocation"><img src="../standard/extr.ico.gif">&nbsp;ISO 15926 - SpatialLocation</a></li> <li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ActualLocation"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - ActualLocation</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="b1edb2612c1401d3.htm" target="_top">Site</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="91be97ff54882d9f.htm" target="_top">Project</a></td>
+<td class="description-text">A&#160;<b> Project</b> is a course of action that is being executed or has been selected for execution. An organization&#39;s <a href="0ffeec41600be08a.htm" target="_top"><b><u>Initiative</u></b></a>s represent the choices the organization has made about how to pursue the change that allows it to achieve its objectives.<i><ul>References:<li><a href="https://dodcio.defense.gov/Library/DoD-Architecture-Framework/dodaf20_project/"><img src="../standard/extr.ico.gif">&nbsp;DoDAF2 - Project Viewpoint</a></li> <li><a href="https://martinfowler.com/articles/products-over-projects.html"><img src="../standard/extr_htm.ico.gif">&nbsp;Martin Fowler - Products over Projects</a></li> <li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ActualProject"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - ActualProject</a></li> <li><a href="https://pubs.opengroup.org/architecture/togaf9-doc/m/chap03.html#tag_03_85"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Definitions - Work Package</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="8a1f952c585256cc.htm" target="_top">Project</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="24ac695354881cbe.htm" target="_top">Project Type</a></td>
+<td class="description-text">A category of project.<i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Project"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - Project</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="8a1f95a2585257a9.htm" target="_top">Project Category</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="2d18f6705ac37b70.htm" target="_top">Projet Risk Type</a></td>
+<td class="description-text">        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="8a1fa11158525ad6.htm" target="_top">Project Risk Type</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="BCDBC555617A5DCC.htm" target="_top">Responsibility Assignment</a></td>
+<td class="description-text">A&#160;<b> Responsibility Assignment</b> is a governing duty assigned to a <a href="2cc9718655263c44.htm" target="_top"><b><u>Individual Stakeholder</u></b></a> on a particular asset (<a href="07ca0f015dd84efa.htm" target="_top"><b><u>Functional Asset</u></b></a>).       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="0000000080000040.htm" target="_top">Responsibility Assignment</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="d5e6ddd05c46547c.htm" target="_top">Software Technology</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Software Technology</b> is an elementary <a href="0463ea9a63fd8b6c.htm" target="_top"><b><u>Software Technology System</u></b></a>&#160; used as an enabler by <a href="c30bdac25a5d9eaf.htm" target="_top"><b><u>Software Module</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">Examples : </div><div align="left" style="min-height: 12pt; ">- Application server, </div><div align="left" style="min-height: 12pt; ">- Message server, </div><div align="left" style="min-height: 12pt; ">- Storage, </div><div align="left" style="min-height: 12pt; ">- Business information sharing, </div><div align="left" style="min-height: 12pt; ">- Operating systems, </div><div align="left" style="min-height: 12pt; ">- Navigators, etc</div><i><ul>References:<li><a href="https://method.demomega.com/MM-OVERVIEW/pages/architecture-content/chap02.html#tag_02_04"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Content MetaModel - Technology Component</a></li> <li><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_81"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Definition - Technology Component</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="2885299152a85717.htm" target="_top">Software Technology</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="0b3013675a1875c5.htm" target="_top">Software Technology Capability Map</a></td>
+<td class="description-text">A&#160;<b> Software Technology Capability Map</b> is an assembly of <a href="0b3013565a1875a8.htm" target="_top"><b><u>Software Technology Capability</u></b></a>(ies) and their dependencies that, together, provide a <a href="0b3013565a1875a8.htm" target="_top"><b><u>Software Technology Capability</u></b></a> scope for an <a href="6123633261dd757a.htm" target="_top"><b><u>Enterprise Porfolio Stage</u></b></a>.       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="0ab1340a58b40ae9.htm" target="_top">Technical Functionality map</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="05b091f46006f913.htm" target="_top">Solution Team</a></td>
+<td class="description-text">A&#160;<b> Solution Team</b> is a <a href="ff0501b65b253fdd.htm" target="_top"><b><u>Governing Team</u></b></a>&#160; responsible for overseeing the administration of a <a href="29df3f4060084c07.htm" target="_top"><b><u>Management System</u></b></a>.       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="7cae244a5a739f96.htm" target="_top">Portfolio Team</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="6ce61b9d5ef382cf.htm" target="_top">Technology Portfolio</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; "><b>&#160;Technology Portfolio</b>s are&#160;<b> Technology Portfolio</b> aimed at managing a set of <a href="d5e6ddd05c46547c.htm" target="_top"><b><u>Software Technology</u></b></a>s delivering functionalities required by enterprise operations.</div><div align="left" style="min-height: 12pt; ">The purpose of&#160;<b> Technology Portfolio</b>s is efficiency: managed&#160;<b> Managed Software Technology</b>s must provide expected <a href="0b3013565a1875a8.htm" target="_top"><b><u>Software Technology Capability</u></b></a>s in the best cost / performance ratio.</div>       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="b082b0d44e041967.htm" target="_top">Portfolio</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="24032c315fc6780a.htm" target="_top">Transformation Program</a></td>
+<td class="description-text"><div align="left" style="min-height: 11pt; ">A&#160;<b> Transformation Program</b> is an <a href="0ffeec41600be08a.htm" target="_top"><b><u>Initiative</u></b></a> that is a temporary, flexible organisation created to co-ordinate, direct and oversee the implementation of a set of related Projects and Tasks in order to deliver outcomes and benefits related to the organisation&rsquo;s strategic objectives.</div><div align="left" style="min-height: 11pt; ">A programme is likely to have a lifespan of several years. During a programme lifecycle, projects are initiated, executed, and closed.&#160; Programmes provide an umbrella under which these projects can be co-ordinated. The programme integrates the projects so that it can deliver an outcome greater than the sum of its parts.</div><div align="left" style="min-height: 11pt; ">Programs are defined upon a given domain (e.g. Business, Information Technology)</div><div align="left" style="min-height: 11pt; ">A program domain gathers all the projects managed from the same perspective in terms of portfolio management decisions. Project Portfolios are therefore also attached to programs; by default, one portfolio of each portfolio type is created when creating a new program.</div><i><ul>References:<li><a href="https://martinfowler.com/articles/products-over-projects.html"><img src="../standard/extr_htm.ico.gif">&nbsp;Martin Fowler - Products over Projects</a></li> <li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ProjectKind"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - ProjectKind</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="8a1f953b58525710.htm" target="_top">Project Domain</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="1ce330c55c4879bd.htm" target="_top">Vendor</a></td>
+<td class="description-text">Entity who provides and maintains resources used in the enterprise operating system.       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="b1edb2562c140173.htm" target="_top">Org-Unit</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="81c3ab5a6054f637.htm" target="_top">Vendor Catalog</a></td>
+<td class="description-text">A&#160;<b> Vendor Catalog</b> is a package of resources offered by a <a href="1ce330c55c4879bd.htm" target="_top"><b><u>Vendor</u></b></a>.       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="335c34b75f7c65e5.htm" target="_top">Vendor Catalog</a></td>
+</tr>  
+</tbody>
+</table>
+<hr class="sectionbreak" />
+<h5>Abstract Concepts</h5>
+<table class="table  table-set-col-width">
+<thead >
+<tr><th>Concept</th><th>Description</th><th>HOPEX Metaclass</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="d342d88e5b121401.htm" target="_top">Architecture Block</a></td>
+<td class="description-text">An&#160;<b> Architecture Block</b> is any <a href="CA353E6D5FC5E8AF.htm" target="_top"><b><u>Model Building Block</u></b></a> used to describe an enterprise architecture. This includes types (applications, org-units, ...) and individuals (physical persons, software installations, sites, ...).<i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#UAFElement"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - UAFElement</a></li> <li><a href="https://pubs.opengroup.org/togaf-standard/architecture-content/chap04.html#tag_04_02_01"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Architecture Building Blocks</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="2a8336f9564b4439.htm" target="_top">Enterprise Description Building Block</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="d342d91a5b121454.htm" target="_top">Architecture Namespace</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Architecture Namespace</b> is a <a href="209c29bb5ed23342.htm" target="_top"><b><u>Model Namespace</u></b></a>&#160; that packages <a href="d342d88e5b121401.htm" target="_top"><b><u>Architecture Block</u></b></a>s used to describe the architecture of the enterprise.</div><div align="left" style="min-height: 12pt; ">This includes&#160;<b> Information Asset</b>, <a href="d682ef5e56144e77.htm" target="_top"><b><u>Process</u></b></a>es, <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a>s, <a href="c30bf4015a5da72b.htm" target="_top"><b><u>Hardware System</u></b></a>s, <a href="910196ca550a2ec2.htm" target="_top"><b><u>Organization</u></b></a>s, etc.</div><div align="left" style="min-height: 12pt; "><b>&#160;Architecture Namespace</b>s are used to split HOPEX repository content into several independent modules (aka package).</div><div align="left" style="min-height: 12pt; ">They allow virtual partitions of the repository. In particular, <a href="d342d88e5b121401.htm" target="_top"><b><u>Architecture Block</u></b></a>s owned by different&#160;<b> Architecture Namespace</b>(ies) can have the same name (namespacing).</div><div align="left" style="min-height: 12pt; ">There are two main kinds of&#160;<b> Architecture Namespace</b>: <a href="b181b82a54891668.htm" target="_top"><b><u>Enterprise</u></b></a> and <a href="d342d96c5b12148e.htm" target="_top"><b><u>Library</u></b></a>.</div>       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="2ea133cd565c2f7d.htm" target="_top">Architecture Building Block Container</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="26b8889c5eea8ab7.htm" target="_top">Asset Portfolio</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Asset Portfolio</b> is a <a href="29df3f4060084c07.htm" target="_top"><b><u>Management System</u></b></a> aimed at developing and maintaining in operational conditions a set of <a href="62466ea661b80d09.htm" target="_top"><b><u>Resource Operating Asset</u></b></a>s delivering functionalities required by <a href="2d1874635ac352f3.htm" target="_top"><b><u>Business Operations</u></b></a>.</div><div align="left" style="min-height: 12pt; ">The purpose of&#160;<b> Asset Portfolio</b>s is <u>efficiency</u>: managed assets must provide expected functionalities in the best cost / performance ratio.</div>       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="b082b0d44e041967.htm" target="_top">Portfolio</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="1737b50b5fe27cba.htm" target="_top">Governance Event</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Governance Event</b> is any event that has an impact on the management and governance of an <a href="d321c226601262ae.htm" target="_top"><b><u>Enduring Initiative</u></b></a>.</div><div align="left" style="min-height: 12pt; ">This includes the result of <a href="3B539CBB551E4C2A.htm" target="_top"><b><u>Assessment</u></b></a>s, <a href="D7F9FCC95F720EE0.htm" target="_top"><b><u>Decision</u></b></a>s, recorded <a href="d059da695ef11294.htm" target="_top"><b><u>Incident</u></b></a>s, <a href="bcebd0565491287e.htm" target="_top"><b><u>Driver</u></b></a>s, etc.</div>       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="15c050c95ffc4c53.htm" target="_top">Team Event</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="29df3f4060084c07.htm" target="_top">Management System</a></td>
+<td class="description-text">A&#160;<b> Management System</b> is an <a href="d321c226601262ae.htm" target="_top"><b><u>Enduring Initiative</u></b></a> within an <a href="b181b82a54891668.htm" target="_top"><b><u>Enterprise</u></b></a>, aimed at creating, maintaining, evaluating, evolving, and operating a collection of essential <a href="07ca0f015dd84efa.htm" target="_top"><b><u>Functional Asset</u></b></a>s of the <a href="b181b82a54891668.htm" target="_top"><b><u>Enterprise</u></b></a>.<i><ul>References:<li><a href="https://www.iso.org/obp/ui/#iso:std:iso:22301:ed-2:v1:en"><img src="../standard/extr.ico.gif">&nbsp;ISO 22301 - Management System</a></li> <li><a href="https://pubs.opengroup.org/togaf-standard/introduction/apdxb.html#tag_06_30"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Definition - Portfolio</a></li> <li><a href="https://www.scaledagileframework.com/large-solution-safe/"><img src="../standard/extr.ico.gif">&nbsp;SAFe&copy; - Large Solution SAFe</a></li> <li><a href="https://www.scaledagileframework.com/enterprise-solution-delivery/"><img src="../standard/extr.ico.gif">&nbsp;SAFe&copy; -Enterprise Solution Delivery</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="fa47fbab5e695547.htm" target="_top">Enterprise Portfolio</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="2b5887d05ef07b3b.htm" target="_top">Program Asset</a></td>
+<td class="description-text">A&#160;<b> Program Asset</b> is a resource used in the context of project management such as <a href="91be97ff54882d9f.htm" target="_top"><b><u>Project</u></b></a>, <a href="2d18f6705ac37b70.htm" target="_top"><b><u>Projet Risk Type</u></b></a>, <a href="d26b6b685fe0c6b9.htm" target="_top"><b><u>Project Portfolio</u></b></a>,etc.       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="fff70bdc5952665d.htm" target="_top">Project Building Block</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="bcdbc52b617a5d27.htm" target="_top">Team Responsibility</a></td>
+<td class="description-text">A&#160;<b> Team Responsibility</b> is an assignment of a <a href="07ca0f015dd84efa.htm" target="_top"><b><u>Functional Asset</u></b></a> to a <a href="bcebd0175491272a.htm" target="_top"><b><u>Stakeholder</u></b></a> for management or governance purposes.       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="c9a2db04605d623b.htm" target="_top">Team Responsibilities</a></td>
+</tr>  
+</tbody>
+</table>
+<section>
+
+</div>
+<button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button>
+<script>window.onscroll = function() {scrollFunction()};$(document).on('click', 'a[href^="#"]', function (event) {event.preventDefault();$('html, body').animate({scrollTop: $($.attr(this, 'href')).offset().top}, 500);});function showDiagOnClick(elem){ var x = document.getElementsByClassName('Relationship');var e = elem.getAttribute("value"); for (var i=0; i < x.length ;i++){x[i].style.display="none"; if (x[i].id == e){x[i].style.display="block";x[i].style.textAlign="left";}}}
+</script></html>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?> <sitemapindex xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/siteindex.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" ><sitemap>
+  <loc>https://www.gartner.com/peer-community/sitemaps/sitemap_poll1.xml.gz</loc>
+  <lastmod>2023-10-04T10:45:23Z</lastmod>
+</sitemap>
+<sitemap>
+  <loc>https://www.gartner.com/peer-community/sitemaps/sitemap_post1.xml.gz</loc>
+  <lastmod>2023-10-04T10:45:24Z</lastmod>
+</sitemap>
+<sitemap>
+  <loc>https://www.gartner.com/peer-community/sitemaps/sitemap_home1.xml.gz</loc>
+  <lastmod>2023-10-04T10:45:24Z</lastmod>
+</sitemap>
+</sitemapindex>

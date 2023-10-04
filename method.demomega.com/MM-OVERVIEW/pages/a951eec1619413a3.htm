@@ -1,0 +1,430 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="keywords" content="">
+<meta name="description" content="">    
+<LINK REL="icon" HREF="../standard/assets/img/favicon.ico">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/bootstrap.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nav.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/eaportal.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/font-awesome.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/animate.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/datatables.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/grid.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nae.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/custom.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/chosen.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/prism.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery.dataTables.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jsTreeStyle.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.theme.css" media="screen" />
+<script type="text/javascript" src="../standard/assets/js/jquery-3.2.1.min.js" ></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-ui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.columnFilter.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3-force.v2.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.gui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.search.js"></script> 
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.util.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-2.1.1.min.js"></script>
+<script src="../standard/assets/js/ws_zoomtemplate_firefox.js"></script>
+<script src="../standard/assets/js/bootstrap.min.js"></script>
+<script src="../standard/assets/js/datatables.min.js"></script>
+<script src="../standard/assets/js/moment.min.js"></script>
+<script src="../standard/assets/js/datetime-moment.js"></script>
+<script src="../standard/assets/js/chartjs.min.js"></script>
+<script src="../standard/assets/js/searchindexcontent.json"></script>
+<script src="../standard/assets/js/anls.js"></script>
+<script src="../../../cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script src="../standard/assets/js/gauge.js"></script> 
+<script src="../standard/assets/js/domesticApi.js"></script> 
+<script src="../standard/assets/js/piecelabel.js"></script>
+<script src="../standard/assets/js/popper.min.js"></script>
+<script src="../standard/assets/js/custom.js"></script>
+<script src="../standard/assets/js/chosen.jquery.js"></script>
+<script src="../standard/assets/js/prism.js"></script>
+<script src="../standard/assets/js/init-chosen.js"></script>
+<script src="../standard/assets/js/chart-data-flow.js"></script>
+<script src="../standard/assets/js/chart-data-gantt.js"></script>
+<script type="module" src="../standard/assets/js/Fuse.esm.min.js"></script>
+<script type="module">
+import Fuse from '../standard/assets/js/Fuse.esm.min.js';
+$(document).ready(function () {
+console.log('getjson');
+window.$.getJSON('../standard/assets/js/searchindexcontent.json', function (response) {
+console.log('getjson ok');
+var isIndex = "";
+var url = window.location.pathname;
+var filename = url.substring(url.lastIndexOf('/')+1);
+if( filename.includes("index") || filename === "" ){
+isIndex = "pages/";
+} else {
+isIndex = "";
+}
+const fuse = new Fuse(response, {
+keys: ['title','text'],
+shouldSort: true,
+includeMatches : true,
+findAllMatches : true
+});
+$('#search-fuse').on('keyup', function () {
+let result = fuse.search($(this).val());
+console.log(result);
+let resultdiv = $('div.searchresults-fuse');
+if (result.length === 0) {
+resultdiv.hide();
+} else {
+resultdiv.empty();
+resultdiv.append('<table class="table-search" width="100%" cellspacing="0"><thead ><tr><th>Name</th><th>Object Type</th><th>Modification date</th></tr></thead><tbody>');
+
+for (let obj in result.slice(0,10)) {
+
+let searchObj = '<tr><td><a href="./'+ isIndex + result[obj].item.url + '">' + result[obj].item.title +'</a></td><td>' + result[obj].item.ObjectType + '</td><td>' + result[obj].item.ModificationDate + '</td></tr>' ;
+
+
+resultdiv.find('tbody').append(searchObj);
+}
+resultdiv.append('</tbody></table>');
+resultdiv.show();
+}
+});
+});
+});
+</script>
+<title>HOPEX Metamodel Overview (Beta Version)</title>
+</head>
+<nav class="navbar navbar-expand-md navbar-dark  navbar-mega"><!-- Brand --><!--<a class="navbar-brand" href="#">Navbar</a>--><a class="" href="../index.htm"><img class="logo-mega" src="../standard/assets/img/logo.png"  alt="">(Beta Version)</a><!-- Toggler/collapsibe Button --><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><!-- Navbar links -->
+<div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsibleNavbar"><div class="col-sm-auto col-md-auto col-lg-5"></div>
+<div class="col-sm-auto">
+<ul class="navbar-nav">      
+<li><a class="dropdown-item" href="ad30ce115ebf7e90.htm">EA Grid</a></li> 
+<li><a class="dropdown-item" href="fdd5018459bc3c6a.htm">EA Domains</a></li> 
+<li><a class="dropdown-item" href="07e731775ecc93f4.htm">Solutions</a></li> 
+<li><a class="dropdown-item" href="c5dfc62c54810c2c.htm">Glossary</a></li> 
+<li class="nav-item dropdown mx-1">
+<a class="nav-link" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</a>
+<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<li><a class="dropdown-item" href="5446555d5f88c32e.htm">Outcome Driven Metamodel</a></li> 
+<li><a class="dropdown-item" href="e1ccfc295f8f7b90.htm">Playbooks</a></li> 
+<li><a class="dropdown-item" href="42bc992862d20ea7.htm">Framework Mappings</a></li> 
+<li><a class="dropdown-item" href="e93aebb35fa20550.htm">Metamodel Patterns</a></li> 
+<li><a class="dropdown-item" href="d599fe87602b2b85.htm">References</a></li> 
+<li><a class="dropdown-item" href="333f3a7f5dde11de.htm">Legend</a></li> 
+</ul>									                                            
+</li>
+</ul>
+</div>
+<div class="col-sm-auto"><a class="nav-link search" href="#" onclick=showHideSearch("search-section-fuse")><i class="fa fa-search mr-1 form-control-feedback"></i></a></div>
+</div>
+</nav>
+<div id="search-section-fuse" style="display:none">>
+<div class="search_header"><span class="closesearch">&times;</span>
+<nav class="breadcrumb">
+<a class="breadcrumb-item" href="../index.htm">Home </a> 
+<span class="breadcrumb-item active">Search</span> 
+</nav>
+</div>
+<input id="search-fuse" placeholder="Search..."  name="q" onfocus="this.value=''" type="search">
+<div class="searchresults-fuse"></div>
+</div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>function showHideSearch(elementId) {var contentDivs = document.getElementsByClassName('content');var footerDivs = document.getElementsByClassName('footer'); var containerDivs = document.getElementsByClassName('container');var containerfluidDivs = document.getElementsByClassName('container-fluid');var x = document.getElementById(elementId);if (x.style.display === "none") {x.style.display = "block";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "none";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "none";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "none";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "none";}} else {x.style.display = "none";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "block";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "block";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "block";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "block";}}} ;<!-- END WIDGET DRILL DOWN --></script><script>$(document).ready(function() {$(window).scroll(function() {if ($(this).scrollTop() > 100) {$('.scrollup').fadeIn();} else {$('.scrollup').fadeOut();}});$('.scrollup').click(function() {$("html, body").animate({scrollTop: 0}, 600);return false;});});</script><script>
+var modal = document.getElementById("search-section-fuse");
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = "none";
+}
+}
+$(document).on('click', '.closesearch', function() {
+showHideSearch("search-section-fuse");
+
+
+
+
+
+});</script><div class="container-fluid col-lg-11"><nav class="breadcrumb"><a class="breadcrumb-item" href="../index.htm">Home</a> <span class="breadcrumb-item active">
+<a  href="c5dfc62c54810c2c.htm" target="_top">Dictionary of HOPEX concepts</a>&nbsp;/&nbsp;Deployed Facility Assets</span></nav></div>
+<div class="container-fluid col-lg-11 content">
+<section class="fadeInDown animated"><a href="#idt" class="btn btn-d">DEFINITION</a> <a href="#grf" class="btn btn-d">CONCEPT GRAPH</a> <a href="#des" class="btn btn-d">CONCEPT DESCRIPTIONS</a> 
+</section>
+<a class="object-section-anchor" id="idt"></a>
+<section class="object-section">
+<h4>CONCEPT DOMAIN - Deployed Facility Assets</h4><hr class="sectionbreak" /><table class="table table-vertical-headers table-set-col-width"><tr><th>Description</th><td class="description-text"><div></div></td></tr><tr><th>Dictionary</th><td><img src="../standard/dicsubjectarea.ico.gif"/>&nbsp;
+<a  href="c5dfc62c54810c2c.htm" target="_top">Dictionary of HOPEX concepts</a></td></tr><tr><th>Parent Domain</th><td><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="df118e555d5f62b7.htm" target="_top">Facility &amp; Platform ArcDevOps</a>&nbsp;</td></tr>
+<tr><th>Domain dependencies</th><td><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="c30bd1505a5d97f9.htm" target="_top">Architecture Model Management</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="362f37625b3b2050.htm" target="_top">Physical Data Domain</a>&nbsp;</td></tr></table></section>
+<a class="object-section-anchor" id="grf"></a>
+<section class="object-section">
+<h4>DOMAIN CONCEPT GRAPH</h4>
+<hr class="sectionbreak" />
+<a href="#" class="btn btn-d" value="Relationship1" onclick="showDiagOnClick(this)">Diagram</a>
+<a href="#" class="btn btn-d" value="Relationship2" onclick="showDiagOnClick(this)">Graph</a>
+<div class="Relationship" id="Relationship1">
+
+<map  name="A951EEFE6194148A">
+  <area  href=461f3b1963765c1e.htm shape="polygon" coords="717, 377, 717, 432, 706, 432, 706, 377"   target="_top"  title="-">
+  
+  <area  href=#OBMK5754805751545CA3 shape="polygon" coords="850, 210, 850, 196, 935, 196, 935, 210, 850, 210"    title="-">
+  
+  <area  href=#OBMK9E39416B61920742 shape="polygon" coords="795, 199, 1022, 199, 1022, 209, 795, 209"    title="-">
+  
+  <area  href=c30bdac25a5d9eaf.htm#OBMKC30BDAC25A5D9EAF shape="polygon" coords="1054, 194, 1054, 183, 1132, 183, 1132, 194, 1054, 194"   target="_top"  title="A&#160; Software Module is a Software System that is part of an application system. ">
+  
+  <area  href=b1edb2562c14016f.htm#OBMKB1EDB2562C14016F shape="polygon" coords="1066, 226, 1066, 213, 1120, 213, 1120, 226, 1066, 226"   target="_top"  title="An application is a software component that can be deployed and provides users with a set of functionalities.">
+  
+  <area  href="bcebd8e9549144db.htm" shape="rect" coords="1022, 181, 1164, 232"   target="_top"  title="An Application is a Software System that provides a set of Functionality(ies) that End Users see as a single unit.">
+  
+  <area  href=#OBMK5754805751545CA3 shape="polygon" coords="855, 370, 855, 356, 940, 356, 940, 370, 855, 370"    title="-">
+  
+  <area  href=#OBMKA951F51A619425E0 shape="polygon" coords="783, 358, 1001, 358, 1001, 368, 783, 368"    title="-">
+  
+  <area  href=9e393faa619205dc.htm shape="polygon" coords="442, 244, 442, 338, 628, 338, 628, 348, 431, 348, 431, 244"   target="_top"  title="-">
+  
+  <area  href=56cd63b25c513bd7.htm shape="polygon" coords="709, 309, 709, 246, 720, 246, 720, 309"   target="_top"  title="-">
+  
+  <area  href=9e396903619214a2.htm shape="polygon" coords="784, 315, 900, 315, 900, 326, 784, 326"   target="_top"  title="-">
+  
+  <area  href=3642454f6007e80e.htm#OBMK3642454F6007E80E shape="polygon" coords="650, 323, 650, 312, 768, 312, 768, 323, 650, 323"   target="_top"  title="A&#160; Deployed Business System is a man made Deployed Agent that delivers business outcomes.">
+  
+  <area  href=db48ddd7512d060c.htm#OBMKDB48DDD7512D060C shape="polygon" coords="669, 349, 669, 336, 749, 336, 749, 349, 669, 349"   target="_top"  title="A server is a computer . This computer run applications.">
+  
+  <area  href="56cd60f85c513b04.htm" shape="rect" coords="628, 309, 790, 377"   target="_top"  title="A&#160; Deployed Server is an Computer Server deployed in a Data Center.">
+  
+  <area  href=a951f4546194245b.htm shape="polygon" coords="442, 244, 442, 462, 627, 462, 627, 472, 431, 472, 431, 244"   target="_top"  title="-">
+  
+  <area  href=#OBMK5754805751545CA3 shape="polygon" coords="390, 153, 390, 139, 476, 139, 476, 153, 390, 153"    title="-">
+  
+  <area  href=#OBMKA951F14261941CAD shape="polygon" coords="431, 174, 432, 106, 442, 106, 442, 174"    title="-">
+  
+  <area  href=#OBMK5754805751545CA3 shape="polygon" coords="82, 155, 82, 141, 167, 141, 167, 155, 82, 155"    title="-">
+  
+  <area  href=#OBMK9E393CE46192032C shape="polygon" coords="119, 175, 118, 107, 129, 107, 130, 174"    title="-">
+  
+  <area  href=3642454f6007e80e.htm#OBMK3642454F6007E80E shape="polygon" coords="653, 446, 653, 435, 770, 435, 770, 446, 653, 446"   target="_top"  title="A&#160; Deployed Business System is a man made Deployed Agent that delivers business outcomes.">
+  
+  <area  href=c758e5bc600a31e8.htm#OBMKC758E5BC600A31E8 shape="polygon" coords="666, 457, 666, 446, 757, 446, 757, 457, 666, 457"   target="_top"  title="-">
+  
+  <area  href=861a8bcc5f755f43.htm#OBMK861A8BCC5F755F43 shape="polygon" coords="667, 484, 667, 470, 756, 470, 756, 484, 667, 484"   target="_top"  title="-">
+  
+  <area  href="affeb2255f6051e6.htm" shape="rect" coords="627, 432, 796, 502"   target="_top"  title="A&#160; Deployed Data Store is a repository for storing, managing and distributing data sets on an enterprise level. It is a broad term that incorporates all types of data that is produced, stored and used by an organization.">
+  
+  <area  href=9e393d6f619203ee.htm shape="polygon" coords="506, 214, 630, 214, 630, 224, 506, 224"   target="_top"  title="-">
+  
+  <area  href=9e393a7f61920129.htm shape="polygon" coords="228, 205, 365, 204, 365, 215, 228, 216"   target="_top"  title="-">
+  
+  <area  href=66f8685a620b1440.htm#OBMK66F8685A620B1440 shape="polygon" coords="69, 188, 69, 178, 181, 178, 181, 188, 69, 188"   target="_top"  title="-">
+  
+  <area  href=ddd1eb5d607f7086.htm#OBMKDDD1EB5D607F7086 shape="polygon" coords="55, 215, 55, 202, 195, 202, 195, 215, 55, 215"   target="_top"  title="-">
+  
+  <area  href="9e38361d6192f8da.htm" shape="rect" coords="22, 175, 228, 248"   target="_top"  title="Set of human and physical resources (hardware and software) required for the existence, operation and management of an enterprise in its environment.">
+  
+  <area  href=66f8685a620b1440.htm#OBMK66F8685A620B1440 shape="polygon" coords="380, 188, 380, 177, 492, 177, 492, 188, 380, 188"   target="_top"  title="-">
+  
+  <area  href=ddd1e39b607f6d98.htm#OBMKDDD1E39B607F6D98 shape="polygon" coords="408, 214, 408, 201, 464, 201, 464, 214, 408, 214"   target="_top"  title="-">
+  
+  <area  href="9e38352f6192f750.htm" shape="rect" coords="365, 174, 507, 244"   target="_top"  title="A&#160; Data Center is a Facility composed of networked computers, storage systems and computing infrastructure that enterprises use to organize, process, store and disseminate large amounts of data. ">
+  
+  <area  href=9e77a2ac5c5146eb.htm shape="polygon" coords="488, 178, 488, 136, 630, 136, 630, 146, 498, 146, 498, 178"   target="_top"  title="-">
+  
+  <area  href=ebcfaeac5ad76ed7.htm#OBMKEBCFAEAC5AD76ED7 shape="polygon" coords="648, 127, 648, 116, 774, 116, 774, 127, 648, 127"   target="_top"  title="An Individual which is used in the description of the enterprise.">
+  
+  <area  href=b1edb2612c1401d3.htm#OBMKB1EDB2612C1401D3 shape="polygon" coords="696, 154, 696, 140, 726, 140, 726, 154, 696, 154"   target="_top"  title="A site is the geographical location of an organization. Examples: Boston subsidiary, Seattle plant, and more generally the headquarters, subsidiaries, plants, warehouses, etc.">
+  
+  <area  href="8d5e986f552e28d5.htm" shape="rect" coords="630, 114, 792, 171"   target="_top"  title="A&#160; Location is a geopolitical location anywhere on the earth.">
+  
+  <area  href=56cd63ce5c513c40.htm shape="polygon" coords="795, 222, 964, 222, 964, 279, 953, 279, 953, 232, 795, 232"   target="_top"  title="-">
+  
+  <area  href=111a11da512e21a8.htm#OBMK111A11DA512E21A8 shape="polygon" coords="932, 308, 932, 295, 1024, 295, 1024, 308, 932, 308"   target="_top"  title="Instance of a software technoloy deployed on a server or a site ">
+  
+  <area  href="56cd60c05c513ad9.htm" shape="rect" coords="897, 280, 1059, 337"   target="_top"  title="Instance of a software technoloy deployed on a server or a site ">
+  
+  <area  href=66f870ce620b2d8c.htm#OBMK66F870CE620B2D8C shape="polygon" coords="656, 202, 656, 191, 772, 191, 772, 202, 656, 202"   target="_top"  title="-">
+  
+  <area  href=621f6d474f8d12d8.htm#OBMK621F6D474F8D12D8 shape="polygon" coords="669, 228, 669, 215, 758, 215, 758, 228, 669, 228"   target="_top"  title="An Software instalation to a site offers a set of functionalities to different populations of users. ">
+  
+  <area  href="56cd60a95c513aaf.htm" shape="rect" coords="630, 188, 797, 246"   target="_top"  title="A&#160; Deployed Application offers a set of functionalities to users.">
+  
+  <area  href=02f51209641c7ea4.htm#OBMK02F51209641C7EA4 shape="polygon" coords="1037, 358, 1037, 347, 1122, 347, 1122, 358, 1037, 358"   target="_top"  title="&#160;Computing System is a physical or virtual computer that can host and run software code.">
+  
+  <area  href=0a860d8e58f61d23.htm#OBMK0A860D8E58F61D23 shape="polygon" coords="1056, 390, 1056, 376, 1104, 376, 1104, 390, 1056, 390"   target="_top"  title="An IT Server is a computing device which provides a service to the users connected to it via an IT network. ">
+  
+  <area  href="df118f645d5f65bb.htm" shape="rect" coords="1001, 344, 1159, 394"   target="_top"  title="A&#160; Computer Server is a Computing System which provides processing, storage, and network connectivity services to other Computing Systems on a Computer Network.">
+  
+  <area  href=f4be11b15ee1e0fa.htm#OBMKF4BE11B15EE1E0FA shape="polygon" coords="390, 62, 390, 51, 484, 51, 484, 62, 390, 62"   target="_top"  title="A&#160; System of Resources is a Mezzo Capability Configuration that combines Human Resources, Hardware Systems and Software Systems to provide a Business Capability.">
+  
+  <area  href=8eb8944a58e307fa.htm#OBMK8EB8944A58E307FA shape="polygon" coords="417, 94, 417, 81, 457, 81, 457, 94, 417, 94"   target="_top"  title="A facility is a model of site of interest for the enterprise.">
+  
+  <area  href="f4be0e865ee1d53b.htm" shape="rect" coords="361, 49, 513, 106"   target="_top"  title="A&#160; Facility is a System of Resources used to model factories, buildings, or outdoor constructions that provides a particular Business Capability or is used for a particular industry.">
+  
+  <area  href=d1600c7062e093eb.htm#OBMKD1600C7062E093EB shape="polygon" coords="71, 68, 71, 57, 175, 57, 175, 68, 71, 68"   target="_top"  title="A&#160; Capability Configuration is a Resource Agent which combines Human Resources and Business Systems along with networking capabilities in order to provide Business Capability(ies).">
+  
+  <area  href=6FD1704049880061.htm#OBMK6FD1704049880061 shape="polygon" coords="76, 100, 76, 86, 170, 86, 170, 100, 76, 100"   target="_top"  title="A resource architecture is a combination of physical assets and organization configured to provide a capability.">
+  
+  <area  href="46195775560d4ec0.htm" shape="rect" coords="23, 54, 224, 107"   target="_top"  title="A&#160; System of Systems is a Macro Capability Configuration that combine several System of Resources to deliver a common high level Business Capability.">
+  
+  <area  href="a951eec1619413a3.htm" shape="rect" coords="0, 0, 1181, 522"   target="_top"  title="-">
+  
+</map>
+<img  src="../images/a951eec1619413a3_a951eefe6194148a_i.png" alt="../images/a951eec1619413a3_a951eefe6194148a_i.png" usemap="#A951EEFE6194148A" height="522" width="1181" border=0>
+
+</div>
+<div class="Relationship" id="Relationship2">
+<div id="klmm" style="width: 100vw; height: 100vh;" ></div>
+<!-- <script src="../standard/assets/js/keylines_domain.js"></script> -->
+<script >
+const data = {
+ type: 'LinkChart',
+  items: [
+  //nodes
+    {type: 'node', id:'A951EEC1619413A3', t:"Deployed Facility Assets", sh:'box', d:""},
+    {type: 'node', id:'9E38361D6192F8DA', t:"Infrastructure Landscape", parentId:'A951EEC1619413A3', sh:'circle', d:"Set of human and physical resources (hardware and software) required for the existence, operation and management of an enterprise in its environment."},
+    {type: 'node', id:'A951EE816194126B', t:"Facility Asset Architecture", sh:'box', d:""},
+    {type: 'node', id:'46195775560D4EC0', t:"System of Systems", parentId:'A951EE816194126B', sh:'circle', d:"A System of Systems is a Macro Capability Configuration that combine several System of Resources to deliver a common high level Business Capability."},
+    {type: 'node', id:'9E38352F6192F750', t:"Data Center", parentId:'A951EEC1619413A3', sh:'circle', d:"A Data Center is a Facility composed of networked computers, storage systems and computing infrastructure that enterprises use to organize, process, store and disseminate large amounts of data. "},
+    {type: 'node', id:'F4BE0E865EE1D53B', t:"Facility", parentId:'A951EE816194126B', sh:'circle', d:"A Facility is a System of Resources used to model factories, buildings, or outdoor constructions that provides a particular Business Capability or is used for a particular industry."},
+    {type: 'node', id:'C30BD1505A5D97F9', t:"Architecture Model Management", sh:'box', d:"The Architecture Model Management domain defines top level constructs used in enterprise architecting: Architecture Blocks, Architecture Namespaces, Architecture Category(ies), Constraint Value, Location."},
+    {type: 'node', id:'8D5E986F552E28D5', t:"Location", parentId:'C30BD1505A5D97F9', sh:'circle', d:"A Location is a geopolitical location anywhere on the earth."},
+    {type: 'node', id:'56CD60A95C513AAF', t:"Deployed Application", parentId:'A951EEC1619413A3', sh:'circle', d:"A Deployed Application offers a set of functionalities to users."},
+    {type: 'node', id:'D5E6D6B05C4648D8', t:"Application Functional Architecture", sh:'box', d:"The Application Functional Architecture domain is used to describe the functional structure and behavior of Software Systems."},
+    {type: 'node', id:'BCEBD8E9549144DB', t:"Application", parentId:'D5E6D6B05C4648D8', sh:'circle', d:"An Application is a Software System that provides a set of Functionality(ies) that End Users see as a single unit."},
+    {type: 'node', id:'56CD60C05C513AD9', t:"Deployed Technology", parentId:'A951EEC1619413A3', sh:'circle', d:"Instance of a software technoloy deployed on a server or a site "},
+    {type: 'node', id:'C2DBE1DB5B026B30', t:"Software Technology ArcDevOps", sh:'box', d:"The Software Technology ArcDevOps domain describes a set of concepts used in practices that combines Software Technology System development (Dev) and Software Technology System operations (Ops). "},
+    {type: 'node', id:'D5E6DDD05C46547C', t:"Software Technology", parentId:'C2DBE1DB5B026B30', sh:'circle', d:"A Software Technology is an elementary Software Technology System  used as an enabler by Software Modules."},
+    {type: 'node', id:'56CD60F85C513B04', t:"Deployed Server", parentId:'A951EEC1619413A3', sh:'circle', d:"A Deployed Server is an Computer Server deployed in a Data Center."},
+    {type: 'node', id:'C30BF38F5A5DA645', t:"Hardware System ArcDevOps", sh:'box', d:"The Hardware System ArcDevOps domain describes a set of concepts used in practices that combines Hardware System development (Dev) and Hardware System operations (Ops). "},
+    {type: 'node', id:'DF118F645D5F65BB', t:"Computer Server", parentId:'C30BF38F5A5DA645', sh:'circle', d:"A Computer Server is a Computing System which provides processing, storage, and network connectivity services to other Computing Systems on a Computer Network."},
+    {type: 'node', id:'AFFEB2255F6051E6', t:"Deployed Data Store", parentId:'C758E5BC600A31E8', sh:'circle', d:"A Deployed Data Store is a repository for storing, managing and distributing data sets on an enterprise level. It is a broad term that incorporates all types of data that is produced, stored and used by an organization."},
+    {type: 'node', id:'362F37625B3B2050', t:"Physical Data Domain", sh:'box', d:""},
+    {type: 'node', id:'C758EED8600A399F', t:"MetaData Package", parentId:'362F37625B3B2050', sh:'circle', d:""},
+    {type: 'node', id:'C758E5BC600A31E8', t:"MetaData Dictionary", parentId:'A951EEC1619413A3', sh:'circle', d:""},
+    {type: 'node', id:'77318C6C62167DD7', t:"MetaData Asset", parentId:'362F37625B3B2050', sh:'circle', d:"A MetaData Asset is a Physical Data Asset used for the physical description of data consumed and produced by Software Systems."},
+  //edges
+    { type: 'link', id:'9E38361D6192F8DA-9E393CE46192032C', id1:'9E38361D6192F8DA', id2:'46195775560D4EC0', t:"System of Systems"},
+    { type: 'link', id:'9E38361D6192F8DA-9E393A7F61920129', id1:'9E38361D6192F8DA', id2:'9E38352F6192F750', t:"Owned Data Center"},
+    { type: 'link', id:'9E38352F6192F750-A951F14261941CAD', id1:'9E38352F6192F750', id2:'F4BE0E865EE1D53B', t:"Facility"},
+    { type: 'link', id:'9E38352F6192F750-9E393D6F619203EE', id1:'9E38352F6192F750', id2:'56CD60A95C513AAF', t:"Hosted Application"},
+    { type: 'link', id:'9E38352F6192F750-9E393FAA619205DC', id1:'9E38352F6192F750', id2:'56CD60F85C513B04', t:"Hosted Server"},
+    { type: 'link', id:'9E38352F6192F750-9E77A2AC5C5146EB', id1:'9E38352F6192F750', id2:'8D5E986F552E28D5', t:"Data Center Location"},
+    { type: 'link', id:'9E38352F6192F750-A951F4546194245B', id1:'9E38352F6192F750', id2:'AFFEB2255F6051E6', t:"Hosted Data Store"},
+    { type: 'link', id:'56CD60A95C513AAF-9E39416B61920742', id1:'56CD60A95C513AAF', id2:'BCEBD8E9549144DB', t:"Application"},
+    { type: 'link', id:'56CD60A95C513AAF-56CD63CE5C513C40', id1:'56CD60A95C513AAF', id2:'56CD60C05C513AD9', t:"Technology Installation Used"},
+    { type: 'link', id:'56CD60C05C513AD9-9E39417E619207A8', id1:'56CD60C05C513AD9', id2:'D5E6DDD05C46547C', t:"Software Technology"},
+    { type: 'link', id:'56CD60F85C513B04-A951F51A619425E0', id1:'56CD60F85C513B04', id2:'DF118F645D5F65BB', t:"Computer Server"},
+    { type: 'link', id:'56CD60F85C513B04-461F3B1963765C1E', id1:'56CD60F85C513B04', id2:'AFFEB2255F6051E6', t:"Hosted Data Store"},
+    { type: 'link', id:'56CD60F85C513B04-56CD63B25C513BD7', id1:'56CD60F85C513B04', id2:'56CD60A95C513AAF', t:"Hosted Application"},
+    { type: 'link', id:'56CD60F85C513B04-9E396903619214A2', id1:'56CD60F85C513B04', id2:'56CD60C05C513AD9', t:"Hosted Technology"},
+    { type: 'link', id:'AFFEB2255F6051E6-C758EEED600A3A4F', id1:'AFFEB2255F6051E6', id2:'C758EED8600A399F', t:"Imported Package"},
+    { type: 'link', id:'C758E5BC600A31E8-C758029C600B440A', id1:'C758E5BC600A31E8', id2:'D5E6DDD05C46547C', t:"Software Technology"},
+    { type: 'link', id:'C758E5BC600A31E8-77318C9F62167EE8', id1:'C758E5BC600A31E8', id2:'77318C6C62167DD7', t:"Owned MetaData Asset"}
+  ]
+}
+</script>
+<script src="../standard/assets/js/keylines_domain.js" type="module"></script>
+</div>
+</section>
+<a class="object-section-anchor" id="des"></a>
+<section class="object-section">
+<h4>CONCEPT DESCRIPTIONS</h4> 
+<hr class="sectionbreak" />
+<h5>Concrete Concepts</h5>
+<table class="table  table-set-col-width">
+<thead>
+<tr><th>Concept</th><th>Description</th><th>HOPEX Metaclass</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="bcebd8e9549144db.htm" target="_top">Application</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An <a href="b1edb2562c14016f.htm" target="_top"><b><u>Application</u></b></a> is a <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a> that provides a set of <a href="598272e954c622f4.htm" target="_top"><b><u>Functionality</u></b></a>(ies) that <a href="2dcea8705fc4827c.htm" target="_top"><b><u>End User</u></b></a>s see as a single unit.</div><div align="left" style="min-height: 12pt; ">Essentially&#160;<b> Application</b>s are architectural constructions resulting from the combinaison of the following four criteria:</div><div align="left" style="min-height: 12pt; ">1) A group of <a href="598272e954c622f4.htm" target="_top"><b><u>Functionality</u></b></a> that <a href="2dcea8705fc4827c.htm" target="_top"><b><u>End User</u></b></a>s see as a single unit.</div><div align="left" style="min-height: 12pt; ">2) A managed asset (<b> Managed Application</b>) associated with a budget line in the context of an <a href="1ce3429d5c48982e.htm" target="_top"><b><u>Application Portfolio</u></b></a>.</div><div align="left" style="min-height: 12pt; ">3) A body of code that is seen by developers as a single unit.</div><div align="left" style="min-height: 12pt; ">4) A group of deployable software units (<a href="d5e6d7eb5c464b21.htm" target="_top"><b><u>Deployable Application Package</u></b></a>s) that must be installed together on one or multiple execution nodes (<a href="f4be0eda5ee1d6c0.htm" target="_top"><b><u>Computational Aspect</u></b></a>).</div><div align="left" style="min-height: 12pt; "><b>&#160;Application</b> is a <a href="5c43887c64103e30.htm" target="_top"><b><u>Mezzo</u></b></a> enterprise asset&#160; that sits between <a href="46194ca7560d3a45.htm" target="_top"><b><u>Application System</u></b></a> and <a href="46194ce9560d3ab8.htm" target="_top"><b><u>IT Service</u></b></a> in the decomposition of <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">Example: &quot;Payroll&quot; is an&#160;<b> Application</b> that is part an &quot;HR system&quot; which is an <a href="46194ca7560d3a45.htm" target="_top"><b><u>Application System</u></b></a>.</div><div align="left" style="min-height: 12pt; ">The &quot;Payroll&quot;&#160;<b> Application</b> includes, among other things, the &quot;Salary and Wage Calculation&quot; <a href="46194ce9560d3ab8.htm" target="_top"><b><u>IT Service</u></b></a>.</div><i><ul>References:<li><a href="https://c4model.com/#Abstractions"><img src="../standard/extr.ico.gif">&nbsp;C4 Model - Software System</a></li> <li><a href="https://martinfowler.com/bliki/ApplicationBoundary.html"><img src="../standard/extr_htm.ico.gif">&nbsp;Martin Fowler - Application Boundary</a></li> <li><a href="https://learn.microsoft.com/en-us/azure/architecture/guide/architecture-styles"><img src="../standard/extr.ico.gif">&nbsp;Microsoft - Architecture Design - Architecture Styles</a></li> <li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Software"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - Software</a></li> <li><a href="https://pubs.opengroup.org/architecture/archimate32-doc/#_Toc112154993"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - ArchiMate - Application Component</a></li> <li><a href="https://method.demomega.com/MM-OVERVIEW/pages/architecture-content/chap02.html#tag_02_04"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Content MetaModel - Physical Application Component</a></li> <li><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_04"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Definition - Application Component</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="b1edb2562c14016f.htm" target="_top">Application</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="df118f645d5f65bb.htm" target="_top">Computer Server</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Computer Server</b> is a <a href="02f51209641c7ea4.htm" target="_top"><b><u>Computing System</u></b></a> which provides processing, storage, and network connectivity services to other <a href="02f51209641c7ea4.htm" target="_top"><b><u>Computing System</u></b></a>s on a <a href="a41ab2d25b378b12.htm" target="_top"><b><u>Computer Network</u></b></a>.</div><div align="left" style="min-height: 12pt; ">As a <a href="f4be0eda5ee1d6c0.htm" target="_top"><b><u>Computational Aspect</u></b></a>, it can host data and run <a href="bcebd8e9549144db.htm" target="_top"><b><u>Application</u></b></a> code..</div><i><ul>References:<li><a href="https://compliancedictionary.com/term/1610"><img src="../standard/extr.ico.gif">&nbsp;UCF Glossary - Server</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="0a860d8e58f61d23.htm" target="_top">IT Server</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="9e38352f6192f750.htm" target="_top">Data Center</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Data Center</b> is a <a href="f4be0e865ee1d53b.htm" target="_top"><b><u>Facility</u></b></a> composed of networked computers, storage systems and computing infrastructure that enterprises use to organize, process, store and disseminate large amounts of data. </div><div align="left" style="min-height: 12pt; "><a href="2d1874635ac352f3.htm" target="_top"><b><u>Business Operations</u></b></a> rely heavily upon the applications, services and data contained within a&#160;<b> Data Center</b>, making it a focal point and critical asset for everyday operations.</div><i><ul>References:<li><a href="https://c4model.com/#SystemLandscapeDiagram"><img src="../standard/extr.ico.gif">&nbsp;C4 Model - Supplementary diagrams - System Landscape diagram</a></li> <li><a href="https://www.gartner.com/en/information-technology/glossary/data-center"><img src="../standard/extr.ico.gif">&nbsp;Gartner - Data Center</a></li> <li><a href="https://searchdatacenter.techtarget.com/definition/data-center"><img src="../standard/extr.ico.gif">&nbsp;TechTarget - Data Center</a></li> <li><a href="https://compliancedictionary.com/term/708"><img src="../standard/extr.ico.gif">&nbsp;UCF Glossary - Data Center</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="ddd1e39b607f6d98.htm" target="_top">Data Center</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="56cd60a95c513aaf.htm" target="_top">Deployed Application</a></td>
+<td class="description-text">A&#160;<b> Deployed Application</b> offers a set of functionalities to users.       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="621f6d474f8d12d8.htm" target="_top">Software Installation</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="affeb2255f6051e6.htm" target="_top">Deployed Data Store</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Deployed Data Store</b> is a repository for storing, managing and distributing data sets on an enterprise level. It is a broad term that incorporates all types of data that is produced, stored and used by an organization.</div><div align="left" style="min-height: 12pt; "><b>&#160;Deployed Data Store</b>s exist wihin a <a href="9e38352f6192f750.htm" target="_top"><b><u>Data Center</u></b></a>. They can be hosted on <a href="56cd60f85c513b04.htm" target="_top"><b><u>Deployed Server</u></b></a>.</div><i><ul>References:<li><a href="https://compliancedictionary.com/term/254192"><img src="../standard/extr.ico.gif">&nbsp;UCF - Glossary - Data Store</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="861a8bcc5f755f43.htm" target="_top">Deployed Data Store</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="56cd60f85c513b04.htm" target="_top">Deployed Server</a></td>
+<td class="description-text">A&#160;<b> Deployed Server</b> is an <a href="df118f645d5f65bb.htm" target="_top"><b><u>Computer Server</u></b></a> deployed in a <a href="9e38352f6192f750.htm" target="_top"><b><u>Data Center</u></b></a>.       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="db48ddd7512d060c.htm" target="_top">Server (Deployed)</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="56cd60c05c513ad9.htm" target="_top">Deployed Technology</a></td>
+<td class="description-text">Instance of a software technoloy deployed on a server or a site        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="111a11da512e21a8.htm" target="_top">Deployed Technology</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="f4be0e865ee1d53b.htm" target="_top">Facility</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Facility</b> is a <a href="f4be11b15ee1e0fa.htm" target="_top"><b><u>System of Resources</u></b></a> used to model factories, buildings, or outdoor constructions that provides a particular <a href="9810abf3551135c4.htm" target="_top"><b><u>Business Capability</u></b></a> or is used for a particular industry.</div><div align="left" style="min-height: 12pt; ">Examples: </div><div align="left" style="min-height: 12pt; ">- Data Center</div><div align="left" style="min-height: 12pt; ">- Factory</div><div align="left" style="min-height: 12pt; ">- Outlet</div><i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Facility"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - Facility</a></li> <li><a href="https://pubs.opengroup.org/architecture/archimate32-doc/#_Toc112155034"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - ArchiMate - Facility</a></li> <li><a href="https://compliancedictionary.com/term/3826"><img src="../standard/extr.ico.gif">&nbsp;UCF Glossary - Facility</a></li> <li><a href="http://wordnetweb.princeton.edu/perl/webwn?o2=&amp;o0=1&amp;o8=1&amp;o1=1&amp;o7=&amp;o5=&amp;o9=&amp;o6=&amp;o3=&amp;o4=&amp;s=facility&amp;i=0&amp;h=00000#c"><img src="../standard/extr.ico.gif">&nbsp;WordNet - Facility</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="8eb8944a58e307fa.htm" target="_top">Facility</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="9e38361d6192f8da.htm" target="_top">Infrastructure Landscape</a></td>
+<td class="description-text">Set of human and physical resources (hardware and software) required for the existence, operation and management of an enterprise in its environment.<i><ul>References:<li><a href="https://c4model.com/#SystemLandscapeDiagram"><img src="../standard/extr.ico.gif">&nbsp;C4 Model - Supplementary diagrams - System Landscape diagram</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="ddd1eb5d607f7086.htm" target="_top">Enterprise Infrastructure Landscape</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="8d5e986f552e28d5.htm" target="_top">Location</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Location</b> is a geopolitical location anywhere on the earth.</div><div align="left" style="min-height: 12pt; ">Examples: </div><div align="left" style="min-height: 12pt; ">- France</div><div align="left" style="min-height: 12pt; ">- Paris</div><div align="left" style="min-height: 12pt; ">- Washington DC</div><div align="left" style="min-height: 12pt; ">- Cairo</div><div align="left" style="min-height: 12pt; ">- Buenos-Aires</div><div align="left" style="min-height: 12pt; ">- Asia</div><i><ul>References:<li><a href="https://15926.blog/topics/data-model/index.htm#SpatialLocation"><img src="../standard/extr.ico.gif">&nbsp;ISO 15926 - SpatialLocation</a></li> <li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#ActualLocation"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - ActualLocation</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="b1edb2612c1401d3.htm" target="_top">Site</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="46195775560d4ec0.htm" target="_top">System of Systems</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> System of Systems</b> is a <a href="5c43886f64103e09.htm" target="_top"><b><u>Macro</u></b></a> <a href="d1600c7062e093eb.htm" target="_top"><b><u>Capability Configuration</u></b></a> that combine several <a href="f4be11b15ee1e0fa.htm" target="_top"><b><u>System of Resources</u></b></a> to deliver a common high level <a href="9810abf3551135c4.htm" target="_top"><b><u>Business Capability</u></b></a>.</div><div align="left" style="min-height: 12pt; ">Examples:</div><div align="left" style="min-height: 12pt; ">- Air traffic control system</div><div align="left" style="min-height: 12pt; ">- Smart city system</div><div align="left" style="min-height: 12pt; ">- Health Care System</div><div align="left" style="min-height: 12pt; ">- Search and Resue system (SAR)</div><div align="left" style="min-height: 12pt; ">- Naval squadron consisting of an aircraft carrier, its escort ships and its C5ISR capabilities.</div><i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#CapabilityConfiguration"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - CapabilityConfiguration</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="6FD1704049880061.htm" target="_top">Resource Architecture</a></td>
+</tr>  
+</tbody>
+</table>
+<section>
+
+</div>
+<button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button>
+<script>window.onscroll = function() {scrollFunction()};$(document).on('click', 'a[href^="#"]', function (event) {event.preventDefault();$('html, body').animate({scrollTop: $($.attr(this, 'href')).offset().top}, 500);});function showDiagOnClick(elem){ var x = document.getElementsByClassName('Relationship');var e = elem.getAttribute("value"); for (var i=0; i < x.length ;i++){x[i].style.display="none"; if (x[i].id == e){x[i].style.display="block";x[i].style.textAlign="left";}}}
+</script></html>

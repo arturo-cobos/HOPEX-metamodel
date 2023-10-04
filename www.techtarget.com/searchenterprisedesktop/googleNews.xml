@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:ns2="http://www.google.com/schemas/sitemap-news/0.9">
+    <url>
+        <loc>https://www.techtarget.com/searchenterprisedesktop/opinion/Redefining-DEX-Is-user-sentiment-a-requirement</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-28</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>Redefining DEX: Is user sentiment a requirement?</ns2:title>
+        </ns2:news>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchenterprisedesktop/tip/Using-the-Intune-management-extension-for-PowerShell-scripts</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-25</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>Using the Intune management extension for PowerShell scripts</ns2:title>
+        </ns2:news>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchenterprisedesktop/news/366552657/Intel-promotes-new-computing-era-with-AI-PC</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-20</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>Intel promotes new computing era with AI PC</ns2:title>
+        </ns2:news>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchenterprisedesktop/opinion/4-ways-that-I-use-generative-AI-as-an-analyst</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-19</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>4 ways that I use generative AI as an analyst</ns2:title>
+        </ns2:news>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchenterprisedesktop/tip/How-to-ensure-that-UEM-supports-rugged-device-management</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-18</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>How to handle rugged device management in the enterprise</ns2:title>
+        </ns2:news>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchenterprisedesktop/tip/Compare-rugged-phones-vs-rugged-cases-for-enterprise-users</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-12</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>Compare rugged phones vs. rugged cases for enterprise users</ns2:title>
+        </ns2:news>
+    </url>
+</urlset>

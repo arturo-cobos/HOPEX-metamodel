@@ -1,0 +1,3 @@
+User-agent: *
+Sitemap: http://marketbusinessnews.com/sitemap_index.xml
+Allow: /

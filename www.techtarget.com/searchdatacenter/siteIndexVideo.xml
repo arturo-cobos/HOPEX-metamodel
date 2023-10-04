@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
+    <url>
+        <loc>https://www.techtarget.com/searchdatacenter/video/Ubuntu-Core-tutorial-Run-IoT-devices-on-Linux</loc>
+        <video:video>
+            <video:title>Ubuntu Core tutorial: Run IoT devices on Linux</video:title>
+            <video:publication_date>2020-09-10T13:23:00-04:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/46FASOcwmH8/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=46FASOcwmH8</video:player_loc>
+            <video:duration>449</video:duration>
+            <video:description>Linux OSes offer flexible IoT device management and have no upfront costs. Get Ubuntu Core up and connect your devices with the steps in this video tutorial.</video:description>
+        </video:video>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchdatacenter/video/Easily-spin-up-a-Docker-Ubuntu-container</loc>
+        <video:video>
+            <video:title>Easily spin up a Docker Ubuntu container</video:title>
+            <video:publication_date>2020-05-26T12:42:00-04:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/36ZyU9syibw/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=36ZyU9syibw</video:player_loc>
+            <video:duration>404</video:duration>
+            <video:description>Docker and Ubuntu make it possible for admins to use containers for Windows applications in the data center. Watch what's involved to get started with containerization.</video:description>
+        </video:video>
+    </url>
+</urlset>

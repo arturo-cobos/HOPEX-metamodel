@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:ns2="http://www.google.com/schemas/sitemap-news/0.9">
+    <url>
+        <loc>https://www.techtarget.com/searchitoperations/tip/A-guide-to-the-key-stages-of-AIOps</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-10-02</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>A guide to the key stages of AIOps</ns2:title>
+        </ns2:news>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchitoperations/tip/DevOps-engineer-skills-needed-for-continuous-deployment</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-29</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>10 DevOps engineer skills to add to your resume</ns2:title>
+        </ns2:news>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchitoperations/news/366553533/Now-a-graduated-CNCF-project-Istio-contests-complexity-rep</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-27</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>Now a graduated CNCF project, Istio contests complexity rep</ns2:title>
+        </ns2:news>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchitoperations/opinion/Observability-security-unity-in-Ciscos-Splunk-acquisition</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-26</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>Observability, security unity in Cisco's Splunk acquisition</ns2:title>
+        </ns2:news>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchitoperations/opinion/What-Ciscos-Splunk-acquisition-means-for-app-modernization</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-25</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>What Cisco's Splunk acquisition means for app modernization</ns2:title>
+        </ns2:news>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchitoperations/tip/The-benefits-of-uniting-product-management-with-DevOps</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-21</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>The benefits of uniting product management with DevOps</ns2:title>
+        </ns2:news>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchitoperations/tutorial/Get-started-with-Argo-CD-workflow-examples-for-Kubernetes</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-21</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>Get started with Argo CD workflow examples for Kubernetes</ns2:title>
+        </ns2:news>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchitoperations/news/366552861/IT-pros-react-to-blockbuster-28B-Cisco-Splunk-deal</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-21</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>IT pros react to blockbuster $28B Cisco-Splunk deal</ns2:title>
+        </ns2:news>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchitoperations/news/366552676/Linux-Foundation-ups-ante-on-HashiCorp-hosts-Terraform-fork</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-20</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>Linux Foundation ups ante on HashiCorp, hosts Terraform fork</ns2:title>
+        </ns2:news>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchitoperations/news/366552119/CloudBees-scales-its-Jenkins-CI-previews-SaaS-platform</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-14</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>CloudBees scales its Jenkins CI, previews SaaS platform</ns2:title>
+        </ns2:news>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchitoperations/feature/Generative-AI-emerges-for-DevSecOps-with-some-qualms</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-14</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>Generative AI emerges for DevSecOps, with some qualms</ns2:title>
+        </ns2:news>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchitoperations/tip/Common-platform-engineering-interview-questions</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-13</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>10 common platform engineering interview questions</ns2:title>
+        </ns2:news>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchitoperations/news/366552019/Meet-MLSecOps-industry-calls-for-new-measures-to-secure-AI</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-13</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>Meet MLSecOps: Industry calls for new measures to secure AI</ns2:title>
+        </ns2:news>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchitoperations/news/366551878/Cisco-Full-Stack-Observability-draws-on-channel-clout</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-12</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>Cisco Full-Stack Observability draws on channel clout</ns2:title>
+        </ns2:news>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchitoperations/news/366551352/Server-side-WebAssembly-takes-shape-but-faces-challenges</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-07</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>Server-side WebAssembly takes shape, but faces challenges</ns2:title>
+        </ns2:news>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchitoperations/tip/IT-operations-management-best-practices-you-need-to-know</loc>
+        <ns2:news>
+            <ns2:publication_date>2023-09-05</ns2:publication_date>
+            <ns2:publication>
+                <ns2:name>TechTarget</ns2:name>
+                <ns2:language>en</ns2:language>
+            </ns2:publication>
+            <ns2:title>5 IT operations management best practices you need to know</ns2:title>
+        </ns2:news>
+    </url>
+</urlset>

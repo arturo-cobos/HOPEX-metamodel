@@ -1,0 +1,824 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="keywords" content="">
+<meta name="description" content="">    
+<LINK REL="icon" HREF="../standard/assets/img/favicon.ico">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/bootstrap.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nav.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/eaportal.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/font-awesome.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/animate.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/datatables.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/grid.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nae.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/custom.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/chosen.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/prism.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery.dataTables.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jsTreeStyle.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.theme.css" media="screen" />
+<script type="text/javascript" src="../standard/assets/js/jquery-3.2.1.min.js" ></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-ui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.columnFilter.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3-force.v2.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.gui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.search.js"></script> 
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.util.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-2.1.1.min.js"></script>
+<script src="../standard/assets/js/ws_zoomtemplate_firefox.js"></script>
+<script src="../standard/assets/js/bootstrap.min.js"></script>
+<script src="../standard/assets/js/datatables.min.js"></script>
+<script src="../standard/assets/js/moment.min.js"></script>
+<script src="../standard/assets/js/datetime-moment.js"></script>
+<script src="../standard/assets/js/chartjs.min.js"></script>
+<script src="../standard/assets/js/searchindexcontent.json"></script>
+<script src="../standard/assets/js/anls.js"></script>
+<script src="../../../cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script src="../standard/assets/js/gauge.js"></script> 
+<script src="../standard/assets/js/domesticApi.js"></script> 
+<script src="../standard/assets/js/piecelabel.js"></script>
+<script src="../standard/assets/js/popper.min.js"></script>
+<script src="../standard/assets/js/custom.js"></script>
+<script src="../standard/assets/js/chosen.jquery.js"></script>
+<script src="../standard/assets/js/prism.js"></script>
+<script src="../standard/assets/js/init-chosen.js"></script>
+<script src="../standard/assets/js/chart-data-flow.js"></script>
+<script src="../standard/assets/js/chart-data-gantt.js"></script>
+<script type="module" src="../standard/assets/js/Fuse.esm.min.js"></script>
+<script type="module">
+import Fuse from '../standard/assets/js/Fuse.esm.min.js';
+$(document).ready(function () {
+console.log('getjson');
+window.$.getJSON('../standard/assets/js/searchindexcontent.json', function (response) {
+console.log('getjson ok');
+var isIndex = "";
+var url = window.location.pathname;
+var filename = url.substring(url.lastIndexOf('/')+1);
+if( filename.includes("index") || filename === "" ){
+isIndex = "pages/";
+} else {
+isIndex = "";
+}
+const fuse = new Fuse(response, {
+keys: ['title','text'],
+shouldSort: true,
+includeMatches : true,
+findAllMatches : true
+});
+$('#search-fuse').on('keyup', function () {
+let result = fuse.search($(this).val());
+console.log(result);
+let resultdiv = $('div.searchresults-fuse');
+if (result.length === 0) {
+resultdiv.hide();
+} else {
+resultdiv.empty();
+resultdiv.append('<table class="table-search" width="100%" cellspacing="0"><thead ><tr><th>Name</th><th>Object Type</th><th>Modification date</th></tr></thead><tbody>');
+
+for (let obj in result.slice(0,10)) {
+
+let searchObj = '<tr><td><a href="./'+ isIndex + result[obj].item.url + '">' + result[obj].item.title +'</a></td><td>' + result[obj].item.ObjectType + '</td><td>' + result[obj].item.ModificationDate + '</td></tr>' ;
+
+
+resultdiv.find('tbody').append(searchObj);
+}
+resultdiv.append('</tbody></table>');
+resultdiv.show();
+}
+});
+});
+});
+</script>
+<title>HOPEX Metamodel Overview (Beta Version)</title>
+</head>
+<nav class="navbar navbar-expand-md navbar-dark  navbar-mega"><!-- Brand --><!--<a class="navbar-brand" href="#">Navbar</a>--><a class="" href="../index.htm"><img class="logo-mega" src="../standard/assets/img/logo.png"  alt="">(Beta Version)</a><!-- Toggler/collapsibe Button --><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><!-- Navbar links -->
+<div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsibleNavbar"><div class="col-sm-auto col-md-auto col-lg-5"></div>
+<div class="col-sm-auto">
+<ul class="navbar-nav">      
+<li><a class="dropdown-item" href="ad30ce115ebf7e90.htm">EA Grid</a></li> 
+<li><a class="dropdown-item" href="fdd5018459bc3c6a.htm">EA Domains</a></li> 
+<li><a class="dropdown-item" href="07e731775ecc93f4.htm">Solutions</a></li> 
+<li><a class="dropdown-item" href="c5dfc62c54810c2c.htm">Glossary</a></li> 
+<li class="nav-item dropdown mx-1">
+<a class="nav-link" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</a>
+<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<li><a class="dropdown-item" href="5446555d5f88c32e.htm">Outcome Driven Metamodel</a></li> 
+<li><a class="dropdown-item" href="e1ccfc295f8f7b90.htm">Playbooks</a></li> 
+<li><a class="dropdown-item" href="42bc992862d20ea7.htm">Framework Mappings</a></li> 
+<li><a class="dropdown-item" href="e93aebb35fa20550.htm">Metamodel Patterns</a></li> 
+<li><a class="dropdown-item" href="d599fe87602b2b85.htm">References</a></li> 
+<li><a class="dropdown-item" href="333f3a7f5dde11de.htm">Legend</a></li> 
+</ul>									                                            
+</li>
+</ul>
+</div>
+<div class="col-sm-auto"><a class="nav-link search" href="#" onclick=showHideSearch("search-section-fuse")><i class="fa fa-search mr-1 form-control-feedback"></i></a></div>
+</div>
+</nav>
+<div id="search-section-fuse" style="display:none">>
+<div class="search_header"><span class="closesearch">&times;</span>
+<nav class="breadcrumb">
+<a class="breadcrumb-item" href="../index.htm">Home </a> 
+<span class="breadcrumb-item active">Search</span> 
+</nav>
+</div>
+<input id="search-fuse" placeholder="Search..."  name="q" onfocus="this.value=''" type="search">
+<div class="searchresults-fuse"></div>
+</div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>function showHideSearch(elementId) {var contentDivs = document.getElementsByClassName('content');var footerDivs = document.getElementsByClassName('footer'); var containerDivs = document.getElementsByClassName('container');var containerfluidDivs = document.getElementsByClassName('container-fluid');var x = document.getElementById(elementId);if (x.style.display === "none") {x.style.display = "block";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "none";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "none";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "none";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "none";}} else {x.style.display = "none";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "block";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "block";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "block";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "block";}}} ;<!-- END WIDGET DRILL DOWN --></script><script>$(document).ready(function() {$(window).scroll(function() {if ($(this).scrollTop() > 100) {$('.scrollup').fadeIn();} else {$('.scrollup').fadeOut();}});$('.scrollup').click(function() {$("html, body").animate({scrollTop: 0}, 600);return false;});});</script><script>
+var modal = document.getElementById("search-section-fuse");
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = "none";
+}
+}
+$(document).on('click', '.closesearch', function() {
+showHideSearch("search-section-fuse");
+
+
+
+
+
+});</script><div class="container-fluid col-lg-11"><nav class="breadcrumb"><a class="breadcrumb-item" href="../index.htm">Home</a> <span class="breadcrumb-item active">
+<a  href="02af0a215a1823ee.htm" target="_top">Dictionary of HOPEX patterns</a>&nbsp;/&nbsp;Operating Semantic</span></nav></div>
+<div class="container-fluid col-lg-11 content">
+<section class="fadeInDown animated"><a href="#idt" class="btn btn-d">DEFINITION</a> <a href="#grf" class="btn btn-d">CONCEPT GRAPH</a> <a href="#des" class="btn btn-d">CONCEPT DESCRIPTIONS</a> 
+</section>
+<a class="object-section-anchor" id="idt"></a>
+<section class="object-section">
+<h4>CONCEPT DOMAIN - Operating Semantic</h4><hr class="sectionbreak" /><table class="table table-vertical-headers table-set-col-width"><tr><th>Description</th><td class="description-text"><i>Pattern Domain</i><br/>The&#160;<b> Operating Semantic</b> domain is used to model how a system (<a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>) operates/functions (<a href="986cd4ec5ffca3ac.htm" target="_top"><b><u>Behavior</u></b></a>) in its <a href="ca35f48a5fc48686.htm" target="_top"><b><u>Operating Eco-System</u></b></a> to produce <a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>s that benefit (value) to other <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s or affect (have an effect upon) these <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s.<br />It includes <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s, <a href="d682ef5e56144e77.htm" target="_top"><b><u>Process</u></b></a>es, <a href="333f35ee5dde0c8c.htm" target="_top"><b><u>Interaction Scenario</u></b></a>s, <a href="959320325ee7fe24.htm" target="_top"><b><u>Policy</u></b></a>(ies), <a href="b181b98c54891882.htm" target="_top"><b><u>Capability</u></b></a>(ies), <a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>s.<div><br/><i>References:</i><br/><a href="../../../complexsystems.mst.edu/media/conference/complexsystems/documents/de_Weck_CAS_Keynote_Nov_2015_updated.pdf#page=40" target="_blank">de Weck - The three dimensions of complexity</a><br/><a href="../resources/eagrid/eagrid-animation.gif" target="_blank">Method Resources - Operating Model Animation</a></div></td></tr><tr><th>Dictionary</th><td><img src="../standard/dicsubjectarea.ico.gif"/>&nbsp;
+<a  href="02af0a215a1823ee.htm" target="_top">Dictionary of HOPEX patterns</a></td></tr><tr><th>Parent Domain</th><td><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="36195a0461589079.htm" target="_top">Architecture GRID Pattern</a>&nbsp;</td></tr>
+<tr><th>Domain dependencies</th><td><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="36166b8c6157b6b4.htm" target="_top">Aggregate Syntax</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="c30bd1505a5d97f9.htm" target="_top">Architecture Model Management</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="D6CD2C8B5AB98DA5.htm" target="_top">Information Pattern</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="02F70FDC600F4179.htm" target="_top">Policy Pattern</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="427C1BDB64B5D1C7.htm" target="_top">Risk &amp; Threat</a>&nbsp;</td></tr></table></section>
+<a class="object-section-anchor" id="grf"></a>
+<section class="object-section">
+<h4>DOMAIN CONCEPT GRAPH</h4>
+<hr class="sectionbreak" />
+<a href="#" class="btn btn-d" value="Relationship1" onclick="showDiagOnClick(this)">Diagram</a>
+<a href="#" class="btn btn-d" value="Relationship2" onclick="showDiagOnClick(this)">Graph</a>
+<div class="Relationship" id="Relationship1">
+
+<map  name="02AF0A4E5A182433">
+  <area  href=#OBMK427C1E2B64B5D652 shape="polygon" coords="1001, 155, 1001, 137, 1011, 137, 1011, 155"    title="-">
+  
+  <area  href=427c1e2b64b5d643.htm shape="polygon" coords="1001, 192, 1001, 137, 1011, 137, 1011, 192"   target="_top"  title="A&#160; Risk is refers to the potential for loss resulting from inadequate structure or behavior of an Operating Asset.">
+  
+  <area  href=#OBMK427C1E2E64B5D68C shape="polygon" coords="1001, 192, 1001, 173, 1011, 173, 1011, 192"    title="-">
+  
+  <area  href=0dc20f4d5e9b5ca9.htm#OBMK0DC20F4D5E9B5CA9 shape="polygon" coords="964, 97, 964, 86, 1061, 86, 1061, 97, 964, 97"   target="_top"  title="An&#160; Architecture Category is a Categorization Block used to classify Architecture Blocks. Examples are Data Category, Business Line.">
+  
+  <area  href=977fc52e3d250359.htm#OBMK977FC52E3D250359 shape="polygon" coords="988, 129, 988, 116, 1037, 116, 1037, 129, 988, 129"   target="_top"  title="A risk type defines a standardized risk typology within the context of an organization.">
+  
+  <area  href="427c1c7d64b5d4a1.htm" shape="rect" coords="941, 84, 1085, 137"   target="_top"  title="A&#160; Risk Type refers to a distinct category or classification of risk based on its origin, nature, or potential impact. It helps in organizing and addressing different sources of uncertainty or potential harm that an individual, organization, or system might face. By categorizing risks into different types, entities can develop more targeted mitigation strategies and response plans. ">
+  
+  <area  href=#OBMK27A44F796407C1E4 shape="polygon" coords="1022, 322, 813, 322, 813, 633, 802, 633, 802, 312, 1022, 312"    title="-">
+  
+  <area  href=#OBMK10E32FAF63248FD5 shape="polygon" coords="821, 1015, 802, 1015, 802, 633, 813, 633, 813, 1005, 821, 1005"    title="-">
+  
+  <area  href=#OBMK070B088A64011568 shape="polygon" coords="1118, 756, 1118, 838, 1108, 838, 1108, 756"    title="-">
+  
+  <area  href=#OBMKE4C003255ED1F03E shape="polygon" coords="936, 338, 825, 338, 825, 327, 936, 327"    title="-">
+  
+  <area  href=e4c003255ed1f037.htm shape="polygon" coords="958, 528, 958, 338, 825, 338, 825, 327, 969, 327, 969, 528"   target="_top"  title="An&#160; Process Store references an Information Domain necessary for activities of the process.">
+  
+  <area  href=#OBMKE4C003265ED1F075 shape="polygon" coords="958, 528, 958, 417, 969, 417, 969, 528"    title="-">
+  
+  <area  href=#OBMK230B3EA161D89187 shape="polygon" coords="890, 635, 972, 635, 972, 597, 983, 597, 983, 646, 890, 646"    title="-">
+  
+  <area  href=#OBMK8E1390925EBE3DBB shape="polygon" coords="1027, 504, 1049, 504, 1049, 528, 1038, 528, 1038, 514, 1027, 514"    title="-">
+  
+  <area  href=8e1390925ebe3db7.htm shape="polygon" coords="972, 528, 972, 504, 1049, 504, 1049, 528, 1038, 528, 1038, 514, 983, 514, 983, 528"   target="_top"  title="A&#160; Sub-Process is a Process Activity&#160; invoking another Process">
+  
+  <area  href=#OBMK8E1390925EBE3DD8 shape="polygon" coords="972, 528, 972, 504, 993, 504, 993, 514, 983, 514, 983, 528"    title="-">
+  
+  <area  href=#OBMK07E737495ECCD836 shape="polygon" coords="710, 708, 662, 708, 662, 697, 710, 697"    title="-">
+  
+  <area  href=07e737495eccd831.htm shape="polygon" coords="804, 708, 662, 708, 662, 697, 804, 697"   target="_top"  title="-">
+  
+  <area  href=#OBMK07E7374A5ECCD875 shape="polygon" coords="804, 708, 757, 708, 757, 697, 804, 697"    title="-">
+  
+  <area  href=#OBMK07E737925ECCD8F7 shape="polygon" coords="754, 630, 662, 630, 662, 619, 754, 619"    title="-">
+  
+  <area  href=07e737925eccd8f1.htm shape="polygon" coords="884, 670, 884, 630, 662, 630, 662, 619, 895, 619, 895, 670"   target="_top"  title="-">
+  
+  <area  href=#OBMK07E737935ECCD935 shape="polygon" coords="884, 670, 884, 630, 845, 630, 845, 619, 895, 619, 895, 670"    title="-">
+  
+  <area  href=#OBMK004B041F5EBD111D shape="polygon" coords="744, 581, 662, 581, 662, 570, 744, 570"    title="-">
+  
+  <area  href=004b041f5ebd1119.htm shape="polygon" coords="907, 581, 662, 581, 662, 570, 907, 570"   target="_top"  title="Participation of an Agent in a process as an actor of the Process.">
+  
+  <area  href=#OBMK004B041F5EBD114E shape="polygon" coords="907, 581, 826, 581, 826, 570, 907, 570"    title="-">
+  
+  <area  href=#OBMK004B03B15EBD0FE0 shape="polygon" coords="827, 538, 910, 538, 910, 549, 827, 549"    title="-">
+  
+  <area  href=004b03b15ebd0fdb.htm shape="polygon" coords="662, 538, 910, 538, 910, 549, 662, 549"   target="_top"  title="-">
+  
+  <area  href=#OBMK004B03B15EBD1019 shape="polygon" coords="662, 538, 745, 538, 745, 549, 662, 549"    title="-">
+  
+  <area  href=986cd4ec5ffca3ac.htm#OBMK986CD4EC5FFCA3AC shape="polygon" coords="868, 684, 868, 673, 911, 673, 911, 684, 868, 684"   target="_top"  title="A&#160; Behavior is an Operating Asset that describes any action or reaction of an Agent to external or internal circumstances. This includes Processes (action), Interaction Scenarios (stories) or interactions (Service Interface).">
+  
+  <area  href=d9fdde4f5829524f.htm#OBMKD9FDDE4F5829524F shape="polygon" coords="822, 716, 822, 703, 957, 703, 957, 716, 822, 716"   target="_top"  title="-">
+  
+  <area  href="333f35ee5dde0c8c.htm" shape="rect" coords="804, 670, 975, 734"   target="_top"  title="An&#160; Interaction Scenario is a story (Behavior) that describes how the components of an Agent interacts to produce Outcomes.This includes:">
+  
+  <area  href=986cd4ec5ffca3ac.htm#OBMK986CD4EC5FFCA3AC shape="polygon" coords="973, 541, 973, 530, 1016, 530, 1016, 541, 973, 541"   target="_top"  title="A&#160; Behavior is an Operating Asset that describes any action or reaction of an Agent to external or internal circumstances. This includes Processes (action), Interaction Scenarios (stories) or interactions (Service Interface).">
+  
+  <area  href=39924a285927597c.htm#OBMK39924A285927597C shape="polygon" coords="959, 573, 959, 560, 1029, 560, 1029, 573, 959, 573"   target="_top"  title="-">
+  
+  <area  href="d682ef5e56144e77.htm" shape="rect" coords="904, 528, 1084, 597"   target="_top"  title="A&#160; Process is a Behavior that describes a typical course of action intended to produce Outcomes, through the involvement of Agents as Active Participants.">
+  
+  <area  href=14431b565ad65914.htm#OBMK14431B565AD65914 shape="polygon" coords="509, 508, 509, 497, 644, 497, 644, 508, 509, 508"   target="_top"  title="An&#160; Encapsulated Aggregate (Type) is a class of Encapsulated Aggregate (Individual).">
+  
+  <area  href=a371a43b5b865817.htm#OBMKA371A43B5B865817 shape="polygon" coords="539, 519, 539, 508, 613, 508, 613, 519, 539, 519"   target="_top"  title="An&#160; Operating Asset is a Functional Asset used to describes the way Outcomes are produced and consumed: how&#160; (Behaviors) and by whom (Agents).">
+  
+  <area  href=e9321053590b4a88.htm#OBMKE9321053590B4A88 shape="polygon" coords="525, 548, 525, 535, 627, 535, 627, 548, 525, 548"   target="_top"  title="-">
+  
+  <area  href="79368381561716a6.htm" shape="rect" coords="490, 495, 662, 730"   target="_top"  title="An&#160; Agent is an Operating Asset which is able to participate actively to Processes (Active Participant) and/or to conduct Processes (Performed Process) to produce Outcomes that benefit to other&#160; Agents or affect other&#160; Agents.">
+  
+  <area  href=14431b565ad65914.htm#OBMK14431B565AD65914 shape="polygon" coords="849, 496, 849, 485, 984, 485, 984, 496, 849, 496"   target="_top"  title="An&#160; Encapsulated Aggregate (Type) is a class of Encapsulated Aggregate (Individual).">
+  
+  <area  href=a371a43b5b865817.htm#OBMKA371A43B5B865817 shape="polygon" coords="880, 507, 880, 496, 954, 496, 954, 507, 880, 507"   target="_top"  title="An&#160; Operating Asset is a Functional Asset used to describes the way Outcomes are produced and consumed: how&#160; (Behaviors) and by whom (Agents).">
+  
+  <area  href="986cd4ec5ffca3ac.htm" shape="rect" coords="734, 483, 1100, 746"   target="_top"  title="A&#160; Behavior is an Operating Asset that describes any action or reaction of an Agent to external or internal circumstances. This includes Processes (action), Interaction Scenarios (stories) or interactions (Service Interface).">
+  
+  <area  href=d9fdded9582953e7.htm#OBMKD9FDDED9582953E7 shape="polygon" coords="832, 888, 832, 874, 938, 874, 938, 888, 832, 888"   target="_top"  title="-">
+  
+  <area  href=24ae31d75ed1c747.htm#OBMK24AE31D75ED1C747 shape="polygon" coords="870, 861, 870, 850, 901, 850, 901, 861, 870, 861"   target="_top"  title="An&#160; Event is type of change that is used to coordinate Behaviors.">
+  
+  <area  href="30223b5c5ec90c01.htm" shape="rect" coords="824, 814, 947, 925"   target="_top"  title="An&#160; Outcome is an Event that indicates the availability of an expected change in the state of a Value Added Object brought about by a specific Behavior,">
+  
+  <area  href=#OBMKF21DF5D0617B671C shape="polygon" coords="313, 293, 347, 293, 347, 304, 313, 304"    title="-">
+  
+  <area  href=F21DF5D0617B6707.htm shape="polygon" coords="244, 293, 347, 293, 347, 304, 244, 304"   target="_top"  title="-">
+  
+  <area  href=#OBMKF21DF5D2617B677D shape="polygon" coords="244, 293, 278, 293, 278, 304, 244, 304"    title="-">
+  
+  <area  href=#OBMKCE1BFCDD62843DF2 shape="polygon" coords="360, 195, 444, 195, 444, 206, 360, 206"    title="-">
+  
+  <area  href=#OBMKCE1BFCDD62843DE5 shape="polygon" coords="192, 195, 444, 195, 444, 206, 192, 206"    title="-">
+  
+  <area  href=#OBMKCE1BFCDE62843E29 shape="polygon" coords="192, 195, 276, 195, 276, 206, 192, 206"    title="-">
+  
+  <area  href=#OBMK24AE36805ED1CD1D shape="polygon" coords="1248, 603, 1301, 603, 1301, 613, 1248, 613"    title="-">
+  
+  <area  href=24ae36805ed1cd18.htm shape="polygon" coords="1143, 603, 1301, 603, 1301, 613, 1143, 613"   target="_top"  title="A&#160; Rule Enforcement is the application of a Behavioral Rule in an Operating Asset.">
+  
+  <area  href=#OBMK24AE36805ED1CD5A shape="polygon" coords="1143, 603, 1196, 603, 1196, 613, 1143, 613"    title="-">
+  
+  <area  href=#OBMK30223B8A5EC90CD8 shape="polygon" coords="776, 799, 776, 786, 878, 786, 878, 799, 776, 799"    title="-">
+  
+  <area  href=#OBMKE4C000D95ED1EE65 shape="polygon" coords="845, 746, 845, 832, 834, 832, 834, 746"    title="-">
+  
+  <area  href=#OBMK30EF9B5161F357B2 shape="polygon" coords="138, 365, 138, 764, 163, 764, 163, 774, 127, 774, 127, 365"    title="-">
+  
+  <area  href=18a81ed15eeb5d60.htm shape="polygon" coords="142, 116, 142, 167, 132, 167, 132, 116"   target="_top"  title="-">
+  
+  <area  href=514e623c620f2198.htm#OBMK514E623C620F2198 shape="polygon" coords="71, 181, 71, 170, 190, 170, 190, 181, 71, 181"   target="_top"  title="An&#160; Aggregate Block (Individual) is an Individual which has an internal structure.">
+  
+  <area  href=c31ce58f62158d82.htm#OBMKC31CE58F62158D82 shape="polygon" coords="98, 192, 98, 181, 163, 181, 163, 192, 98, 192"   target="_top"  title="An&#160; Initiative Block is a Model Building Block used to describe enterprise transformation.">
+  
+  <area  href="0ffeec41600be08a.htm" shape="rect" coords="68, 167, 193, 222"   target="_top"  title="An&#160; Initiative is any piece of work that is undertaken or attempted under the responsibility of a Steering Authority.">
+  
+  <area  href=#OBMK9D389F6761C41288 shape="polygon" coords="538, 1157, 557, 1157, 557, 1142, 567, 1142, 567, 1167, 538, 1167"    title="-">
+  
+  <area  href=9d389f6761c4127d.htm shape="polygon" coords="475, 1142, 475, 1157, 557, 1157, 557, 1142, 567, 1142, 567, 1167, 464, 1167, 464, 1142"   target="_top"  title="-">
+  
+  <area  href=#OBMK9D389F6761C412C0 shape="polygon" coords="475, 1142, 475, 1157, 494, 1157, 494, 1167, 464, 1167, 464, 1142"    title="-">
+  
+  <area  href=10f2691d61b32f71.htm shape="polygon" coords="119, 600, 119, 550, 130, 550, 130, 600"   target="_top"  title="-">
+  
+  <area  href=#OBMK5754805751545CA3 shape="polygon" coords="469, 1050, 469, 1037, 554, 1037, 554, 1050, 469, 1050"    title="-">
+  
+  <area  href=#OBMK9E38384C6192FEBE shape="polygon" coords="495, 1087, 495, 723, 506, 723, 506, 1087"    title="-">
+  
+  <area  href=ebcfaeac5ad76ed7.htm#OBMKEBCFAEAC5AD76ED7 shape="polygon" coords="454, 1101, 454, 1090, 581, 1090, 581, 1101, 454, 1101"   target="_top"  title="An Individual which is used in the description of the enterprise.">
+  
+  <area  href="9e3837e46192fcad.htm" shape="rect" coords="439, 1087, 595, 1142"   target="_top"  title="A&#160; Deployed Agent is an entity that exists in space/time and that is able to participate actively to Processes and/or to conduct Processes.">
+  
+  <area  href=#OBMK30223C345EC90F53 shape="polygon" coords="321, 327, 378, 327, 378, 337, 321, 337"    title="-">
+  
+  <area  href=30223c345ec90f4f.htm shape="polygon" coords="207, 327, 378, 327, 378, 337, 207, 337"   target="_top"  title="-">
+  
+  <area  href=#OBMK30223C345EC90F79 shape="polygon" coords="207, 327, 264, 327, 264, 337, 207, 337"    title="-">
+  
+  <area  href=c559c100616f7de3.htm#OBMKC559C100616F7DE3 shape="polygon" coords="92, 327, 92, 316, 173, 316, 173, 327, 92, 327"   target="_top"  title="An&#160; Operating Context is a perimeter of Architecture Block (Type) that forms the scope of an Enduring Initiative. It can be a set of Capability(ies) that define the purpose of operating Agents or the Operating Eco-System in which these Agents deliver these Capability(ies).">
+  
+  <area  href=8714d7bb559b5ee2.htm#OBMK8714D7BB559B5EE2 shape="polygon" coords="99, 359, 99, 345, 166, 345, 166, 359, 99, 359"   target="_top"  title="Assembly of capabilities and their dependencies defined for an Enterprise Phase or Enterprise (whole).">
+  
+  <area  href="7c4085db552708a4.htm" shape="rect" coords="57, 313, 208, 365"   target="_top"  title="Top level assembly of Capabilityies and their dependencies which, together, provide a scope of added value (Outcomes) pursued by Enduring Initiatives.">
+  
+  <area  href=#OBMKD05933365EF2B8CB shape="polygon" coords="891, 256, 1094, 256, 1094, 284, 1083, 284, 1083, 266, 891, 266"    title="-">
+  
+  <area  href=D05933365EF2B8C5.htm shape="polygon" coords="479, 295, 479, 256, 1094, 256, 1094, 284, 1083, 284, 1083, 266, 490, 266, 490, 295"   target="_top"  title="-">
+  
+  <area  href=#OBMKD05933375EF2B8FC shape="polygon" coords="479, 295, 479, 256, 671, 256, 671, 266, 490, 266, 490, 295"    title="-">
+  
+  <area  href=#OBMK24AE4A405ED16BD5 shape="polygon" coords="958, 301, 1025, 301, 1025, 312, 958, 312"    title="-">
+  
+  <area  href=24ae4a405ed16bcf.htm shape="polygon" coords="823, 301, 1025, 301, 1025, 312, 823, 312"   target="_top"  title="Information Entity that is part of an Information Domain.">
+  
+  <area  href=#OBMK24AE4A405ED16C13 shape="polygon" coords="823, 301, 890, 301, 890, 312, 823, 312"    title="-">
+  
+  <area  href=f594f72e61f736e1.htm#OBMKF594F72E61F736E1 shape="polygon" coords="368, 73, 380, 73, 380, 87, 251, 87, 251, 73, 368, 73"   target="_top"  title="-">
+  
+  <area  href=b0d7b34f5ea02f2c.htm shape="polygon" coords="217, 68, 413, 68, 413, 78, 217, 78"   target="_top"  title="-">
+  
+  <area  href=ff0500115b253e92.htm#OBMKFF0500115B253E92 shape="polygon" coords="80, 60, 80, 49, 188, 49, 188, 60, 80, 60"   target="_top"  title="Container of Building Blocks used to measure, assess, monitor transformation&#160; Initiatives .">
+  
+  <area  href=8a228c0e550a3122.htm#OBMK8A228C0E550A3122 shape="polygon" coords="86, 70, 86, 60, 183, 60, 183, 70, 86, 70"   target="_top"  title="&#160;Governance Resources include Governing Teams, Governance Activitys, Governance Events and Measures used to guide and steer Initiatives.">
+  
+  <area  href=728a7d2c59fc72b3.htm#OBMK728A7D2C59FC72B3 shape="polygon" coords="117, 97, 117, 84, 152, 84, 152, 97, 117, 97"   target="_top"  title="-">
+  
+  <area  href="ff0501b65b253fdd.htm" shape="rect" coords="51, 46, 218, 116"   target="_top"  title="A&#160; Governing Team consists of a collection of individuals and resources, including personnel and committees, assembled to effectively manage and sustain an Enduring Initiative.">
+  
+  <area  href=#OBMK986CD52D5FFCA44C shape="polygon" coords="917, 620, 799, 620, 799, 590, 810, 590, 810, 609, 917, 609"    title="-">
+  
+  <area  href=#OBMKCA35159E5FC5979E shape="polygon" coords="389, 651, 490, 651, 490, 662, 389, 662"    title="-">
+  
+  <area  href=ca35159e5fc5978d.htm shape="polygon" coords="189, 651, 490, 651, 490, 662, 189, 662"   target="_top"  title="Agents which are partners of the subject agent in the scenario.">
+  
+  <area  href=#OBMKCA35159F5FC597F8 shape="polygon" coords="189, 651, 289, 651, 289, 662, 189, 662"    title="-">
+  
+  <area  href=#OBMKCA3514125FC59549 shape="polygon" coords="390, 618, 490, 618, 490, 629, 390, 629"    title="-">
+  
+  <area  href=ca3514125fc59538.htm shape="polygon" coords="192, 618, 490, 618, 490, 629, 192, 629"   target="_top"  title="Agent that is the subject of the environment scenarios">
+  
+  <area  href=#OBMKCA3514145FC595A3 shape="polygon" coords="192, 618, 291, 618, 291, 629, 192, 629"    title="-">
+  
+  <area  href=ca35f48a5fc48686.htm#OBMKCA35F48A5FC48686 shape="polygon" coords="76, 614, 76, 603, 173, 603, 173, 614, 76, 614"   target="_top"  title="An&#160; Operating Eco-System is an Operating Context in which an Agent exists or lives for a specific purpose, interacting with partners.For instance, the operating context of an enterprise includes its customers and suppliers.">
+  
+  <area  href=b695ba4a58cb5b2a.htm#OBMKB695BA4A58CB5B2A shape="polygon" coords="66, 646, 66, 633, 183, 633, 183, 646, 147, 646, 147, 656, 102, 656, 102, 646, 66, 646"   target="_top"  title="-">
+  
+  <area  href="ca3513af5fc59413.htm" shape="rect" coords="57, 600, 193, 664"   target="_top"  title="An&#160; Environment Scenario is a story that describes how an Agent interacts with its partners (Partner Agent) to achieve Outcomes in a specific Operating Eco-System (Agent Environment).">
+  
+  <area  href=#OBMKD6CD10F85AB974F9 shape="polygon" coords="107, 550, 107, 559, 97, 559, 97, 550"    title="-">
+  
+  <area  href=#OBMKFA4FFC235EC8627B shape="polygon" coords="389, 527, 490, 527, 490, 538, 389, 538"    title="-">
+  
+  <area  href=fa4ffc235ec86276.htm shape="polygon" coords="187, 527, 490, 527, 490, 538, 187, 538"   target="_top"  title="-">
+  
+  <area  href=#OBMKFA4FFC235EC862A0 shape="polygon" coords="187, 527, 288, 527, 288, 538, 187, 538"    title="-">
+  
+  <area  href=ca35f48a5fc48686.htm#OBMKCA35F48A5FC48686 shape="polygon" coords="74, 499, 74, 488, 171, 488, 171, 499, 74, 499"   target="_top"  title="An&#160; Operating Eco-System is an Operating Context in which an Agent exists or lives for a specific purpose, interacting with partners.For instance, the operating context of an enterprise includes its customers and suppliers.">
+  
+  <area  href="d6cd0fd95ab9744b.htm" shape="rect" coords="55, 485, 191, 550"   target="_top"  title="An&#160; Agent Environment is an Operating Eco-System which defines the interactions ( Service Channel) of an Agent with its partners (Partner Agent).">
+  
+  <area  href=c559c100616f7de3.htm#OBMKC559C100616F7DE3 shape="polygon" coords="90, 452, 90, 441, 171, 441, 171, 452, 90, 452"   target="_top"  title="An&#160; Operating Context is a perimeter of Architecture Block (Type) that forms the scope of an Enduring Initiative. It can be a set of Capability(ies) that define the purpose of operating Agents or the Operating Eco-System in which these Agents deliver these Capability(ies).">
+  
+  <area  href="ca35f48a5fc48686.htm" shape="rect" coords="43, 440, 218, 678"   target="_top"  title="An&#160; Operating Eco-System is an Operating Context in which an Agent exists or lives for a specific purpose, interacting with partners.For instance, the operating context of an enterprise includes its customers and suppliers.">
+  
+  <area  href=bcebd0175491272a.htm#OBMKBCEBD0175491272A shape="polygon" coords="461, 56, 461, 45, 517, 45, 517, 56, 461, 56"   target="_top"  title="A&#160; Stakeholder is an individual, team, organization, or classes thereof, having an interest in the enterprise.">
+  
+  <area  href=b09fc6ae56bd201e.htm#OBMKB09FC6AE56BD201E shape="polygon" coords="452, 82, 452, 69, 525, 69, 525, 82, 452, 82"   target="_top"  title="An EA Organization is a governance body regrouping several persons or organizations.">
+  
+  <area  href="2cc9717155263b89.htm" shape="rect" coords="413, 43, 563, 104"   target="_top"  title="A&#160; Governance Committee is a group of Stakeholders that contributes to architecture and assurance activities and governs Enduring Initiatives.">
+  
+  <area  href=#OBMK24AE33D85ED1C9B6 shape="polygon" coords="513, 783, 513, 770, 604, 770, 604, 783, 513, 783"    title="-">
+  
+  <area  href=#OBMK24AE34855ED1CADF shape="polygon" coords="557, 729, 557, 819, 546, 819, 546, 729"    title="-">
+  
+  <area  href=#OBMK24AE34065ED1CA1F shape="polygon" coords="605, 800, 605, 787, 693, 787, 693, 800, 605, 800"    title="-">
+  
+  <area  href=#OBMK24AE34755ED1CAA8 shape="polygon" coords="627, 729, 627, 818, 617, 818, 617, 729"    title="-">
+  
+  <area  href=278678e95b2533d6.htm#OBMK278678E95B2533D6 shape="polygon" coords="726, 103, 726, 92, 770, 92, 770, 103, 726, 103"   target="_top"  title="A&#160; Directive is an authoritative declaration that indicates how Agents and their Behaviors should be (or should not be) in the enterprise.">
+  
+  <area  href=68ed6a295d065b7b.htm#OBMK68ED6A295D065B7B shape="polygon" coords="729, 135, 729, 122, 766, 122, 766, 135, 729, 135"   target="_top"  title="-">
+  
+  <area  href="959320325ee7fe24.htm" shape="rect" coords="671, 90, 826, 137"   target="_top"  title="A&#160; Policy is a Directive that is not directly enforceable whose purpose is to govern, guide or constrain the structure and behavior of Agents in the enterprise. ">
+  
+  <area  href=#OBMK24AE322B5ED1C8CB shape="polygon" coords="887, 924, 887, 954, 876, 954, 876, 924"    title="-">
+  
+  <area  href=915283d05ed54ca1.htm#OBMK915283D05ED54CA1 shape="polygon" coords="838, 1003, 838, 992, 927, 992, 927, 1003, 838, 1003"   target="_top"  title="Top level pattern of Relationship Type.">
+  
+  <area  href=07ca0f015dd84efa.htm#OBMK07CA0F015DD84EFA shape="polygon" coords="844, 1014, 844, 1003, 921, 1003, 921, 1014, 844, 1014"   target="_top"  title="&#160;Functional Assets encompasse Architecture Blocks used to describe how an enterprise function. This includes the purposes of an enterprise (Capability) and the way the enterprise operates to fulfill these purposes (Agents and their&#160; Behaviors).">
+  
+  <area  href="24ae31d75ed1c747.htm" shape="rect" coords="821, 955, 944, 1066"   target="_top"  title="An&#160; Event is type of change that is used to coordinate Behaviors.">
+  
+  <area  href=#OBMKF4BEE7265EE1BF2B shape="polygon" coords="650, 868, 824, 868, 824, 879, 650, 879"    title="-">
+  
+  <area  href=#OBMKF4BEE5925EE1BE66 shape="polygon" coords="625, 337, 625, 312, 689, 312, 689, 323, 635, 323, 635, 337"    title="-">
+  
+  <area  href=f4bee5925ee1be5b.htm shape="polygon" coords="625, 494, 625, 312, 689, 312, 689, 323, 635, 323, 635, 494"   target="_top"  title="An&#160; Information Store is a storage of Information Objects necessary for an Agent to carry out its activities.">
+  
+  <area  href=#OBMKF4BEE5935EE1BEA5 shape="polygon" coords="625, 494, 625, 416, 635, 416, 635, 494"    title="-">
+  
+  <area  href=07ca0f015dd84efa.htm#OBMK07CA0F015DD84EFA shape="polygon" coords="719, 301, 719, 290, 796, 290, 796, 301, 719, 301"   target="_top"  title="&#160;Functional Assets encompasse Architecture Blocks used to describe how an enterprise function. This includes the purposes of an enterprise (Capability) and the way the enterprise operates to fulfill these purposes (Agents and their&#160; Behaviors).">
+  
+  <area  href=30efa75761f367fe.htm#OBMK30EFA75761F367FE shape="polygon" coords="717, 312, 717, 301, 798, 301, 798, 312, 717, 312"   target="_top"  title="An&#160; Information Asset is a Model Building Block involved in the description of information.">
+  
+  <area  href=7047785d56e96940.htm#OBMK7047785D56E96940 shape="polygon" coords="714, 344, 714, 330, 801, 330, 801, 344, 714, 344"   target="_top"  title="-">
+  
+  <area  href="d6cd116d5ab97525.htm" shape="rect" coords="689, 287, 826, 352"   target="_top"  title="An&#160; Information Domain is a group of Information Entity(ies) which constitutes a unit a knowlege required by an Agent to operate or required during a Process execution.">
+  
+  <area  href=#OBMK1DA6216A5EBC65FC shape="polygon" coords="575, 466, 595, 466, 595, 494, 585, 494, 585, 477, 575, 477"    title="-">
+  
+  <area  href=1da6216a5ebc65f7.htm shape="polygon" coords="517, 494, 517, 466, 595, 466, 595, 494, 585, 494, 585, 477, 527, 477, 527, 494"   target="_top"  title="A composition of Agent.">
+  
+  <area  href=#OBMK1DA6216A5EBC6627 shape="polygon" coords="517, 494, 517, 466, 537, 466, 537, 477, 527, 477, 527, 494"    title="-">
+  
+  <area  href=#OBMK8E1393E85EBE4775 shape="polygon" coords="746, 154, 746, 136, 757, 136, 757, 154"    title="-">
+  
+  <area  href=8E1393E85EBE476F.htm shape="polygon" coords="746, 192, 746, 136, 757, 136, 757, 192"   target="_top"  title="A&#160; Policy Conformance is a statement that a Functional Asset is designed to comply with a Policy.">
+  
+  <area  href=#OBMK8E1393E85EBE479A shape="polygon" coords="746, 192, 746, 173, 757, 173, 757, 192"    title="-">
+  
+  <area  href=#OBMK59EE9DDB5AB72462 shape="polygon" coords="547, 357, 547, 628, 807, 628, 807, 638, 537, 638, 537, 357"    title="-">
+  
+  <area  href=7936846756171776.htm shape="polygon" coords="534, 417, 534, 357, 545, 357, 545, 417"   target="_top"  title="Capability(ies) fulfilled by an Agent and their Behaviors.">
+  
+  <area  href=278678e95b2533d6.htm#OBMK278678E95B2533D6 shape="polygon" coords="1341, 589, 1341, 578, 1385, 578, 1385, 589, 1341, 589"   target="_top"  title="A&#160; Directive is an authoritative declaration that indicates how Agents and their Behaviors should be (or should not be) in the enterprise.">
+  
+  <area  href=75cb7d9258b63e33.htm#OBMK75CB7D9258B63E33 shape="polygon" coords="1322, 621, 1322, 608, 1404, 608, 1404, 621, 1322, 621"   target="_top"  title="A Business Rule is a Directive, intended to govern, guide, or influence business behavior, in support of Business Policy">
+  
+  <area  href="fe2203ca5c4f0fed.htm" shape="rect" coords="1301, 576, 1425, 640"   target="_top"  title="A&#160; Behavioral Rule is a Directive intended to guide the Behavior of Agents, in compliance with enterprise Policy(ies) or regulations.">
+  
+  <area  href=907592d6594725eb.htm#OBMK907592D6594725EB shape="polygon" coords="543, 884, 543, 871, 632, 871, 632, 884, 605, 884, 605, 895, 570, 895, 570, 884, 543, 884"   target="_top"  title="-">
+  
+  <area  href=986cd4ec5ffca3ac.htm#OBMK986CD4EC5FFCA3AC shape="polygon" coords="566, 847, 566, 836, 609, 836, 609, 847, 566, 847"   target="_top"  title="A&#160; Behavior is an Operating Asset that describes any action or reaction of an Agent to external or internal circumstances. This includes Processes (action), Interaction Scenarios (stories) or interactions (Service Interface).">
+  
+  <area  href=915283d05ed54ca1.htm#OBMK915283D05ED54CA1 shape="polygon" coords="543, 858, 543, 847, 633, 847, 633, 858, 543, 858"   target="_top"  title="Top level pattern of Relationship Type.">
+  
+  <area  href="24ae31b55ed1c66d.htm" shape="rect" coords="524, 810, 651, 923"   target="_top"  title="A&#160; Service Interface is a communication Behavior that describes a typical course of interactions, coordinated by Events and Outcomes, and intended to produce Value Added Objects, through the involvement of Agents.">
+  
+  <area  href=#OBMK30223B705EC90CA8 shape="polygon" coords="908, 799, 908, 786, 1004, 786, 1004, 799, 908, 799"    title="-">
+  
+  <area  href=#OBMKE4C000E45ED1EE9C shape="polygon" coords="939, 746, 939, 836, 929, 836, 929, 746"    title="-">
+  
+  <area  href=#OBMK30223B705EC90CA8 shape="polygon" coords="687, 944, 687, 930, 783, 930, 783, 944, 687, 944"    title="-">
+  
+  <area  href=#OBMK30223BBD5EC90D7E shape="polygon" coords="423, 357, 423, 932, 845, 932, 845, 915, 856, 915, 856, 943, 413, 943, 413, 357"    title="-">
+  
+  <area  href=07ca0f015dd84efa.htm#OBMK07CA0F015DD84EFA shape="polygon" coords="446, 309, 446, 298, 523, 298, 523, 309, 446, 309"   target="_top"  title="&#160;Functional Assets encompasse Architecture Blocks used to describe how an enterprise function. This includes the purposes of an enterprise (Capability) and the way the enterprise operates to fulfill these purposes (Agents and their&#160; Behaviors).">
+  
+  <area  href=77987c424f5f17c5.htm#OBMK77987C424F5F17C5 shape="polygon" coords="460, 341, 460, 327, 509, 327, 509, 341, 460, 341"   target="_top"  title="A Capability is the property of a system to deliver an outcome (desired effect).">
+  
+  <area  href="b181b98c54891882.htm" shape="rect" coords="379, 295, 592, 357"   target="_top"  title="A&#160; Capability&#160; is an ability to produce an Outcome.">
+  
+  <area  href=07ca0f015dd84efa.htm#OBMK07CA0F015DD84EFA shape="polygon" coords="1051, 298, 1051, 287, 1128, 287, 1128, 298, 1051, 298"   target="_top"  title="&#160;Functional Assets encompasse Architecture Blocks used to describe how an enterprise function. This includes the purposes of an enterprise (Capability) and the way the enterprise operates to fulfill these purposes (Agents and their&#160; Behaviors).">
+  
+  <area  href=30efa75761f367fe.htm#OBMK30EFA75761F367FE shape="polygon" coords="1049, 309, 1049, 298, 1130, 298, 1130, 309, 1049, 309"   target="_top"  title="An&#160; Information Asset is a Model Building Block involved in the description of information.">
+  
+  <area  href=43ee620e63725a56.htm#OBMK43EE620E63725A56 shape="polygon" coords="1045, 320, 1045, 309, 1133, 309, 1133, 320, 1045, 320"   target="_top"  title="A&#160; Value Added Object is an aspect of Architecture Block (Type)s which can be the subject of business transactions.">
+  
+  <area  href=81f48a9756f17efb.htm#OBMK81F48A9756F17EFB shape="polygon" coords="1049, 352, 1049, 338, 1130, 338, 1130, 352, 1049, 352"   target="_top"  title="-">
+  
+  <area  href="e6f250185f772ee1.htm" shape="rect" coords="1022, 285, 1157, 356"   target="_top"  title="An&#160; Information Object&#160; represents anything that can be communicated or memorized by an Agent in order to produce its Outcomes.">
+  
+  <area  href=514E62CE620F22C1.htm#OBMK514E62CE620F22C1 shape="polygon" coords="83, 261, 83, 250, 184, 250, 184, 261, 83, 261"   target="_top"  title="An&#160; Aggregate Block (Type) is a class of&#160; Aggregate Blocks.">
+  
+  <area  href=A4A5B3F855585CE1.htm#OBMKA4A5B3F855585CE1 shape="polygon" coords="79, 272, 79, 261, 188, 261, 188, 272, 79, 272"   target="_top"  title="An&#160; Architecture Block (Type) is a type of Architecture Block which is used in the description of the enterprise, such as Processes, Org-Units, Applications.">
+  
+  <area  href="c559c100616f7de3.htm" shape="rect" coords="22, 249, 244, 722"   target="_top"  title="An&#160; Operating Context is a perimeter of Architecture Block (Type) that forms the scope of an Enduring Initiative. It can be a set of Capability(ies) that define the purpose of operating Agents or the Operating Eco-System in which these Agents deliver these Capability(ies).">
+  
+  <area  href=26cd27c763ef2c1b.htm#OBMK26CD27C763EF2C1B shape="polygon" coords="746, 430, 746, 419, 863, 419, 863, 430, 746, 430"   target="_top"  title="A&#160; Constraining Property Type is a class of&#160; Constraining Property.">
+  
+  <area  href=c229d1235d0c6ae1.htm#OBMKC229D1235D0C6AE1 shape="polygon" coords="755, 456, 755, 443, 854, 443, 854, 456, 755, 456"   target="_top"  title="-">
+  
+  <area  href="a371a43b5b865817.htm" shape="rect" coords="467, 418, 1144, 763"   target="_top"  title="An&#160; Operating Asset is a Functional Asset used to describes the way Outcomes are produced and consumed: how&#160; (Behaviors) and by whom (Agents).">
+  
+  <area  href=A4A5B3F855585CE1.htm#OBMKA4A5B3F855585CE1 shape="polygon" coords="1085, 852, 1085, 841, 1194, 841, 1194, 852, 1085, 852"   target="_top"  title="An&#160; Architecture Block (Type) is a type of Architecture Block which is used in the description of the enterprise, such as Processes, Org-Units, Applications.">
+  
+  <area  href=8df59a8f5911280c.htm#OBMK8DF59A8F5911280C shape="polygon" coords="1086, 884, 1086, 871, 1193, 871, 1193, 884, 1086, 884"   target="_top"  title="-">
+  
+  <area  href="43ee620e63725a56.htm" shape="rect" coords="1079, 838, 1202, 909"   target="_top"  title="A&#160; Value Added Object is an aspect of Architecture Block (Type)s which can be the subject of business transactions.">
+  
+  <area  href=514E62CE620F22C1.htm#OBMK514E62CE620F22C1 shape="polygon" coords="757, 205, 757, 194, 858, 194, 858, 205, 757, 205"   target="_top"  title="An&#160; Aggregate Block (Type) is a class of&#160; Aggregate Blocks.">
+  
+  <area  href=A4A5B3F855585CE1.htm#OBMKA4A5B3F855585CE1 shape="polygon" coords="753, 216, 753, 205, 862, 205, 862, 216, 753, 216"   target="_top"  title="An&#160; Architecture Block (Type) is a type of Architecture Block which is used in the description of the enterprise, such as Processes, Org-Units, Applications.">
+  
+  <area  href=c229c44e5d0c649f.htm#OBMKC229C44E5D0C649F shape="polygon" coords="757, 242, 757, 229, 858, 229, 858, 242, 757, 242"   target="_top"  title="Blocks used to describe the functional architecture of an ~BR6K086dIfvA[Enterprise].">
+  
+  <area  href="07ca0f015dd84efa.htm" shape="rect" coords="346, 192, 1269, 1074"   target="_top"  title="&#160;Functional Assets encompasse Architecture Blocks used to describe how an enterprise function. This includes the purposes of an enterprise (Capability) and the way the enterprise operates to fulfill these purposes (Agents and their&#160; Behaviors).">
+  
+  <area  href="02af0a4b5a182417.htm" shape="rect" coords="0, 0, 1452, 1205"   target="_top"  title="The&#160; Operating Semantic domain is used to model how a system (Agent) operates/functions (Behavior) in its Operating Eco-System to produce Outcomes that benefit (value) to other Agents or affect (have an effect upon) these Agents.It includes Agents, Processes, Interaction Scenarios, Policy(ies), Capability(ies), Outcomes.">
+  
+</map>
+<img  src="../images/02af0a4b5a182417_02af0a4e5a182433_i.png" alt="../images/02af0a4b5a182417_02af0a4e5a182433_i.png" usemap="#02AF0A4E5A182433" height="1205" width="1452" border=0>
+
+</div>
+<div class="Relationship" id="Relationship2">
+<div id="klmm" style="width: 100vw; height: 100vh;" ></div>
+<!-- <script src="../standard/assets/js/keylines_domain.js"></script> -->
+<script >
+const data = {
+ type: 'LinkChart',
+  items: [
+  //nodes
+    {type: 'node', id:'02AF0A4B5A182417', t:"Operating Semantic", sh:'box', d:"The Operating Semantic domain is used to model how a system (Agent) operates/functions (Behavior) in its Operating Eco-System to produce Outcomes that benefit (value) to other Agents or affect (have an effect upon) these Agents."},
+    {type: 'node', id:'30223B5C5EC90C01', t:"Outcome", parentId:'24AE31D75ED1C747', sh:'circle', d:"An Outcome is an Event that indicates the availability of an expected change in the state of a Value Added Object brought about by a specific Behavior,"},
+    {type: 'node', id:'C334C4E35ECB43EA', t:"Capability Dependency", parentId:'24AE31D75ED1C747', sh:'circle', d:""},
+    {type: 'node', id:'CA35F48A5FC48686', t:"Operating Eco-System", parentId:'C559C100616F7DE3', sh:'circle', d:"An Operating Eco-System is an Operating Context in which an Agent exists or lives for a specific purpose, interacting with partners."},
+    {type: 'node', id:'CA3513AF5FC59413', t:"Environment Scenario", parentId:'CA35F48A5FC48686', sh:'circle', d:"An Environment Scenario is a story that describes how an Agent interacts with its partners (Partner Agent) to achieve Outcomes in a specific Operating Eco-System (Agent Environment)."},
+    {type: 'node', id:'79368381561716A6', t:"Agent", parentId:'A371A43B5B865817', sh:'circle', d:"An Agent is an Operating Asset which is able to participate actively to Processes (Active Participant) and/or to conduct Processes (Performed Process) to produce Outcomes that benefit to other Agents or affect other Agents."},
+    {type: 'node', id:'D6CD2C8B5AB98DA5', t:"Information Pattern", sh:'box', d:"The Information Pattern domain describes top level concepts used to describe information."},
+    {type: 'node', id:'D6CD116D5AB97525', t:"Information Domain", parentId:'D6CD2C8B5AB98DA5', sh:'circle', d:"An Information Domain is a group of Information Entity(ies) which constitutes a unit a knowlege required by an Agent to operate or required during a Process execution."},
+    {type: 'node', id:'9E3837E46192FCAD', t:"Deployed Agent", parentId:'EBCFAEAC5AD76ED7', sh:'circle', d:"A Deployed Agent is an entity that exists in space/time and that is able to participate actively to Processes and/or to conduct Processes."},
+    {type: 'node', id:'333F35EE5DDE0C8C', t:"Interaction Scenario", parentId:'986CD4EC5FFCA3AC', sh:'circle', d:"An Interaction Scenario is a story (Behavior) that describes how the components of an Agent interacts to produce Outcomes."},
+    {type: 'node', id:'7C4085DB552708A4', t:"Capability Map", parentId:'C559C100616F7DE3', sh:'circle', d:"Top level assembly of Capabilityies and their dependencies which, together, provide a scope of added value (Outcomes) pursued by Enduring Initiatives."},
+    {type: 'node', id:'C559C100616F7DE3', t:"Operating Context", parentId:'A4A5B3F855585CE1', sh:'circle', d:"An Operating Context is a perimeter of Architecture Block (Type) that forms the scope of an Enduring Initiative. It can be a set of Capability(ies) that define the purpose of operating Agents or the Operating Eco-System in which these Agents deliver these Capability(ies)."},
+    {type: 'node', id:'986CD4EC5FFCA3AC', t:"Behavior", parentId:'A371A43B5B865817', sh:'circle', d:"A Behavior is an Operating Asset that describes any action or reaction of an Agent to external or internal circumstances. This includes Processes (action), Interaction Scenarios (stories) or interactions (Service Interface)."},
+    {type: 'node', id:'A371A43B5B865817', t:"Operating Asset", parentId:'07CA0F015DD84EFA', sh:'circle', d:"An Operating Asset is a Functional Asset used to describes the way Outcomes are produced and consumed: how  (Behaviors) and by whom (Agents)."},
+    {type: 'node', id:'02F70FDC600F4179', t:"Policy Pattern", sh:'box', d:"The Policy Pattern domain defines Directives and rules that constrain enterprise structures and behaviors."},
+    {type: 'node', id:'FE2203CA5C4F0FED', t:"Behavioral Rule", parentId:'02F70FDC600F4179', sh:'circle', d:"A Behavioral Rule is a Directive intended to guide the Behavior of Agents, in compliance with enterprise Policy(ies) or regulations."},
+    {type: 'node', id:'B181B98C54891882', t:"Capability", parentId:'07CA0F015DD84EFA', sh:'circle', d:"A Capability  is an ability to produce an Outcome."},
+    {type: 'node', id:'C30BD1505A5D97F9', t:"Architecture Model Management", sh:'box', d:"The Architecture Model Management domain defines top level constructs used in enterprise architecting: Architecture Blocks, Architecture Namespaces, Architecture Category(ies), Constraint Value, Location."},
+    {type: 'node', id:'63F8870255AE1BA2', t:"Constraining Property", parentId:'C30BD1505A5D97F9', sh:'circle', d:"A Constraining Property expresses a type of constraint that can be applied to Architecture Blocks."},
+    {type: 'node', id:'E6F250185F772EE1', t:"Information Object", parentId:'D6CD2C8B5AB98DA5', sh:'circle', d:"An Information Object  represents anything that can be communicated or memorized by an Agent in order to produce its Outcomes."},
+    {type: 'node', id:'D682EF5E56144E77', t:"Process", parentId:'986CD4EC5FFCA3AC', sh:'circle', d:"A Process is a Behavior that describes a typical course of action intended to produce Outcomes, through the involvement of Agents as Active Participants."},
+    {type: 'node', id:'24AE31B55ED1C66D', t:"Service Interface", parentId:'986CD4EC5FFCA3AC', sh:'circle', d:"A Service Interface is a communication Behavior that describes a typical course of interactions, coordinated by Events and Outcomes, and intended to produce Value Added Objects, through the involvement of Agents."},
+    {type: 'node', id:'24AE31D75ED1C747', t:"Event", parentId:'07CA0F015DD84EFA', sh:'circle', d:"An Event is type of change that is used to coordinate Behaviors."},
+    {type: 'node', id:'07CA0F015DD84EFA', t:"Functional Asset", parentId:'A4A5B3F855585CE1', sh:'circle', d:"Functional Assets encompasse Architecture Blocks used to describe how an enterprise function. This includes the purposes of an enterprise (Capability) and the way the enterprise operates to fulfill these purposes (Agents and their  Behaviors)."},
+    {type: 'node', id:'427C1BDB64B5D1C7', t:"Risk & Threat", sh:'box', d:""},
+    {type: 'node', id:'427C1C7D64B5D4A1', t:"Risk Type", parentId:'427C1BDB64B5D1C7', sh:'circle', d:"A Risk Type refers to a distinct category or classification of risk based on its origin, nature, or potential impact. It helps in organizing and addressing different sources of uncertainty or potential harm that an individual, organization, or system might face. By categorizing risks into different types, entities can develop more targeted mitigation strategies and response plans. "},
+    {type: 'node', id:'959320325EE7FE24', t:"Policy", parentId:'02F70FDC600F4179', sh:'circle', d:"A Policy is a Directive that is not directly enforceable whose purpose is to govern, guide or constrain the structure and behavior of Agents in the enterprise. "},
+    {type: 'node', id:'D6CD0FD95AB9744B', t:"Agent Environment", parentId:'CA35F48A5FC48686', sh:'circle', d:"An Agent Environment is an Operating Eco-System which defines the interactions (Service Channel) of an Agent with its partners (Partner Agent)."},
+    {type: 'node', id:'43EE620E63725A56', t:"Value Added Object", parentId:'02AF0A4B5A182417', sh:'circle', d:"A Value Added Object is an aspect of Architecture Block (Type)s which can be the subject of business transactions."},
+    {type: 'node', id:'A4A5B3F855585CE1', t:"Architecture Block (Type)", parentId:'02AF0A4B5A182417', sh:'circle', d:"An Architecture Block (Type) is a type of Architecture Block which is used in the description of the enterprise, such as Processes, Org-Units, Applications."},
+    {type: 'node', id:'7C40A5B455272BB4', t:"Constraint Value", parentId:'C30BD1505A5D97F9', sh:'circle', d:"A Constraint Value is a possible value of a Constraining Property such as a delivery time of 30 minutes, a weight of 20 kg, a high level of confidentiality, stormy conditions."},
+    {type: 'node', id:'0DC20F4D5E9B5CA9', t:"Architecture Category", parentId:'C30BD1505A5D97F9', sh:'circle', d:"An Architecture Category is a Categorization Block used to classify Architecture Blocks. Examples are Data Category, Business Line."},
+    {type: 'node', id:'16B051ED64357695', t:"Asset Category", parentId:'C30BD1505A5D97F9', sh:'circle', d:"An Asset Category is a general purpose Architecture Category used to classify any type of Architecture Block (Type)."},
+    {type: 'node', id:'EBCFAEAC5AD76ED7', t:"Architecture Block (Individual)", parentId:'02AF0A4B5A182417', sh:'circle', d:"An Individual which is used in the description of the enterprise."},
+    {type: 'node', id:'8D5E986F552E28D5', t:"Location", parentId:'C30BD1505A5D97F9', sh:'circle', d:"A Location is a geopolitical location anywhere on the earth."},
+  //edges
+    { type: 'link', id:'CA35F48A5FC48686-3D3F4AED6201346C', id1:'CA35F48A5FC48686', id2:'CA35F48A5FC48686', t:"Ecosystem Component"},
+    { type: 'link', id:'CA3513AF5FC59413-10F2691D61B32F71', id1:'CA3513AF5FC59413', id2:'D6CD0FD95AB9744B', t:"Scenarized Environment"},
+    { type: 'link', id:'CA3513AF5FC59413-CA3514125FC59538', id1:'CA3513AF5FC59413', id2:'79368381561716A6', t:"Subject Agent"},
+    { type: 'link', id:'CA3513AF5FC59413-CA35159E5FC5978D', id1:'CA3513AF5FC59413', id2:'79368381561716A6', t:"Partner Agent"},
+    { type: 'link', id:'CA3513AF5FC59413-CA3518A45FC59E76', id1:'CA3513AF5FC59413', id2:'79368381561716A6', t:"Scenario Participant"},
+    { type: 'link', id:'79368381561716A6-456836845F9B00A2', id1:'79368381561716A6', id2:'79368381561716A6', t:"Specialized Agent"},
+    { type: 'link', id:'79368381561716A6-BC5BD25F61FBB804', id1:'79368381561716A6', id2:'79368381561716A6', t:"Realized Agent"},
+    { type: 'link', id:'79368381561716A6-004B03B15EBD0FDB', id1:'79368381561716A6', id2:'D682EF5E56144E77', t:"Performed Process"},
+    { type: 'link', id:'79368381561716A6-1DA6216A5EBC65F7', id1:'79368381561716A6', id2:'79368381561716A6', t:"Agent Component"},
+    { type: 'link', id:'79368381561716A6-F4BEE5925EE1BE5B', id1:'79368381561716A6', id2:'D6CD116D5AB97525', t:"Information Store"},
+    { type: 'link', id:'9E3837E46192FCAD-9E38384C6192FEBE', id1:'9E3837E46192FCAD', id2:'79368381561716A6', t:"Agent"},
+    { type: 'link', id:'9E3837E46192FCAD-9D389F6761C4127D', id1:'9E3837E46192FCAD', id2:'9E3837E46192FCAD', t:"Deployed Agent Component"},
+    { type: 'link', id:'333F35EE5DDE0C8C-5C2D7689622B31E6', id1:'333F35EE5DDE0C8C', id2:'333F35EE5DDE0C8C', t:"Realized Scenario"},
+    { type: 'link', id:'333F35EE5DDE0C8C-5C2D7698622B326D', id1:'333F35EE5DDE0C8C', id2:'333F35EE5DDE0C8C', t:"Specialized Scenario"},
+    { type: 'link', id:'333F35EE5DDE0C8C-07E737495ECCD831', id1:'333F35EE5DDE0C8C', id2:'79368381561716A6', t:"Scenario Participant"},
+    { type: 'link', id:'333F35EE5DDE0C8C-07E737925ECCD8F1', id1:'333F35EE5DDE0C8C', id2:'79368381561716A6', t:"Described Agent"},
+    { type: 'link', id:'7C4085DB552708A4-30223C345EC90F4F', id1:'7C4085DB552708A4', id2:'B181B98C54891882', t:"capability map component"},
+    { type: 'link', id:'C559C100616F7DE3-F21DF5D0617B6707', id1:'C559C100616F7DE3', id2:'07CA0F015DD84EFA', t:"Context Component"},
+    { type: 'link', id:'986CD4EC5FFCA3AC-F8D1AE0262A50E03', id1:'986CD4EC5FFCA3AC', id2:'986CD4EC5FFCA3AC', t:"Specialized Behavior"},
+    { type: 'link', id:'986CD4EC5FFCA3AC-F8D1AE6A62A50EA1', id1:'986CD4EC5FFCA3AC', id2:'986CD4EC5FFCA3AC', t:"Realized Behavior"},
+    { type: 'link', id:'A371A43B5B865817-7936846756171776', id1:'A371A43B5B865817', id2:'B181B98C54891882', t:"Fulfilled Capability"},
+    { type: 'link', id:'A371A43B5B865817-24AE36805ED1CD18', id1:'A371A43B5B865817', id2:'FE2203CA5C4F0FED', t:"Rule Enforcement"},
+    { type: 'link', id:'B181B98C54891882-D5C9EF915ECF206A', id1:'B181B98C54891882', id2:'63F8870255AE1BA2', t:"Capability Measure Kind"},
+    { type: 'link', id:'B181B98C54891882-D5C9F0ED5ECF2499', id1:'B181B98C54891882', id2:'B181B98C54891882', t:"Specialized Capability"},
+    { type: 'link', id:'B181B98C54891882-D05933365EF2B8C5', id1:'B181B98C54891882', id2:'E6F250185F772EE1', t:"Involved Information"},
+    { type: 'link', id:'B181B98C54891882-30223AEA5EC90B04', id1:'B181B98C54891882', id2:'B181B98C54891882', t:"Capability Component"},
+    { type: 'link', id:'D682EF5E56144E77-E4C0012F5ED1EEF6', id1:'D682EF5E56144E77', id2:'D682EF5E56144E77', t:"Specialized Process"},
+    { type: 'link', id:'D682EF5E56144E77-CA9DDFBC5FCF404E', id1:'D682EF5E56144E77', id2:'D682EF5E56144E77', t:"Realized Proces"},
+    { type: 'link', id:'D682EF5E56144E77-E4C003255ED1F037', id1:'D682EF5E56144E77', id2:'D6CD116D5AB97525', t:"Process Store"},
+    { type: 'link', id:'D682EF5E56144E77-004B041F5EBD1119', id1:'D682EF5E56144E77', id2:'79368381561716A6', t:"Active Participant"},
+    { type: 'link', id:'D682EF5E56144E77-8E1390925EBE3DB7', id1:'D682EF5E56144E77', id2:'D682EF5E56144E77', t:"Sub-Process"},
+    { type: 'link', id:'D682EF5E56144E77-E4C0FE7B5ED0EB4E', id1:'D682EF5E56144E77', id2:'986CD4EC5FFCA3AC', t:"Process Activity"},
+    { type: 'link', id:'07CA0F015DD84EFA-5C2D6D03622B285B', id1:'07CA0F015DD84EFA', id2:'07CA0F015DD84EFA', t:"Realized Functional Asset"},
+    { type: 'link', id:'07CA0F015DD84EFA-5C2D6D14622B28E7', id1:'07CA0F015DD84EFA', id2:'07CA0F015DD84EFA', t:"Specialized Functional Asset"},
+    { type: 'link', id:'07CA0F015DD84EFA-427C1E2B64B5D643', id1:'07CA0F015DD84EFA', id2:'427C1C7D64B5D4A1', t:"Risk"},
+    { type: 'link', id:'07CA0F015DD84EFA-8E1393E85EBE476F', id1:'07CA0F015DD84EFA', id2:'959320325EE7FE24', t:"Policy Conformance"},
+    { type: 'link', id:'D6CD0FD95AB9744B-1C3B0017601D6D16', id1:'D6CD0FD95AB9744B', id2:'D6CD0FD95AB9744B', t:"Specialized Operation Environment"},
+    { type: 'link', id:'D6CD0FD95AB9744B-1C3B0043601D6D8C', id1:'D6CD0FD95AB9744B', id2:'D6CD0FD95AB9744B', t:"Realized Operating Environment"},
+    { type: 'link', id:'D6CD0FD95AB9744B-80BE28965FC2A6B8', id1:'D6CD0FD95AB9744B', id2:'79368381561716A6', t:"Participant Agent"},
+    { type: 'link', id:'D6CD0FD95AB9744B-FA4FFC205EC86201', id1:'D6CD0FD95AB9744B', id2:'79368381561716A6', t:"Subject Agent"},
+    { type: 'link', id:'D6CD0FD95AB9744B-FA4FFC235EC86276', id1:'D6CD0FD95AB9744B', id2:'79368381561716A6', t:"Partner Agent"},
+    { type: 'link', id:'A4A5B3F855585CE1-DC9407806025FC1C', id1:'A4A5B3F855585CE1', id2:'7C40A5B455272BB4', t:"Qualifying Constraint Value"},
+    { type: 'link', id:'A4A5B3F855585CE1-0DC20F885E9B5E29', id1:'A4A5B3F855585CE1', id2:'0DC20F4D5E9B5CA9', t:"Category of Architecture Block"},
+    { type: 'link', id:'A4A5B3F855585CE1-16B05351643577B3', id1:'A4A5B3F855585CE1', id2:'16B051ED64357695', t:"Category of Asset"},
+    { type: 'link', id:'A4A5B3F855585CE1-83BB8C1A5B3765B5', id1:'A4A5B3F855585CE1', id2:'63F8870255AE1BA2', t:"Applicable Constraint"},
+    { type: 'link', id:'A4A5B3F855585CE1-CACED79A5BD73F9B', id1:'A4A5B3F855585CE1', id2:'A4A5B3F855585CE1', t:"Specialized Block"},
+    { type: 'link', id:'A4A5B3F855585CE1-CACED8645BD7404B', id1:'A4A5B3F855585CE1', id2:'A4A5B3F855585CE1', t:"Realized Block"},
+    { type: 'link', id:'EBCFAEAC5AD76ED7-EBCFB6435AD772E9', id1:'EBCFAEAC5AD76ED7', id2:'A4A5B3F855585CE1', t:"Architecture Block (Type)"},
+    { type: 'link', id:'EBCFAEAC5AD76ED7-EBCFB9CF5AD77347', id1:'EBCFAEAC5AD76ED7', id2:'7C40A5B455272BB4', t:"Qualifying Constraint Value"},
+    { type: 'link', id:'EBCFAEAC5AD76ED7-167126A16008EFEB', id1:'EBCFAEAC5AD76ED7', id2:'8D5E986F552E28D5', t:"Location at"},
+    { type: 'link', id:'EBCFAEAC5AD76ED7-0F67194C5EBDF6F8', id1:'EBCFAEAC5AD76ED7', id2:'EBCFAEAC5AD76ED7', t:"architecture component"}
+  ]
+}
+</script>
+<script src="../standard/assets/js/keylines_domain.js" type="module"></script>
+</div>
+</section>
+<a class="object-section-anchor" id="des"></a>
+<section class="object-section">
+<h4>CONCEPT DESCRIPTIONS</h4> 
+<hr class="sectionbreak" />
+<h5>Concrete Concepts</h5>
+<table class="table  table-set-col-width">
+<thead>
+<tr><th>Concept</th><th>Description</th><th>HOPEX Metaclass</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="2cc9717155263b89.htm" target="_top">Governance Committee</a></td>
+<td class="description-text">A&#160;<b> Governance Committee</b> is a group of <a href="bcebd0175491272a.htm" target="_top"><b><u>Stakeholder</u></b></a>s that contributes to architecture and assurance activities and governs <a href="d321c226601262ae.htm" target="_top"><b><u>Enduring Initiative</u></b></a>s.       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="b09fc6ae56bd201e.htm" target="_top">EA Organization</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_eventconcept.ico.gif"/>&nbsp;
+<a  href="34bd440b61f104cb.htm" target="_top">Waiver End</a></td>
+<td class="description-text">        </td>
+<td></td>
+</tr>  
+</tbody>
+</table>
+<hr class="sectionbreak" />
+<h5>Abstract Concepts</h5>
+<table class="table  table-set-col-width">
+<thead >
+<tr><th>Concept</th><th>Description</th><th>HOPEX Metaclass</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="79368381561716a6.htm" target="_top">Agent</a></td>
+<td class="description-text">An&#160;<b> Agent</b> is an <a href="a371a43b5b865817.htm" target="_top"><b><u>Operating Asset</u></b></a><b> </b>which is able to participate actively to <a href="d682ef5e56144e77.htm" target="_top"><b><u>Process</u></b></a>es (<a href="004b041f5ebd1119.htm" target="_top"><b><u>Active Participant</u></b></a>) and/or to conduct <a href="d682ef5e56144e77.htm" target="_top"><b><u>Process</u></b></a>es (<a href="004b03b15ebd0fdb.htm" target="_top"><b><u>Performed Process</u></b></a>) to produce <a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>s that benefit to other&#160;<b> Agent</b>s or affect other&#160;<b> Agent</b>s.<i><ul>References:<li><a href="../../../www.omg.org/spec/KerML/1.0/Beta1/ptc-23-06-01.pdf#page=191"><img src="../standard/extr.ico.gif">&nbsp;OMG - KerML - Structure</a></li> <li><a href="../../../www.omg.org/spec/UML/2.5.1/formal-17-12-05.pdf#page=231"><img src="../standard/extr.ico.gif">&nbsp;OMG - UML - EncapsulatedClassifier</a></li> <li><a href="https://pubs.opengroup.org/architecture/o-aa-standard/definitions.html#_modularity"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - OAA - Modularity</a></li> <li><a href="https://pubs.opengroup.org/togaf-standard/introduction/apdxb.html#tag_06_41"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Definition - System</a></li> <li><a href="../resources/Ackoff-Towards-a-system-of-systems-concepts.pdf#AbstractSystem"><img src="../standard/extr.ico.gif">&nbsp;Russell Ackoff - System of Concepts - Abstract System</a></li> <li><a href="http://wordnetweb.princeton.edu/perl/webwn?o2=&amp;o0=1&amp;o8=1&amp;o1=1&amp;o7=&amp;o5=&amp;o9=&amp;o6=&amp;o3=&amp;o4=&amp;r=1&amp;s=agent&amp;i=2&amp;h=100000000#c"><img src="../standard/extr.ico.gif">&nbsp;WordNet - Agent</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="e9321053590b4a88.htm" target="_top">Class of Agent Assembly</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="d6cd0fd95ab9744b.htm" target="_top">Agent Environment</a></td>
+<td class="description-text">An&#160;<b> Agent Environment</b> is an <a href="ca35f48a5fc48686.htm" target="_top"><b><u>Operating Eco-System</u></b></a> which defines the interactions (<b> Service Channel</b>) of an <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a> with its partners (<a href="fa4ffc235ec86276.htm" target="_top"><b><u>Partner Agent</u></b></a>).<i><ul>References:<li><a href="../resources/Ackoff-Towards-a-system-of-systems-concepts.pdf#EnvironmentOfaSystem"><img src="../standard/extr.ico.gif">&nbsp;Russell Ackoff - System of Concepts - Environment of a system</a></li></ul></i>        </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="986cd4ec5ffca3ac.htm" target="_top">Behavior</a></td>
+<td class="description-text">A&#160;<b> Behavior</b> is an <a href="a371a43b5b865817.htm" target="_top"><b><u>Operating Asset</u></b></a> that describes any action or reaction of an <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a> to external or internal circumstances. This includes <a href="d682ef5e56144e77.htm" target="_top"><b><u>Process</u></b></a>es (action), <a href="333f35ee5dde0c8c.htm" target="_top"><b><u>Interaction Scenario</u></b></a>s (stories) or interactions (<a href="24ae31b55ed1c66d.htm" target="_top"><b><u>Service Interface</u></b></a>).<i><ul>References:<li><a href="../../../www.omg.org/spec/UML/2.5.1/formal-17-12-05.pdf#page=328"><img src="../standard/extr.ico.gif">&nbsp;OMG - UML - Behavior</a></li> <li><a href="../resources/Ackoff-Towards-a-system-of-systems-concepts.pdf#SystemBehavior"><img src="../standard/extr.ico.gif">&nbsp;Russell Ackoff - System of Concepts - Behavior</a></li> <li><a href="http://wordnetweb.princeton.edu/perl/webwn?o2=&amp;o0=1&amp;o8=1&amp;o1=1&amp;o7=&amp;o5=&amp;o9=&amp;o6=&amp;o3=&amp;o4=&amp;r=1&amp;s=behavior&amp;i=2&amp;h=1000000#c"><img src="../standard/extr.ico.gif">&nbsp;WordNet - Behavior and Activity</a></li></ul></i>        </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="fe2203ca5c4f0fed.htm" target="_top">Behavioral Rule</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Behavioral Rule</b> is a <a href="278678e95b2533d6.htm" target="_top"><b><u>Directive</u></b></a> intended to guide the <a href="986cd4ec5ffca3ac.htm" target="_top"><b><u>Behavior</u></b></a> of <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s, in compliance with enterprise <a href="959320325ee7fe24.htm" target="_top"><b><u>Policy</u></b></a>(ies) or regulations.</div><div align="left" style="min-height: 12pt; ">Often, a rule is derived from a <a href="959320325ee7fe24.htm" target="_top"><b><u>Policy</u></b></a>.&#160;<b> Behavioral Rule</b> are enforced in <a href="d682ef5e56144e77.htm" target="_top"><b><u>Process</u></b></a>es and <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s.</div><i><ul>References:<li><a href="../../../www.omg.org/spec/BMM/1.3/formal-15-05-19.pdf#page=46"><img src="../standard/extr.ico.gif">&nbsp;OMG - BMM - Business Rule</a></li> <li><a href="../../../www.omg.org/spec/SBVR/1.5/formal-19-10-02.pdf#page=129"><img src="../standard/extr.ico.gif">&nbsp;OMG - SBVR - Business Rule (Behavioral)</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="75cb7d9258b63e33.htm" target="_top">Rule Building Block</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="b181b98c54891882.htm" target="_top">Capability</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Capability</b>&#160; is an ability to produce an <a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>.</div><div align="left" style="min-height: 12pt; "><b>&#160;Capability</b>s are fulfilled by <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s performing <a href="d682ef5e56144e77.htm" target="_top"><b><u>Process</u></b></a>es and interacting with other <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s to produce the desired <a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>.</div><i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Capability"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - Capability</a></li> <li><a href="https://pubs.opengroup.org/architecture/o-aa-standard/definitions.html#_capability"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - OAA - Capability</a></li> <li><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_33"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Definition - Capability</a></li> <li><a href="../resources/Ackoff-Choice-Communication-and-Conflict.pdf#FunctionalClass"><img src="../standard/extr.ico.gif">&nbsp;Russell Ackoff - Choice &amp; Communication - FunctionalClass</a></li> <li><a href="http://wordnetweb.princeton.edu/perl/webwn?o2=&amp;o0=1&amp;o8=1&amp;o1=1&amp;o7=&amp;o5=&amp;o9=&amp;o6=&amp;o3=&amp;o4=&amp;r=1&amp;s=capability&amp;i=3&amp;h=10000000#c"><img src="../standard/extr.ico.gif">&nbsp;WordNet - Capabiity</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="77987c424f5f17c5.htm" target="_top">Capability</a></td>
+</tr>
+<tr>
+<td><img src="../standard/relationship-concepttype.ico.gif"/>&nbsp;
+<a  href="c334c4e35ecb43ea.htm" target="_top">Capability Dependency</a></td>
+<td class="description-text">        </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="7c4085db552708a4.htm" target="_top">Capability Map</a></td>
+<td class="description-text">Top level assembly of <a href="b181b98c54891882.htm" target="_top"><b><u>Capability</u></b></a>ies and their dependencies which, together, provide a scope of added value (<a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>s) pursued by <a href="d321c226601262ae.htm" target="_top"><b><u>Enduring Initiative</u></b></a>s.       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="8714d7bb559b5ee2.htm" target="_top">Capability Map</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="9e3837e46192fcad.htm" target="_top">Deployed Agent</a></td>
+<td class="description-text">A&#160;<b> Deployed Agent</b> is an entity that exists in space/time and that is able to participate actively to <a href="d682ef5e56144e77.htm" target="_top"><b><u>Process</u></b></a>es and/or to conduct <a href="d682ef5e56144e77.htm" target="_top"><b><u>Process</u></b></a>es.<i><ul>References:<li><a href="../../../www.omg.org/spec/KerML/1.0/Beta1/ptc-23-06-01.pdf#page=309"><img src="../standard/extr.ico.gif">&nbsp;OMG - KerML - Object</a></li></ul></i>        </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="ca3513af5fc59413.htm" target="_top">Environment Scenario</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Environment Scenario</b> is a story that describes how an <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a> interacts with its partners (<a href="fa4ffc235ec86276.htm" target="_top"><b><u>Partner Agent</u></b></a>) to achieve <a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>s in a specific <a href="ca35f48a5fc48686.htm" target="_top"><b><u>Operating Eco-System</u></b></a> (<a href="d6cd0fd95ab9744b.htm" target="_top"><b><u>Agent Environment</u></b></a>).</div><div align="left" style="min-height: 12pt; ">This includes:</div><div align="left" style="min-height: 12pt; ">1) A course of events represented by&#160;<b> Object Flow</b>s depicting the steps towards the delivery of expected <a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">2) Interacting partners who participate to the story in the considered <a href="ca35f48a5fc48686.htm" target="_top"><b><u>Operating Eco-System</u></b></a>.</div>       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="b695ba4a58cb5b2a.htm" target="_top">Scenario of Enterprise Agent Environment</a></td>
+</tr>
+<tr>
+<td><img src="../standard/relationship-concepttype.ico.gif"/>&nbsp;
+<a  href="24ae31d75ed1c747.htm" target="_top">Event</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Event</b> is type of change that is used to coordinate <a href="986cd4ec5ffca3ac.htm" target="_top"><b><u>Behavior</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">An&#160;<b> Event</b> connects a&#160;<b> Predecessor Behavior</b> role producing the event, to a&#160;<b> Successor Behavior</b> role reacting to the event.</div><i><ul>References:<li><a href="../resources/Ackoff-Choice-Communication-and-Conflict.pdf#Signal"><img src="../standard/extr.ico.gif">&nbsp;Russell Ackoff - Choice &amp; Communication - Signal</a></li> <li><a href="../resources/Ackoff-Towards-a-system-of-systems-concepts.pdf#SystemChanges"><img src="../standard/extr.ico.gif">&nbsp;Russell Ackoff - System of Concepts - System Changes</a></li> <li><a href="http://wordnetweb.princeton.edu/perl/webwn?o2=&amp;o0=1&amp;o8=1&amp;o1=1&amp;o7=&amp;o5=&amp;o9=&amp;o6=&amp;o3=&amp;o4=&amp;r=1&amp;s=change&amp;i=2&amp;h=10001011231230220000000000000000000#c"><img src="../standard/extr.ico.gif">&nbsp;WordNet - Change</a></li></ul></i>        </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="07ca0f015dd84efa.htm" target="_top">Functional Asset</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; "><b>&#160;Functional Asset</b>s encompasse <a href="d342d88e5b121401.htm" target="_top"><b><u>Architecture Block</u></b></a>s used to describe how an enterprise function. This includes the purposes of an enterprise (<a href="b181b98c54891882.htm" target="_top"><b><u>Capability</u></b></a>) and the way the enterprise operates to fulfill these purposes (<a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s and their&#160; <a href="986cd4ec5ffca3ac.htm" target="_top"><b><u>Behavior</u></b></a>s).</div><div align="left" style="min-height: 12pt; "><b>&#160;Functional Asset</b>s include:</div><div align="left" style="min-height: 12pt; ">1. Blocks defining results of <a href="986cd4ec5ffca3ac.htm" target="_top"><b><u>Behavior</u></b></a>s of the enterprise or its sub-systems, that benefit to it internal or external customers : <a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>,</div><div align="left" style="min-height: 12pt; ">2. Blocks used to describe the capabilities of the enterprise or its sub-systems: <a href="b181b98c54891882.htm" target="_top"><b><u>Capability</u></b></a>,</div><div align="left" style="min-height: 12pt; ">3. Blocks used to describe information: <a href="e6f250185f772ee1.htm" target="_top"><b><u>Information Object</u></b></a>.</div><div align="left" style="min-height: 12pt; ">4. Blocks used to describe how the enterprise operates: <a href="a371a43b5b865817.htm" target="_top"><b><u>Operating Asset</u></b></a>s (<a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>, <a href="d682ef5e56144e77.htm" target="_top"><b><u>Process</u></b></a>, <a href="333f35ee5dde0c8c.htm" target="_top"><b><u>Interaction Scenario</u></b></a>, <a href="24ae31b55ed1c66d.htm" target="_top"><b><u>Service Interface</u></b></a>).</div><div align="left" style="min-height: 12pt; ">All&#160;<b> Functional Asset</b>s are constrained by <a href="959320325ee7fe24.htm" target="_top"><b><u>Policy</u></b></a>s and are exposed to <a href="427c1c7d64b5d4a1.htm" target="_top"><b><u>Risk Type</u></b></a>s.</div><i><ul>References:<li><a href="../../../complexsystems.mst.edu/media/conference/complexsystems/documents/de_Weck_CAS_Keynote_Nov_2015_updated.pdf#page=40"><img src="../standard/extr.ico.gif">&nbsp;de Weck - The three dimensions of complexity</a></li> <li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Asset"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - Asset</a></li> <li><a href="../resources/Ackoff-Choice-Communication-and-Conflict.pdf#FunctionalClass"><img src="../standard/extr.ico.gif">&nbsp;Russell Ackoff - Choice &amp; Communication - FunctionalClass</a></li> <li><a href="https://www.sebokwiki.org/wiki/Functional_Architecture_(glossary)"><img src="../standard/extr.ico.gif">&nbsp;SEBoK - Functional Architecture</a></li> <li><a href="https://en.wikipedia.org/wiki/Functional_software_architecture#:~:text=A%20functional%20software%20architecture%20(FSA,%2Doperative%20information%2Ddriven%20enterprise."><img src="../standard/extr.ico.gif">&nbsp;Wikipedia - Software Functional Architecture</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="c229c44e5d0c649f.htm" target="_top">Functional Building Block</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="ff0501b65b253fdd.htm" target="_top">Governing Team</a></td>
+<td class="description-text">A&#160;<b> Governing Team</b> consists of a collection of individuals and resources, including personnel and committees, assembled to effectively manage and sustain an <a href="d321c226601262ae.htm" target="_top"><b><u>Enduring Initiative</u></b></a>.<i><ul>References:<li><a href="https://www.iso.org/obp/ui/#iso:std:iso:37000:ed-1:v1:en"><img src="../standard/extr.ico.gif">&nbsp;ISO 37000 - 3.4.4 Governing Body</a></li> <li><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_48"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Definitions - Governance</a></li> <li><a href="http://wordnetweb.princeton.edu/perl/webwn?s=governing+body&amp;sub=Search+WordNet&amp;o2=&amp;o0=1&amp;o8=1&amp;o1=1&amp;o7=&amp;o5=&amp;o9=&amp;o6=&amp;o3=&amp;o4=&amp;h="><img src="../standard/extr.ico.gif">&nbsp;WordNet - Governing Body</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="728a7d2c59fc72b3.htm" target="_top">Team</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="d6cd116d5ab97525.htm" target="_top">Information Domain</a></td>
+<td class="description-text">An&#160;<b> Information Domain</b> is a group of <a href="d6cd2cea5ab98e5f.htm" target="_top"><b><u>Information Entity</u></b></a>(ies) which constitutes a unit a knowlege required by an <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a> to operate or required during a <a href="d682ef5e56144e77.htm" target="_top"><b><u>Process</u></b></a> execution.       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="7047785d56e96940.htm" target="_top">Information Domain</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="e6f250185f772ee1.htm" target="_top">Information Object</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Information Object</b>&#160; represents anything that can be communicated or memorized by an <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a> in order to produce its <a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">An&#160;<b> Information Object</b> is either an <a href="d6cd2cea5ab98e5f.htm" target="_top"><b><u>Information Entity</u></b></a> or a <a href="d7f90c675f737699.htm" target="_top"><b><u>Information Property</u></b></a>.<br />The difference lies in their relationship to change and to time. <a href="d6cd2cea5ab98e5f.htm" target="_top"><b><u>Information Entity</u></b></a>(ies) can change over time and have a lifeycle while <a href="d7f90c675f737699.htm" target="_top"><b><u>Information Property</u></b></a>s are immutable characteristics.</div>       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="81f48a9756f17efb.htm" target="_top">Information Entity</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="0ffeec41600be08a.htm" target="_top">Initiative</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Initiative</b> is any piece of work that is undertaken or attempted under the responsibility of a <a href="b2f2d64d5f47e364.htm" target="_top"><b><u>Steering Authority</u></b></a>.</div><div align="left" style="min-height: 12pt; "><b>&#160;Initiative</b>s range from single project to long term initiatives (<a href="d321c226601262ae.htm" target="_top"><b><u>Enduring Initiative</u></b></a>) such as Enterprises.</div><div align="left" style="min-height: 12pt; "><b>&#160;Initiative</b>s are sychronized over time using <a href="08570d835ed129a3.htm" target="_top"><b><u>Initiative Milestone</u></b></a>s.</div><i><ul>References:<li><a href="https://www.merriam-webster.com/dictionary/undertaking"><img src="../standard/extr.ico.gif">&nbsp;Merriam Webster - Undertaking</a></li> <li><a href="http://wordnetweb.princeton.edu/perl/webwn?s=undertaking&amp;sub=Search+WordNet&amp;o2=&amp;o0=1&amp;o8=1&amp;o1=1&amp;o7=&amp;o5=&amp;o9=&amp;o6=&amp;o3=&amp;o4=&amp;h=000"><img src="../standard/extr.ico.gif">&nbsp;Wordnet - Undertaking</a></li></ul></i>        </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="333f35ee5dde0c8c.htm" target="_top">Interaction Scenario</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Interaction Scenario</b> is a story (<a href="986cd4ec5ffca3ac.htm" target="_top"><b><u>Behavior</u></b></a>) that describes how the components of an <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a> interacts to produce <a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>s.<br />This includes:</div><div align="left" style="min-height: 12pt; ">1) A course of events represented by&#160;<b> Object Flow</b>s depicting the story towards the delivery of expected <a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">2) Interacting <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s who participate to the story.</div><i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#InteractionScenario"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - InteractionScenario</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="d9fdde4f5829524f.htm" target="_top">Scenario of Enterprise Agent Flow</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="a371a43b5b865817.htm" target="_top">Operating Asset</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Operating Asset</b> is a <a href="07ca0f015dd84efa.htm" target="_top"><b><u>Functional Asset</u></b></a> used to describes the way <a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>s are produced and consumed: how&#160; (<a href="986cd4ec5ffca3ac.htm" target="_top"><b><u>Behavior</u></b></a>s) and by whom (<a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s).</div><div align="left" style="min-height: 12pt; "><b>&#160;Operating Asset</b>s include&#160; <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s and their <a href="986cd4ec5ffca3ac.htm" target="_top"><b><u>Behavior</u></b></a>s (<a href="d682ef5e56144e77.htm" target="_top"><b><u>Process</u></b></a>es, <a href="24ae31b55ed1c66d.htm" target="_top"><b><u>Service Interface</u></b></a>s and <a href="333f35ee5dde0c8c.htm" target="_top"><b><u>Interaction Scenario</u></b></a>s).</div><div align="left" style="min-height: 12pt; "><b>&#160;Operating Asset</b>s fulfill <a href="b181b98c54891882.htm" target="_top"><b><u>Capability</u></b></a>(ies) (<a href="7936846756171776.htm" target="_top"><b><u>Fulfilled Capability</u></b></a>).<br />As any <a href="07ca0f015dd84efa.htm" target="_top"><b><u>Functional Asset</u></b></a>,&#160;<b> Operating Asset</b>s are subject to <a href="8E1393E85EBE476F.htm" target="_top"><b><u>Policy Conformance</u></b></a>s. In addition, they define <a href="24ae36805ed1cd18.htm" target="_top"><b><u>Rule Enforcement</u></b></a>s to indicate how <a href="8E1393E85EBE476F.htm" target="_top"><b><u>Policy Conformance</u></b></a>s are met.</div><div align="left" style="min-height: 12pt; ">Any&#160;<b> Operating Asset</b> can be considered as a <a href="43ee620e63725a56.htm" target="_top"><b><u>Value Added Object</u></b></a> which means it can be transformed and delivered as part of business transactions.</div>       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="c229d1235d0c6ae1.htm" target="_top">Class of Operating Block</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="c559c100616f7de3.htm" target="_top">Operating Context</a></td>
+<td class="description-text">An&#160;<b> Operating Context</b> is a perimeter of <a href="A4A5B3F855585CE1.htm" target="_top"><b><u>Architecture Block (Type)</u></b></a> that forms the scope of an <a href="d321c226601262ae.htm" target="_top"><b><u>Enduring Initiative</u></b></a>. It can be a set of <a href="b181b98c54891882.htm" target="_top"><b><u>Capability</u></b></a>(ies) that define the purpose of operating <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s or the <a href="ca35f48a5fc48686.htm" target="_top"><b><u>Operating Eco-System</u></b></a> in which these <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s deliver these <a href="b181b98c54891882.htm" target="_top"><b><u>Capability</u></b></a>(ies).       </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="ca35f48a5fc48686.htm" target="_top">Operating Eco-System</a></td>
+<td class="description-text">An&#160;<b> Operating Eco-System</b> is an <a href="c559c100616f7de3.htm" target="_top"><b><u>Operating Context</u></b></a> in which an <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a> exists or lives for a specific purpose, interacting with partners.<br />For instance, the operating context of an enterprise includes its customers and suppliers.<i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Architecture"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - Architecture</a></li> <li><a href="https://pubs.opengroup.org/architecture/o-aa-standard/definitions.html#ecosystem"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - OAA - Ecosystem</a></li> <li><a href="../resources/Ackoff-Towards-a-system-of-systems-concepts.pdf#EnvironmentOfaSystem"><img src="../standard/extr.ico.gif">&nbsp;Russell Ackoff - System of Concepts - Environment of a system</a></li></ul></i>        </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/relationship-concepttype.ico.gif"/>&nbsp;
+<a  href="30223b5c5ec90c01.htm" target="_top">Outcome</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Outcome</b> is an <a href="24ae31d75ed1c747.htm" target="_top"><b><u>Event</u></b></a> that indicates the availability of an expected change in the state of a <a href="43ee620e63725a56.htm" target="_top"><b><u>Value Added Object</u></b></a> brought about by a specific <a href="986cd4ec5ffca3ac.htm" target="_top"><b><u>Behavior</u></b></a>,</div><div align="left" style="min-height: 12pt; ">An&#160;<b> Outcome</b> is a connection point between a producer <a href="986cd4ec5ffca3ac.htm" target="_top"><b><u>Behavior</u></b></a> and a consumer <a href="986cd4ec5ffca3ac.htm" target="_top"><b><u>Behavior</u></b></a> which benefits from the produced <a href="43ee620e63725a56.htm" target="_top"><b><u>Value Added Object</u></b></a>.</div><div align="left" style="min-height: 12pt; ">In HOPEX, the most common&#160;<b> Outcome</b> is exemplified by the <a href="302238be5ec9020a.htm" target="_top"><b><u>Information Outcome</u></b></a> which refers to the production or consumption of a specific <a href="e6f250185f772ee1.htm" target="_top"><b><u>Information Object</u></b></a> such as an order received or a&#160; payment rejected.</div><i><ul>References:<li><a href="../../../www.omg.org/spec/BACM/1.0/Beta1/dtc-22-06-01.pdf#page=28"><img src="../standard/extr.ico.gif">&nbsp;OMG - BACM - Outcome</a></li> <li><a href="../../../www.omg.org/spec/UML/2.5.1/formal-17-12-05.pdf#page=211"><img src="../standard/extr.ico.gif">&nbsp;OMG - UML - Signal</a></li> <li><a href="../resources/Ackoff-Choice-Communication-and-Conflict.pdf#Outcomes"><img src="../standard/extr.ico.gif">&nbsp;Russell Ackoff - Choice &amp; Communication - Outcomes</a></li> <li><a href="../resources/Ackoff-Choice-Communication-and-Conflict.pdf#Utility"><img src="../standard/extr.ico.gif">&nbsp;Russell Ackoff - Choice &amp; Communication - Utility</a></li> <li><a href="http://wordnetweb.princeton.edu/perl/webwn?o2=&amp;o0=1&amp;o8=1&amp;o1=1&amp;o7=&amp;o5=&amp;o9=&amp;o6=&amp;o3=&amp;o4=&amp;s=outcome&amp;h=10112312312231231230222200&amp;j=25#c"><img src="../standard/extr.ico.gif">&nbsp;WordNet - Outcome</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="d9fdded9582953e7.htm" target="_top">Class of Work Product</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="959320325ee7fe24.htm" target="_top">Policy</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Policy</b> is a <a href="278678e95b2533d6.htm" target="_top"><b><u>Directive</u></b></a> that is not directly enforceable whose purpose is to govern, guide or constrain the structure and behavior of <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s in the enterprise. </div><div align="left" style="min-height: 12pt; ">Policies provide the basis for rules and govern <a href="986cd4ec5ffca3ac.htm" target="_top"><b><u>Behavior</u></b></a>s carried out by <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s.<br />Example of&#160;<b> Policy</b>s are <a href="07ca0ca15dd84ada.htm" target="_top"><b><u>Regulation Article</u></b></a>s, <a href="fe22ffdd5c4e0bd4.htm" target="_top"><b><u>Business Policy</u></b></a>s or <a href="07231aff5f4eb337.htm" target="_top"><b><u>Architecture principle</u></b></a>s.</div><i><ul>References:<li><a href="../../../www.omg.org/spec/BMM/1.3/formal-15-05-19.pdf#page=45"><img src="../standard/extr.ico.gif">&nbsp;OMG - BMM 1.3 - Business Policy</a></li> <li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Rule"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - Rule</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="68ed6a295d065b7b.htm" target="_top">Policy</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="d682ef5e56144e77.htm" target="_top">Process</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Process</b> is a <a href="986cd4ec5ffca3ac.htm" target="_top"><b><u>Behavior</u></b></a> that describes a typical course of action intended to produce <a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>s, through the involvement of <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s as <a href="004b041f5ebd1119.htm" target="_top"><b><u>Active Participant</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">During its course of action, a process consumes or produces <a href="43ee620e63725a56.htm" target="_top"><b><u>Value Added Object</u></b></a>s, including <a href="e6f250185f772ee1.htm" target="_top"><b><u>Information Object</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">1) It may read or write <a href="e6f250185f772ee1.htm" target="_top"><b><u>Information Object</u></b></a>s from and to its <a href="e4c003255ed1f037.htm" target="_top"><b><u>Process Store</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">2) It may receive <a href="43ee620e63725a56.htm" target="_top"><b><u>Value Added Object</u></b></a>s at its boundary:&#160;<b> Consumed Outcome</b>s.</div><div align="left" style="min-height: 12pt; ">3) It may produce <a href="43ee620e63725a56.htm" target="_top"><b><u>Value Added Object</u></b></a>s at its boundary:&#160;<b> Produced Outcome</b>s.</div><div align="left" style="min-height: 12pt; ">The course of actions of a&#160;<b> Process</b> is constrained (<a href="24ae36805ed1cd18.htm" target="_top"><b><u>Rule Enforcement</u></b></a>) by the application of <a href="fe2203ca5c4f0fed.htm" target="_top"><b><u>Behavioral Rule</u></b></a>s that define what is allowed and not allowed to do.</div><i><ul>References:<li><a href="https://15926.blog/topics/data-model/index.htm#ClassOfActivity"><img src="../standard/extr.ico.gif">&nbsp;ISO 15926 - ClassOfActivity</a></li> <li><a href="https://www.iso.org/obp/ui/#iso:std:iso:9000:ed-4:v1:en"><img src="../standard/extr.ico.gif">&nbsp;ISO 9000 - 3.4 - Process</a></li> <li><a href="https://www.merriam-webster.com/dictionary/process"><img src="../standard/extr.ico.gif">&nbsp;Merriam Webster - Process</a></li> <li><a href="../../../www.omg.org/spec/BPMN/2.0.2/formal-13-12-09.pdf#page=173"><img src="../standard/extr.ico.gif">&nbsp;OMG - BPMN - Process</a></li> <li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Process"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - Process</a></li> <li><a href="../../../www.omg.org/spec/UML/2.5.1/formal-17-12-05.pdf#page=415"><img src="../standard/extr.ico.gif">&nbsp;OMG - UML - Activity</a></li> <li><a href="../resources/Ackoff-Towards-a-system-of-systems-concepts.pdf#Process"><img src="../standard/extr.ico.gif">&nbsp;Russell Ackoff - System of Concepts - Process</a></li> <li><a href="http://wordnetweb.princeton.edu/perl/webwn?o2=&amp;o0=1&amp;o8=1&amp;o1=1&amp;o7=&amp;o5=&amp;o9=&amp;o6=&amp;o3=&amp;o4=&amp;s=process&amp;i=0&amp;h=0000000000000#c"><img src="../standard/extr.ico.gif">&nbsp;WordNet -Process</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="39924a285927597c.htm" target="_top">Action Process</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="427c1c7d64b5d4a1.htm" target="_top">Risk Type</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Risk Type</b> refers to a distinct category or classification of risk based on its origin, nature, or potential impact. It helps in organizing and addressing different sources of uncertainty or potential harm that an individual, organization, or system might face. By categorizing risks into different types, entities can develop more targeted mitigation strategies and response plans. </div><div align="left" style="min-height: 12pt; ">Common risk types include <a href="16e327be5bf83e3b.htm" target="_top"><b><u>Operational Risk Type</u></b></a>, <a href="5163d17a64b66991.htm" target="_top"><b><u>Privacy Risk Type</u></b></a>, and <a href="8f469fa664b76efc.htm" target="_top"><b><u>Compliance Risk Type</u></b></a>, among others.</div>       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="977fc52e3d250359.htm" target="_top">Risk Type</a></td>
+</tr>
+<tr>
+<td><img src="../standard/relationship-concepttype.ico.gif"/>&nbsp;
+<a  href="24ae31b55ed1c66d.htm" target="_top">Service Interface</a></td>
+<td class="description-text">A&#160;<b> Service Interface</b> is a communication <a href="986cd4ec5ffca3ac.htm" target="_top"><b><u>Behavior</u></b></a> that describes a typical course of interactions, coordinated by <a href="24ae31d75ed1c747.htm" target="_top"><b><u>Event</u></b></a>s and <a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>s, and intended to produce <a href="43ee620e63725a56.htm" target="_top"><b><u>Value Added Object</u></b></a>s, through the involvement of <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s.<i><ul>References:<li><a href="https://publications.opengroup.org/w161"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - IT4IT - Defining Service Reference Architecture</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="907592d6594725eb.htm" target="_top">Class of Exchange Contract</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="43ee620e63725a56.htm" target="_top">Value Added Object</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Value Added Object</b> is an aspect of <a href="A4A5B3F855585CE1.htm" target="_top"><b><u>Architecture Block (Type)</u></b></a>s which can be the subject of business transactions.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Value Added Object</b> can be created, enhanced or transformed through the action of a producer <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>, resulting in an increase in value (<a href="30223b5c5ec90c01.htm" target="_top"><b><u>Outcome</u></b></a>) that benefits (value) to a user <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a> .</div><div align="left" style="min-height: 12pt; "><b>&#160;Value Added Object</b>s include all <a href="a371a43b5b865817.htm" target="_top"><b><u>Operating Asset</u></b></a>s ( <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>s,&#160; <a href="986cd4ec5ffca3ac.htm" target="_top"><b><u>Behavior</u></b></a>s), <a href="e6f250185f772ee1.htm" target="_top"><b><u>Information Object</u></b></a>s and <a href="861987db6372446e.htm" target="_top"><b><u>Natural Resource</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">Examples:</div><div align="left" style="min-height: 12pt; ">- An improved process (<a href="986cd4ec5ffca3ac.htm" target="_top"><b><u>Behavior</u></b></a>) that is the result of a refactoring activity done by a consulting organization (producer <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>) for the benefit of a business unit (user <a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>).</div><div align="left" style="min-height: 12pt; ">- A new application (<a href="79368381561716a6.htm" target="_top"><b><u>Agent</u></b></a>) that is the result of development and sales activities of a software company (producer Agent) for the benefit of an end user (user Agent).</div><i><ul>References:<li><a href="../resources/Ackoff-Choice-Communication-and-Conflict.pdf#Utility"><img src="../standard/extr.ico.gif">&nbsp;Russell Ackoff - Choice &amp; Communication - Utility</a></li> <li><a href="http://wordnetweb.princeton.edu/perl/webwn?o2=&amp;o0=1&amp;o8=1&amp;o1=1&amp;o7=&amp;o5=&amp;o9=&amp;o6=&amp;o3=&amp;o4=&amp;r=1&amp;s=product&amp;i=3&amp;h=010000000#c"><img src="../standard/extr.ico.gif">&nbsp;WordNet - Product (Production)</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="8df59a8f5911280c.htm" target="_top">Class of Processed Entity</a></td>
+</tr>  
+</tbody>
+</table>
+<section>
+
+</div>
+<button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button>
+<script>window.onscroll = function() {scrollFunction()};$(document).on('click', 'a[href^="#"]', function (event) {event.preventDefault();$('html, body').animate({scrollTop: $($.attr(this, 'href')).offset().top}, 500);});function showDiagOnClick(elem){ var x = document.getElementsByClassName('Relationship');var e = elem.getAttribute("value"); for (var i=0; i < x.length ;i++){x[i].style.display="none"; if (x[i].id == e){x[i].style.display="block";x[i].style.textAlign="left";}}}
+</script></html>

@@ -1,0 +1,1291 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="keywords" content="">
+<meta name="description" content="">    
+<LINK REL="icon" HREF="../standard/assets/img/favicon.ico">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/bootstrap.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nav.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/eaportal.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/font-awesome.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/animate.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/datatables.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/grid.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nae.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/custom.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/chosen.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/prism.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery.dataTables.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jsTreeStyle.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.theme.css" media="screen" />
+<script type="text/javascript" src="../standard/assets/js/jquery-3.2.1.min.js" ></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-ui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.columnFilter.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3-force.v2.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.gui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.search.js"></script> 
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.util.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-2.1.1.min.js"></script>
+<script src="../standard/assets/js/ws_zoomtemplate_firefox.js"></script>
+<script src="../standard/assets/js/bootstrap.min.js"></script>
+<script src="../standard/assets/js/datatables.min.js"></script>
+<script src="../standard/assets/js/moment.min.js"></script>
+<script src="../standard/assets/js/datetime-moment.js"></script>
+<script src="../standard/assets/js/chartjs.min.js"></script>
+<script src="../standard/assets/js/searchindexcontent.json"></script>
+<script src="../standard/assets/js/anls.js"></script>
+<script src="../../../cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script src="../standard/assets/js/gauge.js"></script> 
+<script src="../standard/assets/js/domesticApi.js"></script> 
+<script src="../standard/assets/js/piecelabel.js"></script>
+<script src="../standard/assets/js/popper.min.js"></script>
+<script src="../standard/assets/js/custom.js"></script>
+<script src="../standard/assets/js/chosen.jquery.js"></script>
+<script src="../standard/assets/js/prism.js"></script>
+<script src="../standard/assets/js/init-chosen.js"></script>
+<script src="../standard/assets/js/chart-data-flow.js"></script>
+<script src="../standard/assets/js/chart-data-gantt.js"></script>
+<script type="module" src="../standard/assets/js/Fuse.esm.min.js"></script>
+<script type="module">
+import Fuse from '../standard/assets/js/Fuse.esm.min.js';
+$(document).ready(function () {
+console.log('getjson');
+window.$.getJSON('../standard/assets/js/searchindexcontent.json', function (response) {
+console.log('getjson ok');
+var isIndex = "";
+var url = window.location.pathname;
+var filename = url.substring(url.lastIndexOf('/')+1);
+if( filename.includes("index") || filename === "" ){
+isIndex = "pages/";
+} else {
+isIndex = "";
+}
+const fuse = new Fuse(response, {
+keys: ['title','text'],
+shouldSort: true,
+includeMatches : true,
+findAllMatches : true
+});
+$('#search-fuse').on('keyup', function () {
+let result = fuse.search($(this).val());
+console.log(result);
+let resultdiv = $('div.searchresults-fuse');
+if (result.length === 0) {
+resultdiv.hide();
+} else {
+resultdiv.empty();
+resultdiv.append('<table class="table-search" width="100%" cellspacing="0"><thead ><tr><th>Name</th><th>Object Type</th><th>Modification date</th></tr></thead><tbody>');
+
+for (let obj in result.slice(0,10)) {
+
+let searchObj = '<tr><td><a href="./'+ isIndex + result[obj].item.url + '">' + result[obj].item.title +'</a></td><td>' + result[obj].item.ObjectType + '</td><td>' + result[obj].item.ModificationDate + '</td></tr>' ;
+
+
+resultdiv.find('tbody').append(searchObj);
+}
+resultdiv.append('</tbody></table>');
+resultdiv.show();
+}
+});
+});
+});
+</script>
+<title>HOPEX Metamodel Overview (Beta Version)</title>
+</head>
+<nav class="navbar navbar-expand-md navbar-dark  navbar-mega"><!-- Brand --><!--<a class="navbar-brand" href="#">Navbar</a>--><a class="" href="../index.htm"><img class="logo-mega" src="../standard/assets/img/logo.png"  alt="">(Beta Version)</a><!-- Toggler/collapsibe Button --><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><!-- Navbar links -->
+<div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsibleNavbar"><div class="col-sm-auto col-md-auto col-lg-5"></div>
+<div class="col-sm-auto">
+<ul class="navbar-nav">      
+<li><a class="dropdown-item" href="ad30ce115ebf7e90.htm">EA Grid</a></li> 
+<li><a class="dropdown-item" href="fdd5018459bc3c6a.htm">EA Domains</a></li> 
+<li><a class="dropdown-item" href="07e731775ecc93f4.htm">Solutions</a></li> 
+<li><a class="dropdown-item" href="c5dfc62c54810c2c.htm">Glossary</a></li> 
+<li class="nav-item dropdown mx-1">
+<a class="nav-link" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</a>
+<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<li><a class="dropdown-item" href="5446555d5f88c32e.htm">Outcome Driven Metamodel</a></li> 
+<li><a class="dropdown-item" href="e1ccfc295f8f7b90.htm">Playbooks</a></li> 
+<li><a class="dropdown-item" href="42bc992862d20ea7.htm">Framework Mappings</a></li> 
+<li><a class="dropdown-item" href="e93aebb35fa20550.htm">Metamodel Patterns</a></li> 
+<li><a class="dropdown-item" href="d599fe87602b2b85.htm">References</a></li> 
+<li><a class="dropdown-item" href="333f3a7f5dde11de.htm">Legend</a></li> 
+</ul>									                                            
+</li>
+</ul>
+</div>
+<div class="col-sm-auto"><a class="nav-link search" href="#" onclick=showHideSearch("search-section-fuse")><i class="fa fa-search mr-1 form-control-feedback"></i></a></div>
+</div>
+</nav>
+<div id="search-section-fuse" style="display:none">>
+<div class="search_header"><span class="closesearch">&times;</span>
+<nav class="breadcrumb">
+<a class="breadcrumb-item" href="../index.htm">Home </a> 
+<span class="breadcrumb-item active">Search</span> 
+</nav>
+</div>
+<input id="search-fuse" placeholder="Search..."  name="q" onfocus="this.value=''" type="search">
+<div class="searchresults-fuse"></div>
+</div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>function showHideSearch(elementId) {var contentDivs = document.getElementsByClassName('content');var footerDivs = document.getElementsByClassName('footer'); var containerDivs = document.getElementsByClassName('container');var containerfluidDivs = document.getElementsByClassName('container-fluid');var x = document.getElementById(elementId);if (x.style.display === "none") {x.style.display = "block";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "none";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "none";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "none";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "none";}} else {x.style.display = "none";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "block";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "block";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "block";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "block";}}} ;<!-- END WIDGET DRILL DOWN --></script><script>$(document).ready(function() {$(window).scroll(function() {if ($(this).scrollTop() > 100) {$('.scrollup').fadeIn();} else {$('.scrollup').fadeOut();}});$('.scrollup').click(function() {$("html, body").animate({scrollTop: 0}, 600);return false;});});</script><script>
+var modal = document.getElementById("search-section-fuse");
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = "none";
+}
+}
+$(document).on('click', '.closesearch', function() {
+showHideSearch("search-section-fuse");
+
+
+
+
+
+});</script><div class="container-fluid col-lg-11" id="top"><nav class="breadcrumb"><a class="breadcrumb-item" href="../index.htm">Home</a> <span class="breadcrumb-item active">
+<a  href="c5dfc62c54810c2c.htm" target="_top">Dictionary of HOPEX concepts</a>&nbsp;/&nbsp;Privacy Processing</span></nav></div>
+<div class="container-fluid col-lg-11 content">
+<section class="fadeInDown animated"><a href="#det" class="btn btn-d">DEFINITION</a><a href="#rel" class="btn btn-d">RELATIONSHIPS</a><a href="#str" class="btn btn-d">INTERNAL STRUCTURE</a>	 <a href="#shi" class="btn btn-d">SUPER-SUB TYPE HIERARCHY</a></section>
+<a class="object-section-anchor" id="det"></a>
+<section class="object-section">
+<h4>BUILDING BLOCK - Privacy Processing</h4>
+<hr class="sectionbreak" />
+<table class="table table-vertical-headers table-set-col-width">
+<tr><th>Description</th><td class="description-text"><i>Abstract Concept</i><br/><div class="description-text">A&#160;<b> Privacy Processing</b> is a <a href="b90aeac8600e619f.htm" target="_top"><b><u>Data Assurance Case</u></b></a>&#160; related to any operation or set of operations which is performed on personal data or on sets of personal data, whether or not by automated means, such as collection, recording, organisation, structuring, storage, adaptation or alteration, retrieval, consultation, use, disclosure by transmission, dissemination or otherwise making available, alignment or combination, restriction, erasure or destruction</div><div></div></td></tr>		
+<tr><th>Version</th><td class="description-text">Available since: HOPEX V2<br/>Last Update: HOPEX V2</td></tr>		
+<tr><th>Super Types</th><td class="description-text><img src="../standard/dic_concepttype.ico.gif">&nbsp;
+<a  href="b90aeac8600e619f.htm" target="_top">Data Assurance Case</a>&nbsp;&nbsp;</td></tr>   
+<tr><th>Definition Domain</th><td class="description-text"><img src="../standard/dic_graph.ico.gif">&nbsp;
+<a  href="75d07c2b5a1583f5.htm" target="_top">Privacy Assurance</a><br/>Privacy assurance offers strategies and schemes adopted by an organization to prevent the flow of important information outside of the workplace. The approach includes investigation, remediation and reporting.
+</td></tr>
+<tr><th>Dictionary</th><td><img src="../standard/dicsubjectarea.ico.gif">&nbsp;
+<a  href="c5dfc62c54810c2c.htm" target="_top">Dictionary of HOPEX concepts</a></td></tr>
+<tr><th>Managing Namespace</th><td><img src="../standard/dicdefinition.ico.gif">&nbsp;
+<a  href="9152d8875ed741ef.htm" target="_top">Data Catalog</a>&nbsp;</td></tr>
+<tr><th>Implementing MetaClass</th><td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="0708697859d25e8b.htm" target="_top">GDPR Processing</a></td></tr>
+</table>
+</section>
+<section class="object-section">
+<h4>RELATIONSHIPS</h4> 
+<hr class="sectionbreak" />
+<a href="#" class="btn btn-d" value="Relationship1" onclick="showDiagOnClick(this)">Simple Graph</a>
+<a href="#" class="btn btn-d" value="Relationship2" onclick="showDiagOnClick(this)">Graph & Hierarchy</a>
+<a href="#" class="btn btn-d" value="Relationship3" onclick="showDiagOnClick(this)">Graph by Domain</a>
+<a href="#" class="btn btn-d" value="Relationship4" onclick="showDiagOnClick(this)">Table</a>
+<a class="object-section-anchor" id="rel"></a>
+<div class="Relationship" id="Relationship1">
+<h3>Simple Graph</h3>
+<svg id="426A57325AEB3D76" height="580.5" width="1650" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" overflow="hidden">
+  <defs>
+    <marker id="Simple-426A57325AEB3D76__RelCircle" refX="3" refY="3" markerWidth="6" markerHeight="6">
+      <circle cx="3" cy="3" r="3" fill="#A52A00"></circle>
+    </marker>
+    <marker id="Simple-426A57325AEB3D76__RelArrowTip" refX="3" refY="3" markerWidth="8" markerHeight="6" orient="0">
+      <path d="M0,0 L6,2 L0,4" fill="#A52A00"></path>
+    </marker>
+  </defs>
+<g   transform="translate(585,280)">
+  <rect height="30"  width="150"  id="core-426A57325AEB3D76-0"  rx="3"  ry="3"  x="0"  y="-10"  stroke="#A52A00"/>
+<foreignObject x="0" y="-10" width="150" height="30" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:12; text-align:center"><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-426A57325AEB3D76').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-426A57325AEB3D76').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="#Relationship1">Privacy Processing</a>
+  <span id="Desc-426A57325AEB3D76" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">A Privacy Processing is a Data Assurance Case  related to any operation or set of operations which is performed on personal data or on sets of personal data, whether or not by automated means, such as collection, recording, organisation, structuring, storage, adaptation or alteration, retrieval, consultation, use, disclosure by transmission, dissemination or otherwise making available, alignment or combination, restriction, erasure or destruction  </span>
+</div></div></foreignObject>
+</g>
+<g   transform="translate(945,85.25)">
+  <rect height="40"  width="325"  id="E7CDCCC7643F5185"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="E7CDCCC7643F5185.htm#Relationship1">&#60;Agents&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(950,105.25)">
+  <rect height="20"  width="320"  id="BCEBD65854913935"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-426A07125AEC41C6-core-426A57325AEB3D76-0-BCEBD65854913935').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-426A07125AEC41C6-core-426A57325AEB3D76-0-BCEBD65854913935').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="426a07125aec41c6.htm">[impacted data subject]</a>  <div id="Desc-426A07125AEC41C6-core-426A57325AEB3D76-0-BCEBD65854913935" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">People-human beings from whom or about whom you collect information in connection with your business and its operations.  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-BCEBD65854913935').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-BCEBD65854913935').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="bcebd65854913935.htm#Relationship1">Business Partner</a><div id="Desc-BCEBD65854913935" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Business Partner is a party who interacts with the enterprise in the context its operating eco-system (the Business Operating Ecosystem).  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="426A07125AEC41C6-core-426A57325AEB3D76-0-BCEBD65854913935" class="Simple-426A57325AEB3D76_Rel-line" d="M735,280 C842.5,280 842.5,105.25 950,105.25" stroke="gray" fill="none" marker-start="url(#Simple-426A57325AEB3D76__RelCircle" marker-end="url(#Simple-426A57325AEB3D76__RelArrowTip"/>
+<g   transform="translate(945,135.25)">
+  <rect height="60"  width="325"  id="8856901B620A6237"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="60" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="8856901B620A6237.htm#Relationship1">&#60;Data&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(950,155.25)">
+  <rect height="20"  width="320"  id="E6F250185F772EE1"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-B90AFA69600E715C-core-426A57325AEB3D76-1-E6F250185F772EE1').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-B90AFA69600E715C-core-426A57325AEB3D76-1-E6F250185F772EE1').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="B90AFA69600E715C.htm">[Concerned Information]</a>  <div id="Desc-B90AFA69600E715C-core-426A57325AEB3D76-1-E6F250185F772EE1" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-E6F250185F772EE1').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-E6F250185F772EE1').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="e6f250185f772ee1.htm#Relationship1">Information Object</a><div id="Desc-E6F250185F772EE1" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">An Information Object  represents anything that can be communicated or memorized by an Agent in order to produce its Outcomes.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="B90AFA69600E715C-core-426A57325AEB3D76-1-E6F250185F772EE1" class="Simple-426A57325AEB3D76_Rel-line" d="M735,280 C842.5,280 842.5,155.25 950,155.25" stroke="gray" fill="none" marker-start="url(#Simple-426A57325AEB3D76__RelCircle" marker-end="url(#Simple-426A57325AEB3D76__RelArrowTip"/>
+<g   transform="translate(950,175.25)">
+  <rect height="20"  width="320"  id="E6F250185F772EE1"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-258C6C815FD25BBF-core-426A57325AEB3D76-0-E6F250185F772EE1').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-258C6C815FD25BBF-core-426A57325AEB3D76-0-E6F250185F772EE1').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="258c6c815fd25bbf.htm">[Data Transfer]</a>  <div id="Desc-258C6C815FD25BBF-core-426A57325AEB3D76-0-E6F250185F772EE1" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">Any transfer of personal data which are undergoing processing or are intended for processing after transfer to a third country or to an international organization.  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-E6F250185F772EE1').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-E6F250185F772EE1').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="e6f250185f772ee1.htm#Relationship1">Information Object</a><div id="Desc-E6F250185F772EE1" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">An Information Object  represents anything that can be communicated or memorized by an Agent in order to produce its Outcomes.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="258C6C815FD25BBF-core-426A57325AEB3D76-0-E6F250185F772EE1" class="Simple-426A57325AEB3D76_Rel-line" d="M735,280 C842.5,280 842.5,175.25 950,175.25" stroke="gray" fill="none" marker-start="url(#Simple-426A57325AEB3D76__RelCircle" marker-end="url(#Simple-426A57325AEB3D76__RelArrowTip"/>
+<g   transform="translate(945,205.25)">
+  <rect height="60"  width="325"  id="F27F168563375D82"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="60" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="F27F168563375D82.htm#Relationship1">&#60;Quality & Risk Assurance&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(950,225.25)">
+  <rect height="20"  width="320"  id="A67DC8AE5F8EACDF"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-B90ACFA1600E4C31-core-426A57325AEB3D76-2-A67DC8AE5F8EACDF').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-B90ACFA1600E4C31-core-426A57325AEB3D76-2-A67DC8AE5F8EACDF').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="b90acfa1600e4c31.htm">[Enforced Directive]</a>  <div id="Desc-B90ACFA1600E4C31-core-426A57325AEB3D76-2-A67DC8AE5F8EACDF" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-A67DC8AE5F8EACDF').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-A67DC8AE5F8EACDF').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="a67dc8ae5f8eacdf.htm#Relationship1">Control Directive</a><div id="Desc-A67DC8AE5F8EACDF" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Control Directive is a kind of Policy that provides recommendations on how to comply with Regulation Articles.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="B90ACFA1600E4C31-core-426A57325AEB3D76-2-A67DC8AE5F8EACDF" class="Simple-426A57325AEB3D76_Rel-line" d="M735,280 C842.5,280 842.5,225.25 950,225.25" stroke="gray" fill="none" marker-start="url(#Simple-426A57325AEB3D76__RelCircle" marker-end="url(#Simple-426A57325AEB3D76__RelArrowTip"/>
+<g   transform="translate(950,245.25)">
+  <rect height="20"  width="320"  id="5163D17A64B66991"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-ADE3B05E5EDE411F-core-426A57325AEB3D76-0-5163D17A64B66991').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-ADE3B05E5EDE411F-core-426A57325AEB3D76-0-5163D17A64B66991').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="ade3b05e5ede411f.htm">[Privacy Risk]</a>  <div id="Desc-ADE3B05E5EDE411F-core-426A57325AEB3D76-0-5163D17A64B66991" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">Represents any risk related to data privacy that should be identified and assessed during a DPIA process.  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-5163D17A64B66991').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-5163D17A64B66991').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="5163d17a64b66991.htm#Relationship1">Privacy Risk Type</a><div id="Desc-5163D17A64B66991" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Privacy Risk Type is a Risk Type that refers to the potential for harm that could occur to Information Objects due to the loss, exposure, or misuse of personal or sensitive data.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="ADE3B05E5EDE411F-core-426A57325AEB3D76-0-5163D17A64B66991" class="Simple-426A57325AEB3D76_Rel-line" d="M735,280 C842.5,280 842.5,245.25 950,245.25" stroke="gray" fill="none" marker-start="url(#Simple-426A57325AEB3D76__RelCircle" marker-end="url(#Simple-426A57325AEB3D76__RelArrowTip"/>
+<g   transform="translate(50,203.5)">
+  <rect height="60"  width="325"  id="4C7853C35FCB7CEF"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="60" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="4C7853C35FCB7CEF.htm#Relationship1">&#60;Transformations&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(50,223.5)">
+  <rect height="20"  width="320"  id="In-05B0FFD76006DAC0-D321C226601262AE"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#F4DB6F"><a href="d321c226601262ae.htm#Relationship1">Enduring Initiative</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="05b0ffd76006dac0.htm">[Owned Initiative Resource]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="05B0FFD76006DAC0-D321C226601262AE-D321C226601262AE" class="Simple-426A57325AEB3D76_Rel-line" d="M370,223.5 C477.5,223.5 477.5,280 585,280" stroke="gray" fill="none" marker-start="url(#Simple-426A57325AEB3D76__RelCircle" marker-end="url(#Simple-426A57325AEB3D76__RelArrowTip"/>
+<g   transform="translate(50,243.5)">
+  <rect height="20"  width="320"  id="In-B90AE7DB600E5E7A-9152D8875ED741EF"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#F4DB6F"><a href="9152d8875ed741ef.htm#Relationship1">Data Catalog</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="https://method.demomega.com/MM-OVERVIEW/pages/B90AE7DB600E5E7A.htm">[Owned Data Assurance Case]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="B90AE7DB600E5E7A-9152D8875ED741EF-9152D8875ED741EF" class="Simple-426A57325AEB3D76_Rel-line" d="M370,243.5 C477.5,243.5 477.5,280 585,280" stroke="gray" fill="none" marker-start="url(#Simple-426A57325AEB3D76__RelCircle" marker-end="url(#Simple-426A57325AEB3D76__RelArrowTip"/>
+<g   transform="translate(945,275.25)">
+  <rect height="40"  width="325"  id="AD30DF2A5EBF803C"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="AD30DF2A5EBF803C.htm#Relationship1">&#60;Directives&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(950,295.25)">
+  <rect height="20"  width="320"  id="258C66A25FD25310"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-258C66F55FD2539C-core-426A57325AEB3D76-0-258C66A25FD25310').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-258C66F55FD2539C-core-426A57325AEB3D76-0-258C66A25FD25310').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="258c66f55fd2539c.htm">[Person Right]</a>  <div id="Desc-258C66F55FD2539C-core-426A57325AEB3D76-0-258C66A25FD25310" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-258C66A25FD25310').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-258C66A25FD25310').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="258c66a25fd25310.htm#Relationship1">Person Right</a><div id="Desc-258C66A25FD25310" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">Rights are legal, social or ethical principals of freedom that people are entitled for by a governing body.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="258C66F55FD2539C-core-426A57325AEB3D76-0-258C66A25FD25310" class="Simple-426A57325AEB3D76_Rel-line" d="M735,280 C842.5,280 842.5,295.25 950,295.25" stroke="gray" fill="none" marker-start="url(#Simple-426A57325AEB3D76__RelCircle" marker-end="url(#Simple-426A57325AEB3D76__RelArrowTip"/>
+<g   transform="translate(50,273.5)">
+  <rect height="80"  width="325"  id="938E3ED362024F5B"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="80" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="938E3ED362024F5B.htm#Relationship1">&#60;Governance&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(50,293.5)">
+  <rect height="20"  width="320"  id="In-D7F9F9405F720AAA-762590AE5F6C7CC1"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#F4DB6F"><a href="762590ae5f6c7cc1.htm#Relationship1">Key IRM Indicator</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="https://method.demomega.com/MM-OVERVIEW/pages/D7F9F9405F720AAA.htm">[Monitored Data Assurance Case]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="D7F9F9405F720AAA-762590AE5F6C7CC1-762590AE5F6C7CC1" class="Simple-426A57325AEB3D76_Rel-line" d="M370,293.5 C477.5,293.5 477.5,280 585,280" stroke="gray" fill="none" marker-start="url(#Simple-426A57325AEB3D76__RelCircle" marker-end="url(#Simple-426A57325AEB3D76__RelArrowTip"/>
+<g   transform="translate(50,313.5)">
+  <rect height="20"  width="320"  id="In-B90AF831600E6EB5-D7F9FBD45F720D19"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#F4DB6F"><a href="d7f9fbd45f720d19.htm#Relationship1">Data Control Execution</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="https://method.demomega.com/MM-OVERVIEW/pages/B90AF831600E6EB5.htm">[Tested Assurance Case]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="B90AF831600E6EB5-D7F9FBD45F720D19-D7F9FBD45F720D19" class="Simple-426A57325AEB3D76_Rel-line" d="M370,313.5 C477.5,313.5 477.5,280 585,280" stroke="gray" fill="none" marker-start="url(#Simple-426A57325AEB3D76__RelCircle" marker-end="url(#Simple-426A57325AEB3D76__RelArrowTip"/>
+<g   transform="translate(50,333.5)">
+  <rect height="20"  width="320"  id="In-8A9FA88E5EE08E8E-8A9F9FE55EE0A603"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#F4DB6F"><a href="8a9f9fe55ee0a603.htm#Relationship1">Privacy Assessment</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="https://method.demomega.com/MM-OVERVIEW/pages/8A9FA88E5EE08E8E.htm">[assessed processing activity]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="8A9FA88E5EE08E8E-8A9F9FE55EE0A603-8A9F9FE55EE0A603" class="Simple-426A57325AEB3D76_Rel-line" d="M370,333.5 C477.5,333.5 477.5,280 585,280" stroke="gray" fill="none" marker-start="url(#Simple-426A57325AEB3D76__RelCircle" marker-end="url(#Simple-426A57325AEB3D76__RelArrowTip"/>
+<g   transform="translate(945,325.25)">
+  <rect height="40"  width="325"  id="E7CDD1F0643F5BD8"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="E7CDD1F0643F5BD8.htm#Relationship1">&#60;Qualification&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(950,345.25)">
+  <rect height="20"  width="320"  id="6CCE7D6D5A2E4834"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-426A071E5AEC41DC-core-426A57325AEB3D76-0-6CCE7D6D5A2E4834').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-426A071E5AEC41DC-core-426A57325AEB3D76-0-6CCE7D6D5A2E4834').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="426a071e5aec41dc.htm">[Data Category]</a>  <div id="Desc-426A071E5AEC41DC-core-426A57325AEB3D76-0-6CCE7D6D5A2E4834" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-6CCE7D6D5A2E4834').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-6CCE7D6D5A2E4834').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="6cce7d6d5a2e4834.htm#Relationship1">Data Category</a><div id="Desc-6CCE7D6D5A2E4834" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Data Category is a classification or division of Information Objects regarded as having particular shared characteristics.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="426A071E5AEC41DC-core-426A57325AEB3D76-0-6CCE7D6D5A2E4834" class="Simple-426A57325AEB3D76_Rel-line" d="M735,280 C842.5,280 842.5,345.25 950,345.25" stroke="gray" fill="none" marker-start="url(#Simple-426A57325AEB3D76__RelCircle" marker-end="url(#Simple-426A57325AEB3D76__RelArrowTip"/>
+<g   transform="translate(945,375.25)">
+  <rect height="60"  width="325"  id="3D908C805FFC642C"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="60" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="3D908C805FFC642C.htm#Relationship1">&#60;Annotation&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(950,395.25)">
+  <rect height="20"  width="320"  id="AFFEE0765F6086D4"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-05B0DF7E6006C158-core-426A57325AEB3D76-5-AFFEE0765F6086D4').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-05B0DF7E6006C158-core-426A57325AEB3D76-5-AFFEE0765F6086D4').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/05B0DF7E6006C158.htm">[Annotation Tag]</a>  <div id="Desc-05B0DF7E6006C158-core-426A57325AEB3D76-5-AFFEE0765F6086D4" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-AFFEE0765F6086D4').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-AFFEE0765F6086D4').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="AFFEE0765F6086D4.htm#Relationship1">Tag</a><div id="Desc-AFFEE0765F6086D4" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Tag is a general classification description which permits characterization of Entitys.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="05B0DF7E6006C158-core-426A57325AEB3D76-5-AFFEE0765F6086D4" class="Simple-426A57325AEB3D76_Rel-line" d="M735,280 C842.5,280 842.5,395.25 950,395.25" stroke="gray" fill="none" marker-start="url(#Simple-426A57325AEB3D76__RelCircle" marker-end="url(#Simple-426A57325AEB3D76__RelArrowTip"/>
+<g   transform="translate(950,415.25)">
+  <rect height="20"  width="320"  id="AFFEE0F15F60898A"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-05B0DF0C6006C0D8-core-426A57325AEB3D76-5-AFFEE0F15F60898A').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-05B0DF0C6006C0D8-core-426A57325AEB3D76-5-AFFEE0F15F60898A').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/05B0DF0C6006C0D8.htm">[Attached Document]</a>  <div id="Desc-05B0DF0C6006C0D8-core-426A57325AEB3D76-5-AFFEE0F15F60898A" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-AFFEE0F15F60898A').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-AFFEE0F15F60898A').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="AFFEE0F15F60898A.htm#Relationship1">Business Document</a><div id="Desc-AFFEE0F15F60898A" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Business Document is a document whose lifecycle can be synched to the MEGA repository content: it may be attached to mega objects and a document version bound to a mega object timestamp in the Time Machine. This document can be of any given file format.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="05B0DF0C6006C0D8-core-426A57325AEB3D76-5-AFFEE0F15F60898A" class="Simple-426A57325AEB3D76_Rel-line" d="M735,280 C842.5,280 842.5,415.25 950,415.25" stroke="gray" fill="none" marker-start="url(#Simple-426A57325AEB3D76__RelCircle" marker-end="url(#Simple-426A57325AEB3D76__RelArrowTip"/>
+<g   transform="translate(50,363.5)">
+  <rect height="40"  width="325"  id="Other"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="">Other</a></div></foreignObject>
+</g>
+<g   transform="translate(50,383.5)">
+  <rect height="20"  width="320"  id="In-4D9461C65EC9ECA3-514E5F6C620F1EC6"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"gray"><a href="514e5f6c620f1ec6.htm#Relationship1">Aggregate Block</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="4d9461c65ec9eca3.htm">[Contextual Object]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="4D9461C65EC9ECA3-514E5F6C620F1EC6-514E5F6C620F1EC6" class="Simple-426A57325AEB3D76_Rel-line" d="M370,383.5 C477.5,383.5 477.5,280 585,280" stroke="gray" fill="none" marker-start="url(#Simple-426A57325AEB3D76__RelCircle" marker-end="url(#Simple-426A57325AEB3D76__RelArrowTip"/>
+<g   transform="translate(945,445.25)">
+  <rect height="100"  width="325"  id="Other"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="100" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="">Other</a></div></foreignObject>
+</g>
+<g   transform="translate(950,465.25)">
+  <rect height="20"  width="320"  id="CA353E6D5FC5E8AF"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-F594F72E61F736E1-core-426A57325AEB3D76-5-CA353E6D5FC5E8AF').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-F594F72E61F736E1-core-426A57325AEB3D76-5-CA353E6D5FC5E8AF').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="f594f72e61f736e1.htm">[Referenced Model Block]</a>  <div id="Desc-F594F72E61F736E1-core-426A57325AEB3D76-5-CA353E6D5FC5E8AF" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-CA353E6D5FC5E8AF').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-CA353E6D5FC5E8AF').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="CA353E6D5FC5E8AF.htm#Relationship1">Model Building Block</a><div id="Desc-CA353E6D5FC5E8AF" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Model Building Block is a Building Block used to describe and manage the enterprise. It comprises:  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="F594F72E61F736E1-core-426A57325AEB3D76-5-CA353E6D5FC5E8AF" class="Simple-426A57325AEB3D76_Rel-line" d="M735,280 C842.5,280 842.5,465.25 950,465.25" stroke="gray" fill="none" marker-start="url(#Simple-426A57325AEB3D76__RelCircle" marker-end="url(#Simple-426A57325AEB3D76__RelArrowTip"/>
+<g   transform="translate(950,485.25)">
+  <rect height="20"  width="320"  id="9597D7B3620AB751"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-9597D7C1620AB7A9-core-426A57325AEB3D76-5-9597D7B3620AB751').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-9597D7C1620AB7A9-core-426A57325AEB3D76-5-9597D7B3620AB751').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/9597D7C1620AB7A9.htm">[Class of Model Block]</a>  <div id="Desc-9597D7C1620AB7A9-core-426A57325AEB3D76-5-9597D7B3620AB751" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-9597D7B3620AB751').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-9597D7B3620AB751').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="9597d7b3620ab751.htm#Relationship1">Class of Model Block</a><div id="Desc-9597D7B3620AB751" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Class of Model Block is a Class that classifies Model Building Blocks.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="9597D7C1620AB7A9-core-426A57325AEB3D76-5-9597D7B3620AB751" class="Simple-426A57325AEB3D76_Rel-line" d="M735,280 C842.5,280 842.5,485.25 950,485.25" stroke="gray" fill="none" marker-start="url(#Simple-426A57325AEB3D76__RelCircle" marker-end="url(#Simple-426A57325AEB3D76__RelArrowTip"/>
+<g   transform="translate(950,505.25)">
+  <rect height="20"  width="320"  id="07CA0DD75DD84E92"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-71F59B656008373C-core-426A57325AEB3D76-2-07CA0DD75DD84E92').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-71F59B656008373C-core-426A57325AEB3D76-2-07CA0DD75DD84E92').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="71f59b656008373c.htm">[Constraining Policy]</a>  <div id="Desc-71F59B656008373C-core-426A57325AEB3D76-2-07CA0DD75DD84E92" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-07CA0DD75DD84E92').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-07CA0DD75DD84E92').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="07ca0dd75dd84e92.htm#Relationship1">Policy Asset</a><div id="Desc-07CA0DD75DD84E92" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Policy Asset is any topic related to policy definitions.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="71F59B656008373C-core-426A57325AEB3D76-2-07CA0DD75DD84E92" class="Simple-426A57325AEB3D76_Rel-line" d="M735,280 C842.5,280 842.5,505.25 950,505.25" stroke="gray" fill="none" marker-start="url(#Simple-426A57325AEB3D76__RelCircle" marker-end="url(#Simple-426A57325AEB3D76__RelArrowTip"/>
+<g   transform="translate(950,525.25)">
+  <rect height="20"  width="320"  id="B3C824665C709228"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-B13DB35B5EDE3983-core-426A57325AEB3D76-0-B3C824665C709228').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-B13DB35B5EDE3983-core-426A57325AEB3D76-0-B3C824665C709228').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="B13DB35B5EDE3983.htm">[Security Measure]</a>  <div id="Desc-B13DB35B5EDE3983-core-426A57325AEB3D76-0-B3C824665C709228" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-B3C824665C709228').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-B3C824665C709228').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="b3c824665c709228.htm#Relationship1">Security Measure Type</a><div id="Desc-B3C824665C709228" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">Security measures are appropriate technical, organizational or certification measures to be taken to ensure that the requirements of the GDPR are met.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="B13DB35B5EDE3983-core-426A57325AEB3D76-0-B3C824665C709228" class="Simple-426A57325AEB3D76_Rel-line" d="M735,280 C842.5,280 842.5,525.25 950,525.25" stroke="gray" fill="none" marker-start="url(#Simple-426A57325AEB3D76__RelCircle" marker-end="url(#Simple-426A57325AEB3D76__RelArrowTip"/>
+</svg>
+
+</div>
+<div class="Relationship" id="Relationship2" style="display:none">
+<h3>Graph & Hierarchy</h3>
+<svg id="426A57325AEB3D76" height="580.5" width="1650" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" overflow="hidden">
+  <defs>
+    <marker id="Full-426A57325AEB3D76__RelCircle" refX="3" refY="3" markerWidth="6" markerHeight="6">
+      <circle cx="3" cy="3" r="3" fill="#A52A00"></circle>
+    </marker>
+    <marker id="Full-426A57325AEB3D76__RelArrowTip" refX="3" refY="3" markerWidth="8" markerHeight="6" orient="0">
+      <path d="M0,0 L6,2 L0,4" fill="#A52A00"></path>
+    </marker>
+  </defs>
+<g   transform="translate(555,241)">
+  <rect height="153"  width="210"  id="core-426A57325AEB3D76-6"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="210" height="153" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:center"><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-CCB819645A564F12').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-CCB819645A564F12').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="ccb819645a564f12.htm#Relationship1">Building Block</a>
+  <span id="Desc-CCB819645A564F12" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">A Building Block is an autonomous, resusable Entity that contributes to the makeup of other Building Blocks.  </span>
+</div></div></foreignObject>
+</g>
+<g   transform="translate(560,260)">
+  <rect height="130"  width="200"  id="core-426A57325AEB3D76-5"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="200" height="130" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:center"><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-CA353E6D5FC5E8AF').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-CA353E6D5FC5E8AF').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="CA353E6D5FC5E8AF.htm#Relationship1">Model Building Block</a>
+  <span id="Desc-CA353E6D5FC5E8AF" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">A Model Building Block is a Building Block used to describe and manage the enterprise. It comprises:  </span>
+</div></div></foreignObject>
+</g>
+<g   transform="translate(570,283)">
+  <rect height="99"  width="180"  id="core-426A57325AEB3D76-3"  rx="3"  ry="3"  x="0"  y="-10"  stroke="#F4DB6F"/>
+<foreignObject x="0" y="-10" width="180" height="99" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:center"><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-05B0F6D56006CC8A').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-05B0F6D56006CC8A').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="05b0f6d56006cc8a.htm#Relationship1">Initiative Resource</a>
+  <span id="Desc-05B0F6D56006CC8A" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">An Initiative Resource is a resource and course of actions defined by Enduring Initiatives  to achieve its objectives.  </span>
+</div></div></foreignObject>
+</g>
+<g   transform="translate(575,302)">
+  <rect height="76"  width="170"  id="core-426A57325AEB3D76-2"  rx="3"  ry="3"  x="0"  y="-10"  stroke="#A52A00"/>
+<foreignObject x="0" y="-10" width="170" height="76" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:center"><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-07CA19E95DD854E9').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-07CA19E95DD854E9').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="07ca19e95dd854e9.htm#Relationship1">Assurance Case</a>
+  <span id="Desc-07CA19E95DD854E9" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">An Assurance Case is a claim that a particular enterprise asset or group of assets (Resources or Activites) adequately mitigates certain identified risks by means of appropriated controls.  </span>
+</div></div></foreignObject>
+</g>
+<g   transform="translate(580,321)">
+  <rect height="53"  width="160"  id="core-426A57325AEB3D76-1"  rx="3"  ry="3"  x="0"  y="-10"  stroke="#A52A00"/>
+<foreignObject x="0" y="-10" width="160" height="53" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:center"><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-B90AEAC8600E619F').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-B90AEAC8600E619F').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="b90aeac8600e619f.htm#Relationship1">Data Assurance Case</a>
+  <span id="Desc-B90AEAC8600E619F" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">A Data Assurance Case is a structured argument, supported by evidence, intended to justify that a data is acceptably assured relative to a concern (such as quality, safety, security or privacy) in the intended operating environment.  </span>
+</div></div></foreignObject>
+</g>
+<g   transform="translate(585,340)">
+  <rect height="30"  width="150"  id="core-426A57325AEB3D76-0"  rx="3"  ry="3"  x="0"  y="-10"  stroke="#A52A00"/>
+<foreignObject x="0" y="-10" width="150" height="30" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:12; text-align:center"><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-426A57325AEB3D76').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-426A57325AEB3D76').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="#Relationship1">Privacy Processing</a>
+  <span id="Desc-426A57325AEB3D76" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">A Privacy Processing is a Data Assurance Case  related to any operation or set of operations which is performed on personal data or on sets of personal data, whether or not by automated means, such as collection, recording, organisation, structuring, storage, adaptation or alteration, retrieval, consultation, use, disclosure by transmission, dissemination or otherwise making available, alignment or combination, restriction, erasure or destruction  </span>
+</div></div></foreignObject>
+</g>
+<g   transform="translate(945,85.25)">
+  <rect height="40"  width="325"  id="E7CDCCC7643F5185"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="E7CDCCC7643F5185.htm#Relationship1">&#60;Agents&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(950,105.25)">
+  <rect height="20"  width="320"  id="BCEBD65854913935"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-426A07125AEC41C6-core-426A57325AEB3D76-0-BCEBD65854913935').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-426A07125AEC41C6-core-426A57325AEB3D76-0-BCEBD65854913935').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="426a07125aec41c6.htm">[impacted data subject]</a>  <div id="Desc-426A07125AEC41C6-core-426A57325AEB3D76-0-BCEBD65854913935" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">People-human beings from whom or about whom you collect information in connection with your business and its operations.  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-BCEBD65854913935').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-BCEBD65854913935').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="bcebd65854913935.htm#Relationship1">Business Partner</a><div id="Desc-BCEBD65854913935" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Business Partner is a party who interacts with the enterprise in the context its operating eco-system (the Business Operating Ecosystem).  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="426A07125AEC41C6-core-426A57325AEB3D76-0-BCEBD65854913935" class="Full-426A57325AEB3D76_Rel-line" d="M735,340 C842.5,340 842.5,105.25 950,105.25" stroke="gray" fill="none" marker-start="url(#Full-426A57325AEB3D76__RelCircle" marker-end="url(#Full-426A57325AEB3D76__RelArrowTip"/>
+<g   transform="translate(945,135.25)">
+  <rect height="60"  width="325"  id="8856901B620A6237"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="60" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="8856901B620A6237.htm#Relationship1">&#60;Data&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(950,155.25)">
+  <rect height="20"  width="320"  id="E6F250185F772EE1"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-B90AFA69600E715C-core-426A57325AEB3D76-1-E6F250185F772EE1').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-B90AFA69600E715C-core-426A57325AEB3D76-1-E6F250185F772EE1').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="B90AFA69600E715C.htm">[Concerned Information]</a>  <div id="Desc-B90AFA69600E715C-core-426A57325AEB3D76-1-E6F250185F772EE1" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-E6F250185F772EE1').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-E6F250185F772EE1').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="e6f250185f772ee1.htm#Relationship1">Information Object</a><div id="Desc-E6F250185F772EE1" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">An Information Object  represents anything that can be communicated or memorized by an Agent in order to produce its Outcomes.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="B90AFA69600E715C-core-426A57325AEB3D76-1-E6F250185F772EE1" class="Full-426A57325AEB3D76_Rel-line" d="M740,321 C845,321 845,155.25 950,155.25" stroke="gray" fill="none" marker-start="url(#Full-426A57325AEB3D76__RelCircle" marker-end="url(#Full-426A57325AEB3D76__RelArrowTip"/>
+<g   transform="translate(950,175.25)">
+  <rect height="20"  width="320"  id="E6F250185F772EE1"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-258C6C815FD25BBF-core-426A57325AEB3D76-0-E6F250185F772EE1').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-258C6C815FD25BBF-core-426A57325AEB3D76-0-E6F250185F772EE1').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="258c6c815fd25bbf.htm">[Data Transfer]</a>  <div id="Desc-258C6C815FD25BBF-core-426A57325AEB3D76-0-E6F250185F772EE1" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">Any transfer of personal data which are undergoing processing or are intended for processing after transfer to a third country or to an international organization.  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-E6F250185F772EE1').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-E6F250185F772EE1').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="e6f250185f772ee1.htm#Relationship1">Information Object</a><div id="Desc-E6F250185F772EE1" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">An Information Object  represents anything that can be communicated or memorized by an Agent in order to produce its Outcomes.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="258C6C815FD25BBF-core-426A57325AEB3D76-0-E6F250185F772EE1" class="Full-426A57325AEB3D76_Rel-line" d="M735,340 C842.5,340 842.5,175.25 950,175.25" stroke="gray" fill="none" marker-start="url(#Full-426A57325AEB3D76__RelCircle" marker-end="url(#Full-426A57325AEB3D76__RelArrowTip"/>
+<g   transform="translate(945,205.25)">
+  <rect height="60"  width="325"  id="F27F168563375D82"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="60" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="F27F168563375D82.htm#Relationship1">&#60;Quality & Risk Assurance&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(950,225.25)">
+  <rect height="20"  width="320"  id="A67DC8AE5F8EACDF"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-B90ACFA1600E4C31-core-426A57325AEB3D76-2-A67DC8AE5F8EACDF').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-B90ACFA1600E4C31-core-426A57325AEB3D76-2-A67DC8AE5F8EACDF').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="b90acfa1600e4c31.htm">[Enforced Directive]</a>  <div id="Desc-B90ACFA1600E4C31-core-426A57325AEB3D76-2-A67DC8AE5F8EACDF" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-A67DC8AE5F8EACDF').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-A67DC8AE5F8EACDF').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="a67dc8ae5f8eacdf.htm#Relationship1">Control Directive</a><div id="Desc-A67DC8AE5F8EACDF" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Control Directive is a kind of Policy that provides recommendations on how to comply with Regulation Articles.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="B90ACFA1600E4C31-core-426A57325AEB3D76-2-A67DC8AE5F8EACDF" class="Full-426A57325AEB3D76_Rel-line" d="M745,302 C847.5,302 847.5,225.25 950,225.25" stroke="gray" fill="none" marker-start="url(#Full-426A57325AEB3D76__RelCircle" marker-end="url(#Full-426A57325AEB3D76__RelArrowTip"/>
+<g   transform="translate(950,245.25)">
+  <rect height="20"  width="320"  id="5163D17A64B66991"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-ADE3B05E5EDE411F-core-426A57325AEB3D76-0-5163D17A64B66991').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-ADE3B05E5EDE411F-core-426A57325AEB3D76-0-5163D17A64B66991').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="ade3b05e5ede411f.htm">[Privacy Risk]</a>  <div id="Desc-ADE3B05E5EDE411F-core-426A57325AEB3D76-0-5163D17A64B66991" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">Represents any risk related to data privacy that should be identified and assessed during a DPIA process.  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-5163D17A64B66991').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-5163D17A64B66991').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="5163d17a64b66991.htm#Relationship1">Privacy Risk Type</a><div id="Desc-5163D17A64B66991" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Privacy Risk Type is a Risk Type that refers to the potential for harm that could occur to Information Objects due to the loss, exposure, or misuse of personal or sensitive data.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="ADE3B05E5EDE411F-core-426A57325AEB3D76-0-5163D17A64B66991" class="Full-426A57325AEB3D76_Rel-line" d="M735,340 C842.5,340 842.5,245.25 950,245.25" stroke="gray" fill="none" marker-start="url(#Full-426A57325AEB3D76__RelCircle" marker-end="url(#Full-426A57325AEB3D76__RelArrowTip"/>
+<g   transform="translate(50,203.5)">
+  <rect height="60"  width="325"  id="4C7853C35FCB7CEF"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="60" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="4C7853C35FCB7CEF.htm#Relationship1">&#60;Transformations&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(50,223.5)">
+  <rect height="20"  width="320"  id="In-05B0FFD76006DAC0-D321C226601262AE"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#F4DB6F"><a href="d321c226601262ae.htm#Relationship1">Enduring Initiative</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="05b0ffd76006dac0.htm">[Owned Initiative Resource]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="05B0FFD76006DAC0-D321C226601262AE-D321C226601262AE" class="Full-426A57325AEB3D76_Rel-line" d="M370,223.5 C470,223.5 470,283 570,283" stroke="gray" fill="none" marker-start="url(#Full-426A57325AEB3D76__RelCircle" marker-end="url(#Full-426A57325AEB3D76__RelArrowTip"/>
+<g   transform="translate(50,243.5)">
+  <rect height="20"  width="320"  id="In-B90AE7DB600E5E7A-9152D8875ED741EF"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#F4DB6F"><a href="9152d8875ed741ef.htm#Relationship1">Data Catalog</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="https://method.demomega.com/MM-OVERVIEW/pages/B90AE7DB600E5E7A.htm">[Owned Data Assurance Case]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="B90AE7DB600E5E7A-9152D8875ED741EF-9152D8875ED741EF" class="Full-426A57325AEB3D76_Rel-line" d="M370,243.5 C475,243.5 475,321 580,321" stroke="gray" fill="none" marker-start="url(#Full-426A57325AEB3D76__RelCircle" marker-end="url(#Full-426A57325AEB3D76__RelArrowTip"/>
+<g   transform="translate(945,275.25)">
+  <rect height="40"  width="325"  id="AD30DF2A5EBF803C"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="AD30DF2A5EBF803C.htm#Relationship1">&#60;Directives&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(950,295.25)">
+  <rect height="20"  width="320"  id="258C66A25FD25310"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-258C66F55FD2539C-core-426A57325AEB3D76-0-258C66A25FD25310').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-258C66F55FD2539C-core-426A57325AEB3D76-0-258C66A25FD25310').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="258c66f55fd2539c.htm">[Person Right]</a>  <div id="Desc-258C66F55FD2539C-core-426A57325AEB3D76-0-258C66A25FD25310" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-258C66A25FD25310').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-258C66A25FD25310').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="258c66a25fd25310.htm#Relationship1">Person Right</a><div id="Desc-258C66A25FD25310" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">Rights are legal, social or ethical principals of freedom that people are entitled for by a governing body.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="258C66F55FD2539C-core-426A57325AEB3D76-0-258C66A25FD25310" class="Full-426A57325AEB3D76_Rel-line" d="M735,340 C842.5,340 842.5,295.25 950,295.25" stroke="gray" fill="none" marker-start="url(#Full-426A57325AEB3D76__RelCircle" marker-end="url(#Full-426A57325AEB3D76__RelArrowTip"/>
+<g   transform="translate(50,273.5)">
+  <rect height="80"  width="325"  id="938E3ED362024F5B"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="80" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="938E3ED362024F5B.htm#Relationship1">&#60;Governance&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(50,293.5)">
+  <rect height="20"  width="320"  id="In-D7F9F9405F720AAA-762590AE5F6C7CC1"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#F4DB6F"><a href="762590ae5f6c7cc1.htm#Relationship1">Key IRM Indicator</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="https://method.demomega.com/MM-OVERVIEW/pages/D7F9F9405F720AAA.htm">[Monitored Data Assurance Case]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="D7F9F9405F720AAA-762590AE5F6C7CC1-762590AE5F6C7CC1" class="Full-426A57325AEB3D76_Rel-line" d="M370,293.5 C475,293.5 475,321 580,321" stroke="gray" fill="none" marker-start="url(#Full-426A57325AEB3D76__RelCircle" marker-end="url(#Full-426A57325AEB3D76__RelArrowTip"/>
+<g   transform="translate(50,313.5)">
+  <rect height="20"  width="320"  id="In-B90AF831600E6EB5-D7F9FBD45F720D19"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#F4DB6F"><a href="d7f9fbd45f720d19.htm#Relationship1">Data Control Execution</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="https://method.demomega.com/MM-OVERVIEW/pages/B90AF831600E6EB5.htm">[Tested Assurance Case]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="B90AF831600E6EB5-D7F9FBD45F720D19-D7F9FBD45F720D19" class="Full-426A57325AEB3D76_Rel-line" d="M370,313.5 C475,313.5 475,321 580,321" stroke="gray" fill="none" marker-start="url(#Full-426A57325AEB3D76__RelCircle" marker-end="url(#Full-426A57325AEB3D76__RelArrowTip"/>
+<g   transform="translate(50,333.5)">
+  <rect height="20"  width="320"  id="In-8A9FA88E5EE08E8E-8A9F9FE55EE0A603"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#F4DB6F"><a href="8a9f9fe55ee0a603.htm#Relationship1">Privacy Assessment</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="https://method.demomega.com/MM-OVERVIEW/pages/8A9FA88E5EE08E8E.htm">[assessed processing activity]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="8A9FA88E5EE08E8E-8A9F9FE55EE0A603-8A9F9FE55EE0A603" class="Full-426A57325AEB3D76_Rel-line" d="M370,333.5 C477.5,333.5 477.5,340 585,340" stroke="gray" fill="none" marker-start="url(#Full-426A57325AEB3D76__RelCircle" marker-end="url(#Full-426A57325AEB3D76__RelArrowTip"/>
+<g   transform="translate(945,325.25)">
+  <rect height="40"  width="325"  id="E7CDD1F0643F5BD8"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="E7CDD1F0643F5BD8.htm#Relationship1">&#60;Qualification&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(950,345.25)">
+  <rect height="20"  width="320"  id="6CCE7D6D5A2E4834"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-426A071E5AEC41DC-core-426A57325AEB3D76-0-6CCE7D6D5A2E4834').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-426A071E5AEC41DC-core-426A57325AEB3D76-0-6CCE7D6D5A2E4834').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="426a071e5aec41dc.htm">[Data Category]</a>  <div id="Desc-426A071E5AEC41DC-core-426A57325AEB3D76-0-6CCE7D6D5A2E4834" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-6CCE7D6D5A2E4834').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-6CCE7D6D5A2E4834').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="6cce7d6d5a2e4834.htm#Relationship1">Data Category</a><div id="Desc-6CCE7D6D5A2E4834" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Data Category is a classification or division of Information Objects regarded as having particular shared characteristics.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="426A071E5AEC41DC-core-426A57325AEB3D76-0-6CCE7D6D5A2E4834" class="Full-426A57325AEB3D76_Rel-line" d="M735,340 C842.5,340 842.5,345.25 950,345.25" stroke="gray" fill="none" marker-start="url(#Full-426A57325AEB3D76__RelCircle" marker-end="url(#Full-426A57325AEB3D76__RelArrowTip"/>
+<g   transform="translate(945,375.25)">
+  <rect height="60"  width="325"  id="3D908C805FFC642C"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="60" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="3D908C805FFC642C.htm#Relationship1">&#60;Annotation&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(950,395.25)">
+  <rect height="20"  width="320"  id="AFFEE0765F6086D4"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-05B0DF7E6006C158-core-426A57325AEB3D76-5-AFFEE0765F6086D4').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-05B0DF7E6006C158-core-426A57325AEB3D76-5-AFFEE0765F6086D4').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/05B0DF7E6006C158.htm">[Annotation Tag]</a>  <div id="Desc-05B0DF7E6006C158-core-426A57325AEB3D76-5-AFFEE0765F6086D4" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-AFFEE0765F6086D4').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-AFFEE0765F6086D4').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="AFFEE0765F6086D4.htm#Relationship1">Tag</a><div id="Desc-AFFEE0765F6086D4" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Tag is a general classification description which permits characterization of Entitys.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="05B0DF7E6006C158-core-426A57325AEB3D76-5-AFFEE0765F6086D4" class="Full-426A57325AEB3D76_Rel-line" d="M760,260 C855,260 855,395.25 950,395.25" stroke="gray" fill="none" marker-start="url(#Full-426A57325AEB3D76__RelCircle" marker-end="url(#Full-426A57325AEB3D76__RelArrowTip"/>
+<g   transform="translate(950,415.25)">
+  <rect height="20"  width="320"  id="AFFEE0F15F60898A"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-05B0DF0C6006C0D8-core-426A57325AEB3D76-5-AFFEE0F15F60898A').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-05B0DF0C6006C0D8-core-426A57325AEB3D76-5-AFFEE0F15F60898A').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/05B0DF0C6006C0D8.htm">[Attached Document]</a>  <div id="Desc-05B0DF0C6006C0D8-core-426A57325AEB3D76-5-AFFEE0F15F60898A" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-AFFEE0F15F60898A').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-AFFEE0F15F60898A').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="AFFEE0F15F60898A.htm#Relationship1">Business Document</a><div id="Desc-AFFEE0F15F60898A" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Business Document is a document whose lifecycle can be synched to the MEGA repository content: it may be attached to mega objects and a document version bound to a mega object timestamp in the Time Machine. This document can be of any given file format.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="05B0DF0C6006C0D8-core-426A57325AEB3D76-5-AFFEE0F15F60898A" class="Full-426A57325AEB3D76_Rel-line" d="M760,260 C855,260 855,415.25 950,415.25" stroke="gray" fill="none" marker-start="url(#Full-426A57325AEB3D76__RelCircle" marker-end="url(#Full-426A57325AEB3D76__RelArrowTip"/>
+<g   transform="translate(50,363.5)">
+  <rect height="40"  width="325"  id="Other"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="">Other</a></div></foreignObject>
+</g>
+<g   transform="translate(50,383.5)">
+  <rect height="20"  width="320"  id="In-4D9461C65EC9ECA3-514E5F6C620F1EC6"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"gray"><a href="514e5f6c620f1ec6.htm#Relationship1">Aggregate Block</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="4d9461c65ec9eca3.htm">[Contextual Object]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="4D9461C65EC9ECA3-514E5F6C620F1EC6-514E5F6C620F1EC6" class="Full-426A57325AEB3D76_Rel-line" d="M370,383.5 C462.5,383.5 462.5,241 555,241" stroke="gray" fill="none" marker-start="url(#Full-426A57325AEB3D76__RelCircle" marker-end="url(#Full-426A57325AEB3D76__RelArrowTip"/>
+<g   transform="translate(945,445.25)">
+  <rect height="100"  width="325"  id="Other"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="100" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="">Other</a></div></foreignObject>
+</g>
+<g   transform="translate(950,465.25)">
+  <rect height="20"  width="320"  id="CA353E6D5FC5E8AF"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-F594F72E61F736E1-core-426A57325AEB3D76-5-CA353E6D5FC5E8AF').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-F594F72E61F736E1-core-426A57325AEB3D76-5-CA353E6D5FC5E8AF').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="f594f72e61f736e1.htm">[Referenced Model Block]</a>  <div id="Desc-F594F72E61F736E1-core-426A57325AEB3D76-5-CA353E6D5FC5E8AF" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-CA353E6D5FC5E8AF').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-CA353E6D5FC5E8AF').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="CA353E6D5FC5E8AF.htm#Relationship1">Model Building Block</a><div id="Desc-CA353E6D5FC5E8AF" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Model Building Block is a Building Block used to describe and manage the enterprise. It comprises:  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="F594F72E61F736E1-core-426A57325AEB3D76-5-CA353E6D5FC5E8AF" class="Full-426A57325AEB3D76_Rel-line" d="M760,260 C855,260 855,465.25 950,465.25" stroke="gray" fill="none" marker-start="url(#Full-426A57325AEB3D76__RelCircle" marker-end="url(#Full-426A57325AEB3D76__RelArrowTip"/>
+<g   transform="translate(950,485.25)">
+  <rect height="20"  width="320"  id="9597D7B3620AB751"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-9597D7C1620AB7A9-core-426A57325AEB3D76-5-9597D7B3620AB751').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-9597D7C1620AB7A9-core-426A57325AEB3D76-5-9597D7B3620AB751').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/9597D7C1620AB7A9.htm">[Class of Model Block]</a>  <div id="Desc-9597D7C1620AB7A9-core-426A57325AEB3D76-5-9597D7B3620AB751" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-9597D7B3620AB751').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-9597D7B3620AB751').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="9597d7b3620ab751.htm#Relationship1">Class of Model Block</a><div id="Desc-9597D7B3620AB751" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Class of Model Block is a Class that classifies Model Building Blocks.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="9597D7C1620AB7A9-core-426A57325AEB3D76-5-9597D7B3620AB751" class="Full-426A57325AEB3D76_Rel-line" d="M760,260 C855,260 855,485.25 950,485.25" stroke="gray" fill="none" marker-start="url(#Full-426A57325AEB3D76__RelCircle" marker-end="url(#Full-426A57325AEB3D76__RelArrowTip"/>
+<g   transform="translate(950,505.25)">
+  <rect height="20"  width="320"  id="07CA0DD75DD84E92"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-71F59B656008373C-core-426A57325AEB3D76-2-07CA0DD75DD84E92').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-71F59B656008373C-core-426A57325AEB3D76-2-07CA0DD75DD84E92').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="71f59b656008373c.htm">[Constraining Policy]</a>  <div id="Desc-71F59B656008373C-core-426A57325AEB3D76-2-07CA0DD75DD84E92" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-07CA0DD75DD84E92').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-07CA0DD75DD84E92').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="07ca0dd75dd84e92.htm#Relationship1">Policy Asset</a><div id="Desc-07CA0DD75DD84E92" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Policy Asset is any topic related to policy definitions.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="71F59B656008373C-core-426A57325AEB3D76-2-07CA0DD75DD84E92" class="Full-426A57325AEB3D76_Rel-line" d="M745,302 C847.5,302 847.5,505.25 950,505.25" stroke="gray" fill="none" marker-start="url(#Full-426A57325AEB3D76__RelCircle" marker-end="url(#Full-426A57325AEB3D76__RelArrowTip"/>
+<g   transform="translate(950,525.25)">
+  <rect height="20"  width="320"  id="B3C824665C709228"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-B13DB35B5EDE3983-core-426A57325AEB3D76-0-B3C824665C709228').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-B13DB35B5EDE3983-core-426A57325AEB3D76-0-B3C824665C709228').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="B13DB35B5EDE3983.htm">[Security Measure]</a>  <div id="Desc-B13DB35B5EDE3983-core-426A57325AEB3D76-0-B3C824665C709228" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-B3C824665C709228').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-B3C824665C709228').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="b3c824665c709228.htm#Relationship1">Security Measure Type</a><div id="Desc-B3C824665C709228" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">Security measures are appropriate technical, organizational or certification measures to be taken to ensure that the requirements of the GDPR are met.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="B13DB35B5EDE3983-core-426A57325AEB3D76-0-B3C824665C709228" class="Full-426A57325AEB3D76_Rel-line" d="M735,340 C842.5,340 842.5,525.25 950,525.25" stroke="gray" fill="none" marker-start="url(#Full-426A57325AEB3D76__RelCircle" marker-end="url(#Full-426A57325AEB3D76__RelArrowTip"/>
+</svg>
+
+</div>
+<div class="Relationship" id="Relationship3" style="display:none">
+<h3>Graph by Domain</h3>
+<svg id="426A57325AEB3D76" height="559" width="1650" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" overflow="hidden">
+  <defs>
+    <marker id="Domain-426A57325AEB3D76__RelCircle" refX="3" refY="3" markerWidth="6" markerHeight="6">
+      <circle cx="3" cy="3" r="3" fill="#A52A00"></circle>
+    </marker>
+    <marker id="Domain-426A57325AEB3D76__RelArrowTip" refX="3" refY="3" markerWidth="8" markerHeight="6" orient="0">
+      <path d="M0,0 L6,2 L0,4" fill="#A52A00"></path>
+    </marker>
+  </defs>
+<g   transform="translate(585,270)">
+  <rect height="30"  width="150"  id="core-426A57325AEB3D76-0"  rx="3"  ry="3"  x="0"  y="-10"  stroke="#A52A00"/>
+<foreignObject x="0" y="-10" width="150" height="30" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:12; text-align:center"><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-426A57325AEB3D76').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-426A57325AEB3D76').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="#Relationship1">Privacy Processing</a>
+  <span id="Desc-426A57325AEB3D76" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">A Privacy Processing is a Data Assurance Case  related to any operation or set of operations which is performed on personal data or on sets of personal data, whether or not by automated means, such as collection, recording, organisation, structuring, storage, adaptation or alteration, retrieval, consultation, use, disclosure by transmission, dissemination or otherwise making available, alignment or combination, restriction, erasure or destruction  </span>
+</div></div></foreignObject>
+</g>
+<g   transform="translate(50,160.5)">
+  <rect height="40"  width="325"  id="36166B8C6157B6B4"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="36166b8c6157b6b4.htm#Relationship1">{Aggregate Syntax}</a></div></foreignObject>
+</g>
+<g   transform="translate(50,180.5)">
+  <rect height="20"  width="320"  id="In-4D9461C65EC9ECA3-514E5F6C620F1EC6"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"gray"><a href="514e5f6c620f1ec6.htm#Relationship1">Aggregate Block</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="4d9461c65ec9eca3.htm">[Contextual Object]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="4D9461C65EC9ECA3-514E5F6C620F1EC6-514E5F6C620F1EC6" class="Domain-426A57325AEB3D76_Rel-line" d="M370,180.5 C477.5,180.5 477.5,270 585,270" stroke="gray" fill="none" marker-start="url(#Domain-426A57325AEB3D76__RelCircle" marker-end="url(#Domain-426A57325AEB3D76__RelArrowTip"/>
+<g   transform="translate(945,85.25)">
+  <rect height="40"  width="325"  id="FE663DD261817752"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="fe663dd261817752.htm#Relationship1">{Assurance System Pattern}</a></div></foreignObject>
+</g>
+<g   transform="translate(950,105.25)">
+  <rect height="20"  width="320"  id="A67DC8AE5F8EACDF"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-B90ACFA1600E4C31-core-426A57325AEB3D76-2-A67DC8AE5F8EACDF').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-B90ACFA1600E4C31-core-426A57325AEB3D76-2-A67DC8AE5F8EACDF').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="b90acfa1600e4c31.htm">[Enforced Directive]</a>  <div id="Desc-B90ACFA1600E4C31-core-426A57325AEB3D76-2-A67DC8AE5F8EACDF" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-A67DC8AE5F8EACDF').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-A67DC8AE5F8EACDF').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="a67dc8ae5f8eacdf.htm#Relationship1">Control Directive</a><div id="Desc-A67DC8AE5F8EACDF" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Control Directive is a kind of Policy that provides recommendations on how to comply with Regulation Articles.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="B90ACFA1600E4C31-core-426A57325AEB3D76-2-A67DC8AE5F8EACDF" class="Domain-426A57325AEB3D76_Rel-line" d="M735,270 C842.5,270 842.5,105.25 950,105.25" stroke="gray" fill="none" marker-start="url(#Domain-426A57325AEB3D76__RelCircle" marker-end="url(#Domain-426A57325AEB3D76__RelArrowTip"/>
+<g   transform="translate(50,210.5)">
+  <rect height="40"  width="325"  id="44254CCE6182C076"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="44254cce6182c076.htm#Relationship1">{Data Governance Core}</a></div></foreignObject>
+</g>
+<g   transform="translate(50,230.5)">
+  <rect height="20"  width="320"  id="In-B90AE7DB600E5E7A-9152D8875ED741EF"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#F4DB6F"><a href="9152d8875ed741ef.htm#Relationship1">Data Catalog</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="https://method.demomega.com/MM-OVERVIEW/pages/B90AE7DB600E5E7A.htm">[Owned Data Assurance Case]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="B90AE7DB600E5E7A-9152D8875ED741EF-9152D8875ED741EF" class="Domain-426A57325AEB3D76_Rel-line" d="M370,230.5 C477.5,230.5 477.5,270 585,270" stroke="gray" fill="none" marker-start="url(#Domain-426A57325AEB3D76__RelCircle" marker-end="url(#Domain-426A57325AEB3D76__RelArrowTip"/>
+<g   transform="translate(945,135.25)">
+  <rect height="40"  width="325"  id="E2EF086D62147802"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="e2ef086d62147802.htm#Relationship1">{EA Pattern - Business Operating Pattern}</a></div></foreignObject>
+</g>
+<g   transform="translate(950,155.25)">
+  <rect height="20"  width="320"  id="BCEBD65854913935"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-426A07125AEC41C6-core-426A57325AEB3D76-0-BCEBD65854913935').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-426A07125AEC41C6-core-426A57325AEB3D76-0-BCEBD65854913935').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="426a07125aec41c6.htm">[impacted data subject]</a>  <div id="Desc-426A07125AEC41C6-core-426A57325AEB3D76-0-BCEBD65854913935" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">People-human beings from whom or about whom you collect information in connection with your business and its operations.  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-BCEBD65854913935').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-BCEBD65854913935').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="bcebd65854913935.htm#Relationship1">Business Partner</a><div id="Desc-BCEBD65854913935" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Business Partner is a party who interacts with the enterprise in the context its operating eco-system (the Business Operating Ecosystem).  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="426A07125AEC41C6-core-426A57325AEB3D76-0-BCEBD65854913935" class="Domain-426A57325AEB3D76_Rel-line" d="M735,270 C842.5,270 842.5,155.25 950,155.25" stroke="gray" fill="none" marker-start="url(#Domain-426A57325AEB3D76__RelCircle" marker-end="url(#Domain-426A57325AEB3D76__RelArrowTip"/>
+<g   transform="translate(50,260.5)">
+  <rect height="40"  width="325"  id="9D3B121261CFB66B"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="9D3B121261CFB66B.htm#Relationship1">{Indicator Pattern}</a></div></foreignObject>
+</g>
+<g   transform="translate(50,280.5)">
+  <rect height="20"  width="320"  id="In-D7F9F9405F720AAA-762590AE5F6C7CC1"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#F4DB6F"><a href="762590ae5f6c7cc1.htm#Relationship1">Key IRM Indicator</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="https://method.demomega.com/MM-OVERVIEW/pages/D7F9F9405F720AAA.htm">[Monitored Data Assurance Case]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="D7F9F9405F720AAA-762590AE5F6C7CC1-762590AE5F6C7CC1" class="Domain-426A57325AEB3D76_Rel-line" d="M370,280.5 C477.5,280.5 477.5,270 585,270" stroke="gray" fill="none" marker-start="url(#Domain-426A57325AEB3D76__RelCircle" marker-end="url(#Domain-426A57325AEB3D76__RelArrowTip"/>
+<g   transform="translate(945,185.25)">
+  <rect height="80"  width="325"  id="D6CD2C8B5AB98DA5"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="80" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="D6CD2C8B5AB98DA5.htm#Relationship1">{Information Pattern}</a></div></foreignObject>
+</g>
+<g   transform="translate(950,205.25)">
+  <rect height="20"  width="320"  id="E6F250185F772EE1"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-B90AFA69600E715C-core-426A57325AEB3D76-1-E6F250185F772EE1').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-B90AFA69600E715C-core-426A57325AEB3D76-1-E6F250185F772EE1').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="B90AFA69600E715C.htm">[Concerned Information]</a>  <div id="Desc-B90AFA69600E715C-core-426A57325AEB3D76-1-E6F250185F772EE1" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-E6F250185F772EE1').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-E6F250185F772EE1').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="e6f250185f772ee1.htm#Relationship1">Information Object</a><div id="Desc-E6F250185F772EE1" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">An Information Object  represents anything that can be communicated or memorized by an Agent in order to produce its Outcomes.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="B90AFA69600E715C-core-426A57325AEB3D76-1-E6F250185F772EE1" class="Domain-426A57325AEB3D76_Rel-line" d="M735,270 C842.5,270 842.5,205.25 950,205.25" stroke="gray" fill="none" marker-start="url(#Domain-426A57325AEB3D76__RelCircle" marker-end="url(#Domain-426A57325AEB3D76__RelArrowTip"/>
+<g   transform="translate(950,225.25)">
+  <rect height="20"  width="320"  id="6CCE7D6D5A2E4834"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-426A071E5AEC41DC-core-426A57325AEB3D76-0-6CCE7D6D5A2E4834').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-426A071E5AEC41DC-core-426A57325AEB3D76-0-6CCE7D6D5A2E4834').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="426a071e5aec41dc.htm">[Data Category]</a>  <div id="Desc-426A071E5AEC41DC-core-426A57325AEB3D76-0-6CCE7D6D5A2E4834" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-6CCE7D6D5A2E4834').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-6CCE7D6D5A2E4834').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="6cce7d6d5a2e4834.htm#Relationship1">Data Category</a><div id="Desc-6CCE7D6D5A2E4834" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Data Category is a classification or division of Information Objects regarded as having particular shared characteristics.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="426A071E5AEC41DC-core-426A57325AEB3D76-0-6CCE7D6D5A2E4834" class="Domain-426A57325AEB3D76_Rel-line" d="M735,270 C842.5,270 842.5,225.25 950,225.25" stroke="gray" fill="none" marker-start="url(#Domain-426A57325AEB3D76__RelCircle" marker-end="url(#Domain-426A57325AEB3D76__RelArrowTip"/>
+<g   transform="translate(950,245.25)">
+  <rect height="20"  width="320"  id="E6F250185F772EE1"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-258C6C815FD25BBF-core-426A57325AEB3D76-0-E6F250185F772EE1').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-258C6C815FD25BBF-core-426A57325AEB3D76-0-E6F250185F772EE1').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="258c6c815fd25bbf.htm">[Data Transfer]</a>  <div id="Desc-258C6C815FD25BBF-core-426A57325AEB3D76-0-E6F250185F772EE1" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">Any transfer of personal data which are undergoing processing or are intended for processing after transfer to a third country or to an international organization.  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-E6F250185F772EE1').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-E6F250185F772EE1').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="e6f250185f772ee1.htm#Relationship1">Information Object</a><div id="Desc-E6F250185F772EE1" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">An Information Object  represents anything that can be communicated or memorized by an Agent in order to produce its Outcomes.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="258C6C815FD25BBF-core-426A57325AEB3D76-0-E6F250185F772EE1" class="Domain-426A57325AEB3D76_Rel-line" d="M735,270 C842.5,270 842.5,245.25 950,245.25" stroke="gray" fill="none" marker-start="url(#Domain-426A57325AEB3D76__RelCircle" marker-end="url(#Domain-426A57325AEB3D76__RelArrowTip"/>
+<g   transform="translate(50,310.5)">
+  <rect height="40"  width="325"  id="69346AF86005EFA9"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="69346af86005efa9.htm#Relationship1">{Initiative and Transformation Pattern}</a></div></foreignObject>
+</g>
+<g   transform="translate(50,330.5)">
+  <rect height="20"  width="320"  id="In-05B0FFD76006DAC0-D321C226601262AE"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#F4DB6F"><a href="d321c226601262ae.htm#Relationship1">Enduring Initiative</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="05b0ffd76006dac0.htm">[Owned Initiative Resource]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="05B0FFD76006DAC0-D321C226601262AE-D321C226601262AE" class="Domain-426A57325AEB3D76_Rel-line" d="M370,330.5 C477.5,330.5 477.5,270 585,270" stroke="gray" fill="none" marker-start="url(#Domain-426A57325AEB3D76__RelCircle" marker-end="url(#Domain-426A57325AEB3D76__RelArrowTip"/>
+<g   transform="translate(945,275.25)">
+  <rect height="80"  width="325"  id="AF4DB12D62993434"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="80" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="af4db12d62993434.htm#Relationship1">{Model Block Management}</a></div></foreignObject>
+</g>
+<g   transform="translate(950,295.25)">
+  <rect height="20"  width="320"  id="AFFEE0F15F60898A"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-05B0DF0C6006C0D8-core-426A57325AEB3D76-5-AFFEE0F15F60898A').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-05B0DF0C6006C0D8-core-426A57325AEB3D76-5-AFFEE0F15F60898A').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/05B0DF0C6006C0D8.htm">[Attached Document]</a>  <div id="Desc-05B0DF0C6006C0D8-core-426A57325AEB3D76-5-AFFEE0F15F60898A" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-AFFEE0F15F60898A').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-AFFEE0F15F60898A').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="AFFEE0F15F60898A.htm#Relationship1">Business Document</a><div id="Desc-AFFEE0F15F60898A" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Business Document is a document whose lifecycle can be synched to the MEGA repository content: it may be attached to mega objects and a document version bound to a mega object timestamp in the Time Machine. This document can be of any given file format.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="05B0DF0C6006C0D8-core-426A57325AEB3D76-5-AFFEE0F15F60898A" class="Domain-426A57325AEB3D76_Rel-line" d="M735,270 C842.5,270 842.5,295.25 950,295.25" stroke="gray" fill="none" marker-start="url(#Domain-426A57325AEB3D76__RelCircle" marker-end="url(#Domain-426A57325AEB3D76__RelArrowTip"/>
+<g   transform="translate(950,315.25)">
+  <rect height="20"  width="320"  id="AFFEE0765F6086D4"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-05B0DF7E6006C158-core-426A57325AEB3D76-5-AFFEE0765F6086D4').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-05B0DF7E6006C158-core-426A57325AEB3D76-5-AFFEE0765F6086D4').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/05B0DF7E6006C158.htm">[Annotation Tag]</a>  <div id="Desc-05B0DF7E6006C158-core-426A57325AEB3D76-5-AFFEE0765F6086D4" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-AFFEE0765F6086D4').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-AFFEE0765F6086D4').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="AFFEE0765F6086D4.htm#Relationship1">Tag</a><div id="Desc-AFFEE0765F6086D4" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Tag is a general classification description which permits characterization of Entitys.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="05B0DF7E6006C158-core-426A57325AEB3D76-5-AFFEE0765F6086D4" class="Domain-426A57325AEB3D76_Rel-line" d="M735,270 C842.5,270 842.5,315.25 950,315.25" stroke="gray" fill="none" marker-start="url(#Domain-426A57325AEB3D76__RelCircle" marker-end="url(#Domain-426A57325AEB3D76__RelArrowTip"/>
+<g   transform="translate(950,335.25)">
+  <rect height="20"  width="320"  id="CA353E6D5FC5E8AF"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-F594F72E61F736E1-core-426A57325AEB3D76-5-CA353E6D5FC5E8AF').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-F594F72E61F736E1-core-426A57325AEB3D76-5-CA353E6D5FC5E8AF').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="f594f72e61f736e1.htm">[Referenced Model Block]</a>  <div id="Desc-F594F72E61F736E1-core-426A57325AEB3D76-5-CA353E6D5FC5E8AF" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-CA353E6D5FC5E8AF').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-CA353E6D5FC5E8AF').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="CA353E6D5FC5E8AF.htm#Relationship1">Model Building Block</a><div id="Desc-CA353E6D5FC5E8AF" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Model Building Block is a Building Block used to describe and manage the enterprise. It comprises:  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="F594F72E61F736E1-core-426A57325AEB3D76-5-CA353E6D5FC5E8AF" class="Domain-426A57325AEB3D76_Rel-line" d="M735,270 C842.5,270 842.5,335.25 950,335.25" stroke="gray" fill="none" marker-start="url(#Domain-426A57325AEB3D76__RelCircle" marker-end="url(#Domain-426A57325AEB3D76__RelArrowTip"/>
+<g   transform="translate(945,365.25)">
+  <rect height="40"  width="325"  id="02F70FDC600F4179"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="02F70FDC600F4179.htm#Relationship1">{Policy Pattern}</a></div></foreignObject>
+</g>
+<g   transform="translate(950,385.25)">
+  <rect height="20"  width="320"  id="07CA0DD75DD84E92"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-71F59B656008373C-core-426A57325AEB3D76-2-07CA0DD75DD84E92').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-71F59B656008373C-core-426A57325AEB3D76-2-07CA0DD75DD84E92').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="71f59b656008373c.htm">[Constraining Policy]</a>  <div id="Desc-71F59B656008373C-core-426A57325AEB3D76-2-07CA0DD75DD84E92" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-07CA0DD75DD84E92').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-07CA0DD75DD84E92').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="07ca0dd75dd84e92.htm#Relationship1">Policy Asset</a><div id="Desc-07CA0DD75DD84E92" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Policy Asset is any topic related to policy definitions.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="71F59B656008373C-core-426A57325AEB3D76-2-07CA0DD75DD84E92" class="Domain-426A57325AEB3D76_Rel-line" d="M735,270 C842.5,270 842.5,385.25 950,385.25" stroke="gray" fill="none" marker-start="url(#Domain-426A57325AEB3D76__RelCircle" marker-end="url(#Domain-426A57325AEB3D76__RelArrowTip"/>
+<g   transform="translate(50,360.5)">
+  <rect height="40"  width="325"  id="75D07C2B5A1583F5"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="75d07c2b5a1583f5.htm#Relationship1">{Privacy Assurance}</a></div></foreignObject>
+</g>
+<g   transform="translate(50,380.5)">
+  <rect height="20"  width="320"  id="In-8A9FA88E5EE08E8E-8A9F9FE55EE0A603"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#F4DB6F"><a href="8a9f9fe55ee0a603.htm#Relationship1">Privacy Assessment</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="https://method.demomega.com/MM-OVERVIEW/pages/8A9FA88E5EE08E8E.htm">[assessed processing activity]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="8A9FA88E5EE08E8E-8A9F9FE55EE0A603-8A9F9FE55EE0A603" class="Domain-426A57325AEB3D76_Rel-line" d="M370,380.5 C477.5,380.5 477.5,270 585,270" stroke="gray" fill="none" marker-start="url(#Domain-426A57325AEB3D76__RelCircle" marker-end="url(#Domain-426A57325AEB3D76__RelArrowTip"/>
+<g   transform="translate(945,415.25)">
+  <rect height="60"  width="325"  id="75D07C2B5A1583F5"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="60" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="75d07c2b5a1583f5.htm#Relationship1">{Privacy Assurance}</a></div></foreignObject>
+</g>
+<g   transform="translate(950,435.25)">
+  <rect height="20"  width="320"  id="258C66A25FD25310"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-258C66F55FD2539C-core-426A57325AEB3D76-0-258C66A25FD25310').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-258C66F55FD2539C-core-426A57325AEB3D76-0-258C66A25FD25310').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="258c66f55fd2539c.htm">[Person Right]</a>  <div id="Desc-258C66F55FD2539C-core-426A57325AEB3D76-0-258C66A25FD25310" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-258C66A25FD25310').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-258C66A25FD25310').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="258c66a25fd25310.htm#Relationship1">Person Right</a><div id="Desc-258C66A25FD25310" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">Rights are legal, social or ethical principals of freedom that people are entitled for by a governing body.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="258C66F55FD2539C-core-426A57325AEB3D76-0-258C66A25FD25310" class="Domain-426A57325AEB3D76_Rel-line" d="M735,270 C842.5,270 842.5,435.25 950,435.25" stroke="gray" fill="none" marker-start="url(#Domain-426A57325AEB3D76__RelCircle" marker-end="url(#Domain-426A57325AEB3D76__RelArrowTip"/>
+<g   transform="translate(950,455.25)">
+  <rect height="20"  width="320"  id="5163D17A64B66991"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-ADE3B05E5EDE411F-core-426A57325AEB3D76-0-5163D17A64B66991').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-ADE3B05E5EDE411F-core-426A57325AEB3D76-0-5163D17A64B66991').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="ade3b05e5ede411f.htm">[Privacy Risk]</a>  <div id="Desc-ADE3B05E5EDE411F-core-426A57325AEB3D76-0-5163D17A64B66991" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">Represents any risk related to data privacy that should be identified and assessed during a DPIA process.  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-5163D17A64B66991').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-5163D17A64B66991').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="5163d17a64b66991.htm#Relationship1">Privacy Risk Type</a><div id="Desc-5163D17A64B66991" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Privacy Risk Type is a Risk Type that refers to the potential for harm that could occur to Information Objects due to the loss, exposure, or misuse of personal or sensitive data.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="ADE3B05E5EDE411F-core-426A57325AEB3D76-0-5163D17A64B66991" class="Domain-426A57325AEB3D76_Rel-line" d="M735,270 C842.5,270 842.5,455.25 950,455.25" stroke="gray" fill="none" marker-start="url(#Domain-426A57325AEB3D76__RelCircle" marker-end="url(#Domain-426A57325AEB3D76__RelArrowTip"/>
+<g   transform="translate(50,410.5)">
+  <rect height="40"  width="325"  id="Other"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="">Other</a></div></foreignObject>
+</g>
+<g   transform="translate(50,430.5)">
+  <rect height="20"  width="320"  id="In-B90AF831600E6EB5-D7F9FBD45F720D19"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#F4DB6F"><a href="d7f9fbd45f720d19.htm#Relationship1">Data Control Execution</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="https://method.demomega.com/MM-OVERVIEW/pages/B90AF831600E6EB5.htm">[Tested Assurance Case]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="B90AF831600E6EB5-D7F9FBD45F720D19-D7F9FBD45F720D19" class="Domain-426A57325AEB3D76_Rel-line" d="M370,430.5 C477.5,430.5 477.5,270 585,270" stroke="gray" fill="none" marker-start="url(#Domain-426A57325AEB3D76__RelCircle" marker-end="url(#Domain-426A57325AEB3D76__RelArrowTip"/>
+<g   transform="translate(945,485.25)">
+  <rect height="40"  width="325"  id="Other"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="">Other</a></div></foreignObject>
+</g>
+<g   transform="translate(950,505.25)">
+  <rect height="20"  width="320"  id="B3C824665C709228"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-B13DB35B5EDE3983-core-426A57325AEB3D76-0-B3C824665C709228').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-B13DB35B5EDE3983-core-426A57325AEB3D76-0-B3C824665C709228').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="B13DB35B5EDE3983.htm">[Security Measure]</a>  <div id="Desc-B13DB35B5EDE3983-core-426A57325AEB3D76-0-B3C824665C709228" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-B3C824665C709228').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-B3C824665C709228').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="b3c824665c709228.htm#Relationship1">Security Measure Type</a><div id="Desc-B3C824665C709228" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">Security measures are appropriate technical, organizational or certification measures to be taken to ensure that the requirements of the GDPR are met.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="B13DB35B5EDE3983-core-426A57325AEB3D76-0-B3C824665C709228" class="Domain-426A57325AEB3D76_Rel-line" d="M735,270 C842.5,270 842.5,505.25 950,505.25" stroke="gray" fill="none" marker-start="url(#Domain-426A57325AEB3D76__RelCircle" marker-end="url(#Domain-426A57325AEB3D76__RelArrowTip"/>
+</svg>
+
+</div>
+<div class="Relationship" id="Relationship4" style="display:none">
+<h3>Relationship Table</h3>
+<table id="sortabletable" class="table table-sm  table-bordered table-cell-resizable table-index-set-col-width-4 table-custom-style table-scrollX" width="100%" cellspacing="0">
+<tr><th>Relationship</th><th>Cardinality</th><th>Target Entity</th><th>Source Entity</th><th>Description</th><th>Implementation</th></tr>
+<tr>
+<td><img src="../standard/dic_concept_powercomponent.ico.gif"/>&nbsp;Annotation Tag</td>
+<td>[0..*]</td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="AFFEE0765F6086D4.htm" target="_top">Tag</a></td>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="CA353E6D5FC5E8AF.htm" target="_top">Model Building Block</a></td>
+<td></td>
+<td><img src="../standard/metaassosub.ico.gif"/>&nbsp;(Tag/Tag Element)</td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_powercomponent.ico.gif"/>&nbsp;Attached Document</td>
+<td>[0..*]</td>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="AFFEE0F15F60898A.htm" target="_top">Business Document</a></td>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="CA353E6D5FC5E8AF.htm" target="_top">Model Building Block</a></td>
+<td></td>
+<td><img src="../standard/metacomposub.ico.gif"/>&nbsp;(Documented Object/Attached Document)</td>
+</tr>
+<tr>
+<td><img src="../standard/ctx-concepttype.ico.gif"/>&nbsp;
+<a  href="B90AFA69600E715C.htm" target="_top">Concerned Information</a></td>
+<td>[0..*]</td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="e6f250185f772ee1.htm" target="_top">Information Object</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="b90aeac8600e619f.htm" target="_top">Data Assurance Case</a></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype_component.ico.gif"/>&nbsp;
+<a  href="71f59b656008373c.htm" target="_top">Constraining Policy</a></td>
+<td>[0..*]</td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="07ca0dd75dd84e92.htm" target="_top">Policy Asset</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="07ca19e95dd854e9.htm" target="_top">Assurance Case</a></td>
+<td></td>
+<td><img src="../standard/metaassosub.ico.gif"/>&nbsp;Assured Enterprise Activity Regulation Constraint</td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype_component.ico.gif"/>&nbsp;
+<a  href="426a071e5aec41dc.htm" target="_top">Data Category</a></td>
+<td>[0..*]</td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="6cce7d6d5a2e4834.htm" target="_top">Data Category</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="426a57325aeb3d76.htm" target="_top">Privacy Processing</a></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/ctx-concepttype.ico.gif"/>&nbsp;
+<a  href="258c6c815fd25bbf.htm" target="_top">Data Transfer</a></td>
+<td>[0..*]</td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="e6f250185f772ee1.htm" target="_top">Information Object</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="426a57325aeb3d76.htm" target="_top">Privacy Processing</a></td>
+<td><div align="left" style="min-height: 12pt; ">Any transfer of personal data which are undergoing processing or are intended for processing after transfer to a third country or to an international organization.</div><div align="left" style="min-height: 12pt; "></div></td>
+<td><img src="../standard/metaclasspart_concrete.ico.gif"/>&nbsp;
+<a  href="897bda6d59d48184.htm" target="_top">Data Transfer</a></td>
+</tr>
+<tr>
+<td><img src="../standard/ctx-concepttype.ico.gif"/>&nbsp;
+<a  href="b90acfa1600e4c31.htm" target="_top">Enforced Directive</a></td>
+<td>[0..*]</td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="a67dc8ae5f8eacdf.htm" target="_top">Control Directive</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="07ca19e95dd854e9.htm" target="_top">Assurance Case</a></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype_component.ico.gif"/>&nbsp;
+<a  href="426a07125aec41c6.htm" target="_top">impacted data subject</a></td>
+<td>[0..*]</td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="bcebd65854913935.htm" target="_top">Business Partner</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="426a57325aeb3d76.htm" target="_top">Privacy Processing</a></td>
+<td>People&mdash;human beings from whom or about whom you collect information in connection with your business and its operations.</td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype_component.ico.gif"/>&nbsp;
+<a  href="258c66f55fd2539c.htm" target="_top">Person Right</a></td>
+<td>[0..*]</td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="258c66a25fd25310.htm" target="_top">Person Right</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="426a57325aeb3d76.htm" target="_top">Privacy Processing</a></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/ctx-concepttype.ico.gif"/>&nbsp;
+<a  href="ade3b05e5ede411f.htm" target="_top">Privacy Risk</a></td>
+<td>[0..*]</td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="5163d17a64b66991.htm" target="_top">Privacy Risk Type</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="426a57325aeb3d76.htm" target="_top">Privacy Processing</a></td>
+<td>Represents any risk related to data privacy that should be identified and assessed during a DPIA process.</td>
+<td><img src="../standard/metaclasspart_concrete.ico.gif"/>&nbsp;
+<a  href="992DAF825A4C14AA.htm" target="_top">Privacy Risk</a></td>
+</tr>
+<tr>
+<td><img src="../standard/ctx-concepttype.ico.gif"/>&nbsp;
+<a  href="B13DB35B5EDE3983.htm" target="_top">Security Measure</a></td>
+<td>[0..*]</td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="b3c824665c709228.htm" target="_top">Security Measure Type</a></td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="426a57325aeb3d76.htm" target="_top">Privacy Processing</a></td>
+<td></td>
+<td><img src="../standard/metaclasspart_abstract.ico.gif"/>&nbsp;
+<a  href="EF68566D59D634D9.htm" target="_top">GDPR Security Measure Subject</a></td>
+</tr>
+</table>
+</div>
+</section>
+<section class="object-section">
+<h4>INTERNAL STRUCTURE</h4> 
+<hr class="sectionbreak" />
+<a class="object-section-anchor" id="str"></a>
+<map  name="ADE3AFD65EDE3EF0">
+  <area  href=9152E6975ED764D3.htm#OBMK9152E6975ED764D3 shape="polygon" coords="366, 316, 366, 305, 434, 305, 434, 316, 366, 316"   target="_top"  title="Functional Asset involved in an Assurance Case.">
+  
+  <area  href=e6f250185f772ee1.htm#OBMKE6F250185F772EE1 shape="polygon" coords="353, 379, 353, 366, 447, 366, 447, 379, 353, 379"   target="_top"  title="An&#160; Information Object&#160; represents anything that can be communicated or memorized by an Agent in order to produce its Outcomes.">
+  
+  <area  href="B90AFA69600E715C.htm" shape="rect" coords="325, 296, 476, 401"   target="_top"  title="-">
+  
+  <area  href=a67dc8ae5f8eacdf.htm#OBMKA67DC8AE5F8EACDF shape="polygon" coords="373, 243, 373, 230, 457, 230, 457, 243, 373, 243"   target="_top"  title="A&#160; Control Directive is a kind of Policy that provides recommendations on how to comply with Regulation Articles.Once implemented,&#160; Control Directives enforces any Regulatory Framework your organization has to comply with.">
+  
+  <area  href="b90acfa1600e4c31.htm" shape="rect" coords="324, 160, 506, 265"   target="_top"  title="-">
+  
+  <area  href=e6f250185f772ee1.htm#OBMKE6F250185F772EE1 shape="polygon" coords="379, 106, 379, 93, 473, 93, 473, 106, 379, 106"   target="_top"  title="An&#160; Information Object&#160; represents anything that can be communicated or memorized by an Agent in order to produce its Outcomes.">
+  
+  <area  href=897bda6d59d48184.htm#OBMK897BDA6D59D48184 shape="polygon" coords="395, 76, 395, 63, 457, 63, 457, 76, 395, 76"   target="_top"  title="Any transfer of personal data which are undergoing processing or are intended for processing after transfer to a third country or to an international organization.">
+  
+  <area  href=#OBMK46284FBF6022FA6F shape="polygon" coords="322, 135, 322, 122, 404, 122, 404, 135, 322, 135"   target="_top"  title="-">
+  
+  <area  href=258c68065fd254de.htm#OBMK258C68065FD254DE shape="polygon" coords="404, 135, 404, 122, 521, 122, 521, 135, 404, 135"   target="_top"  title="Transfer safeguards are measures taken to ensure the legitimacy of data flows.">
+  
+  <area  href="258c6c815fd25bbf.htm" shape="rect" coords="318, 46, 535, 136"   target="_top"  title="Any transfer of personal data which are undergoing processing or are intended for processing after transfer to a third country or to an international organization.">
+  
+  <area  href=9152e51b5ed7614c.htm#OBMK9152E51B5ED7614C shape="polygon" coords="120, 203, 120, 192, 197, 192, 197, 203, 120, 203"   target="_top"  title="-">
+  
+  <area  href=b3c824665c709228.htm#OBMKB3C824665C709228 shape="polygon" coords="100, 256, 100, 243, 217, 243, 217, 256, 100, 256"   target="_top"  title="Security measures are appropriate technical, organizational or certification measures to be taken to ensure that the requirements of the GDPR are met.">
+  
+  <area  href=EF68566D59D634D9.htm#OBMKEF68566D59D634D9 shape="polygon" coords="95, 231, 95, 217, 222, 217, 222, 231, 95, 231"   target="_top"  title="-">
+  
+  <area  href="B13DB35B5EDE3983.htm" shape="rect" coords="55, 192, 264, 270"   target="_top"  title="-">
+  
+  <area  href=9152e55d5ed76217.htm#OBMK9152E55D5ED76217 shape="polygon" coords="114, 60, 114, 49, 203, 49, 203, 60, 114, 60"   target="_top"  title="-">
+  
+  <area  href=5163d17a64b66991.htm#OBMK5163D17A64B66991 shape="polygon" coords="113, 119, 113, 106, 204, 106, 204, 119, 113, 119"   target="_top"  title="A&#160; Privacy Risk Type is a Risk Type that refers to the potential for harm that could occur to Information Objects due to the loss, exposure, or misuse of personal or sensitive data.">
+  
+  <area  href=992DAF825A4C14AA.htm#OBMK992DAF825A4C14AA shape="polygon" coords="129, 91, 129, 78, 188, 78, 188, 91, 129, 91"   target="_top"  title="Represents any risk related to data privacy that should be identified and assessed during a DPIA process.">
+  
+  <area  href="ade3b05e5ede411f.htm" shape="rect" coords="55, 50, 264, 137"   target="_top"  title="Represents any risk related to data privacy that should be identified and assessed during a DPIA process.">
+  
+  <area  href=b90aeac8600e619f.htm#OBMKB90AEAC8600E619F shape="polygon" coords="232, 15, 232, 2, 350, 2, 350, 15, 232, 15"   target="_top"  title="A&#160; Data Assurance Case is a structured argument, supported by evidence, intended to justify that a data is acceptably assured relative to a concern (such as quality, safety, security or privacy) in the intended operating environment.The operating environment includes:1. Policies related to the use of data in the organization (privacy policy, regulation policy, ...).2. Data quality policies defined by the organization.3. Risk to be mitigated in the use, consumption and sharing of data by the organization.4. Control directives to be followed in the use, consumption and sharing of data by the organization.">
+  
+  <area  href="426a57325aeb3d76.htm" shape="rect" coords="1, 0, 582, 506"   target="_top"  title="A&#160; Privacy Processing is a Data Assurance Case&#160; related to any operation or set of operations which is performed on personal data or on sets of personal data, whether or not by automated means, such as collection, recording, organisation, structuring, storage, adaptation or alteration, retrieval, consultation, use, disclosure by transmission, dissemination or otherwise making available, alignment or combination, restriction, erasure or destruction">
+  
+</map>
+<img  src="../images/426a57325aeb3d76_ade3afd65ede3ef0_i.png" alt="../images/426a57325aeb3d76_ade3afd65ede3ef0_i.png" usemap="#ADE3AFD65EDE3EF0" height="516" width="581" border=0>
+
+<a class="object-section-anchor" id="shi"></a>
+<section class="object-section">
+<h4>SUPER TYPES HIERARCHY</h4> 
+<hr class="sectionbreak" />
+<span>Left click on a node to toggle it. Right click to navigate through its page
+</section>
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<div id="categoryHierarchy"></div>
+ <script>
+var hierarchy = JSON.parse('{"name":"Privacy Processing","comment":"A Privacy Processing is a Data Assurance Case  related to any operation or set of operations which is performed on personal data or on sets of personal data, whether or not by automated means, such as collection, recording, organisation, structuring, storage, adaptation or alteration, retrieval, consultation, use, disclosure by transmission, dissemination or otherwise making available, alignment or combination, restriction, erasure or destruction","url":"426A57325AEB3D76.htm","parents":[{"name":"Data Assurance Case","comment":"A Data Assurance Case is a structured argument, supported by evidence, intended to justify that a data is acceptably assured relative to a concern (such as quality, safety, security or privacy) in the intended operating environment.","url":"B90AEAC8600E619F.htm", "isparent":true,"parents":[{"name":"Assurance Case","comment":"An Assurance Case is a claim that a particular enterprise asset or group of assets (Resources or Activites) adequately mitigates certain identified risks by means of appropriated controls.","url":"07CA19E95DD854E9.htm", "isparent":true,"parents":[{"name":"Initiative Resource","comment":"An Initiative Resource is a resource and course of actions defined by Enduring Initiatives  to achieve its objectives.","url":"05B0F6D56006CC8A.htm", "isparent":true,"parents":[{"name":"Initiative Block","comment":"An Initiative Block is a Model Building Block used to describe enterprise transformation.","url":"C31CE58F62158D82.htm", "isparent":true,"parents":[{"name":"Model Building Block","comment":"A Model Building Block is a Building Block used to describe and manage the enterprise. It comprises:","url":"CA353E6D5FC5E8AF.htm", "isparent":true,"parents":[{"name":"Building Block","comment":"A Building Block is an autonomous, resusable Entity that contributes to the makeup of other Building Blocks.","url":"CCB819645A564F12.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]}]}]}]}]}],"children":[{"name":"Processing Activity","comment":"Any operation or set of operations performed upon personal data, whether or not by automatic means, such as collection, recording, organization, storage, adaptation or alteration, retrieval, consultation, use, disclosure by transmission, dissemination or otherwise making available, alignment or combination, blocking, erasure or destruction.","url":"16E319BE5BF83CB9.htm", "isparent":false,"children":[]}]}');
+$(document).ready(function(event) {
+var tree = CollapsibleTree("#categoryHierarchy");
+tree.init(hierarchy);
+});
+</script>
+</div>
+<button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button>
+<script>window.onscroll = function() {scrollFunction()};$(document).on('click', 'a[href^="#"]', function (event) {event.preventDefault();$('html, body').animate({scrollTop: $($.attr(this, 'href')).offset().top}, 500);});
+function showDiagOnClick(elem){ var x = document.getElementsByClassName('Relationship');var e = elem.getAttribute("value"); for (var i=0; i < x.length ;i++){x[i].style.display="none"; if (x[i].id == e){x[i].style.display="block";x[i].style.textAlign="left";}}}
+</script></html>

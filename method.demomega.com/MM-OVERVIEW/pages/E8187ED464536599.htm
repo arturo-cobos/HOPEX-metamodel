@@ -1,0 +1,464 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="keywords" content="">
+<meta name="description" content="">    
+<LINK REL="icon" HREF="../standard/assets/img/favicon.ico">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/bootstrap.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nav.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/eaportal.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/font-awesome.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/animate.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/datatables.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/grid.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nae.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/custom.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/chosen.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/prism.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery.dataTables.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jsTreeStyle.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.theme.css" media="screen" />
+<script type="text/javascript" src="../standard/assets/js/jquery-3.2.1.min.js" ></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-ui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.columnFilter.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3-force.v2.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.gui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.search.js"></script> 
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.util.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-2.1.1.min.js"></script>
+<script src="../standard/assets/js/ws_zoomtemplate_firefox.js"></script>
+<script src="../standard/assets/js/bootstrap.min.js"></script>
+<script src="../standard/assets/js/datatables.min.js"></script>
+<script src="../standard/assets/js/moment.min.js"></script>
+<script src="../standard/assets/js/datetime-moment.js"></script>
+<script src="../standard/assets/js/chartjs.min.js"></script>
+<script src="../standard/assets/js/searchindexcontent.json"></script>
+<script src="../standard/assets/js/anls.js"></script>
+<script src="../../../cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script src="../standard/assets/js/gauge.js"></script> 
+<script src="../standard/assets/js/domesticApi.js"></script> 
+<script src="../standard/assets/js/piecelabel.js"></script>
+<script src="../standard/assets/js/popper.min.js"></script>
+<script src="../standard/assets/js/custom.js"></script>
+<script src="../standard/assets/js/chosen.jquery.js"></script>
+<script src="../standard/assets/js/prism.js"></script>
+<script src="../standard/assets/js/init-chosen.js"></script>
+<script src="../standard/assets/js/chart-data-flow.js"></script>
+<script src="../standard/assets/js/chart-data-gantt.js"></script>
+<script type="module" src="../standard/assets/js/Fuse.esm.min.js"></script>
+<script type="module">
+import Fuse from '../standard/assets/js/Fuse.esm.min.js';
+$(document).ready(function () {
+console.log('getjson');
+window.$.getJSON('../standard/assets/js/searchindexcontent.json', function (response) {
+console.log('getjson ok');
+var isIndex = "";
+var url = window.location.pathname;
+var filename = url.substring(url.lastIndexOf('/')+1);
+if( filename.includes("index") || filename === "" ){
+isIndex = "pages/";
+} else {
+isIndex = "";
+}
+const fuse = new Fuse(response, {
+keys: ['title','text'],
+shouldSort: true,
+includeMatches : true,
+findAllMatches : true
+});
+$('#search-fuse').on('keyup', function () {
+let result = fuse.search($(this).val());
+console.log(result);
+let resultdiv = $('div.searchresults-fuse');
+if (result.length === 0) {
+resultdiv.hide();
+} else {
+resultdiv.empty();
+resultdiv.append('<table class="table-search" width="100%" cellspacing="0"><thead ><tr><th>Name</th><th>Object Type</th><th>Modification date</th></tr></thead><tbody>');
+
+for (let obj in result.slice(0,10)) {
+
+let searchObj = '<tr><td><a href="./'+ isIndex + result[obj].item.url + '">' + result[obj].item.title +'</a></td><td>' + result[obj].item.ObjectType + '</td><td>' + result[obj].item.ModificationDate + '</td></tr>' ;
+
+
+resultdiv.find('tbody').append(searchObj);
+}
+resultdiv.append('</tbody></table>');
+resultdiv.show();
+}
+});
+});
+});
+</script>
+<title>HOPEX Metamodel Overview (Beta Version)</title>
+</head>
+<nav class="navbar navbar-expand-md navbar-dark  navbar-mega"><!-- Brand --><!--<a class="navbar-brand" href="#">Navbar</a>--><a class="" href="../index.htm"><img class="logo-mega" src="../standard/assets/img/logo.png"  alt="">(Beta Version)</a><!-- Toggler/collapsibe Button --><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><!-- Navbar links -->
+<div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsibleNavbar"><div class="col-sm-auto col-md-auto col-lg-5"></div>
+<div class="col-sm-auto">
+<ul class="navbar-nav">      
+<li><a class="dropdown-item" href="ad30ce115ebf7e90.htm">EA Grid</a></li> 
+<li><a class="dropdown-item" href="fdd5018459bc3c6a.htm">EA Domains</a></li> 
+<li><a class="dropdown-item" href="07e731775ecc93f4.htm">Solutions</a></li> 
+<li><a class="dropdown-item" href="c5dfc62c54810c2c.htm">Glossary</a></li> 
+<li class="nav-item dropdown mx-1">
+<a class="nav-link" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</a>
+<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<li><a class="dropdown-item" href="5446555d5f88c32e.htm">Outcome Driven Metamodel</a></li> 
+<li><a class="dropdown-item" href="e1ccfc295f8f7b90.htm">Playbooks</a></li> 
+<li><a class="dropdown-item" href="42bc992862d20ea7.htm">Framework Mappings</a></li> 
+<li><a class="dropdown-item" href="e93aebb35fa20550.htm">Metamodel Patterns</a></li> 
+<li><a class="dropdown-item" href="d599fe87602b2b85.htm">References</a></li> 
+<li><a class="dropdown-item" href="333f3a7f5dde11de.htm">Legend</a></li> 
+</ul>									                                            
+</li>
+</ul>
+</div>
+<div class="col-sm-auto"><a class="nav-link search" href="#" onclick=showHideSearch("search-section-fuse")><i class="fa fa-search mr-1 form-control-feedback"></i></a></div>
+</div>
+</nav>
+<div id="search-section-fuse" style="display:none">>
+<div class="search_header"><span class="closesearch">&times;</span>
+<nav class="breadcrumb">
+<a class="breadcrumb-item" href="../index.htm">Home </a> 
+<span class="breadcrumb-item active">Search</span> 
+</nav>
+</div>
+<input id="search-fuse" placeholder="Search..."  name="q" onfocus="this.value=''" type="search">
+<div class="searchresults-fuse"></div>
+</div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>function showHideSearch(elementId) {var contentDivs = document.getElementsByClassName('content');var footerDivs = document.getElementsByClassName('footer'); var containerDivs = document.getElementsByClassName('container');var containerfluidDivs = document.getElementsByClassName('container-fluid');var x = document.getElementById(elementId);if (x.style.display === "none") {x.style.display = "block";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "none";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "none";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "none";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "none";}} else {x.style.display = "none";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "block";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "block";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "block";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "block";}}} ;<!-- END WIDGET DRILL DOWN --></script><script>$(document).ready(function() {$(window).scroll(function() {if ($(this).scrollTop() > 100) {$('.scrollup').fadeIn();} else {$('.scrollup').fadeOut();}});$('.scrollup').click(function() {$("html, body").animate({scrollTop: 0}, 600);return false;});});</script><script>
+var modal = document.getElementById("search-section-fuse");
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = "none";
+}
+}
+$(document).on('click', '.closesearch', function() {
+showHideSearch("search-section-fuse");
+
+
+
+
+
+});</script><div class="container-fluid col-lg-11" id="top"><nav class="breadcrumb"><a class="breadcrumb-item" href="../index.htm">Home</a> <span class="breadcrumb-item active">
+<a  href="02af0a215a1823ee.htm" target="_top">Dictionary of HOPEX patterns</a>&nbsp;/&nbsp;Block Collection</span></nav></div>
+<div class="container-fluid col-lg-11 content">
+<section class="fadeInDown animated"><a href="#det" class="btn btn-d">DEFINITION</a><a href="#rel" class="btn btn-d">RELATIONSHIPS</a>	 <a href="#shi" class="btn btn-d">SUPER-SUB TYPE HIERARCHY</a></section>
+<a class="object-section-anchor" id="det"></a>
+<section class="object-section">
+<h4>BUILDING BLOCK - Block Collection</h4>
+<hr class="sectionbreak" />
+<table class="table table-vertical-headers table-set-col-width">
+<tr><th>Description</th><td class="description-text"><i>Abstract Concept&nbsp;(Aspect)</i><br/><div class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Block Collection</b> is a grouping of <a href="ccb819645a564f12.htm" target="_top"><b><u>Building Block</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">The grouping of&#160; <a href="ccb819645a564f12.htm" target="_top"><b><u>Building Block</u></b></a>s can be achieved either by nesting, in which case the&#160;<b> Block Collection</b> serves as a <a href="506b81c56442b28a.htm" target="_top"><b><u>Container Package</u></b></a>, or by reference.</div><div align="left" style="min-height: 12pt; ">Example:</div><div align="left" style="min-height: 12pt; ">- <a href="506b81c56442b28a.htm" target="_top"><b><u>Container Package</u></b></a></div><div align="left" style="min-height: 12pt; ">- </div></div><div></div></td></tr>		
+<tr><th>Version</th><td class="description-text">Available since: HOPEX V3.2<br/>Last Update: HOPEX V3.2</td></tr>		
+<tr><th>Super Types</th><td class="description-text><img src="../standard/dic_concept_syntax.ico.gif">&nbsp;
+<a  href="ae26f8b05acd5185.htm" target="_top">Entity</a>&nbsp;&nbsp;</td></tr>   
+<tr><th>Definition Domain</th><td class="description-text"><img src="../standard/dic_graph.ico.gif">&nbsp;
+<a  href="36166c3a6157bb9b.htm" target="_top">Containers &amp; Blocks</a><br/>The Containers &amp; Blocks domain defines the core elements of Building Block and Container which provide the basic for modular model management.
+</td></tr>
+<tr><th>Dictionary</th><td><img src="../standard/dicsubjectarea.ico.gif">&nbsp;
+<a  href="02af0a215a1823ee.htm" target="_top">Dictionary of HOPEX patterns</a></td></tr>
+<tr><th>Implementing MetaClass</th><td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="ecd6158f5e874337.htm" target="_top">Cluster of Building Block</a></td></tr>
+</table>
+</section>
+<section class="object-section">
+<h4>RELATIONSHIPS</h4> 
+<hr class="sectionbreak" />
+<a href="#" class="btn btn-d" value="Relationship1" onclick="showDiagOnClick(this)">Simple Graph</a>
+<a href="#" class="btn btn-d" value="Relationship2" onclick="showDiagOnClick(this)">Graph & Hierarchy</a>
+<a href="#" class="btn btn-d" value="Relationship3" onclick="showDiagOnClick(this)">Graph by Domain</a>
+<a href="#" class="btn btn-d" value="Relationship4" onclick="showDiagOnClick(this)">Table</a>
+<a class="object-section-anchor" id="rel"></a>
+<div class="Relationship" id="Relationship1">
+<h3>Simple Graph</h3>
+<svg id="E8187ED464536599" height="344" width="1610" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" overflow="hidden">
+  <defs>
+    <marker id="Simple-E8187ED464536599__RelCircle" refX="3" refY="3" markerWidth="6" markerHeight="6">
+      <circle cx="3" cy="3" r="3" fill="#A52A00"></circle>
+    </marker>
+    <marker id="Simple-E8187ED464536599__RelArrowTip" refX="3" refY="3" markerWidth="8" markerHeight="6" orient="0">
+      <path d="M0,0 L6,2 L0,4" fill="#A52A00"></path>
+    </marker>
+  </defs>
+<g   transform="translate(585,170)">
+  <rect height="30"  width="150"  id="core-E8187ED464536599-0"  rx="3"  ry="3"  x="0"  y="-10"  stroke="#F4DB6F"/>
+<foreignObject x="0" y="-10" width="150" height="30" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:12; text-align:center"><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-E8187ED464536599').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-E8187ED464536599').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="#Relationship1">Block Collection</a>
+  <span id="Desc-E8187ED464536599" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">A Block Collection is a grouping of Building Blocks.  </span>
+</div></div></foreignObject>
+</g>
+<g   transform="translate(50,149.75)">
+  <rect height="60"  width="325"  id="Other"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="60" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="">Other</a></div></foreignObject>
+</g>
+<g   transform="translate(50,169.75)">
+  <rect height="20"  width="320"  id="In-B13D32315EDF4481-B13D31DE5EDF42D8"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"gray"><a href="b13d31de5edf42d8.htm#Relationship1">Aggregate Entity</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="b13d32315edf4481.htm">[Contextual Entity]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="B13D32315EDF4481-B13D31DE5EDF42D8-B13D31DE5EDF42D8" class="Simple-E8187ED464536599_Rel-line" d="M370,169.75 C477.5,169.75 477.5,170 585,170" stroke="gray" fill="none" marker-start="url(#Simple-E8187ED464536599__RelCircle" marker-end="url(#Simple-E8187ED464536599__RelArrowTip"/>
+<g   transform="translate(50,189.75)">
+  <rect height="20"  width="320"  id="In-27862AA35B251D4C-AE26F8D65ACD51AB"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"gray"><a href="ae26f8d65acd51ab.htm#Relationship1">Nesting Entity</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="27862aa35b251d4c.htm">[Nested Entity]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="27862AA35B251D4C-AE26F8D65ACD51AB-AE26F8D65ACD51AB" class="Simple-E8187ED464536599_Rel-line" d="M370,189.75 C477.5,189.75 477.5,170 585,170" stroke="gray" fill="none" marker-start="url(#Simple-E8187ED464536599__RelCircle" marker-end="url(#Simple-E8187ED464536599__RelArrowTip"/>
+<g   transform="translate(945,149.75)">
+  <rect height="60"  width="325"  id="Other"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="60" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="">Other</a></div></foreignObject>
+</g>
+<g   transform="translate(950,169.75)">
+  <rect height="20"  width="320"  id="744B935D5FBFE0F9"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-ACFECCCA614D006B-core-E8187ED464536599-1-744B935D5FBFE0F9').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-ACFECCCA614D006B-core-E8187ED464536599-1-744B935D5FBFE0F9').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/ACFECCCA614D006B.htm">[Class]</a>  <div id="Desc-ACFECCCA614D006B-core-E8187ED464536599-1-744B935D5FBFE0F9" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-744B935D5FBFE0F9').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-744B935D5FBFE0F9').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="744b935d5fbfe0f9.htm#Relationship1">Class</a><div id="Desc-744B935D5FBFE0F9" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Class is collection of Entitys which it classifies according to one or more criteria.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="ACFECCCA614D006B-core-E8187ED464536599-1-744B935D5FBFE0F9" class="Simple-E8187ED464536599_Rel-line" d="M735,170 C842.5,170 842.5,169.75 950,169.75" stroke="gray" fill="none" marker-start="url(#Simple-E8187ED464536599__RelCircle" marker-end="url(#Simple-E8187ED464536599__RelArrowTip"/>
+<g   transform="translate(950,189.75)">
+  <rect height="20"  width="320"  id="CCB819645A564F12"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-0CB7118B64585FDD-core-E8187ED464536599-0-CCB819645A564F12').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-0CB7118B64585FDD-core-E8187ED464536599-0-CCB819645A564F12').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="0CB7118B64585FDD.htm">[Grouped Building Block]</a>  <div id="Desc-0CB7118B64585FDD-core-E8187ED464536599-0-CCB819645A564F12" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-CCB819645A564F12').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-CCB819645A564F12').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="ccb819645a564f12.htm#Relationship1">Building Block</a><div id="Desc-CCB819645A564F12" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Building Block is an autonomous, resusable Entity that contributes to the makeup of other Building Blocks.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="0CB7118B64585FDD-core-E8187ED464536599-0-CCB819645A564F12" class="Simple-E8187ED464536599_Rel-line" d="M735,170 C842.5,170 842.5,189.75 950,189.75" stroke="gray" fill="none" marker-start="url(#Simple-E8187ED464536599__RelCircle" marker-end="url(#Simple-E8187ED464536599__RelArrowTip"/>
+</svg>
+
+</div>
+<div class="Relationship" id="Relationship2" style="display:none">
+<h3>Graph & Hierarchy</h3>
+<svg id="E8187ED464536599" height="344" width="1610" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" overflow="hidden">
+  <defs>
+    <marker id="Full-E8187ED464536599__RelCircle" refX="3" refY="3" markerWidth="6" markerHeight="6">
+      <circle cx="3" cy="3" r="3" fill="#A52A00"></circle>
+    </marker>
+    <marker id="Full-E8187ED464536599__RelArrowTip" refX="3" refY="3" markerWidth="8" markerHeight="6" orient="0">
+      <path d="M0,0 L6,2 L0,4" fill="#A52A00"></path>
+    </marker>
+  </defs>
+<g   transform="translate(580,171)">
+  <rect height="53"  width="160"  id="core-E8187ED464536599-1"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="160" height="53" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:center"><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-AE26F8B05ACD5185').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-AE26F8B05ACD5185').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="ae26f8b05acd5185.htm#Relationship1">Entity</a>
+  <span id="Desc-AE26F8B05ACD5185" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.  </span>
+</div></div></foreignObject>
+</g>
+<g   transform="translate(585,190)">
+  <rect height="30"  width="150"  id="core-E8187ED464536599-0"  rx="3"  ry="3"  x="0"  y="-10"  stroke="#F4DB6F"/>
+<foreignObject x="0" y="-10" width="150" height="30" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:12; text-align:center"><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-E8187ED464536599').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-E8187ED464536599').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="#Relationship1">Block Collection</a>
+  <span id="Desc-E8187ED464536599" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">A Block Collection is a grouping of Building Blocks.  </span>
+</div></div></foreignObject>
+</g>
+<g   transform="translate(50,149.75)">
+  <rect height="60"  width="325"  id="Other"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="60" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="">Other</a></div></foreignObject>
+</g>
+<g   transform="translate(50,169.75)">
+  <rect height="20"  width="320"  id="In-B13D32315EDF4481-B13D31DE5EDF42D8"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"gray"><a href="b13d31de5edf42d8.htm#Relationship1">Aggregate Entity</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="b13d32315edf4481.htm">[Contextual Entity]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="B13D32315EDF4481-B13D31DE5EDF42D8-B13D31DE5EDF42D8" class="Full-E8187ED464536599_Rel-line" d="M370,169.75 C475,169.75 475,171 580,171" stroke="gray" fill="none" marker-start="url(#Full-E8187ED464536599__RelCircle" marker-end="url(#Full-E8187ED464536599__RelArrowTip"/>
+<g   transform="translate(50,189.75)">
+  <rect height="20"  width="320"  id="In-27862AA35B251D4C-AE26F8D65ACD51AB"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"gray"><a href="ae26f8d65acd51ab.htm#Relationship1">Nesting Entity</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="27862aa35b251d4c.htm">[Nested Entity]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="27862AA35B251D4C-AE26F8D65ACD51AB-AE26F8D65ACD51AB" class="Full-E8187ED464536599_Rel-line" d="M370,189.75 C475,189.75 475,171 580,171" stroke="gray" fill="none" marker-start="url(#Full-E8187ED464536599__RelCircle" marker-end="url(#Full-E8187ED464536599__RelArrowTip"/>
+<g   transform="translate(945,149.75)">
+  <rect height="60"  width="325"  id="Other"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="60" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="">Other</a></div></foreignObject>
+</g>
+<g   transform="translate(950,169.75)">
+  <rect height="20"  width="320"  id="744B935D5FBFE0F9"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-ACFECCCA614D006B-core-E8187ED464536599-1-744B935D5FBFE0F9').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-ACFECCCA614D006B-core-E8187ED464536599-1-744B935D5FBFE0F9').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/ACFECCCA614D006B.htm">[Class]</a>  <div id="Desc-ACFECCCA614D006B-core-E8187ED464536599-1-744B935D5FBFE0F9" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-744B935D5FBFE0F9').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-744B935D5FBFE0F9').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="744b935d5fbfe0f9.htm#Relationship1">Class</a><div id="Desc-744B935D5FBFE0F9" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Class is collection of Entitys which it classifies according to one or more criteria.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="ACFECCCA614D006B-core-E8187ED464536599-1-744B935D5FBFE0F9" class="Full-E8187ED464536599_Rel-line" d="M740,171 C845,171 845,169.75 950,169.75" stroke="gray" fill="none" marker-start="url(#Full-E8187ED464536599__RelCircle" marker-end="url(#Full-E8187ED464536599__RelArrowTip"/>
+<g   transform="translate(950,189.75)">
+  <rect height="20"  width="320"  id="CCB819645A564F12"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-0CB7118B64585FDD-core-E8187ED464536599-0-CCB819645A564F12').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-0CB7118B64585FDD-core-E8187ED464536599-0-CCB819645A564F12').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="0CB7118B64585FDD.htm">[Grouped Building Block]</a>  <div id="Desc-0CB7118B64585FDD-core-E8187ED464536599-0-CCB819645A564F12" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-CCB819645A564F12').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-CCB819645A564F12').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="ccb819645a564f12.htm#Relationship1">Building Block</a><div id="Desc-CCB819645A564F12" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Building Block is an autonomous, resusable Entity that contributes to the makeup of other Building Blocks.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="0CB7118B64585FDD-core-E8187ED464536599-0-CCB819645A564F12" class="Full-E8187ED464536599_Rel-line" d="M735,190 C842.5,190 842.5,189.75 950,189.75" stroke="gray" fill="none" marker-start="url(#Full-E8187ED464536599__RelCircle" marker-end="url(#Full-E8187ED464536599__RelArrowTip"/>
+</svg>
+
+</div>
+<div class="Relationship" id="Relationship3" style="display:none">
+<h3>Graph by Domain</h3>
+<svg id="E8187ED464536599" height="344" width="1610" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" overflow="hidden">
+  <defs>
+    <marker id="Domain-E8187ED464536599__RelCircle" refX="3" refY="3" markerWidth="6" markerHeight="6">
+      <circle cx="3" cy="3" r="3" fill="#A52A00"></circle>
+    </marker>
+    <marker id="Domain-E8187ED464536599__RelArrowTip" refX="3" refY="3" markerWidth="8" markerHeight="6" orient="0">
+      <path d="M0,0 L6,2 L0,4" fill="#A52A00"></path>
+    </marker>
+  </defs>
+<g   transform="translate(585,170)">
+  <rect height="30"  width="150"  id="core-E8187ED464536599-0"  rx="3"  ry="3"  x="0"  y="-10"  stroke="#F4DB6F"/>
+<foreignObject x="0" y="-10" width="150" height="30" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:12; text-align:center"><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-E8187ED464536599').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-E8187ED464536599').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="#Relationship1">Block Collection</a>
+  <span id="Desc-E8187ED464536599" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">A Block Collection is a grouping of Building Blocks.  </span>
+</div></div></foreignObject>
+</g>
+<g   transform="translate(50,139)">
+  <rect height="40"  width="325"  id="36166B8C6157B6B4"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="36166b8c6157b6b4.htm#Relationship1">{Aggregate Syntax}</a></div></foreignObject>
+</g>
+<g   transform="translate(50,159)">
+  <rect height="20"  width="320"  id="In-B13D32315EDF4481-B13D31DE5EDF42D8"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"gray"><a href="b13d31de5edf42d8.htm#Relationship1">Aggregate Entity</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="b13d32315edf4481.htm">[Contextual Entity]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="B13D32315EDF4481-B13D31DE5EDF42D8-B13D31DE5EDF42D8" class="Domain-E8187ED464536599_Rel-line" d="M370,159 C477.5,159 477.5,170 585,170" stroke="gray" fill="none" marker-start="url(#Domain-E8187ED464536599__RelCircle" marker-end="url(#Domain-E8187ED464536599__RelArrowTip"/>
+<g   transform="translate(945,139)">
+  <rect height="40"  width="325"  id="36166C3A6157BB9B"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="36166c3a6157bb9b.htm#Relationship1">{Containers & Blocks}</a></div></foreignObject>
+</g>
+<g   transform="translate(950,159)">
+  <rect height="20"  width="320"  id="CCB819645A564F12"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-0CB7118B64585FDD-core-E8187ED464536599-0-CCB819645A564F12').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-0CB7118B64585FDD-core-E8187ED464536599-0-CCB819645A564F12').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="0CB7118B64585FDD.htm">[Grouped Building Block]</a>  <div id="Desc-0CB7118B64585FDD-core-E8187ED464536599-0-CCB819645A564F12" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-CCB819645A564F12').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-CCB819645A564F12').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="ccb819645a564f12.htm#Relationship1">Building Block</a><div id="Desc-CCB819645A564F12" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Building Block is an autonomous, resusable Entity that contributes to the makeup of other Building Blocks.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="0CB7118B64585FDD-core-E8187ED464536599-0-CCB819645A564F12" class="Domain-E8187ED464536599_Rel-line" d="M735,170 C842.5,170 842.5,159 950,159" stroke="gray" fill="none" marker-start="url(#Domain-E8187ED464536599__RelCircle" marker-end="url(#Domain-E8187ED464536599__RelArrowTip"/>
+<g   transform="translate(50,189)">
+  <rect height="40"  width="325"  id="AE26F9C25ACD52D4"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="ae26f9c25acd52d4.htm#Relationship1">{Elementary Graph}</a></div></foreignObject>
+</g>
+<g   transform="translate(50,209)">
+  <rect height="20"  width="320"  id="In-27862AA35B251D4C-AE26F8D65ACD51AB"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"gray"><a href="ae26f8d65acd51ab.htm#Relationship1">Nesting Entity</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="27862aa35b251d4c.htm">[Nested Entity]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="27862AA35B251D4C-AE26F8D65ACD51AB-AE26F8D65ACD51AB" class="Domain-E8187ED464536599_Rel-line" d="M370,209 C477.5,209 477.5,170 585,170" stroke="gray" fill="none" marker-start="url(#Domain-E8187ED464536599__RelCircle" marker-end="url(#Domain-E8187ED464536599__RelArrowTip"/>
+<g   transform="translate(945,189)">
+  <rect height="40"  width="325"  id="AE26F9C25ACD52D4"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="ae26f9c25acd52d4.htm#Relationship1">{Elementary Graph}</a></div></foreignObject>
+</g>
+<g   transform="translate(950,209)">
+  <rect height="20"  width="320"  id="744B935D5FBFE0F9"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-ACFECCCA614D006B-core-E8187ED464536599-1-744B935D5FBFE0F9').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-ACFECCCA614D006B-core-E8187ED464536599-1-744B935D5FBFE0F9').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/ACFECCCA614D006B.htm">[Class]</a>  <div id="Desc-ACFECCCA614D006B-core-E8187ED464536599-1-744B935D5FBFE0F9" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-744B935D5FBFE0F9').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-744B935D5FBFE0F9').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="744b935d5fbfe0f9.htm#Relationship1">Class</a><div id="Desc-744B935D5FBFE0F9" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Class is collection of Entitys which it classifies according to one or more criteria.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="ACFECCCA614D006B-core-E8187ED464536599-1-744B935D5FBFE0F9" class="Domain-E8187ED464536599_Rel-line" d="M735,170 C842.5,170 842.5,209 950,209" stroke="gray" fill="none" marker-start="url(#Domain-E8187ED464536599__RelCircle" marker-end="url(#Domain-E8187ED464536599__RelArrowTip"/>
+</svg>
+
+</div>
+<div class="Relationship" id="Relationship4" style="display:none">
+<h3>Relationship Table</h3>
+<table id="sortabletable" class="table table-sm  table-bordered table-cell-resizable table-index-set-col-width-4 table-custom-style table-scrollX" width="100%" cellspacing="0">
+<tr><th>Relationship</th><th>Cardinality</th><th>Target Entity</th><th>Source Entity</th><th>Description</th><th>Implementation</th></tr>
+<tr>
+<td><img src="../standard/dic_concept_classification.ico.gif"/>&nbsp;Class</td>
+<td>[1..1]</td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="744b935d5fbfe0f9.htm" target="_top">Class</a></td>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="ae26f8b05acd5185.htm" target="_top">Entity</a></td>
+<td><i>Abstract Relationship</i><br/></td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_structuralcomponent.ico.gif"/>&nbsp;
+<a  href="0CB7118B64585FDD.htm" target="_top">Grouped Building Block</a></td>
+<td>[0..*]</td>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="ccb819645a564f12.htm" target="_top">Building Block</a></td>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="E8187ED464536599.htm" target="_top">Block Collection</a></td>
+<td><i>Abstract Relationship</i><br/></td>
+<td></td>
+</tr>
+</table>
+</div>
+</section>
+<a class="object-section-anchor" id="shi"></a>
+<section class="object-section">
+<h4>SUPER TYPES HIERARCHY</h4> 
+<hr class="sectionbreak" />
+<span>Left click on a node to toggle it. Right click to navigate through its page
+</section>
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<div id="categoryHierarchy"></div>
+ <script>
+var hierarchy = JSON.parse('{"name":"Block Collection","comment":"A Block Collection is a grouping of Building Blocks.","url":"E8187ED464536599.htm","parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}],"children":[{"name":"<Concretization>","isparent": false,"children":[{"name":"Container","comment":"A Container is a collection of Building Blocks whose existence and meaning are defined by the Container.","url":"4089423855572F23.htm", "isparent":false,"children":[{"name":"<Concretization>","isparent": false,"children":[{"name":"Model Namespace","comment":"A Model Namespace is a namespace of Model Building Blocks used to describe both the architecture of the enterprise and Initiatives aimed at designing, developing, running, adapting and maintaining this architecture over time.","url":"209C29BB5ED23342.htm", "isparent":false,"children":[{"name":"Governance Namespace","comment":"Container of Building Blocks used to measure, assess, monitor transformation Initiatives .","url":"FF0500115B253E92.htm", "isparent":false,"children":[{"name":"<Aspect-of> ","isparent": false,"comment":"Governance Namespace","children":[{"name":"Governing Team","comment":"A Governing Team consists of a collection of individuals and resources, including personnel and committees, assembled to effectively manage and sustain an Enduring Initiative.","url":"FF0501B65B253FDD.htm", "isparent":false,"children":[{"name":"<Concretization>","isparent": false,"children":[{"name":"Architecture Governance Committee","comment":"An Architecture Governance Committee is an organization of resources and people (persons and committees) who make up a body for the purpose of administering an Enterprise.","url":"FF0512935B254723.htm", "isparent":false,"children":[]},{"name":"Architecture Project","comment":"An Architecture Project project consists in a set of modeling tasks entrusted to a Team Committee in order develop or update architecture artifacts (Architecture Blocks) so as to achieve a specific objective.","url":"D34222C65B131D09.htm", "isparent":false,"children":[]},{"name":"Solution Team","comment":"A Solution Team is a Governing Team  responsible for overseeing the administration of a Management System.","url":"05B091F46006F913.htm", "isparent":false,"children":[]}]}]}]}]},{"name":"Architecture Namespace","comment":"An Architecture Namespace is a Model Namespace  that packages Architecture Blocks used to describe the architecture of the enterprise.","url":"D342D91A5B121454.htm", "isparent":false,"children":[{"name":"<Aspect-of> ","isparent": false,"comment":"Architecture Namespace","children":[{"name":"Library","comment":"A Library is a kind of Architecture Namespace used to split HOPEX repository content into several independent modules (aka package).","url":"D342D96C5B12148E.htm", "isparent":false,"children":[]},{"name":"Architecture Project","comment":"An Architecture Project project consists in a set of modeling tasks entrusted to a Team Committee in order develop or update architecture artifacts (Architecture Blocks) so as to achieve a specific objective.","url":"D34222C65B131D09.htm", "isparent":false,"children":[]},{"name":"Reference Dictionary","comment":"A Reference Dictionary is an aspect of Model Namespace that are used as reference libraries used to hold reference materials used to develop architectures.","url":"A67DC9F45F8EB2A9.htm", "isparent":false,"children":[{"name":"<Concretization>","isparent": false,"children":[{"name":"MetaData Package","comment":"","url":"C758EED8600A399F.htm", "isparent":false,"children":[]},{"name":"Policy Dictionary","comment":"A Policy Dictionary is a set of Policy(ies), defined in laws published by governements or in policy frameworks defined by the enterprise.","url":"8D5E9560552E22B2.htm", "isparent":false,"children":[{"name":"Regulatory Framework","comment":"Regulatory Framework is a set of Regulation Articles issued by a Regulator (government, international body) to rule the structure and behavior of entities participating to a specific activity domain.","url":"744B8D735FBFCFA9.htm", "isparent":false,"children":[]},{"name":"Control Framework","comment":"A Control Framework is a set of Control Directives originating from Regulatory Frameworks and their Regulation Articles.","url":"A67DC9285F8EADFB.htm", "isparent":false,"children":[]},{"name":"<Concretization>","isparent": false,"children":[{"name":"Policy Framework","comment":"A Policy Framework is a set of Directives defined by an enterprise to guide its operations.","url":"283131A65DA81FBD.htm", "isparent":false,"children":[]}]}]},{"name":"Vendor Catalog","comment":"A Vendor Catalog is a package of resources offered by a Vendor.","url":"81C3AB5A6054F637.htm", "isparent":false,"children":[]}]}]},{"name":"Enterprise","comment":"An Enterprise is an Enduring Initiative that delivers added-value Products (goods & services) to its target Customers.","url":"B181B82A54891668.htm", "isparent":false,"children":[]}]}]}, {"name":"<Aspect-of> ","isparent": false,"comment":"Model Namespace","children":[{"name":"Enduring Initiative","comment":"An Enduring Initiative is a long term Initiative which involves roadmapping and governance. Enterprises and their Management Systems are typical Enduring Initiatives.","url":"D321C226601262AE.htm", "isparent":false,"children":[{"name":"<Concretization>","isparent": false,"children":[{"name":"Enterprise","comment":"An Enterprise is an Enduring Initiative that delivers added-value Products (goods & services) to its target Customers.","url":"B181B82A54891668.htm", "isparent":false,"children":[]},{"name":"Management System","comment":"A Management System is an Enduring Initiative within an Enterprise, aimed at creating, maintaining, evaluating, evolving, and operating a collection of essential Functional Assets of the Enterprise.","url":"29DF3F4060084C07.htm", "isparent":false,"children":[{"name":"Assurance System","comment":"An Assurance System is a Management System aimed at ensuring enterprise resilience against internal and external constraints:","url":"07CA18D25DD85477.htm", "isparent":false,"children":[{"name":"<Concretization>","isparent": false,"children":[{"name":"Control System","comment":"A control system is a set of controls that ensure risk prevention and management, application of internal operating rules, respect a law or regulation, or work towards achievement of an objective as defined by company strategy. Examples: quality control system, control system relating to IT and Privacy, management control system, internal audit system.","url":"7A0AC89B5DDE4DF4.htm", "isparent":false,"children":[]},{"name":"Data Catalog","comment":"A Data Catalog is an Assurance System of Data Assets, ensuring understanding,  trust, compliance and confidence of enterprise data. This includes:","url":"9152D8875ED741EF.htm", "isparent":false,"children":[]},{"name":"BCM System","comment":"A BCM System is an Assurance System that establishes, implements, operates, monitors, reviews , maintains and improves business continuity.","url":"8DBD8F17609B4A70.htm", "isparent":false,"children":[]}]}]},{"name":"Product Portfolio","comment":"A Product Portfolio is a Management System within an enterprise which purpose is to develop, maintain, transform and deliver a set of  Products of the Enterprise.","url":"215CCFAB606C3A18.htm", "isparent":false,"children":[]},{"name":"Asset Portfolio","comment":"An Asset Portfolio is a Management System aimed at developing and maintaining in operational conditions a set of Resource Operating Assets delivering functionalities required by Business Operations.","url":"26B8889C5EEA8AB7.htm", "isparent":false,"children":[{"name":"<Concretization>","isparent": false,"children":[{"name":"Hardware Portolio","comment":"A portfolio enables representation of all investments of an enterprise (or department) necessary to carry out changes required to achieve strategic objectives. It comprises a set of initiatives to be compared based on comparison criteria associated with the portfolio.","url":"137D5BAC5EE2B904.htm", "isparent":false,"children":[]},{"name":"Application Portfolio","comment":"Application Portfolios are Enduring Initiatives aimed at managing a set of Applications delivering functionalities required by enterprise operations.","url":"1CE3429D5C48982E.htm", "isparent":false,"children":[]},{"name":"Technology Portfolio","comment":"Technology Portfolios are Technology Portfolio aimed at managing a set of Software Technologys delivering functionalities required by enterprise operations.","url":"6CE61B9D5EF382CF.htm", "isparent":false,"children":[]}]}]},{"name":"Service Catalog","comment":"A Service Catalog is a list of key service offerings for which a set of recommended solutions are proposed.","url":"A41AA4675B375380.htm", "isparent":false,"children":[{"name":"<Concretization>","isparent": false,"children":[{"name":"Business Service Catalog","comment":"","url":"A41AA9F15B3759CD.htm", "isparent":false,"children":[]},{"name":"Information Service Catalog","comment":"The Information Service Catalog provides a central source of information on the Information services delivered by the service provider organization. It contains a customer-facing view of the Information services in use, how they are intended to be used, the process they enable, and the levels and quality of service the customer can expect from each service. The IS Service Catalog provides the list of reference functionalities and their recommended implementation.","url":"ED59F3AC5B3817C6.htm", "isparent":false,"children":[]}]}]},{"name":"<Concretization>","isparent": false,"children":[{"name":"Asset Catalog","comment":"","url":"74A577615B86211B.htm", "isparent":false,"children":[]}]}]}]}]},{"name":"Model Dictionary","comment":"A Model Dictionary is a Model Namespace which sole purpose is model management.","url":"506B838C6442B46C.htm", "isparent":false,"children":[{"name":"Library","comment":"A Library is a kind of Architecture Namespace used to split HOPEX repository content into several independent modules (aka package).","url":"D342D96C5B12148E.htm", "isparent":false,"children":[]},{"name":"Reference Dictionary","comment":"A Reference Dictionary is an aspect of Model Namespace that are used as reference libraries used to hold reference materials used to develop architectures.","url":"A67DC9F45F8EB2A9.htm", "isparent":false,"children":[{"name":"<Concretization>","isparent": false,"children":[{"name":"MetaData Package","comment":"","url":"C758EED8600A399F.htm", "isparent":false,"children":[]},{"name":"Policy Dictionary","comment":"A Policy Dictionary is a set of Policy(ies), defined in laws published by governements or in policy frameworks defined by the enterprise.","url":"8D5E9560552E22B2.htm", "isparent":false,"children":[{"name":"Regulatory Framework","comment":"Regulatory Framework is a set of Regulation Articles issued by a Regulator (government, international body) to rule the structure and behavior of entities participating to a specific activity domain.","url":"744B8D735FBFCFA9.htm", "isparent":false,"children":[]},{"name":"Control Framework","comment":"A Control Framework is a set of Control Directives originating from Regulatory Frameworks and their Regulation Articles.","url":"A67DC9285F8EADFB.htm", "isparent":false,"children":[]},{"name":"<Concretization>","isparent": false,"children":[{"name":"Policy Framework","comment":"A Policy Framework is a set of Directives defined by an enterprise to guide its operations.","url":"283131A65DA81FBD.htm", "isparent":false,"children":[]}]}]},{"name":"Vendor Catalog","comment":"A Vendor Catalog is a package of resources offered by a Vendor.","url":"81C3AB5A6054F637.htm", "isparent":false,"children":[]}]}]},{"name":"<Concretization>","isparent": false,"children":[{"name":"Information Dictionary","comment":"An Information Dictionary is a dictionary of Information Assets used to describe an information architecture. This includes:","url":"24AE4A185ED16AAA.htm", "isparent":false,"children":[{"name":"<Concretization>","isparent": false,"children":[{"name":"Business Dictionary","comment":"A Business Dictionary is a cluster of Business Dictionary Assets whose existence and meaning are defined by the Business Dictionary.","url":"D2A7DC875EE8740B.htm", "isparent":false,"children":[]},{"name":"Data Dictionary","comment":"A Data Dictionary is a dictionary of Data Assets used to describe a data architecture. This includes:","url":"82C3B89C5FDCBD0F.htm", "isparent":false,"children":[{"name":"<Concretization>","isparent": false,"children":[{"name":"Physical Data Dictionary","comment":"A Physical Data Dictionary is Data Dictionary that holds the definition of Physical Data Assets such as Physical Data Domain definitions, Table definitions, Column Type definitions.","url":"6BA771525F6B8AD4.htm", "isparent":false,"children":[{"name":"<Concretization>","isparent": false,"children":[{"name":"Relational Dictionary","comment":"A is Relational Dictionary a Dictionary of relational entities (Tables, Keys, Indexes, etc.) and of schema referencing theses entites: relational data areas.","url":"362F3B875B3B221E.htm", "isparent":false,"children":[]},{"name":"MetaData Dictionary","comment":"","url":"C758E5BC600A31E8.htm", "isparent":false,"children":[{"name":"Deployed Data Store","comment":"A Deployed Data Store is a repository for storing, managing and distributing data sets on an enterprise level. It is a broad term that incorporates all types of data that is produced, stored and used by an organization.","url":"AFFEB2255F6051E6.htm", "isparent":false,"children":[]},{"name":"MetaData Package","comment":"","url":"C758EED8600A399F.htm", "isparent":false,"children":[]}]}]}]},{"name":"Logical Data Dictionary","comment":"Dictionary of Logical Data Entity.","url":"7EAA87E856121DB2.htm", "isparent":false,"children":[]}]}]}]}]}]}]},{"name":"Data Inventory Snapshot","comment":"A Data Inventory Snapshot the state a Deployed Data Store at a given period.","url":"AFFEB4425F6053D9.htm", "isparent":false,"children":[]}]}]}]}, {"name":"<Aspect-of> ","isparent": false,"comment":"Container","children":[{"name":"Container Package","comment":"A Container Package is a Container which sole purpose is model management.","url":"506B81C56442B28A.htm", "isparent":false,"children":[{"name":"<Concretization>","isparent": false,"children":[{"name":"Model Dictionary","comment":"A Model Dictionary is a Model Namespace which sole purpose is model management.","url":"506B838C6442B46C.htm", "isparent":false,"children":[{"name":"Library","comment":"A Library is a kind of Architecture Namespace used to split HOPEX repository content into several independent modules (aka package).","url":"D342D96C5B12148E.htm", "isparent":false,"children":[]},{"name":"Reference Dictionary","comment":"A Reference Dictionary is an aspect of Model Namespace that are used as reference libraries used to hold reference materials used to develop architectures.","url":"A67DC9F45F8EB2A9.htm", "isparent":false,"children":[{"name":"<Concretization>","isparent": false,"children":[{"name":"MetaData Package","comment":"","url":"C758EED8600A399F.htm", "isparent":false,"children":[]},{"name":"Policy Dictionary","comment":"A Policy Dictionary is a set of Policy(ies), defined in laws published by governements or in policy frameworks defined by the enterprise.","url":"8D5E9560552E22B2.htm", "isparent":false,"children":[{"name":"Regulatory Framework","comment":"Regulatory Framework is a set of Regulation Articles issued by a Regulator (government, international body) to rule the structure and behavior of entities participating to a specific activity domain.","url":"744B8D735FBFCFA9.htm", "isparent":false,"children":[]},{"name":"Control Framework","comment":"A Control Framework is a set of Control Directives originating from Regulatory Frameworks and their Regulation Articles.","url":"A67DC9285F8EADFB.htm", "isparent":false,"children":[]},{"name":"<Concretization>","isparent": false,"children":[{"name":"Policy Framework","comment":"A Policy Framework is a set of Directives defined by an enterprise to guide its operations.","url":"283131A65DA81FBD.htm", "isparent":false,"children":[]}]}]},{"name":"Vendor Catalog","comment":"A Vendor Catalog is a package of resources offered by a Vendor.","url":"81C3AB5A6054F637.htm", "isparent":false,"children":[]}]}]},{"name":"<Concretization>","isparent": false,"children":[{"name":"Information Dictionary","comment":"An Information Dictionary is a dictionary of Information Assets used to describe an information architecture. This includes:","url":"24AE4A185ED16AAA.htm", "isparent":false,"children":[{"name":"<Concretization>","isparent": false,"children":[{"name":"Business Dictionary","comment":"A Business Dictionary is a cluster of Business Dictionary Assets whose existence and meaning are defined by the Business Dictionary.","url":"D2A7DC875EE8740B.htm", "isparent":false,"children":[]},{"name":"Data Dictionary","comment":"A Data Dictionary is a dictionary of Data Assets used to describe a data architecture. This includes:","url":"82C3B89C5FDCBD0F.htm", "isparent":false,"children":[{"name":"<Concretization>","isparent": false,"children":[{"name":"Physical Data Dictionary","comment":"A Physical Data Dictionary is Data Dictionary that holds the definition of Physical Data Assets such as Physical Data Domain definitions, Table definitions, Column Type definitions.","url":"6BA771525F6B8AD4.htm", "isparent":false,"children":[{"name":"<Concretization>","isparent": false,"children":[{"name":"Relational Dictionary","comment":"A is Relational Dictionary a Dictionary of relational entities (Tables, Keys, Indexes, etc.) and of schema referencing theses entites: relational data areas.","url":"362F3B875B3B221E.htm", "isparent":false,"children":[]},{"name":"MetaData Dictionary","comment":"","url":"C758E5BC600A31E8.htm", "isparent":false,"children":[{"name":"Deployed Data Store","comment":"A Deployed Data Store is a repository for storing, managing and distributing data sets on an enterprise level. It is a broad term that incorporates all types of data that is produced, stored and used by an organization.","url":"AFFEB2255F6051E6.htm", "isparent":false,"children":[]},{"name":"MetaData Package","comment":"","url":"C758EED8600A399F.htm", "isparent":false,"children":[]}]}]}]},{"name":"Logical Data Dictionary","comment":"Dictionary of Logical Data Entity.","url":"7EAA87E856121DB2.htm", "isparent":false,"children":[]}]}]}]}]}]}]}]}]}]}]}]}]}');
+$(document).ready(function(event) {
+var tree = CollapsibleTree("#categoryHierarchy");
+tree.init(hierarchy);
+});
+</script>
+</div>
+<button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button>
+<script>window.onscroll = function() {scrollFunction()};$(document).on('click', 'a[href^="#"]', function (event) {event.preventDefault();$('html, body').animate({scrollTop: $($.attr(this, 'href')).offset().top}, 500);});
+function showDiagOnClick(elem){ var x = document.getElementsByClassName('Relationship');var e = elem.getAttribute("value"); for (var i=0; i < x.length ;i++){x[i].style.display="none"; if (x[i].id == e){x[i].style.display="block";x[i].style.textAlign="left";}}}
+</script></html>

@@ -1,0 +1,1274 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="keywords" content="">
+<meta name="description" content="">    
+<LINK REL="icon" HREF="../standard/assets/img/favicon.ico">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/bootstrap.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nav.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/eaportal.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/font-awesome.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/animate.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/datatables.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/grid.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nae.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/custom.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/chosen.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/prism.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery.dataTables.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jsTreeStyle.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.theme.css" media="screen" />
+<script type="text/javascript" src="../standard/assets/js/jquery-3.2.1.min.js" ></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-ui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.columnFilter.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3-force.v2.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.gui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.search.js"></script> 
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.util.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-2.1.1.min.js"></script>
+<script src="../standard/assets/js/ws_zoomtemplate_firefox.js"></script>
+<script src="../standard/assets/js/bootstrap.min.js"></script>
+<script src="../standard/assets/js/datatables.min.js"></script>
+<script src="../standard/assets/js/moment.min.js"></script>
+<script src="../standard/assets/js/datetime-moment.js"></script>
+<script src="../standard/assets/js/chartjs.min.js"></script>
+<script src="../standard/assets/js/searchindexcontent.json"></script>
+<script src="../standard/assets/js/anls.js"></script>
+<script src="../../../cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script src="../standard/assets/js/gauge.js"></script> 
+<script src="../standard/assets/js/domesticApi.js"></script> 
+<script src="../standard/assets/js/piecelabel.js"></script>
+<script src="../standard/assets/js/popper.min.js"></script>
+<script src="../standard/assets/js/custom.js"></script>
+<script src="../standard/assets/js/chosen.jquery.js"></script>
+<script src="../standard/assets/js/prism.js"></script>
+<script src="../standard/assets/js/init-chosen.js"></script>
+<script src="../standard/assets/js/chart-data-flow.js"></script>
+<script src="../standard/assets/js/chart-data-gantt.js"></script>
+<script type="module" src="../standard/assets/js/Fuse.esm.min.js"></script>
+<script type="module">
+import Fuse from '../standard/assets/js/Fuse.esm.min.js';
+$(document).ready(function () {
+console.log('getjson');
+window.$.getJSON('../standard/assets/js/searchindexcontent.json', function (response) {
+console.log('getjson ok');
+var isIndex = "";
+var url = window.location.pathname;
+var filename = url.substring(url.lastIndexOf('/')+1);
+if( filename.includes("index") || filename === "" ){
+isIndex = "pages/";
+} else {
+isIndex = "";
+}
+const fuse = new Fuse(response, {
+keys: ['title','text'],
+shouldSort: true,
+includeMatches : true,
+findAllMatches : true
+});
+$('#search-fuse').on('keyup', function () {
+let result = fuse.search($(this).val());
+console.log(result);
+let resultdiv = $('div.searchresults-fuse');
+if (result.length === 0) {
+resultdiv.hide();
+} else {
+resultdiv.empty();
+resultdiv.append('<table class="table-search" width="100%" cellspacing="0"><thead ><tr><th>Name</th><th>Object Type</th><th>Modification date</th></tr></thead><tbody>');
+
+for (let obj in result.slice(0,10)) {
+
+let searchObj = '<tr><td><a href="./'+ isIndex + result[obj].item.url + '">' + result[obj].item.title +'</a></td><td>' + result[obj].item.ObjectType + '</td><td>' + result[obj].item.ModificationDate + '</td></tr>' ;
+
+
+resultdiv.find('tbody').append(searchObj);
+}
+resultdiv.append('</tbody></table>');
+resultdiv.show();
+}
+});
+});
+});
+</script>
+<title>HOPEX Metamodel Overview (Beta Version)</title>
+</head>
+<nav class="navbar navbar-expand-md navbar-dark  navbar-mega"><!-- Brand --><!--<a class="navbar-brand" href="#">Navbar</a>--><a class="" href="../index.htm"><img class="logo-mega" src="../standard/assets/img/logo.png"  alt="">(Beta Version)</a><!-- Toggler/collapsibe Button --><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><!-- Navbar links -->
+<div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsibleNavbar"><div class="col-sm-auto col-md-auto col-lg-5"></div>
+<div class="col-sm-auto">
+<ul class="navbar-nav">      
+<li><a class="dropdown-item" href="ad30ce115ebf7e90.htm">EA Grid</a></li> 
+<li><a class="dropdown-item" href="fdd5018459bc3c6a.htm">EA Domains</a></li> 
+<li><a class="dropdown-item" href="07e731775ecc93f4.htm">Solutions</a></li> 
+<li><a class="dropdown-item" href="c5dfc62c54810c2c.htm">Glossary</a></li> 
+<li class="nav-item dropdown mx-1">
+<a class="nav-link" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</a>
+<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<li><a class="dropdown-item" href="5446555d5f88c32e.htm">Outcome Driven Metamodel</a></li> 
+<li><a class="dropdown-item" href="e1ccfc295f8f7b90.htm">Playbooks</a></li> 
+<li><a class="dropdown-item" href="42bc992862d20ea7.htm">Framework Mappings</a></li> 
+<li><a class="dropdown-item" href="e93aebb35fa20550.htm">Metamodel Patterns</a></li> 
+<li><a class="dropdown-item" href="d599fe87602b2b85.htm">References</a></li> 
+<li><a class="dropdown-item" href="333f3a7f5dde11de.htm">Legend</a></li> 
+</ul>									                                            
+</li>
+</ul>
+</div>
+<div class="col-sm-auto"><a class="nav-link search" href="#" onclick=showHideSearch("search-section-fuse")><i class="fa fa-search mr-1 form-control-feedback"></i></a></div>
+</div>
+</nav>
+<div id="search-section-fuse" style="display:none">>
+<div class="search_header"><span class="closesearch">&times;</span>
+<nav class="breadcrumb">
+<a class="breadcrumb-item" href="../index.htm">Home </a> 
+<span class="breadcrumb-item active">Search</span> 
+</nav>
+</div>
+<input id="search-fuse" placeholder="Search..."  name="q" onfocus="this.value=''" type="search">
+<div class="searchresults-fuse"></div>
+</div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>function showHideSearch(elementId) {var contentDivs = document.getElementsByClassName('content');var footerDivs = document.getElementsByClassName('footer'); var containerDivs = document.getElementsByClassName('container');var containerfluidDivs = document.getElementsByClassName('container-fluid');var x = document.getElementById(elementId);if (x.style.display === "none") {x.style.display = "block";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "none";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "none";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "none";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "none";}} else {x.style.display = "none";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "block";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "block";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "block";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "block";}}} ;<!-- END WIDGET DRILL DOWN --></script><script>$(document).ready(function() {$(window).scroll(function() {if ($(this).scrollTop() > 100) {$('.scrollup').fadeIn();} else {$('.scrollup').fadeOut();}});$('.scrollup').click(function() {$("html, body").animate({scrollTop: 0}, 600);return false;});});</script><script>
+var modal = document.getElementById("search-section-fuse");
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = "none";
+}
+}
+$(document).on('click', '.closesearch', function() {
+showHideSearch("search-section-fuse");
+
+
+
+
+
+});</script><div class="container-fluid col-lg-11" id="top"><nav class="breadcrumb"><a class="breadcrumb-item" href="../index.htm">Home</a> <span class="breadcrumb-item active">
+<a  href="c5dfc62c54810c2c.htm" target="_top">Dictionary of HOPEX concepts</a>&nbsp;/&nbsp;Application Portfolio</span></nav></div>
+<div class="container-fluid col-lg-11 content">
+<section class="fadeInDown animated"><a href="#det" class="btn btn-d">DEFINITION</a><a href="#rel" class="btn btn-d">RELATIONSHIPS</a><a href="#str" class="btn btn-d">INTERNAL STRUCTURE</a>	 <a href="#shi" class="btn btn-d">SUPER-SUB TYPE HIERARCHY</a></section>
+<a class="object-section-anchor" id="det"></a>
+<section class="object-section">
+<h4>BUILDING BLOCK - Application Portfolio</h4>
+<hr class="sectionbreak" />
+<table class="table table-vertical-headers table-set-col-width">
+<tr><th>Description</th><td class="description-text"><div class="description-text"><div align="left" style="min-height: 12pt; "><b>&#160;Application Portfolio</b>s are <a href="d321c226601262ae.htm" target="_top"><b><u>Enduring Initiative</u></b></a>s aimed at managing a set of <a href="bcebd8e9549144db.htm" target="_top"><b><u>Application</u></b></a>s delivering functionalities required by enterprise operations.</div><div align="left" style="min-height: 12pt; ">The purpose of&#160;<b> Application Portfolio</b>s is efficiency: managed <a href="bcebd8e9549144db.htm" target="_top"><b><u>Application</u></b></a>s must provide expected functionalities in the best cost / performance ratio.</div></div><div></div></td></tr>		
+<tr><th>Version</th><td class="description-text">Available since: MEGA 2009 SP5<br/>Last Update: MEGA 2009 SP5</td></tr>		
+<tr><th>Super Types</th><td class="description-text><img src="../standard/dicdefinition.ico.gif">&nbsp;
+<a  href="26b8889c5eea8ab7.htm" target="_top">Asset Portfolio</a>&nbsp;&nbsp;</td></tr>   
+<tr><th>Definition Domain</th><td class="description-text"><img src="../standard/dic_graph.ico.gif">&nbsp;
+<a  href="1ce330355c4878d7.htm" target="_top">IT Asset Management</a><br/>IT asset management (also known as ITAM) is the process of ensuring an organization&#39;s assets are accounted for, deployed, maintained, upgraded, and disposed of when the time comes. ... Defined simply, an IT asset includes hardware, software systems, or information an organization values.
+</td></tr>
+<tr><th>Dictionary</th><td><img src="../standard/dicsubjectarea.ico.gif">&nbsp;
+<a  href="c5dfc62c54810c2c.htm" target="_top">Dictionary of HOPEX concepts</a></td></tr>
+<tr><th>Managing Namespace</th><td><img src="../standard/dicdefinition.ico.gif">&nbsp;
+<a  href="29df3f4060084c07.htm" target="_top">Management System</a>&nbsp;</td></tr>
+<tr><th>Implementing MetaClass</th><td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="b082b0d44e041967.htm" target="_top">Portfolio</a></td></tr>
+</table>
+</section>
+<section class="object-section">
+<h4>RELATIONSHIPS</h4> 
+<hr class="sectionbreak" />
+<a href="#" class="btn btn-d" value="Relationship1" onclick="showDiagOnClick(this)">Simple Graph</a>
+<a href="#" class="btn btn-d" value="Relationship2" onclick="showDiagOnClick(this)">Graph & Hierarchy</a>
+<a href="#" class="btn btn-d" value="Relationship3" onclick="showDiagOnClick(this)">Graph by Domain</a>
+<a href="#" class="btn btn-d" value="Relationship4" onclick="showDiagOnClick(this)">Table</a>
+<a class="object-section-anchor" id="rel"></a>
+<div class="Relationship" id="Relationship1">
+<h3>Simple Graph</h3>
+<svg id="1CE3429D5C48982E" height="602" width="1640" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" overflow="hidden">
+  <defs>
+    <marker id="Simple-1CE3429D5C48982E__RelCircle" refX="3" refY="3" markerWidth="6" markerHeight="6">
+      <circle cx="3" cy="3" r="3" fill="#A52A00"></circle>
+    </marker>
+    <marker id="Simple-1CE3429D5C48982E__RelArrowTip" refX="3" refY="3" markerWidth="8" markerHeight="6" orient="0">
+      <path d="M0,0 L6,2 L0,4" fill="#A52A00"></path>
+    </marker>
+  </defs>
+<g   transform="translate(585,290)">
+  <rect height="30"  width="150"  id="core-1CE3429D5C48982E-0"  rx="3"  ry="3"  x="0"  y="-10"  stroke="#F4DB6F"/>
+<foreignObject x="0" y="-10" width="150" height="30" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:12; text-align:center"><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-1CE3429D5C48982E').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-1CE3429D5C48982E').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="#Relationship1">Application Portfolio</a>
+  <span id="Desc-1CE3429D5C48982E" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">Application Portfolios are Enduring Initiatives aimed at managing a set of Applications delivering functionalities required by enterprise operations.  </span>
+</div></div></foreignObject>
+</g>
+<g   transform="translate(945,106.75)">
+  <rect height="60"  width="325"  id="E7CDCCC7643F5185"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="60" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="E7CDCCC7643F5185.htm#Relationship1">&#60;Agents&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(950,126.75)">
+  <rect height="20"  width="320"  id="910196CA550A2EC2"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-391204785F4EED0A-core-1CE3429D5C48982E-2-910196CA550A2EC2').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-391204785F4EED0A-core-1CE3429D5C48982E-2-910196CA550A2EC2').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="391204785f4eed0a.htm">[Concerned Organization]</a>  <div id="Desc-391204785F4EED0A-core-1CE3429D5C48982E-2-910196CA550A2EC2" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-910196CA550A2EC2').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-910196CA550A2EC2').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="910196ca550a2ec2.htm#Relationship1">Organization</a><div id="Desc-910196CA550A2EC2" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">An Organization is a group of people who share a common purpose and establish a functional division of labor in pursuit of their common purpose.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="391204785F4EED0A-core-1CE3429D5C48982E-2-910196CA550A2EC2" class="Simple-1CE3429D5C48982E_Rel-line" d="M735,290 C842.5,290 842.5,126.75 950,126.75" stroke="gray" fill="none" marker-start="url(#Simple-1CE3429D5C48982E__RelCircle" marker-end="url(#Simple-1CE3429D5C48982E__RelArrowTip"/>
+<g   transform="translate(950,146.75)">
+  <rect height="20"  width="320"  id="BCEBD8E9549144DB"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-C334EC9B5ECBB0D4-core-1CE3429D5C48982E-0-BCEBD8E9549144DB').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-C334EC9B5ECBB0D4-core-1CE3429D5C48982E-0-BCEBD8E9549144DB').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/C334EC9B5ECBB0D4.htm">[Managed Application]</a>  <div id="Desc-C334EC9B5ECBB0D4-core-1CE3429D5C48982E-0-BCEBD8E9549144DB" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Managed Application represents the characterics of an Application under the management of an Application Portfolio.  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-BCEBD8E9549144DB').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-BCEBD8E9549144DB').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="bcebd8e9549144db.htm#Relationship1">Application</a><div id="Desc-BCEBD8E9549144DB" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">An Application is a Software System that provides a set of Functionality(ies) that End Users see as a single unit.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="C334EC9B5ECBB0D4-core-1CE3429D5C48982E-0-BCEBD8E9549144DB" class="Simple-1CE3429D5C48982E_Rel-line" d="M735,290 C842.5,290 842.5,146.75 950,146.75" stroke="gray" fill="none" marker-start="url(#Simple-1CE3429D5C48982E__RelCircle" marker-end="url(#Simple-1CE3429D5C48982E__RelArrowTip"/>
+<g   transform="translate(945,176.75)">
+  <rect height="60"  width="325"  id="88568B07620A5C5E"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="60" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="88568B07620A5C5E.htm#Relationship1">&#60;Ecosystem&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(950,196.75)">
+  <rect height="20"  width="320"  id="FC96001C601C54D0"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-BCDBBD42617A4F79-core-1CE3429D5C48982E-1-FC96001C601C54D0').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-BCDBBD42617A4F79-core-1CE3429D5C48982E-1-FC96001C601C54D0').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/BCDBBD42617A4F79.htm">[Portfolio Functional Scope]</a>  <div id="Desc-BCDBBD42617A4F79-core-1CE3429D5C48982E-1-FC96001C601C54D0" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-FC96001C601C54D0').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-FC96001C601C54D0').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="fc96001c601c54d0.htm#Relationship1">Enterprise Capability Map</a><div id="Desc-FC96001C601C54D0" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">Top level assembly of Resource Capabilityies  and their dependencies that, together, provide a functional scope for asset portfolios and solution roadmaps.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="BCDBBD42617A4F79-core-1CE3429D5C48982E-1-FC96001C601C54D0" class="Simple-1CE3429D5C48982E_Rel-line" d="M735,290 C842.5,290 842.5,196.75 950,196.75" stroke="gray" fill="none" marker-start="url(#Simple-1CE3429D5C48982E__RelCircle" marker-end="url(#Simple-1CE3429D5C48982E__RelArrowTip"/>
+<g   transform="translate(950,216.75)">
+  <rect height="20"  width="320"  id="7C4085C355270831"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-5B7A01E761F5511D-core-1CE3429D5C48982E-0-7C4085C355270831').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-5B7A01E761F5511D-core-1CE3429D5C48982E-0-7C4085C355270831').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/5B7A01E761F5511D.htm">[Functional Scope]</a>  <div id="Desc-5B7A01E761F5511D-core-1CE3429D5C48982E-0-7C4085C355270831" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-7C4085C355270831').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-7C4085C355270831').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="7c4085c355270831.htm#Relationship1">Functionality Map</a><div id="Desc-7C4085C355270831" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">Assembly of functionnalities and their dependencies that, together, defines the scope of a hardware or software architecture.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="5B7A01E761F5511D-core-1CE3429D5C48982E-0-7C4085C355270831" class="Simple-1CE3429D5C48982E_Rel-line" d="M735,290 C842.5,290 842.5,216.75 950,216.75" stroke="gray" fill="none" marker-start="url(#Simple-1CE3429D5C48982E__RelCircle" marker-end="url(#Simple-1CE3429D5C48982E__RelArrowTip"/>
+<g   transform="translate(50,268)">
+  <rect height="40"  width="325"  id="4C7853C35FCB7CEF"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="4C7853C35FCB7CEF.htm#Relationship1">&#60;Transformations&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(50,288)">
+  <rect height="20"  width="320"  id="In-A67DDF8D5F8ECF44-B181B82A54891668"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#F4DB6F"><a href="b181b82a54891668.htm#Relationship1">Enterprise</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="a67ddf8d5f8ecf44.htm">[Coordinated Management System]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="A67DDF8D5F8ECF44-B181B82A54891668-B181B82A54891668" class="Simple-1CE3429D5C48982E_Rel-line" d="M370,288 C477.5,288 477.5,290 585,290" stroke="gray" fill="none" marker-start="url(#Simple-1CE3429D5C48982E__RelCircle" marker-end="url(#Simple-1CE3429D5C48982E__RelArrowTip"/>
+<g   transform="translate(945,246.75)">
+  <rect height="140"  width="325"  id="4C7853C35FCB7CEF"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="140" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="4C7853C35FCB7CEF.htm#Relationship1">&#60;Transformations&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(950,266.75)">
+  <rect height="20"  width="320"  id="08570D835ED129A3"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-085717445ED13E5D-core-1CE3429D5C48982E-4-08570D835ED129A3').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-085717445ED13E5D-core-1CE3429D5C48982E-4-08570D835ED129A3').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/085717445ED13E5D.htm">[end]</a>  <div id="Desc-085717445ED13E5D-core-1CE3429D5C48982E-4-08570D835ED129A3" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-08570D835ED129A3').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-08570D835ED129A3').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="08570d835ed129a3.htm#Relationship1">Initiative Milestone</a><div id="Desc-08570D835ED129A3" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">An Initiative Milestone is a calendar change that marks the end of an Initiative and possibly the beginning of another.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="085717445ED13E5D-core-1CE3429D5C48982E-4-08570D835ED129A3" class="Simple-1CE3429D5C48982E_Rel-line" d="M735,290 C842.5,290 842.5,266.75 950,266.75" stroke="gray" fill="none" marker-start="url(#Simple-1CE3429D5C48982E__RelCircle" marker-end="url(#Simple-1CE3429D5C48982E__RelArrowTip"/>
+<g   transform="translate(950,286.75)">
+  <rect height="20"  width="320"  id="08570D835ED129A3"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-29DF6CB560087462-core-1CE3429D5C48982E-4-08570D835ED129A3').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-29DF6CB560087462-core-1CE3429D5C48982E-4-08570D835ED129A3').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/29DF6CB560087462.htm">[Coordination Milestone]</a>  <div id="Desc-29DF6CB560087462-core-1CE3429D5C48982E-4-08570D835ED129A3" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-08570D835ED129A3').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-08570D835ED129A3').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="08570d835ed129a3.htm#Relationship1">Initiative Milestone</a><div id="Desc-08570D835ED129A3" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">An Initiative Milestone is a calendar change that marks the end of an Initiative and possibly the beginning of another.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="29DF6CB560087462-core-1CE3429D5C48982E-4-08570D835ED129A3" class="Simple-1CE3429D5C48982E_Rel-line" d="M735,290 C842.5,290 842.5,286.75 950,286.75" stroke="gray" fill="none" marker-start="url(#Simple-1CE3429D5C48982E__RelCircle" marker-end="url(#Simple-1CE3429D5C48982E__RelArrowTip"/>
+<g   transform="translate(950,306.75)">
+  <rect height="20"  width="320"  id="08570D835ED129A3"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-08570DC45ED12A4D-core-1CE3429D5C48982E-4-08570D835ED129A3').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-08570DC45ED12A4D-core-1CE3429D5C48982E-4-08570D835ED129A3').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/08570DC45ED12A4D.htm">[start]</a>  <div id="Desc-08570DC45ED12A4D-core-1CE3429D5C48982E-4-08570D835ED129A3" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-08570D835ED129A3').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-08570D835ED129A3').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="08570d835ed129a3.htm#Relationship1">Initiative Milestone</a><div id="Desc-08570D835ED129A3" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">An Initiative Milestone is a calendar change that marks the end of an Initiative and possibly the beginning of another.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="08570DC45ED12A4D-core-1CE3429D5C48982E-4-08570D835ED129A3" class="Simple-1CE3429D5C48982E_Rel-line" d="M735,290 C842.5,290 842.5,306.75 950,306.75" stroke="gray" fill="none" marker-start="url(#Simple-1CE3429D5C48982E__RelCircle" marker-end="url(#Simple-1CE3429D5C48982E__RelArrowTip"/>
+<g   transform="translate(950,326.75)">
+  <rect height="20"  width="320"  id="29DF3F4060084C07"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-5B7A0F9561F565C4-core-1CE3429D5C48982E-2-29DF3F4060084C07').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-5B7A0F9561F565C4-core-1CE3429D5C48982E-2-29DF3F4060084C07').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="5b7a0f9561f565c4.htm">[Sub-Portfolio]</a>  <div id="Desc-5B7A0F9561F565C4-core-1CE3429D5C48982E-2-29DF3F4060084C07" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-29DF3F4060084C07').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-29DF3F4060084C07').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="29df3f4060084c07.htm#Relationship1">Management System</a><div id="Desc-29DF3F4060084C07" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Management System is an Enduring Initiative within an Enterprise, aimed at creating, maintaining, evaluating, evolving, and operating a collection of essential Functional Assets of the Enterprise.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="5B7A0F9561F565C4-core-1CE3429D5C48982E-2-29DF3F4060084C07" class="Simple-1CE3429D5C48982E_Rel-line" d="M735,290 C842.5,290 842.5,326.75 950,326.75" stroke="gray" fill="none" marker-start="url(#Simple-1CE3429D5C48982E__RelCircle" marker-end="url(#Simple-1CE3429D5C48982E__RelArrowTip"/>
+<g   transform="translate(950,346.75)">
+  <rect height="20"  width="320"  id="29DF3F4060084C07"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-5B7A0E2661F56423-core-1CE3429D5C48982E-2-29DF3F4060084C07').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-5B7A0E2661F56423-core-1CE3429D5C48982E-2-29DF3F4060084C07').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="5b7a0e2661f56423.htm">[Dependent Portfolio]</a>  <div id="Desc-5B7A0E2661F56423-core-1CE3429D5C48982E-2-29DF3F4060084C07" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-29DF3F4060084C07').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-29DF3F4060084C07').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="29df3f4060084c07.htm#Relationship1">Management System</a><div id="Desc-29DF3F4060084C07" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Management System is an Enduring Initiative within an Enterprise, aimed at creating, maintaining, evaluating, evolving, and operating a collection of essential Functional Assets of the Enterprise.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="5B7A0E2661F56423-core-1CE3429D5C48982E-2-29DF3F4060084C07" class="Simple-1CE3429D5C48982E_Rel-line" d="M735,290 C842.5,290 842.5,346.75 950,346.75" stroke="gray" fill="none" marker-start="url(#Simple-1CE3429D5C48982E__RelCircle" marker-end="url(#Simple-1CE3429D5C48982E__RelArrowTip"/>
+<g   transform="translate(950,366.75)">
+  <rect height="20"  width="320"  id="5B7A067561F55876"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-5B7A06E961F5595C-core-1CE3429D5C48982E-0-5B7A067561F55876').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-5B7A06E961F5595C-core-1CE3429D5C48982E-0-5B7A067561F55876').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="5b7a06e961f5595c.htm">[Roadmap]</a>  <div id="Desc-5B7A06E961F5595C-core-1CE3429D5C48982E-0-5B7A067561F55876" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-5B7A067561F55876').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-5B7A067561F55876').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="5b7a067561f55876.htm#Relationship1">Application Portfolio Stage</a><div id="Desc-5B7A067561F55876" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="5B7A06E961F5595C-core-1CE3429D5C48982E-0-5B7A067561F55876" class="Simple-1CE3429D5C48982E_Rel-line" d="M735,290 C842.5,290 842.5,366.75 950,366.75" stroke="gray" fill="none" marker-start="url(#Simple-1CE3429D5C48982E__RelCircle" marker-end="url(#Simple-1CE3429D5C48982E__RelArrowTip"/>
+<g   transform="translate(50,318)">
+  <rect height="40"  width="325"  id="938E3ED362024F5B"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="938E3ED362024F5B.htm#Relationship1">&#60;Governance&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(50,338)">
+  <rect height="20"  width="320"  id="In-AE7C9C45602351BC-05B091F46006F913"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#F4DB6F"><a href="05b091f46006f913.htm#Relationship1">Solution Team</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="ae7c9c45602351bc.htm">[Governed Management System]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="AE7C9C45602351BC-05B091F46006F913-05B091F46006F913" class="Simple-1CE3429D5C48982E_Rel-line" d="M370,338 C477.5,338 477.5,290 585,290" stroke="gray" fill="none" marker-start="url(#Simple-1CE3429D5C48982E__RelCircle" marker-end="url(#Simple-1CE3429D5C48982E__RelArrowTip"/>
+<g   transform="translate(945,396.75)">
+  <rect height="40"  width="325"  id="E7CDD1F0643F5BD8"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="E7CDD1F0643F5BD8.htm#Relationship1">&#60;Qualification&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(950,416.75)">
+  <rect height="20"  width="320"  id="CA353B065FC5E146"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-CA353B355FC5E1B6-core-1CE3429D5C48982E-4-CA353B065FC5E146').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-CA353B355FC5E1B6-core-1CE3429D5C48982E-4-CA353B065FC5E146').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/CA353B355FC5E1B6.htm">[Owned Categorization Block]</a>  <div id="Desc-CA353B355FC5E1B6-core-1CE3429D5C48982E-4-CA353B065FC5E146" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-CA353B065FC5E146').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-CA353B065FC5E146').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="ca353b065fc5e146.htm#Relationship1">Categorization Block</a><div id="Desc-CA353B065FC5E146" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Categorization Block is a Model Building Block used to provid classification and qualification of other Model Building Blocks.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="CA353B355FC5E1B6-core-1CE3429D5C48982E-4-CA353B065FC5E146" class="Simple-1CE3429D5C48982E_Rel-line" d="M735,290 C842.5,290 842.5,416.75 950,416.75" stroke="gray" fill="none" marker-start="url(#Simple-1CE3429D5C48982E__RelCircle" marker-end="url(#Simple-1CE3429D5C48982E__RelArrowTip"/>
+<g   transform="translate(945,446.75)">
+  <rect height="80"  width="325"  id="3D908C805FFC642C"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="80" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="3D908C805FFC642C.htm#Relationship1">&#60;Annotation&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(950,466.75)">
+  <rect height="20"  width="320"  id="AFFEE0765F6086D4"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-05B0DF7E6006C158-core-1CE3429D5C48982E-6-AFFEE0765F6086D4').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-05B0DF7E6006C158-core-1CE3429D5C48982E-6-AFFEE0765F6086D4').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/05B0DF7E6006C158.htm">[Annotation Tag]</a>  <div id="Desc-05B0DF7E6006C158-core-1CE3429D5C48982E-6-AFFEE0765F6086D4" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-AFFEE0765F6086D4').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-AFFEE0765F6086D4').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="AFFEE0765F6086D4.htm#Relationship1">Tag</a><div id="Desc-AFFEE0765F6086D4" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Tag is a general classification description which permits characterization of Entitys.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="05B0DF7E6006C158-core-1CE3429D5C48982E-6-AFFEE0765F6086D4" class="Simple-1CE3429D5C48982E_Rel-line" d="M735,290 C842.5,290 842.5,466.75 950,466.75" stroke="gray" fill="none" marker-start="url(#Simple-1CE3429D5C48982E__RelCircle" marker-end="url(#Simple-1CE3429D5C48982E__RelArrowTip"/>
+<g   transform="translate(950,486.75)">
+  <rect height="20"  width="320"  id="AFFEE0F15F60898A"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-05B0DF0C6006C0D8-core-1CE3429D5C48982E-6-AFFEE0F15F60898A').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-05B0DF0C6006C0D8-core-1CE3429D5C48982E-6-AFFEE0F15F60898A').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/05B0DF0C6006C0D8.htm">[Attached Document]</a>  <div id="Desc-05B0DF0C6006C0D8-core-1CE3429D5C48982E-6-AFFEE0F15F60898A" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-AFFEE0F15F60898A').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-AFFEE0F15F60898A').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="AFFEE0F15F60898A.htm#Relationship1">Business Document</a><div id="Desc-AFFEE0F15F60898A" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Business Document is a document whose lifecycle can be synched to the MEGA repository content: it may be attached to mega objects and a document version bound to a mega object timestamp in the Time Machine. This document can be of any given file format.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="05B0DF0C6006C0D8-core-1CE3429D5C48982E-6-AFFEE0F15F60898A" class="Simple-1CE3429D5C48982E_Rel-line" d="M735,290 C842.5,290 842.5,486.75 950,486.75" stroke="gray" fill="none" marker-start="url(#Simple-1CE3429D5C48982E__RelCircle" marker-end="url(#Simple-1CE3429D5C48982E__RelArrowTip"/>
+<g   transform="translate(950,506.75)">
+  <rect height="20"  width="320"  id="CA3538D45FC5D6F6"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-CA3539F45FC5E018-core-1CE3429D5C48982E-4-CA3538D45FC5D6F6').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-CA3539F45FC5E018-core-1CE3429D5C48982E-4-CA3538D45FC5D6F6').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="CA3539F45FC5E018.htm">[Owned Annotation Block]</a>  <div id="Desc-CA3539F45FC5E018-core-1CE3429D5C48982E-4-CA3538D45FC5D6F6" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-CA3538D45FC5D6F6').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-CA3538D45FC5D6F6').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="CA3538D45FC5D6F6.htm#Relationship1">Annotation Block</a><div id="Desc-CA3538D45FC5D6F6" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">An Annotation Block is a Building Block used to provided additional characteristics such as sketching, reports, description notes.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="CA3539F45FC5E018-core-1CE3429D5C48982E-4-CA3538D45FC5D6F6" class="Simple-1CE3429D5C48982E_Rel-line" d="M735,290 C842.5,290 842.5,506.75 950,506.75" stroke="gray" fill="none" marker-start="url(#Simple-1CE3429D5C48982E__RelCircle" marker-end="url(#Simple-1CE3429D5C48982E__RelArrowTip"/>
+</svg>
+
+</div>
+<div class="Relationship" id="Relationship2" style="display:none">
+<h3>Graph & Hierarchy</h3>
+<svg id="1CE3429D5C48982E" height="602" width="1640" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" overflow="hidden">
+  <defs>
+    <marker id="Full-1CE3429D5C48982E__RelCircle" refX="3" refY="3" markerWidth="6" markerHeight="6">
+      <circle cx="3" cy="3" r="3" fill="#A52A00"></circle>
+    </marker>
+    <marker id="Full-1CE3429D5C48982E__RelArrowTip" refX="3" refY="3" markerWidth="8" markerHeight="6" orient="0">
+      <path d="M0,0 L6,2 L0,4" fill="#A52A00"></path>
+    </marker>
+  </defs>
+<g   transform="translate(555,251)">
+  <rect height="153"  width="210"  id="core-1CE3429D5C48982E-6"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="210" height="153" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:center"><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-CA353E6D5FC5E8AF').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-CA353E6D5FC5E8AF').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="CA353E6D5FC5E8AF.htm#Relationship1">Model Building Block</a>
+  <span id="Desc-CA353E6D5FC5E8AF" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">A Model Building Block is a Building Block used to describe and manage the enterprise. It comprises:  </span>
+</div></div></foreignObject>
+</g>
+<g   transform="translate(565,274)">
+  <rect height="122"  width="190"  id="core-1CE3429D5C48982E-4"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="190" height="122" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:center"><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-209C29BB5ED23342').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-209C29BB5ED23342').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="209c29bb5ed23342.htm#Relationship1">Model Namespace</a>
+  <span id="Desc-209C29BB5ED23342" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">A Model Namespace is a namespace of Model Building Blocks used to describe both the architecture of the enterprise and Initiatives aimed at designing, developing, running, adapting and maintaining this architecture over time.  </span>
+</div><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-0FFEEC41600BE08A').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-0FFEEC41600BE08A').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="0ffeec41600be08a.htm#Relationship1">Initiative</a>
+  <span id="Desc-0FFEEC41600BE08A" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">An Initiative is any piece of work that is undertaken or attempted under the responsibility of a Steering Authority.  </span>
+</div></div></foreignObject>
+</g>
+<g   transform="translate(575,312)">
+  <rect height="76"  width="170"  id="core-1CE3429D5C48982E-2"  rx="3"  ry="3"  x="0"  y="-10"  stroke="#F4DB6F"/>
+<foreignObject x="0" y="-10" width="170" height="76" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:center"><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-29DF3F4060084C07').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-29DF3F4060084C07').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="29df3f4060084c07.htm#Relationship1">Management System</a>
+  <span id="Desc-29DF3F4060084C07" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">A Management System is an Enduring Initiative within an Enterprise, aimed at creating, maintaining, evaluating, evolving, and operating a collection of essential Functional Assets of the Enterprise.  </span>
+</div></div></foreignObject>
+</g>
+<g   transform="translate(580,331)">
+  <rect height="53"  width="160"  id="core-1CE3429D5C48982E-1"  rx="3"  ry="3"  x="0"  y="-10"  stroke="#F4DB6F"/>
+<foreignObject x="0" y="-10" width="160" height="53" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:center"><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-26B8889C5EEA8AB7').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-26B8889C5EEA8AB7').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="26b8889c5eea8ab7.htm#Relationship1">Asset Portfolio</a>
+  <span id="Desc-26B8889C5EEA8AB7" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">An Asset Portfolio is a Management System aimed at developing and maintaining in operational conditions a set of Resource Operating Assets delivering functionalities required by Business Operations.  </span>
+</div></div></foreignObject>
+</g>
+<g   transform="translate(585,350)">
+  <rect height="30"  width="150"  id="core-1CE3429D5C48982E-0"  rx="3"  ry="3"  x="0"  y="-10"  stroke="#F4DB6F"/>
+<foreignObject x="0" y="-10" width="150" height="30" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:12; text-align:center"><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-1CE3429D5C48982E').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-1CE3429D5C48982E').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="#Relationship1">Application Portfolio</a>
+  <span id="Desc-1CE3429D5C48982E" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">Application Portfolios are Enduring Initiatives aimed at managing a set of Applications delivering functionalities required by enterprise operations.  </span>
+</div></div></foreignObject>
+</g>
+<g   transform="translate(945,106.75)">
+  <rect height="60"  width="325"  id="E7CDCCC7643F5185"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="60" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="E7CDCCC7643F5185.htm#Relationship1">&#60;Agents&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(950,126.75)">
+  <rect height="20"  width="320"  id="910196CA550A2EC2"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-391204785F4EED0A-core-1CE3429D5C48982E-2-910196CA550A2EC2').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-391204785F4EED0A-core-1CE3429D5C48982E-2-910196CA550A2EC2').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="391204785f4eed0a.htm">[Concerned Organization]</a>  <div id="Desc-391204785F4EED0A-core-1CE3429D5C48982E-2-910196CA550A2EC2" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-910196CA550A2EC2').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-910196CA550A2EC2').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="910196ca550a2ec2.htm#Relationship1">Organization</a><div id="Desc-910196CA550A2EC2" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">An Organization is a group of people who share a common purpose and establish a functional division of labor in pursuit of their common purpose.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="391204785F4EED0A-core-1CE3429D5C48982E-2-910196CA550A2EC2" class="Full-1CE3429D5C48982E_Rel-line" d="M745,312 C847.5,312 847.5,126.75 950,126.75" stroke="gray" fill="none" marker-start="url(#Full-1CE3429D5C48982E__RelCircle" marker-end="url(#Full-1CE3429D5C48982E__RelArrowTip"/>
+<g   transform="translate(950,146.75)">
+  <rect height="20"  width="320"  id="BCEBD8E9549144DB"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-C334EC9B5ECBB0D4-core-1CE3429D5C48982E-0-BCEBD8E9549144DB').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-C334EC9B5ECBB0D4-core-1CE3429D5C48982E-0-BCEBD8E9549144DB').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/C334EC9B5ECBB0D4.htm">[Managed Application]</a>  <div id="Desc-C334EC9B5ECBB0D4-core-1CE3429D5C48982E-0-BCEBD8E9549144DB" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Managed Application represents the characterics of an Application under the management of an Application Portfolio.  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-BCEBD8E9549144DB').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-BCEBD8E9549144DB').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="bcebd8e9549144db.htm#Relationship1">Application</a><div id="Desc-BCEBD8E9549144DB" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">An Application is a Software System that provides a set of Functionality(ies) that End Users see as a single unit.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="C334EC9B5ECBB0D4-core-1CE3429D5C48982E-0-BCEBD8E9549144DB" class="Full-1CE3429D5C48982E_Rel-line" d="M735,350 C842.5,350 842.5,146.75 950,146.75" stroke="gray" fill="none" marker-start="url(#Full-1CE3429D5C48982E__RelCircle" marker-end="url(#Full-1CE3429D5C48982E__RelArrowTip"/>
+<g   transform="translate(945,176.75)">
+  <rect height="60"  width="325"  id="88568B07620A5C5E"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="60" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="88568B07620A5C5E.htm#Relationship1">&#60;Ecosystem&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(950,196.75)">
+  <rect height="20"  width="320"  id="FC96001C601C54D0"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-BCDBBD42617A4F79-core-1CE3429D5C48982E-1-FC96001C601C54D0').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-BCDBBD42617A4F79-core-1CE3429D5C48982E-1-FC96001C601C54D0').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/BCDBBD42617A4F79.htm">[Portfolio Functional Scope]</a>  <div id="Desc-BCDBBD42617A4F79-core-1CE3429D5C48982E-1-FC96001C601C54D0" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-FC96001C601C54D0').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-FC96001C601C54D0').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="fc96001c601c54d0.htm#Relationship1">Enterprise Capability Map</a><div id="Desc-FC96001C601C54D0" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">Top level assembly of Resource Capabilityies  and their dependencies that, together, provide a functional scope for asset portfolios and solution roadmaps.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="BCDBBD42617A4F79-core-1CE3429D5C48982E-1-FC96001C601C54D0" class="Full-1CE3429D5C48982E_Rel-line" d="M740,331 C845,331 845,196.75 950,196.75" stroke="gray" fill="none" marker-start="url(#Full-1CE3429D5C48982E__RelCircle" marker-end="url(#Full-1CE3429D5C48982E__RelArrowTip"/>
+<g   transform="translate(950,216.75)">
+  <rect height="20"  width="320"  id="7C4085C355270831"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-5B7A01E761F5511D-core-1CE3429D5C48982E-0-7C4085C355270831').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-5B7A01E761F5511D-core-1CE3429D5C48982E-0-7C4085C355270831').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/5B7A01E761F5511D.htm">[Functional Scope]</a>  <div id="Desc-5B7A01E761F5511D-core-1CE3429D5C48982E-0-7C4085C355270831" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-7C4085C355270831').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-7C4085C355270831').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="7c4085c355270831.htm#Relationship1">Functionality Map</a><div id="Desc-7C4085C355270831" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">Assembly of functionnalities and their dependencies that, together, defines the scope of a hardware or software architecture.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="5B7A01E761F5511D-core-1CE3429D5C48982E-0-7C4085C355270831" class="Full-1CE3429D5C48982E_Rel-line" d="M735,350 C842.5,350 842.5,216.75 950,216.75" stroke="gray" fill="none" marker-start="url(#Full-1CE3429D5C48982E__RelCircle" marker-end="url(#Full-1CE3429D5C48982E__RelArrowTip"/>
+<g   transform="translate(50,268)">
+  <rect height="40"  width="325"  id="4C7853C35FCB7CEF"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="4C7853C35FCB7CEF.htm#Relationship1">&#60;Transformations&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(50,288)">
+  <rect height="20"  width="320"  id="In-A67DDF8D5F8ECF44-B181B82A54891668"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#F4DB6F"><a href="b181b82a54891668.htm#Relationship1">Enterprise</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="a67ddf8d5f8ecf44.htm">[Coordinated Management System]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="A67DDF8D5F8ECF44-B181B82A54891668-B181B82A54891668" class="Full-1CE3429D5C48982E_Rel-line" d="M370,288 C472.5,288 472.5,312 575,312" stroke="gray" fill="none" marker-start="url(#Full-1CE3429D5C48982E__RelCircle" marker-end="url(#Full-1CE3429D5C48982E__RelArrowTip"/>
+<g   transform="translate(945,246.75)">
+  <rect height="140"  width="325"  id="4C7853C35FCB7CEF"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="140" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="4C7853C35FCB7CEF.htm#Relationship1">&#60;Transformations&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(950,266.75)">
+  <rect height="20"  width="320"  id="08570D835ED129A3"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-08570DC45ED12A4D-core-1CE3429D5C48982E-4-08570D835ED129A3').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-08570DC45ED12A4D-core-1CE3429D5C48982E-4-08570D835ED129A3').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/08570DC45ED12A4D.htm">[start]</a>  <div id="Desc-08570DC45ED12A4D-core-1CE3429D5C48982E-4-08570D835ED129A3" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-08570D835ED129A3').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-08570D835ED129A3').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="08570d835ed129a3.htm#Relationship1">Initiative Milestone</a><div id="Desc-08570D835ED129A3" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">An Initiative Milestone is a calendar change that marks the end of an Initiative and possibly the beginning of another.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="08570DC45ED12A4D-core-1CE3429D5C48982E-4-08570D835ED129A3" class="Full-1CE3429D5C48982E_Rel-line" d="M755,274 C852.5,274 852.5,266.75 950,266.75" stroke="gray" fill="none" marker-start="url(#Full-1CE3429D5C48982E__RelCircle" marker-end="url(#Full-1CE3429D5C48982E__RelArrowTip"/>
+<g   transform="translate(950,286.75)">
+  <rect height="20"  width="320"  id="08570D835ED129A3"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-29DF6CB560087462-core-1CE3429D5C48982E-4-08570D835ED129A3').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-29DF6CB560087462-core-1CE3429D5C48982E-4-08570D835ED129A3').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/29DF6CB560087462.htm">[Coordination Milestone]</a>  <div id="Desc-29DF6CB560087462-core-1CE3429D5C48982E-4-08570D835ED129A3" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-08570D835ED129A3').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-08570D835ED129A3').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="08570d835ed129a3.htm#Relationship1">Initiative Milestone</a><div id="Desc-08570D835ED129A3" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">An Initiative Milestone is a calendar change that marks the end of an Initiative and possibly the beginning of another.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="29DF6CB560087462-core-1CE3429D5C48982E-4-08570D835ED129A3" class="Full-1CE3429D5C48982E_Rel-line" d="M755,274 C852.5,274 852.5,286.75 950,286.75" stroke="gray" fill="none" marker-start="url(#Full-1CE3429D5C48982E__RelCircle" marker-end="url(#Full-1CE3429D5C48982E__RelArrowTip"/>
+<g   transform="translate(950,306.75)">
+  <rect height="20"  width="320"  id="08570D835ED129A3"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-085717445ED13E5D-core-1CE3429D5C48982E-4-08570D835ED129A3').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-085717445ED13E5D-core-1CE3429D5C48982E-4-08570D835ED129A3').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/085717445ED13E5D.htm">[end]</a>  <div id="Desc-085717445ED13E5D-core-1CE3429D5C48982E-4-08570D835ED129A3" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-08570D835ED129A3').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-08570D835ED129A3').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="08570d835ed129a3.htm#Relationship1">Initiative Milestone</a><div id="Desc-08570D835ED129A3" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">An Initiative Milestone is a calendar change that marks the end of an Initiative and possibly the beginning of another.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="085717445ED13E5D-core-1CE3429D5C48982E-4-08570D835ED129A3" class="Full-1CE3429D5C48982E_Rel-line" d="M755,274 C852.5,274 852.5,306.75 950,306.75" stroke="gray" fill="none" marker-start="url(#Full-1CE3429D5C48982E__RelCircle" marker-end="url(#Full-1CE3429D5C48982E__RelArrowTip"/>
+<g   transform="translate(950,326.75)">
+  <rect height="20"  width="320"  id="29DF3F4060084C07"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-5B7A0E2661F56423-core-1CE3429D5C48982E-2-29DF3F4060084C07').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-5B7A0E2661F56423-core-1CE3429D5C48982E-2-29DF3F4060084C07').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="5b7a0e2661f56423.htm">[Dependent Portfolio]</a>  <div id="Desc-5B7A0E2661F56423-core-1CE3429D5C48982E-2-29DF3F4060084C07" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-29DF3F4060084C07').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-29DF3F4060084C07').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="29df3f4060084c07.htm#Relationship1">Management System</a><div id="Desc-29DF3F4060084C07" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Management System is an Enduring Initiative within an Enterprise, aimed at creating, maintaining, evaluating, evolving, and operating a collection of essential Functional Assets of the Enterprise.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="5B7A0E2661F56423-core-1CE3429D5C48982E-2-29DF3F4060084C07" class="Full-1CE3429D5C48982E_Rel-line" d="M745,312 C847.5,312 847.5,326.75 950,326.75" stroke="gray" fill="none" marker-start="url(#Full-1CE3429D5C48982E__RelCircle" marker-end="url(#Full-1CE3429D5C48982E__RelArrowTip"/>
+<g   transform="translate(950,346.75)">
+  <rect height="20"  width="320"  id="29DF3F4060084C07"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-5B7A0F9561F565C4-core-1CE3429D5C48982E-2-29DF3F4060084C07').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-5B7A0F9561F565C4-core-1CE3429D5C48982E-2-29DF3F4060084C07').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="5b7a0f9561f565c4.htm">[Sub-Portfolio]</a>  <div id="Desc-5B7A0F9561F565C4-core-1CE3429D5C48982E-2-29DF3F4060084C07" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-29DF3F4060084C07').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-29DF3F4060084C07').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="29df3f4060084c07.htm#Relationship1">Management System</a><div id="Desc-29DF3F4060084C07" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Management System is an Enduring Initiative within an Enterprise, aimed at creating, maintaining, evaluating, evolving, and operating a collection of essential Functional Assets of the Enterprise.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="5B7A0F9561F565C4-core-1CE3429D5C48982E-2-29DF3F4060084C07" class="Full-1CE3429D5C48982E_Rel-line" d="M745,312 C847.5,312 847.5,346.75 950,346.75" stroke="gray" fill="none" marker-start="url(#Full-1CE3429D5C48982E__RelCircle" marker-end="url(#Full-1CE3429D5C48982E__RelArrowTip"/>
+<g   transform="translate(950,366.75)">
+  <rect height="20"  width="320"  id="5B7A067561F55876"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-5B7A06E961F5595C-core-1CE3429D5C48982E-0-5B7A067561F55876').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-5B7A06E961F5595C-core-1CE3429D5C48982E-0-5B7A067561F55876').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="5b7a06e961f5595c.htm">[Roadmap]</a>  <div id="Desc-5B7A06E961F5595C-core-1CE3429D5C48982E-0-5B7A067561F55876" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-5B7A067561F55876').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-5B7A067561F55876').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="5b7a067561f55876.htm#Relationship1">Application Portfolio Stage</a><div id="Desc-5B7A067561F55876" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="5B7A06E961F5595C-core-1CE3429D5C48982E-0-5B7A067561F55876" class="Full-1CE3429D5C48982E_Rel-line" d="M735,350 C842.5,350 842.5,366.75 950,366.75" stroke="gray" fill="none" marker-start="url(#Full-1CE3429D5C48982E__RelCircle" marker-end="url(#Full-1CE3429D5C48982E__RelArrowTip"/>
+<g   transform="translate(50,318)">
+  <rect height="40"  width="325"  id="938E3ED362024F5B"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="938E3ED362024F5B.htm#Relationship1">&#60;Governance&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(50,338)">
+  <rect height="20"  width="320"  id="In-AE7C9C45602351BC-05B091F46006F913"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#F4DB6F"><a href="05b091f46006f913.htm#Relationship1">Solution Team</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="ae7c9c45602351bc.htm">[Governed Management System]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="AE7C9C45602351BC-05B091F46006F913-05B091F46006F913" class="Full-1CE3429D5C48982E_Rel-line" d="M370,338 C472.5,338 472.5,312 575,312" stroke="gray" fill="none" marker-start="url(#Full-1CE3429D5C48982E__RelCircle" marker-end="url(#Full-1CE3429D5C48982E__RelArrowTip"/>
+<g   transform="translate(945,396.75)">
+  <rect height="40"  width="325"  id="E7CDD1F0643F5BD8"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="E7CDD1F0643F5BD8.htm#Relationship1">&#60;Qualification&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(950,416.75)">
+  <rect height="20"  width="320"  id="CA353B065FC5E146"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-CA353B355FC5E1B6-core-1CE3429D5C48982E-4-CA353B065FC5E146').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-CA353B355FC5E1B6-core-1CE3429D5C48982E-4-CA353B065FC5E146').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/CA353B355FC5E1B6.htm">[Owned Categorization Block]</a>  <div id="Desc-CA353B355FC5E1B6-core-1CE3429D5C48982E-4-CA353B065FC5E146" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-CA353B065FC5E146').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-CA353B065FC5E146').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="ca353b065fc5e146.htm#Relationship1">Categorization Block</a><div id="Desc-CA353B065FC5E146" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Categorization Block is a Model Building Block used to provid classification and qualification of other Model Building Blocks.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="CA353B355FC5E1B6-core-1CE3429D5C48982E-4-CA353B065FC5E146" class="Full-1CE3429D5C48982E_Rel-line" d="M755,274 C852.5,274 852.5,416.75 950,416.75" stroke="gray" fill="none" marker-start="url(#Full-1CE3429D5C48982E__RelCircle" marker-end="url(#Full-1CE3429D5C48982E__RelArrowTip"/>
+<g   transform="translate(945,446.75)">
+  <rect height="80"  width="325"  id="3D908C805FFC642C"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="80" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="3D908C805FFC642C.htm#Relationship1">&#60;Annotation&#62;</a></div></foreignObject>
+</g>
+<g   transform="translate(950,466.75)">
+  <rect height="20"  width="320"  id="AFFEE0F15F60898A"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-05B0DF0C6006C0D8-core-1CE3429D5C48982E-6-AFFEE0F15F60898A').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-05B0DF0C6006C0D8-core-1CE3429D5C48982E-6-AFFEE0F15F60898A').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/05B0DF0C6006C0D8.htm">[Attached Document]</a>  <div id="Desc-05B0DF0C6006C0D8-core-1CE3429D5C48982E-6-AFFEE0F15F60898A" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-AFFEE0F15F60898A').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-AFFEE0F15F60898A').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="AFFEE0F15F60898A.htm#Relationship1">Business Document</a><div id="Desc-AFFEE0F15F60898A" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Business Document is a document whose lifecycle can be synched to the MEGA repository content: it may be attached to mega objects and a document version bound to a mega object timestamp in the Time Machine. This document can be of any given file format.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="05B0DF0C6006C0D8-core-1CE3429D5C48982E-6-AFFEE0F15F60898A" class="Full-1CE3429D5C48982E_Rel-line" d="M765,251 C857.5,251 857.5,466.75 950,466.75" stroke="gray" fill="none" marker-start="url(#Full-1CE3429D5C48982E__RelCircle" marker-end="url(#Full-1CE3429D5C48982E__RelArrowTip"/>
+<g   transform="translate(950,486.75)">
+  <rect height="20"  width="320"  id="AFFEE0765F6086D4"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-05B0DF7E6006C158-core-1CE3429D5C48982E-6-AFFEE0765F6086D4').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-05B0DF7E6006C158-core-1CE3429D5C48982E-6-AFFEE0765F6086D4').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/05B0DF7E6006C158.htm">[Annotation Tag]</a>  <div id="Desc-05B0DF7E6006C158-core-1CE3429D5C48982E-6-AFFEE0765F6086D4" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-AFFEE0765F6086D4').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-AFFEE0765F6086D4').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="AFFEE0765F6086D4.htm#Relationship1">Tag</a><div id="Desc-AFFEE0765F6086D4" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Tag is a general classification description which permits characterization of Entitys.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="05B0DF7E6006C158-core-1CE3429D5C48982E-6-AFFEE0765F6086D4" class="Full-1CE3429D5C48982E_Rel-line" d="M765,251 C857.5,251 857.5,486.75 950,486.75" stroke="gray" fill="none" marker-start="url(#Full-1CE3429D5C48982E__RelCircle" marker-end="url(#Full-1CE3429D5C48982E__RelArrowTip"/>
+<g   transform="translate(950,506.75)">
+  <rect height="20"  width="320"  id="CA3538D45FC5D6F6"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-CA3539F45FC5E018-core-1CE3429D5C48982E-4-CA3538D45FC5D6F6').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-CA3539F45FC5E018-core-1CE3429D5C48982E-4-CA3538D45FC5D6F6').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="CA3539F45FC5E018.htm">[Owned Annotation Block]</a>  <div id="Desc-CA3539F45FC5E018-core-1CE3429D5C48982E-4-CA3538D45FC5D6F6" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-CA3538D45FC5D6F6').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-CA3538D45FC5D6F6').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="CA3538D45FC5D6F6.htm#Relationship1">Annotation Block</a><div id="Desc-CA3538D45FC5D6F6" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">An Annotation Block is a Building Block used to provided additional characteristics such as sketching, reports, description notes.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="CA3539F45FC5E018-core-1CE3429D5C48982E-4-CA3538D45FC5D6F6" class="Full-1CE3429D5C48982E_Rel-line" d="M755,274 C852.5,274 852.5,506.75 950,506.75" stroke="gray" fill="none" marker-start="url(#Full-1CE3429D5C48982E__RelCircle" marker-end="url(#Full-1CE3429D5C48982E__RelArrowTip"/>
+</svg>
+
+</div>
+<div class="Relationship" id="Relationship3" style="display:none">
+<h3>Graph by Domain</h3>
+<svg id="1CE3429D5C48982E" height="602" width="1640" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" overflow="hidden">
+  <defs>
+    <marker id="Domain-1CE3429D5C48982E__RelCircle" refX="3" refY="3" markerWidth="6" markerHeight="6">
+      <circle cx="3" cy="3" r="3" fill="#A52A00"></circle>
+    </marker>
+    <marker id="Domain-1CE3429D5C48982E__RelArrowTip" refX="3" refY="3" markerWidth="8" markerHeight="6" orient="0">
+      <path d="M0,0 L6,2 L0,4" fill="#A52A00"></path>
+    </marker>
+  </defs>
+<g   transform="translate(585,290)">
+  <rect height="30"  width="150"  id="core-1CE3429D5C48982E-0"  rx="3"  ry="3"  x="0"  y="-10"  stroke="#F4DB6F"/>
+<foreignObject x="0" y="-10" width="150" height="30" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:12; text-align:center"><div style="margin-top:0; margin-bottom:0;"
+ onmouseover="var oElt=document.getElementById('Desc-1CE3429D5C48982E').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-1CE3429D5C48982E').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="#Relationship1">Application Portfolio</a>
+  <span id="Desc-1CE3429D5C48982E" style="margin-top:0: ùargin-bottom:0; width:280; height:150; background-color:gray; overflow:visible; display:none; z-index:1000;">Application Portfolios are Enduring Initiatives aimed at managing a set of Applications delivering functionalities required by enterprise operations.  </span>
+</div></div></foreignObject>
+</g>
+<g   transform="translate(945,85.25)">
+  <rect height="40"  width="325"  id="D5E6D6B05C4648D8"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="d5e6d6b05c4648d8.htm#Relationship1">{Application Functional Architecture}</a></div></foreignObject>
+</g>
+<g   transform="translate(950,105.25)">
+  <rect height="20"  width="320"  id="BCEBD8E9549144DB"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-C334EC9B5ECBB0D4-core-1CE3429D5C48982E-0-BCEBD8E9549144DB').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-C334EC9B5ECBB0D4-core-1CE3429D5C48982E-0-BCEBD8E9549144DB').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/C334EC9B5ECBB0D4.htm">[Managed Application]</a>  <div id="Desc-C334EC9B5ECBB0D4-core-1CE3429D5C48982E-0-BCEBD8E9549144DB" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Managed Application represents the characterics of an Application under the management of an Application Portfolio.  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-BCEBD8E9549144DB').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-BCEBD8E9549144DB').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="bcebd8e9549144db.htm#Relationship1">Application</a><div id="Desc-BCEBD8E9549144DB" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">An Application is a Software System that provides a set of Functionality(ies) that End Users see as a single unit.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="C334EC9B5ECBB0D4-core-1CE3429D5C48982E-0-BCEBD8E9549144DB" class="Domain-1CE3429D5C48982E_Rel-line" d="M735,290 C842.5,290 842.5,105.25 950,105.25" stroke="gray" fill="none" marker-start="url(#Domain-1CE3429D5C48982E__RelCircle" marker-end="url(#Domain-1CE3429D5C48982E__RelArrowTip"/>
+<g   transform="translate(945,135.25)">
+  <rect height="40"  width="325"  id="255CD30862AA0DA8"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="255cd30862aa0da8.htm#Relationship1">{EA Pattern - Business System Operating Model}</a></div></foreignObject>
+</g>
+<g   transform="translate(950,155.25)">
+  <rect height="20"  width="320"  id="7C4085C355270831"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-5B7A01E761F5511D-core-1CE3429D5C48982E-0-7C4085C355270831').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-5B7A01E761F5511D-core-1CE3429D5C48982E-0-7C4085C355270831').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/5B7A01E761F5511D.htm">[Functional Scope]</a>  <div id="Desc-5B7A01E761F5511D-core-1CE3429D5C48982E-0-7C4085C355270831" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-7C4085C355270831').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-7C4085C355270831').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="7c4085c355270831.htm#Relationship1">Functionality Map</a><div id="Desc-7C4085C355270831" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">Assembly of functionnalities and their dependencies that, together, defines the scope of a hardware or software architecture.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="5B7A01E761F5511D-core-1CE3429D5C48982E-0-7C4085C355270831" class="Domain-1CE3429D5C48982E_Rel-line" d="M735,290 C842.5,290 842.5,155.25 950,155.25" stroke="gray" fill="none" marker-start="url(#Domain-1CE3429D5C48982E__RelCircle" marker-end="url(#Domain-1CE3429D5C48982E__RelArrowTip"/>
+<g   transform="translate(50,268)">
+  <rect height="40"  width="325"  id="76147FEB6182230A"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="76147feb6182230a.htm#Relationship1">{Enterprise Architecting & Management Systems}</a></div></foreignObject>
+</g>
+<g   transform="translate(50,288)">
+  <rect height="20"  width="320"  id="In-AE7C9C45602351BC-05B091F46006F913"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#F4DB6F"><a href="05b091f46006f913.htm#Relationship1">Solution Team</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="ae7c9c45602351bc.htm">[Governed Management System]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="AE7C9C45602351BC-05B091F46006F913-05B091F46006F913" class="Domain-1CE3429D5C48982E_Rel-line" d="M370,288 C477.5,288 477.5,290 585,290" stroke="gray" fill="none" marker-start="url(#Domain-1CE3429D5C48982E__RelCircle" marker-end="url(#Domain-1CE3429D5C48982E__RelArrowTip"/>
+<g   transform="translate(945,185.25)">
+  <rect height="60"  width="325"  id="76147FEB6182230A"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="60" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="76147feb6182230a.htm#Relationship1">{Enterprise Architecting & Management Systems}</a></div></foreignObject>
+</g>
+<g   transform="translate(950,205.25)">
+  <rect height="20"  width="320"  id="29DF3F4060084C07"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-5B7A0F9561F565C4-core-1CE3429D5C48982E-2-29DF3F4060084C07').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-5B7A0F9561F565C4-core-1CE3429D5C48982E-2-29DF3F4060084C07').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="5b7a0f9561f565c4.htm">[Sub-Portfolio]</a>  <div id="Desc-5B7A0F9561F565C4-core-1CE3429D5C48982E-2-29DF3F4060084C07" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-29DF3F4060084C07').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-29DF3F4060084C07').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="29df3f4060084c07.htm#Relationship1">Management System</a><div id="Desc-29DF3F4060084C07" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Management System is an Enduring Initiative within an Enterprise, aimed at creating, maintaining, evaluating, evolving, and operating a collection of essential Functional Assets of the Enterprise.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="5B7A0F9561F565C4-core-1CE3429D5C48982E-2-29DF3F4060084C07" class="Domain-1CE3429D5C48982E_Rel-line" d="M735,290 C842.5,290 842.5,205.25 950,205.25" stroke="gray" fill="none" marker-start="url(#Domain-1CE3429D5C48982E__RelCircle" marker-end="url(#Domain-1CE3429D5C48982E__RelArrowTip"/>
+<g   transform="translate(950,225.25)">
+  <rect height="20"  width="320"  id="29DF3F4060084C07"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-5B7A0E2661F56423-core-1CE3429D5C48982E-2-29DF3F4060084C07').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-5B7A0E2661F56423-core-1CE3429D5C48982E-2-29DF3F4060084C07').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="5b7a0e2661f56423.htm">[Dependent Portfolio]</a>  <div id="Desc-5B7A0E2661F56423-core-1CE3429D5C48982E-2-29DF3F4060084C07" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-29DF3F4060084C07').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-29DF3F4060084C07').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="29df3f4060084c07.htm#Relationship1">Management System</a><div id="Desc-29DF3F4060084C07" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Management System is an Enduring Initiative within an Enterprise, aimed at creating, maintaining, evaluating, evolving, and operating a collection of essential Functional Assets of the Enterprise.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="5B7A0E2661F56423-core-1CE3429D5C48982E-2-29DF3F4060084C07" class="Domain-1CE3429D5C48982E_Rel-line" d="M735,290 C842.5,290 842.5,225.25 950,225.25" stroke="gray" fill="none" marker-start="url(#Domain-1CE3429D5C48982E__RelCircle" marker-end="url(#Domain-1CE3429D5C48982E__RelArrowTip"/>
+<g   transform="translate(50,318)">
+  <rect height="40"  width="325"  id="57DF58AB55091A58"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><a href="57df58ab55091a58.htm#Relationship1">{Enterprise Strategy & Roadmapping}</a></div></foreignObject>
+</g>
+<g   transform="translate(50,338)">
+  <rect height="20"  width="320"  id="In-A67DDF8D5F8ECF44-B181B82A54891668"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><table style="border:0; width:100%"><tr><td style="text-align:left; width:50%; font-size:9; color:"#F4DB6F"><a href="b181b82a54891668.htm#Relationship1">Enterprise</a></td><td style="text-align:right; width:50%; font-size:9;"><a href="a67ddf8d5f8ecf44.htm">[Coordinated Management System]</a></td></tr></table></div></foreignObject>
+</g>
+<path id="A67DDF8D5F8ECF44-B181B82A54891668-B181B82A54891668" class="Domain-1CE3429D5C48982E_Rel-line" d="M370,338 C477.5,338 477.5,290 585,290" stroke="gray" fill="none" marker-start="url(#Domain-1CE3429D5C48982E__RelCircle" marker-end="url(#Domain-1CE3429D5C48982E__RelArrowTip"/>
+<g   transform="translate(945,255.25)">
+  <rect height="80"  width="325"  id="69346AF86005EFA9"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="80" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="69346af86005efa9.htm#Relationship1">{Initiative and Transformation Pattern}</a></div></foreignObject>
+</g>
+<g   transform="translate(950,275.25)">
+  <rect height="20"  width="320"  id="08570D835ED129A3"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-29DF6CB560087462-core-1CE3429D5C48982E-4-08570D835ED129A3').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-29DF6CB560087462-core-1CE3429D5C48982E-4-08570D835ED129A3').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/29DF6CB560087462.htm">[Coordination Milestone]</a>  <div id="Desc-29DF6CB560087462-core-1CE3429D5C48982E-4-08570D835ED129A3" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-08570D835ED129A3').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-08570D835ED129A3').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="08570d835ed129a3.htm#Relationship1">Initiative Milestone</a><div id="Desc-08570D835ED129A3" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">An Initiative Milestone is a calendar change that marks the end of an Initiative and possibly the beginning of another.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="29DF6CB560087462-core-1CE3429D5C48982E-4-08570D835ED129A3" class="Domain-1CE3429D5C48982E_Rel-line" d="M735,290 C842.5,290 842.5,275.25 950,275.25" stroke="gray" fill="none" marker-start="url(#Domain-1CE3429D5C48982E__RelCircle" marker-end="url(#Domain-1CE3429D5C48982E__RelArrowTip"/>
+<g   transform="translate(950,295.25)">
+  <rect height="20"  width="320"  id="08570D835ED129A3"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-085717445ED13E5D-core-1CE3429D5C48982E-4-08570D835ED129A3').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-085717445ED13E5D-core-1CE3429D5C48982E-4-08570D835ED129A3').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/085717445ED13E5D.htm">[end]</a>  <div id="Desc-085717445ED13E5D-core-1CE3429D5C48982E-4-08570D835ED129A3" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-08570D835ED129A3').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-08570D835ED129A3').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="08570d835ed129a3.htm#Relationship1">Initiative Milestone</a><div id="Desc-08570D835ED129A3" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">An Initiative Milestone is a calendar change that marks the end of an Initiative and possibly the beginning of another.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="085717445ED13E5D-core-1CE3429D5C48982E-4-08570D835ED129A3" class="Domain-1CE3429D5C48982E_Rel-line" d="M735,290 C842.5,290 842.5,295.25 950,295.25" stroke="gray" fill="none" marker-start="url(#Domain-1CE3429D5C48982E__RelCircle" marker-end="url(#Domain-1CE3429D5C48982E__RelArrowTip"/>
+<g   transform="translate(950,315.25)">
+  <rect height="20"  width="320"  id="08570D835ED129A3"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-08570DC45ED12A4D-core-1CE3429D5C48982E-4-08570D835ED129A3').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-08570DC45ED12A4D-core-1CE3429D5C48982E-4-08570D835ED129A3').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/08570DC45ED12A4D.htm">[start]</a>  <div id="Desc-08570DC45ED12A4D-core-1CE3429D5C48982E-4-08570D835ED129A3" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-08570D835ED129A3').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-08570D835ED129A3').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="08570d835ed129a3.htm#Relationship1">Initiative Milestone</a><div id="Desc-08570D835ED129A3" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">An Initiative Milestone is a calendar change that marks the end of an Initiative and possibly the beginning of another.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="08570DC45ED12A4D-core-1CE3429D5C48982E-4-08570D835ED129A3" class="Domain-1CE3429D5C48982E_Rel-line" d="M735,290 C842.5,290 842.5,315.25 950,315.25" stroke="gray" fill="none" marker-start="url(#Domain-1CE3429D5C48982E__RelCircle" marker-end="url(#Domain-1CE3429D5C48982E__RelArrowTip"/>
+<g   transform="translate(945,345.25)">
+  <rect height="100"  width="325"  id="AF4DB12D62993434"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="100" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="af4db12d62993434.htm#Relationship1">{Model Block Management}</a></div></foreignObject>
+</g>
+<g   transform="translate(950,365.25)">
+  <rect height="20"  width="320"  id="AFFEE0765F6086D4"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-05B0DF7E6006C158-core-1CE3429D5C48982E-6-AFFEE0765F6086D4').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-05B0DF7E6006C158-core-1CE3429D5C48982E-6-AFFEE0765F6086D4').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/05B0DF7E6006C158.htm">[Annotation Tag]</a>  <div id="Desc-05B0DF7E6006C158-core-1CE3429D5C48982E-6-AFFEE0765F6086D4" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-AFFEE0765F6086D4').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-AFFEE0765F6086D4').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="AFFEE0765F6086D4.htm#Relationship1">Tag</a><div id="Desc-AFFEE0765F6086D4" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Tag is a general classification description which permits characterization of Entitys.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="05B0DF7E6006C158-core-1CE3429D5C48982E-6-AFFEE0765F6086D4" class="Domain-1CE3429D5C48982E_Rel-line" d="M735,290 C842.5,290 842.5,365.25 950,365.25" stroke="gray" fill="none" marker-start="url(#Domain-1CE3429D5C48982E__RelCircle" marker-end="url(#Domain-1CE3429D5C48982E__RelArrowTip"/>
+<g   transform="translate(950,385.25)">
+  <rect height="20"  width="320"  id="AFFEE0F15F60898A"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-05B0DF0C6006C0D8-core-1CE3429D5C48982E-6-AFFEE0F15F60898A').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-05B0DF0C6006C0D8-core-1CE3429D5C48982E-6-AFFEE0F15F60898A').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/05B0DF0C6006C0D8.htm">[Attached Document]</a>  <div id="Desc-05B0DF0C6006C0D8-core-1CE3429D5C48982E-6-AFFEE0F15F60898A" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-AFFEE0F15F60898A').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-AFFEE0F15F60898A').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="AFFEE0F15F60898A.htm#Relationship1">Business Document</a><div id="Desc-AFFEE0F15F60898A" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Business Document is a document whose lifecycle can be synched to the MEGA repository content: it may be attached to mega objects and a document version bound to a mega object timestamp in the Time Machine. This document can be of any given file format.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="05B0DF0C6006C0D8-core-1CE3429D5C48982E-6-AFFEE0F15F60898A" class="Domain-1CE3429D5C48982E_Rel-line" d="M735,290 C842.5,290 842.5,385.25 950,385.25" stroke="gray" fill="none" marker-start="url(#Domain-1CE3429D5C48982E__RelCircle" marker-end="url(#Domain-1CE3429D5C48982E__RelArrowTip"/>
+<g   transform="translate(950,405.25)">
+  <rect height="20"  width="320"  id="CA3538D45FC5D6F6"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-CA3539F45FC5E018-core-1CE3429D5C48982E-4-CA3538D45FC5D6F6').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-CA3539F45FC5E018-core-1CE3429D5C48982E-4-CA3538D45FC5D6F6').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="CA3539F45FC5E018.htm">[Owned Annotation Block]</a>  <div id="Desc-CA3539F45FC5E018-core-1CE3429D5C48982E-4-CA3538D45FC5D6F6" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-CA3538D45FC5D6F6').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-CA3538D45FC5D6F6').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="CA3538D45FC5D6F6.htm#Relationship1">Annotation Block</a><div id="Desc-CA3538D45FC5D6F6" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">An Annotation Block is a Building Block used to provided additional characteristics such as sketching, reports, description notes.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="CA3539F45FC5E018-core-1CE3429D5C48982E-4-CA3538D45FC5D6F6" class="Domain-1CE3429D5C48982E_Rel-line" d="M735,290 C842.5,290 842.5,405.25 950,405.25" stroke="gray" fill="none" marker-start="url(#Domain-1CE3429D5C48982E__RelCircle" marker-end="url(#Domain-1CE3429D5C48982E__RelArrowTip"/>
+<g   transform="translate(950,425.25)">
+  <rect height="20"  width="320"  id="CA353B065FC5E146"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-CA353B355FC5E1B6-core-1CE3429D5C48982E-4-CA353B065FC5E146').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-CA353B355FC5E1B6-core-1CE3429D5C48982E-4-CA353B065FC5E146').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/CA353B355FC5E1B6.htm">[Owned Categorization Block]</a>  <div id="Desc-CA353B355FC5E1B6-core-1CE3429D5C48982E-4-CA353B065FC5E146" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-CA353B065FC5E146').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-CA353B065FC5E146').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="ca353b065fc5e146.htm#Relationship1">Categorization Block</a><div id="Desc-CA353B065FC5E146" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">A Categorization Block is a Model Building Block used to provid classification and qualification of other Model Building Blocks.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="CA353B355FC5E1B6-core-1CE3429D5C48982E-4-CA353B065FC5E146" class="Domain-1CE3429D5C48982E_Rel-line" d="M735,290 C842.5,290 842.5,425.25 950,425.25" stroke="gray" fill="none" marker-start="url(#Domain-1CE3429D5C48982E__RelCircle" marker-end="url(#Domain-1CE3429D5C48982E__RelArrowTip"/>
+<g   transform="translate(945,455.25)">
+  <rect height="40"  width="325"  id="1CE356355C48C0E2"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="40" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="1ce356355c48c0e2.htm#Relationship1">{People & Accountability}</a></div></foreignObject>
+</g>
+<g   transform="translate(950,475.25)">
+  <rect height="20"  width="320"  id="910196CA550A2EC2"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-391204785F4EED0A-core-1CE3429D5C48982E-2-910196CA550A2EC2').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-391204785F4EED0A-core-1CE3429D5C48982E-2-910196CA550A2EC2').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="391204785f4eed0a.htm">[Concerned Organization]</a>  <div id="Desc-391204785F4EED0A-core-1CE3429D5C48982E-2-910196CA550A2EC2" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-910196CA550A2EC2').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-910196CA550A2EC2').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="910196ca550a2ec2.htm#Relationship1">Organization</a><div id="Desc-910196CA550A2EC2" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">An Organization is a group of people who share a common purpose and establish a functional division of labor in pursuit of their common purpose.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="391204785F4EED0A-core-1CE3429D5C48982E-2-910196CA550A2EC2" class="Domain-1CE3429D5C48982E_Rel-line" d="M735,290 C842.5,290 842.5,475.25 950,475.25" stroke="gray" fill="none" marker-start="url(#Domain-1CE3429D5C48982E__RelCircle" marker-end="url(#Domain-1CE3429D5C48982E__RelArrowTip"/>
+<g   transform="translate(945,505.25)">
+  <rect height="60"  width="325"  id="Other"  rx="3"  ry="3"  x="0"  y="-10"  stroke="gray"/>
+<foreignObject x="0" y="-10" width="325" height="60" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:right;"><a href="">Other</a></div></foreignObject>
+</g>
+<g   transform="translate(950,525.25)">
+  <rect height="20"  width="320"  id="FC96001C601C54D0"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-BCDBBD42617A4F79-core-1CE3429D5C48982E-1-FC96001C601C54D0').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-BCDBBD42617A4F79-core-1CE3429D5C48982E-1-FC96001C601C54D0').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="https://method.demomega.com/MM-OVERVIEW/pages/BCDBBD42617A4F79.htm">[Portfolio Functional Scope]</a>  <div id="Desc-BCDBBD42617A4F79-core-1CE3429D5C48982E-1-FC96001C601C54D0" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#A52A00"
+ onmouseover="var oElt=document.getElementById('Desc-FC96001C601C54D0').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-FC96001C601C54D0').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="fc96001c601c54d0.htm#Relationship1">Enterprise Capability Map</a><div id="Desc-FC96001C601C54D0" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">Top level assembly of Resource Capabilityies  and their dependencies that, together, provide a functional scope for asset portfolios and solution roadmaps.  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="BCDBBD42617A4F79-core-1CE3429D5C48982E-1-FC96001C601C54D0" class="Domain-1CE3429D5C48982E_Rel-line" d="M735,290 C842.5,290 842.5,525.25 950,525.25" stroke="gray" fill="none" marker-start="url(#Domain-1CE3429D5C48982E__RelCircle" marker-end="url(#Domain-1CE3429D5C48982E__RelArrowTip"/>
+<g   transform="translate(950,545.25)">
+  <rect height="20"  width="320"  id="5B7A067561F55876"  rx="3"  ry="3"  x="0"  y="-10"  stroke="none"/>
+<foreignObject x="0" y="-10" width="320" height="20" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"> <div xmlns="http://www.w3.org/1999/xhtml" style="margin-left:4px; margin-right:4px; overflow:visible; font-size:9; text-align:left;"><table style="border:0; width:100%"><tr>
+<td style="text-align:left; width:50%; font-size:9"
+ onmouseover="var oElt=document.getElementById('Desc-5B7A06E961F5595C-core-1CE3429D5C48982E-0-5B7A067561F55876').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-5B7A06E961F5595C-core-1CE3429D5C48982E-0-5B7A067561F55876').style; oElt.display = 'none'; oElt.opacity='0';">
+  <a href="5b7a06e961f5595c.htm">[Roadmap]</a>  <div id="Desc-5B7A06E961F5595C-core-1CE3429D5C48982E-0-5B7A067561F55876" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div></td>
+<td style="text-align:right; width:50%; font-size:9; color:"#F4DB6F"
+ onmouseover="var oElt=document.getElementById('Desc-5B7A067561F55876').style; oElt.display = 'block'; oElt.opacity='1';"
+ onMouseout="var oElt=document.getElementById('Desc-5B7A067561F55876').style; oElt.display = 'none'; oElt.opacity='0';">
+<a href="5b7a067561f55876.htm#Relationship1">Application Portfolio Stage</a><div id="Desc-5B7A067561F55876" style="width:280; height:150; background-color:gray; overflow:auto; display:none; z-index:1000;">  </div>
+</td>
+</tr></table></div></foreignObject>
+</g>
+<path id="5B7A06E961F5595C-core-1CE3429D5C48982E-0-5B7A067561F55876" class="Domain-1CE3429D5C48982E_Rel-line" d="M735,290 C842.5,290 842.5,545.25 950,545.25" stroke="gray" fill="none" marker-start="url(#Domain-1CE3429D5C48982E__RelCircle" marker-end="url(#Domain-1CE3429D5C48982E__RelArrowTip"/>
+</svg>
+
+</div>
+<div class="Relationship" id="Relationship4" style="display:none">
+<h3>Relationship Table</h3>
+<table id="sortabletable" class="table table-sm  table-bordered table-cell-resizable table-index-set-col-width-4 table-custom-style table-scrollX" width="100%" cellspacing="0">
+<tr><th>Relationship</th><th>Cardinality</th><th>Target Entity</th><th>Source Entity</th><th>Description</th><th>Implementation</th></tr>
+<tr>
+<td><img src="../standard/dic_concept_powercomponent.ico.gif"/>&nbsp;Annotation Tag</td>
+<td>[0..*]</td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="AFFEE0765F6086D4.htm" target="_top">Tag</a></td>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="CA353E6D5FC5E8AF.htm" target="_top">Model Building Block</a></td>
+<td></td>
+<td><img src="../standard/metaassosub.ico.gif"/>&nbsp;(Tag/Tag Element)</td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_powercomponent.ico.gif"/>&nbsp;Attached Document</td>
+<td>[0..*]</td>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="AFFEE0F15F60898A.htm" target="_top">Business Document</a></td>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="CA353E6D5FC5E8AF.htm" target="_top">Model Building Block</a></td>
+<td></td>
+<td><img src="../standard/metacomposub.ico.gif"/>&nbsp;(Documented Object/Attached Document)</td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_structuralcomponent.ico.gif"/>&nbsp;
+<a  href="391204785f4eed0a.htm" target="_top">Concerned Organization</a></td>
+<td>[1..1]</td>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="910196ca550a2ec2.htm" target="_top">Organization</a></td>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="29df3f4060084c07.htm" target="_top">Management System</a></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_interevent.ico.gif"/>&nbsp;Coordination Milestone</td>
+<td>[0..*]</td>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="08570d835ed129a3.htm" target="_top">Initiative Milestone</a></td>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="0ffeec41600be08a.htm" target="_top">Initiative</a></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_structuralcomponent.ico.gif"/>&nbsp;
+<a  href="5b7a0e2661f56423.htm" target="_top">Dependent Portfolio</a></td>
+<td>[0..*]</td>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="29df3f4060084c07.htm" target="_top">Management System</a></td>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="29df3f4060084c07.htm" target="_top">Management System</a></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_grapharc_concept_endevent.ico.gif"/>&nbsp;end</td>
+<td>[1..1]</td>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="08570d835ed129a3.htm" target="_top">Initiative Milestone</a></td>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="0ffeec41600be08a.htm" target="_top">Initiative</a></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_classification.ico.gif"/>&nbsp;Class</td>
+<td>[1..1]</td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="744b935d5fbfe0f9.htm" target="_top">Class</a></td>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="ae26f8b05acd5185.htm" target="_top">Entity</a></td>
+<td><i>Abstract Relationship</i><br/></td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_powercomponent.ico.gif"/>&nbsp;Functional Scope</td>
+<td>[0..*]</td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="7c4085c355270831.htm" target="_top">Functionality Map</a></td>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="1ce3429d5c48982e.htm" target="_top">Application Portfolio</a></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_classification.ico.gif"/>&nbsp;Category of Initiative</td>
+<td>[1..1]</td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="ff161e1b620d461f.htm" target="_top">Category of Initiative</a></td>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="0ffeec41600be08a.htm" target="_top">Initiative</a></td>
+<td><i>Abstract Relationship</i><br/></td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/actualized-concept-type.ico.gif"/>&nbsp;Managed Application</td>
+<td>[0..*]</td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="bcebd8e9549144db.htm" target="_top">Application</a></td>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="1ce3429d5c48982e.htm" target="_top">Application Portfolio</a></td>
+<td>A&#160;<b> Managed Application</b> represents the characterics of an <a href="bcebd8e9549144db.htm" target="_top"><b><u>Application</u></b></a> under the management of an <a href="1ce3429d5c48982e.htm" target="_top"><b><u>Application Portfolio</u></b></a>.</td>
+<td><img src="../standard/metaclasspart_concrete.ico.gif"/>&nbsp;
+<a  href="1B9C1C8F4E0B2D0D.htm" target="_top">Initiative</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_structuralcomponent.ico.gif"/>&nbsp;
+<a  href="CA3539F45FC5E018.htm" target="_top">Owned Annotation Block</a></td>
+<td>[0..*]</td>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="CA3538D45FC5D6F6.htm" target="_top">Annotation Block</a></td>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="209c29bb5ed23342.htm" target="_top">Model Namespace</a></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_powercomponent.ico.gif"/>&nbsp;Owned Categorization Block</td>
+<td>[0..*]</td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="ca353b065fc5e146.htm" target="_top">Categorization Block</a></td>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="209c29bb5ed23342.htm" target="_top">Model Namespace</a></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_structuralcomponent.ico.gif"/>&nbsp;
+<a  href="05b0ffd76006dac0.htm" target="_top">Owned Initiative Resource</a></td>
+<td>[0..*]</td>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="05b0f6d56006cc8a.htm" target="_top">Initiative Resource</a></td>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="d321c226601262ae.htm" target="_top">Enduring Initiative</a></td>
+<td><i>Abstract Relationship</i><br/></td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_powercomponent.ico.gif"/>&nbsp;Portfolio Functional Scope</td>
+<td>[0..1]</td>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="fc96001c601c54d0.htm" target="_top">Enterprise Capability Map</a></td>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="26b8889c5eea8ab7.htm" target="_top">Asset Portfolio</a></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_structuralcomponent.ico.gif"/>&nbsp;
+<a  href="5b7a06e961f5595c.htm" target="_top">Roadmap</a></td>
+<td>[0..*]</td>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="5b7a067561f55876.htm" target="_top">Application Portfolio Stage</a></td>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="1ce3429d5c48982e.htm" target="_top">Application Portfolio</a></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_startevent.ico.gif"/>&nbsp;start</td>
+<td>[1..1]</td>
+<td><img src="../standard/dic_concept_syntax.ico.gif"/>&nbsp;
+<a  href="08570d835ed129a3.htm" target="_top">Initiative Milestone</a></td>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="0ffeec41600be08a.htm" target="_top">Initiative</a></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_structuralcomponent.ico.gif"/>&nbsp;
+<a  href="5b7a0f9561f565c4.htm" target="_top">Sub-Portfolio</a></td>
+<td>[0..*]</td>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="29df3f4060084c07.htm" target="_top">Management System</a></td>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="29df3f4060084c07.htm" target="_top">Management System</a></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+</div>
+</section>
+<section class="object-section">
+<h4>INTERNAL STRUCTURE</h4> 
+<hr class="sectionbreak" />
+<a class="object-section-anchor" id="str"></a>
+<map  name="C334EC7B5ECBB04F">
+  <area  href=#OBMK1D362DA6617C072A shape="polygon" coords="235, 180, 235, 167, 261, 167, 261, 180, 235, 180"   target="_top"  title="-">
+  
+  <area  href="1d362da6617c071e.htm" shape="rect" coords="138, 153, 274, 199"   target="_top"  title="A plan recognized by an enterprise as being essential to achieving its goals - i.e. a strategic specification of what the enterprise does. In other words, a Course of Action channels efforts towards Desired Results.">
+  
+  <area  href=#OBMK1D363485617C0DD3 shape="polygon" coords="244, 93, 244, 79, 270, 79, 270, 93, 244, 93"   target="_top"  title="-">
+  
+  <area  href="1d363485617c0dc9.htm" shape="rect" coords="138, 67, 274, 112"   target="_top"  title="An&#160; Asset Portfolio Goal represent a long term transformation objectives of an Asset Portfolio.">
+  
+  <area  href=26b8889c5eea8ab7.htm#OBMK26B8889C5EEA8AB7 shape="polygon" coords="302, 15, 302, 2, 388, 2, 388, 15, 302, 15"   target="_top"  title="An&#160; Asset Portfolio is a Management System aimed at developing and maintaining in operational conditions a set of Resource Operating Assets delivering functionalities required by Business Operations.">
+  
+  <area  href="1ce3429d5c48982e.htm" shape="rect" coords="42, 0, 648, 301"   target="_top"  title="&#160;Application Portfolios are Enduring Initiatives aimed at managing a set of Applications delivering functionalities required by enterprise operations.">
+  
+</map>
+<img  src="../images/1ce3429d5c48982e_c334ec7b5ecbb04f_i.png" alt="../images/1ce3429d5c48982e_c334ec7b5ecbb04f_i.png" usemap="#C334EC7B5ECBB04F" height="311" width="674" border=0>
+
+<a class="object-section-anchor" id="shi"></a>
+<section class="object-section">
+<h4>SUPER TYPES HIERARCHY</h4> 
+<hr class="sectionbreak" />
+<span>Left click on a node to toggle it. Right click to navigate through its page
+</section>
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<div id="categoryHierarchy"></div>
+ <script>
+var hierarchy = JSON.parse('{"name":"Application Portfolio","comment":"Application Portfolios are Enduring Initiatives aimed at managing a set of Applications delivering functionalities required by enterprise operations.","url":"1CE3429D5C48982E.htm","parents":[{"name":"Asset Portfolio","comment":"An Asset Portfolio is a Management System aimed at developing and maintaining in operational conditions a set of Resource Operating Assets delivering functionalities required by Business Operations.","url":"26B8889C5EEA8AB7.htm", "isparent":true,"parents":[{"name":"Management System","comment":"A Management System is an Enduring Initiative within an Enterprise, aimed at creating, maintaining, evaluating, evolving, and operating a collection of essential Functional Assets of the Enterprise.","url":"29DF3F4060084C07.htm", "isparent":true,"parents":[{"name":"Enduring Initiative","comment":"An Enduring Initiative is a long term Initiative which involves roadmapping and governance. Enterprises and their Management Systems are typical Enduring Initiatives.","url":"D321C226601262AE.htm", "isparent":true,"parents":[{"name":"Initiative","comment":"An Initiative is any piece of work that is undertaken or attempted under the responsibility of a Steering Authority.","url":"0FFEEC41600BE08A.htm", "isparent":true,"parents":[{"name":"Initiative Block","comment":"An Initiative Block is a Model Building Block used to describe enterprise transformation.","url":"C31CE58F62158D82.htm", "isparent":true,"parents":[{"name":"Model Building Block","comment":"A Model Building Block is a Building Block used to describe and manage the enterprise. It comprises:","url":"CA353E6D5FC5E8AF.htm", "isparent":true,"parents":[{"name":"Building Block","comment":"A Building Block is an autonomous, resusable Entity that contributes to the makeup of other Building Blocks.","url":"CCB819645A564F12.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]}]},{"name":"Aggregate Block (Individual)","comment":"An Aggregate Block (Individual) is an Individual which has an internal structure.","url":"514E623C620F2198.htm", "isparent":true,"parents":[{"name":"Aggregate Block","comment":"An Aggregate Block is a Building Block which has an internal structure.","url":"514E5F6C620F1EC6.htm", "isparent":true,"parents":[{"name":"Aggregate Entity","comment":"An Aggregate Entity is a Nesting Entity which has an internal structure made of Aggregate Entity Members.","url":"B13D31DE5EDF42D8.htm", "isparent":true,"parents":[{"name":"<Aspects>","isparent": true,"parents":[{"name":"Nesting Entity","comment":"A Nesting Entity is an Entity that nests other entities as sub-entities, serving as their lexical scope. The existence, visibility, and significance of Nested Entitys are confined within the boundaries of their Nesting Entity.","url":"AE26F8D65ACD51AB.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]}]},{"name":"Building Block","comment":"A Building Block is an autonomous, resusable Entity that contributes to the makeup of other Building Blocks.","url":"CCB819645A564F12.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]},{"name":"Individual","comment":"Individuals are Entitys  which represent objects of the real world that exist over space and time. Examples are, the Oackland digital hospital in 2016, the registration process used at the Oackland digital hospital in 2021 or SAP S/4HANA deployed in Argentina since 2020. ","url":"348F55F661962ECC.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]}]}, {"name":"<Aspects>","isparent": true,"parents":[{"name":"Model Namespace","comment":"A Model Namespace is a namespace of Model Building Blocks used to describe both the architecture of the enterprise and Initiatives aimed at designing, developing, running, adapting and maintaining this architecture over time.","url":"209C29BB5ED23342.htm", "isparent":true,"parents":[{"name":"<Aspects>","isparent": true,"parents":[{"name":"Container","comment":"A Container is a collection of Building Blocks whose existence and meaning are defined by the Container.","url":"4089423855572F23.htm", "isparent":true,"parents":[{"name":"<Aspects>","isparent": true,"parents":[{"name":"Block Collection","comment":"A Block Collection is a grouping of Building Blocks.","url":"E8187ED464536599.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]},{"name":"Nesting Entity","comment":"A Nesting Entity is an Entity that nests other entities as sub-entities, serving as their lexical scope. The existence, visibility, and significance of Nested Entitys are confined within the boundaries of their Nesting Entity.","url":"AE26F8D65ACD51AB.htm", "isparent":true,"parents":[{"name":"Entity","comment":"An Entity is an elementary constituent of a model. It is the top level abstraction of HOPEX upper ontology.","url":"AE26F8B05ACD5185.htm", "isparent":true,"parents":[]}]}]}]}]}]}]}]}]}]}],"children":[]}');
+$(document).ready(function(event) {
+var tree = CollapsibleTree("#categoryHierarchy");
+tree.init(hierarchy);
+});
+</script>
+</div>
+<button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button>
+<script>window.onscroll = function() {scrollFunction()};$(document).on('click', 'a[href^="#"]', function (event) {event.preventDefault();$('html, body').animate({scrollTop: $($.attr(this, 'href')).offset().top}, 500);});
+function showDiagOnClick(elem){ var x = document.getElementsByClassName('Relationship');var e = elem.getAttribute("value"); for (var i=0; i < x.length ;i++){x[i].style.display="none"; if (x[i].id == e){x[i].style.display="block";x[i].style.textAlign="left";}}}
+</script></html>

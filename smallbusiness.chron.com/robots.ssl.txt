@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /blog-post.html*
+Disallow: /6117/
+Disallow: /search?*
+
+Sitemap: https://smallbusiness.chron.com/sitemaps/sitemap.xml

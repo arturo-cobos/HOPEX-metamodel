@@ -1,0 +1,508 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="keywords" content="">
+<meta name="description" content="">    
+<LINK REL="icon" HREF="../standard/assets/img/favicon.ico">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/bootstrap.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nav.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/eaportal.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/font-awesome.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/animate.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/datatables.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/grid.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nae.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/custom.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/chosen.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/prism.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery.dataTables.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jsTreeStyle.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.theme.css" media="screen" />
+<script type="text/javascript" src="../standard/assets/js/jquery-3.2.1.min.js" ></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-ui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.columnFilter.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3-force.v2.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.gui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.search.js"></script> 
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.util.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-2.1.1.min.js"></script>
+<script src="../standard/assets/js/ws_zoomtemplate_firefox.js"></script>
+<script src="../standard/assets/js/bootstrap.min.js"></script>
+<script src="../standard/assets/js/datatables.min.js"></script>
+<script src="../standard/assets/js/moment.min.js"></script>
+<script src="../standard/assets/js/datetime-moment.js"></script>
+<script src="../standard/assets/js/chartjs.min.js"></script>
+<script src="../standard/assets/js/searchindexcontent.json"></script>
+<script src="../standard/assets/js/anls.js"></script>
+<script src="../../../cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script src="../standard/assets/js/gauge.js"></script> 
+<script src="../standard/assets/js/domesticApi.js"></script> 
+<script src="../standard/assets/js/piecelabel.js"></script>
+<script src="../standard/assets/js/popper.min.js"></script>
+<script src="../standard/assets/js/custom.js"></script>
+<script src="../standard/assets/js/chosen.jquery.js"></script>
+<script src="../standard/assets/js/prism.js"></script>
+<script src="../standard/assets/js/init-chosen.js"></script>
+<script src="../standard/assets/js/chart-data-flow.js"></script>
+<script src="../standard/assets/js/chart-data-gantt.js"></script>
+<script type="module" src="../standard/assets/js/Fuse.esm.min.js"></script>
+<script type="module">
+import Fuse from '../standard/assets/js/Fuse.esm.min.js';
+$(document).ready(function () {
+console.log('getjson');
+window.$.getJSON('../standard/assets/js/searchindexcontent.json', function (response) {
+console.log('getjson ok');
+var isIndex = "";
+var url = window.location.pathname;
+var filename = url.substring(url.lastIndexOf('/')+1);
+if( filename.includes("index") || filename === "" ){
+isIndex = "pages/";
+} else {
+isIndex = "";
+}
+const fuse = new Fuse(response, {
+keys: ['title','text'],
+shouldSort: true,
+includeMatches : true,
+findAllMatches : true
+});
+$('#search-fuse').on('keyup', function () {
+let result = fuse.search($(this).val());
+console.log(result);
+let resultdiv = $('div.searchresults-fuse');
+if (result.length === 0) {
+resultdiv.hide();
+} else {
+resultdiv.empty();
+resultdiv.append('<table class="table-search" width="100%" cellspacing="0"><thead ><tr><th>Name</th><th>Object Type</th><th>Modification date</th></tr></thead><tbody>');
+
+for (let obj in result.slice(0,10)) {
+
+let searchObj = '<tr><td><a href="./'+ isIndex + result[obj].item.url + '">' + result[obj].item.title +'</a></td><td>' + result[obj].item.ObjectType + '</td><td>' + result[obj].item.ModificationDate + '</td></tr>' ;
+
+
+resultdiv.find('tbody').append(searchObj);
+}
+resultdiv.append('</tbody></table>');
+resultdiv.show();
+}
+});
+});
+});
+</script>
+<title>HOPEX Metamodel Overview (Beta Version)</title>
+</head>
+<nav class="navbar navbar-expand-md navbar-dark  navbar-mega"><!-- Brand --><!--<a class="navbar-brand" href="#">Navbar</a>--><a class="" href="../index.htm"><img class="logo-mega" src="../standard/assets/img/logo.png"  alt="">(Beta Version)</a><!-- Toggler/collapsibe Button --><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><!-- Navbar links -->
+<div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsibleNavbar"><div class="col-sm-auto col-md-auto col-lg-5"></div>
+<div class="col-sm-auto">
+<ul class="navbar-nav">      
+<li><a class="dropdown-item" href="ad30ce115ebf7e90.htm">EA Grid</a></li> 
+<li><a class="dropdown-item" href="fdd5018459bc3c6a.htm">EA Domains</a></li> 
+<li><a class="dropdown-item" href="07e731775ecc93f4.htm">Solutions</a></li> 
+<li><a class="dropdown-item" href="c5dfc62c54810c2c.htm">Glossary</a></li> 
+<li class="nav-item dropdown mx-1">
+<a class="nav-link" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</a>
+<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<li><a class="dropdown-item" href="5446555d5f88c32e.htm">Outcome Driven Metamodel</a></li> 
+<li><a class="dropdown-item" href="e1ccfc295f8f7b90.htm">Playbooks</a></li> 
+<li><a class="dropdown-item" href="42bc992862d20ea7.htm">Framework Mappings</a></li> 
+<li><a class="dropdown-item" href="e93aebb35fa20550.htm">Metamodel Patterns</a></li> 
+<li><a class="dropdown-item" href="d599fe87602b2b85.htm">References</a></li> 
+<li><a class="dropdown-item" href="333f3a7f5dde11de.htm">Legend</a></li> 
+</ul>									                                            
+</li>
+</ul>
+</div>
+<div class="col-sm-auto"><a class="nav-link search" href="#" onclick=showHideSearch("search-section-fuse")><i class="fa fa-search mr-1 form-control-feedback"></i></a></div>
+</div>
+</nav>
+<div id="search-section-fuse" style="display:none">>
+<div class="search_header"><span class="closesearch">&times;</span>
+<nav class="breadcrumb">
+<a class="breadcrumb-item" href="../index.htm">Home </a> 
+<span class="breadcrumb-item active">Search</span> 
+</nav>
+</div>
+<input id="search-fuse" placeholder="Search..."  name="q" onfocus="this.value=''" type="search">
+<div class="searchresults-fuse"></div>
+</div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>function showHideSearch(elementId) {var contentDivs = document.getElementsByClassName('content');var footerDivs = document.getElementsByClassName('footer'); var containerDivs = document.getElementsByClassName('container');var containerfluidDivs = document.getElementsByClassName('container-fluid');var x = document.getElementById(elementId);if (x.style.display === "none") {x.style.display = "block";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "none";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "none";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "none";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "none";}} else {x.style.display = "none";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "block";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "block";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "block";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "block";}}} ;<!-- END WIDGET DRILL DOWN --></script><script>$(document).ready(function() {$(window).scroll(function() {if ($(this).scrollTop() > 100) {$('.scrollup').fadeIn();} else {$('.scrollup').fadeOut();}});$('.scrollup').click(function() {$("html, body").animate({scrollTop: 0}, 600);return false;});});</script><script>
+var modal = document.getElementById("search-section-fuse");
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = "none";
+}
+}
+$(document).on('click', '.closesearch', function() {
+showHideSearch("search-section-fuse");
+
+
+
+
+
+});</script>
+<script src='../../../d3js.org/d3.v4.min.js'></script>
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<style>.slice {cursor: pointer;}
+.slice .main-arc {stroke: #fff;stroke-width: 2px;}
+.slice .hidden-arc {fill: none;}
+.slice text {pointer-events: none;dominant-baseline: middle;text-anchor: middle;font-size : 0.75rem;}
+#vis {font-size : 0.75rem;}
+.cmdbutton {border-radius: 25px;text-decoration: none;text-color:rgb(255,255,255);background: rgb(49,182,114);paddiing-left:5px;paddiing-right:5px;padding-top: 10px;padding-bottom: 10px;
+}
+</style>
+<div class="container-fluid col-lg-11 content">
+<table border=0><tr><td>
+<nav class="breadcrumb">
+<a class="breadcrumb-item" href="../index.htm">Home </a> 
+<span class="breadcrumb-item"> EA Grid</span> 
+<span class="breadcrumb-item active">EA GRID - Core Domains</span> 
+</nav>
+<div id="vis">
+<a href="#" class="btn btn-d" value="GRID-1" onclick="ShowGridOnClick(this)">Sunburst</a>
+<a href="#" class="btn btn-d" value="GRID-2" onclick="ShowGridOnClick(this)">TreeMap</a>
+<div class="GRID" id="GRID-1">
+<script>
+! function() {
+// number of items
+function t(n, e) {
+return n === e ? !0 : n.children ? n.children.some(function(n) {
+return t(n, e)
+}) : !1
+}
+
+var tooltip = d3.select('#vis') 
+.append('div').classed('tooltipEA', true);  
+tooltip.append('div')  
+.attr('class', 'label');  
+function n(t) {
+if (t.children) {
+var e = t.children.map(n),
+r = d3.hsl(e[0]),
+a = d3.hsl(e[1]);
+return d3.hsl((r.h + a.h) / 2, 1.2 * r.s, r.l / 1.2)
+}
+return t.colour || "#fff"
+}
+function e(t) {
+var n = r(t),
+e = d3.interpolate(d.domain(), [t.x, t.x + t.dx]),
+a = d3.interpolate(u.domain(), [t.y, n]),
+i = d3.interpolate(u.range(), [t.y ? 20 : 0, o]);
+return function(t) {
+return function(n) {
+return d.domain(e(n)), u.domain(a(n)).range(i(n)), x(t)
+}
+}
+}
+// click tru
+function r(t) {
+return t.children ? Math.max.apply(Math, t.children.map(r)) : t.y + t.dy
+}
+function a(t) {
+return .299 * t.r + .587 * t.g + .114 * t.b
+}
+var i = window.innerHeight - 20,
+l = i,
+o = i / 2,
+d = d3.scale.linear().range([0, 2 * Math.PI]),
+u = d3.scale.pow().exponent(1.3).domain([0, 1]).range([0, o]),
+c = 5,
+s = 1e3,
+h = d3.select("#vis");
+h.select("img").remove();
+var f = h.append("svg").attr("width", i + 2 * c).attr("height", l + 2 * c).append("g").attr("transform", "translate(" + [o + c, o + c] + ")");
+h.append("p").attr("id", "intro").text("Click to zoom!");
+var p = d3.layout.partition().sort(null).value(function(t) {
+return 5.8 - t.depth
+}),
+x = d3.svg.arc().startAngle(function(t) {
+return Math.max(0, Math.min(2 * Math.PI, d(t.x)))
+}).endAngle(function(t) {
+return Math.max(0, Math.min(2 * Math.PI, d(t.x + t.dx)))
+}).innerRadius(function(t) {
+return Math.max(0, t.y ? u(t.y) : t.y)
+}).outerRadius(function(t) {
+return Math.max(0, u(t.y + t.dy))
+});
+d3.json("938E3BCF62024E7A-Sunburst.json", function(r, i) {
+function l(n) {
+h.transition().duration(s).attrTween("d", e(n)), m.style("visibility", function(e) {
+return t(n, e) ? null : d3.select(this).style("visibility")
+}).transition().duration(s).attrTween("text-anchor", function(t) {
+return function() {
+return d(t.x + t.dx / 2) > Math.PI ? "end" : "start"
+}
+}).attrTween("transform", function(t) {
+var n = (t.name || "").split(" ").length > 1;
+return function() {
+var e = 180 * d(t.x + t.dx / 2) / Math.PI - 90,
+r = e + (n ? -.5 : 0);
+return "rotate(" + r + ")translate(" + (u(t.y) + c) + ")rotate(" + (e > 90 ? -180 : 0) + ")"
+}
+}).style("fill-opacity", function(e) {
+return t(n, e) ? 1 : 1e-6
+}).each("end", function(e) {
+d3.select(this).style("visibility", t(n, e) ? null : "hidden")
+})
+if (!n.current ? (n.children ? 0 : 1) : 1) {  //condition to check the last node
+window.location = n.hexaId
+console.log("test ok current");
+}
+}
+var o = p.nodes({
+children: i
+}),
+h = f.selectAll("path").data(o);
+h.enter().append("path").attr("id", function(t, n) {
+return "path-" + n
+}).attr("d", x).attr("fill-rule", "evenodd").style("stroke-width","2px").style("stroke","#eee").style("fill", n).on("click", l)
+.on('mouseover', function(d) {  // when mouse enters div
+if (d.name != null) {
+tooltip.select('.label').html("<b>" + d.name + "</b><br/>" + d.description); // set current label           
+tooltip.style('display', 'block'); // set display      
+} else {
+tooltip.style('display', 'none');
+}
+})
+.on('mouseout', function() { // when mouse leaves div                        
+tooltip.style('display', 'none'); // hide tooltip for that element
+})
+.on('mousemove', function(d) { // when mouse moves                  
+tooltip.style('top', (d3.event.layerY + 10) + 'px')
+.style('left', (d3.event.layerX + 10) + 'px'); // always 10px below the cursor
+})
+var m = f.selectAll("text").data(o),
+y = m.enter().append("text").style("fill-opacity", 1).style("fill", function(t) {
+return a(d3.rgb(n(t))) < 125 ? "#eee" : "#000"
+}).attr("text-anchor", function(t) {
+return d(t.x + t.dx / 2) > Math.PI ? "end" : "start"
+}).attr("dy", ".2em").attr("transform", function(t) {
+var n = (t.name || "").split(" ").length > 1,
+e = 180 * d(t.x + t.dx / 2) / Math.PI - 90,
+r = e + (n ? -.5 : 0);
+return "rotate(" + r + ")translate(" + (u(t.y) + c) + ")rotate(" + (e > 90 ? -180 : 0) + ")"
+}).on("click", l);
+y.append("tspan").attr("x", 0)
+.text(function(t) { return t.name})
+.on('mouseover', function(d) {  // when mouse enters div
+if (d.name != null) {
+tooltip.select('.label').html("<b>" + d.name + "</b><br/>" + d.description); // set current label           
+tooltip.style('display', 'block'); // set display      
+} else {
+tooltip.style('display', 'none');
+}
+})
+.on('mouseout', function() { // when mouse leaves div                        
+tooltip.style('display', 'none'); // hide tooltip for that element
+})
+.on('mousemove', function(d) { // when mouse moves                  
+tooltip.style('top', (d3.event.layerY + 10) + 'px')
+.style('left', (d3.event.layerX + 10) + 'px'); // always 10px below the cursor
+})})}();
+</script>
+</div>
+<div class="GRID" id="GRID-2" style="display:none;">
+<div id="domainDrillDown"></div>
+<script>
+
+var margin = {top: 24, right: 0, bottom: 0, left: 0},
+width = 1200, //640
+height = 530,
+formatNumber = d3.format(",d"),
+transitioning;
+var x = d3.scaleLinear()
+.domain([0, width])
+.range([0, width]);
+var y = d3.scaleLinear()
+.domain([0, height - margin.top - margin.bottom])
+.range([0, height - margin.top - margin.bottom]);
+var color = d3.scaleOrdinal()
+.range(d3.schemeCategory10
+.map(function(c) { c = d3.rgb(c); c.opacity = 0.6; return c; }));
+//var color = d3.scaleOrdinal(d3.schemeCategory20.map(fader));
+var fader = function(color) { return d3.interpolateRgb(color, "#fff")(0.2); };
+var format = d3.format(",d");
+var treemap;
+var svg, grandparent;
+updateDrillDown();
+function updateDrillDown() {
+if (svg) {
+svg.selectAll("*").remove();
+} else {
+svg = d3.select("#domainDrillDown").append("svg")
+.attr("width", width - margin.left - margin.right).attr("height", height - margin.bottom - margin.top).style("margin-left", -margin.left + "px").style("margin.right", -margin.right + "px").append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")").style("shape-rendering", "crispEdges");		
+grandparent = svg.append("g").attr("class", "grandparent");
+grandparent.append("rect").attr("y", -margin.top).attr("width", width).attr("height", margin.top);
+grandparent.append("text").attr("x", 6).attr("y", 6 - margin.top).attr("dy", ".75em");		 
+treemap = d3.treemap().tile(d3.treemapResquarify.ratio(height / width * 0.5 * (1 + Math.sqrt(5)))).size([width, height]).round(false).paddingInner(1);
+}
+d3.json("938E3BCF62024E7A-Treemap.json").then(function(data) {
+var root = d3.hierarchy(data).eachBefore(function(d) { d.id = (d.parent ? d.parent.id + "." : "") + d.data.name; }).sum((d) => d.size).sort(function(a, b) {
+console.log('initial root sort a ' + a.value + ' b ' + b.value);
+return b.height - a.height || b.value - a.value;
+});
+initialize(root);
+accumulate(root);
+layout(root);
+treemap(root);
+display(root);
+});
+};
+function initialize(root) {
+root.x = root.y = 0;
+root.x1 = width;
+root.y1 = height;
+root.depth = 0;
+}
+function accumulate(d) {
+console.log('accumulate called ' + d.data.name);
+return (d._children = d.children)
+? d.value = d.children.reduce(function(p, v) { return p + accumulate(v); }, 0) : d.value;
+}
+function layout(d) {
+if (d._children) {
+d._children.forEach(function(c) {
+
+
+c.x0 = d.x0 + c.x0 * d.x1;
+c.y0 = d.y0 + c.y0 * d.y1;
+c.x1 *= (d.x1 - d.x0);
+c.y1 *= (d.y1 - d.y0);
+c.parent = d;
+layout(c);
+});
+}
+}
+function display(d) {
+grandparent
+.datum(d.parent)
+.on("click", transition)
+.select("text")
+.text(name(d));
+var g1 = svg.insert("g", ".grandparent")
+.datum(d)
+.attr("class", "depth");
+var g = g1.selectAll("g")
+.data(d._children)
+.enter().append("g");
+g.filter(function(d) { return d._children; })
+.classed("children", true)
+.on("click", transition);
+var children = g.selectAll(".child")
+.data(function(d) { return d._children || [d]; })
+.enter().append("g");
+children.append("rect")
+.attr("class", "child")
+.call(rect)
+.append("title")
+.text(function(d) { return d.data.name + " (" + formatNumber(d.value) + ")"; });
+children.append("text")
+.attr("class", "ctext")
+.text(function(d) { return d.data.name; })
+.call(text2);
+g.append("rect")
+.attr("class", "parent")
+.call(rect);
+var t = g.append("text")
+.attr("class", "ptext")
+.attr("dy", ".75em")
+t.append("tspan")
+.text(function(d) { return d.data.name; });
+t.append("tspan")
+.attr("dy", "1.0em")
+.text(function(d) { return formatNumber(d.value); });
+t.call(text);
+g.selectAll("rect")
+.style("fill", function(d) { return color(d.data.name); });
+function transition(d) {
+if (transitioning || !d) return;transitioning = true;
+var g2 = display(d),
+t1 = g1.transition().duration(750),
+t2 = g2.transition().duration(750);
+x.domain([d.x0, d.x0 + (d.x1 - d.x0)]);
+y.domain([d.y0, d.y0 + (d.y1 - d.y0)]);
+svg.style("shape-rendering", null);
+svg.selectAll(".depth").sort(function(a, b) { 
+console.log('.depth sort a ' + a.depth + ' b ' + b.depth);
+return a.depth - b.depth; });
+g2.selectAll("text").style("fill-opacity", 0);
+t1.selectAll(".ptext").call(text).style("fill-opacity", 0);
+t2.selectAll(".ptext").call(text).style("fill-opacity", 1);
+t1.selectAll(".ctext").call(text2).style("fill-opacity", 0);
+t2.selectAll(".ctext").call(text2).style("fill-opacity", 1);
+t1.selectAll("rect").call(rect);
+t2.selectAll("rect").call(rect);
+
+
+t1.remove().on("end", function() {
+svg.style("shape-rendering", "crispEdges");
+transitioning = false;
+});
+}
+return g;
+}
+
+function text(text) {
+text.selectAll("tspan")
+.attr("x", function(d) { return x(d.x0) + 6; })
+text.attr("x", function(d) { return x(d.x0) + 6; })
+.attr("y", function(d) { return y(d.y0) + 3; })
+.style("opacity", function(d) {
+var w = x(d.x1) - x(d.x0);
+console.log("text opacity setting textlength " + this.getComputedTextLength() + " d size " + w);
+return this.getComputedTextLength() < w - 6 ? 1 : 0; });
+}
+function text2(text) {
+text.attr("x", function(d) {
+return x(d.x1) - this.getComputedTextLength() - 6;
+})
+.attr("y", function(d) { return y(d.y1) - 6; })
+.style("opacity", function(d) {
+var w = x(d.x1) - x(d.x0);
+console.log("text2 opacity setting textlength " + this.getComputedTextLength() + " d size " + w);
+return this.getComputedTextLength() < w - 6 ? 1 : 0;
+});
+}
+function rect(rect) {
+rect.attr("x", function(d) { return x(d.x0); })
+.attr("y", function(d) { return y(d.y0); })
+.attr("width", function(d) {
+var w = x(d.x1) - x(d.x0);
+console.log('id ' + d.id +' rect width ' + w);
+return w;
+})
+.attr("height", function(d) { 
+var h = y(d.y1) - y(d.y0);
+console.log('id ' + d.id +' rect height ' + h);
+return h;
+});
+}
+function name(d) {
+return d.parent ? name(d.parent) + " / " + d.data.name + " (" + formatNumber(d.value) + ")" : d.data.name + " (" + formatNumber(d.value) + ")";
+}
+</script>
+</div>
+</div>
+</td>
+<td style="vertical-align:middle; width:20%">
+<h3>Description</h3>
+<div class="description-text"></div>
+</td>
+</tr>
+</table>
+</div>
+<script>
+function ShowGridOnClick(elem){ var x = document.getElementsByClassName('GRID');var e = elem.getAttribute("value"); for (var i=0; i < x.length ;i++){x[i].style.display="none"; if (x[i].id == e){x[i].style.display="block";x[i].style.textAlign="left";}}}
+</script></html>

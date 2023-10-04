@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: 
+
+Sitemap: https://cio-wiki.org/sitemap/sitemap-index-ciowiki.xml

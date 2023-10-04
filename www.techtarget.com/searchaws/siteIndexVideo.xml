@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
+    <url>
+        <loc>https://www.techtarget.com/searchaws/video/Set-up-a-Jupyter-notebook-on-AWS-with-this-tutorial</loc>
+        <video:video>
+            <video:title>Set up a Jupyter notebook on AWS with this tutorial</video:title>
+            <video:publication_date>2019-12-27T11:08:00-05:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/rK-0FeZpYpY/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=rK-0FeZpYpY</video:player_loc>
+            <video:duration>488</video:duration>
+            <video:description>AWS machine learning capabilities relies on the Jupyter Notebook tool. Follow this video tutorial to learn how to set up a Jupyter notebook on Amazon EMR.</video:description>
+        </video:video>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchaws/video/Follow-this-AWS-Fargate-tutorial-to-deploy-a-containerized-app</loc>
+        <video:video>
+            <video:title>Follow this AWS Fargate tutorial to deploy a containerized app</video:title>
+            <video:publication_date>2019-09-10T11:33:00-04:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/HxhdpjjejL8/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=HxhdpjjejL8</video:player_loc>
+            <video:duration>240</video:duration>
+            <video:description>New to containers on AWS? Learn how to navigate the Amazon ECS Management Console to configure the proper container orchestration in this simple AWS Fargate example.</video:description>
+        </video:video>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchaws/video/How-to-use-batch-operations-to-process-S3-objects</loc>
+        <video:video>
+            <video:title>How to use batch operations to process S3 objects</video:title>
+            <video:publication_date>2019-08-28T13:00:00-04:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/1GDMuSRpa30/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=1GDMuSRpa30</video:player_loc>
+            <video:duration>430</video:duration>
+            <video:description>AWS ops pros can use Amazon S3 Batch Operations to process and move high volumes of objects between buckets. Find out how Batch Operations on AWS works with this video tutorial.</video:description>
+        </video:video>
+    </url>
+    <url>
+        <loc>https://www.techtarget.com/searchaws/video/Automate-user-and-group-creation-with-this-AWS-IAM-tutorial</loc>
+        <video:video>
+            <video:title>Automate user and group creation with this AWS IAM tutorial</video:title>
+            <video:publication_date>2019-06-27T09:29:00-04:00</video:publication_date>
+            <video:thumbnail_loc>https://i.ytimg.com/vi/Sq0CXX-18KA/default.jpg</video:thumbnail_loc>
+            <video:player_loc>https://www.youtube.com/watch?v=Sq0CXX-18KA</video:player_loc>
+            <video:duration>316</video:duration>
+            <video:description>Watch this 5-minute video to learn how to automate AWS IAM resources. See how to provision users and groups with CloudFormation templates, and manage IAM policies for permissions.</video:description>
+        </video:video>
+    </url>
+</urlset>

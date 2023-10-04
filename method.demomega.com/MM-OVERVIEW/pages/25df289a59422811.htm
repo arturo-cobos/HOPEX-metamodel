@@ -1,0 +1,530 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="keywords" content="">
+<meta name="description" content="">    
+<LINK REL="icon" HREF="../standard/assets/img/favicon.ico">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/bootstrap.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nav.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/eaportal.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/font-awesome.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/animate.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/datatables.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/grid.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nae.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/custom.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/chosen.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/prism.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery.dataTables.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jsTreeStyle.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.theme.css" media="screen" />
+<script type="text/javascript" src="../standard/assets/js/jquery-3.2.1.min.js" ></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-ui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.columnFilter.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3-force.v2.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.gui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.search.js"></script> 
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.util.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-2.1.1.min.js"></script>
+<script src="../standard/assets/js/ws_zoomtemplate_firefox.js"></script>
+<script src="../standard/assets/js/bootstrap.min.js"></script>
+<script src="../standard/assets/js/datatables.min.js"></script>
+<script src="../standard/assets/js/moment.min.js"></script>
+<script src="../standard/assets/js/datetime-moment.js"></script>
+<script src="../standard/assets/js/chartjs.min.js"></script>
+<script src="../standard/assets/js/searchindexcontent.json"></script>
+<script src="../standard/assets/js/anls.js"></script>
+<script src="../../../cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script src="../standard/assets/js/gauge.js"></script> 
+<script src="../standard/assets/js/domesticApi.js"></script> 
+<script src="../standard/assets/js/piecelabel.js"></script>
+<script src="../standard/assets/js/popper.min.js"></script>
+<script src="../standard/assets/js/custom.js"></script>
+<script src="../standard/assets/js/chosen.jquery.js"></script>
+<script src="../standard/assets/js/prism.js"></script>
+<script src="../standard/assets/js/init-chosen.js"></script>
+<script src="../standard/assets/js/chart-data-flow.js"></script>
+<script src="../standard/assets/js/chart-data-gantt.js"></script>
+<script type="module" src="../standard/assets/js/Fuse.esm.min.js"></script>
+<script type="module">
+import Fuse from '../standard/assets/js/Fuse.esm.min.js';
+$(document).ready(function () {
+console.log('getjson');
+window.$.getJSON('../standard/assets/js/searchindexcontent.json', function (response) {
+console.log('getjson ok');
+var isIndex = "";
+var url = window.location.pathname;
+var filename = url.substring(url.lastIndexOf('/')+1);
+if( filename.includes("index") || filename === "" ){
+isIndex = "pages/";
+} else {
+isIndex = "";
+}
+const fuse = new Fuse(response, {
+keys: ['title','text'],
+shouldSort: true,
+includeMatches : true,
+findAllMatches : true
+});
+$('#search-fuse').on('keyup', function () {
+let result = fuse.search($(this).val());
+console.log(result);
+let resultdiv = $('div.searchresults-fuse');
+if (result.length === 0) {
+resultdiv.hide();
+} else {
+resultdiv.empty();
+resultdiv.append('<table class="table-search" width="100%" cellspacing="0"><thead ><tr><th>Name</th><th>Object Type</th><th>Modification date</th></tr></thead><tbody>');
+
+for (let obj in result.slice(0,10)) {
+
+let searchObj = '<tr><td><a href="./'+ isIndex + result[obj].item.url + '">' + result[obj].item.title +'</a></td><td>' + result[obj].item.ObjectType + '</td><td>' + result[obj].item.ModificationDate + '</td></tr>' ;
+
+
+resultdiv.find('tbody').append(searchObj);
+}
+resultdiv.append('</tbody></table>');
+resultdiv.show();
+}
+});
+});
+});
+</script>
+<title>HOPEX Metamodel Overview (Beta Version)</title>
+</head>
+<nav class="navbar navbar-expand-md navbar-dark  navbar-mega"><!-- Brand --><!--<a class="navbar-brand" href="#">Navbar</a>--><a class="" href="../index.htm"><img class="logo-mega" src="../standard/assets/img/logo.png"  alt="">(Beta Version)</a><!-- Toggler/collapsibe Button --><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><!-- Navbar links -->
+<div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsibleNavbar"><div class="col-sm-auto col-md-auto col-lg-5"></div>
+<div class="col-sm-auto">
+<ul class="navbar-nav">      
+<li><a class="dropdown-item" href="ad30ce115ebf7e90.htm">EA Grid</a></li> 
+<li><a class="dropdown-item" href="fdd5018459bc3c6a.htm">EA Domains</a></li> 
+<li><a class="dropdown-item" href="07e731775ecc93f4.htm">Solutions</a></li> 
+<li><a class="dropdown-item" href="c5dfc62c54810c2c.htm">Glossary</a></li> 
+<li class="nav-item dropdown mx-1">
+<a class="nav-link" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</a>
+<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<li><a class="dropdown-item" href="5446555d5f88c32e.htm">Outcome Driven Metamodel</a></li> 
+<li><a class="dropdown-item" href="e1ccfc295f8f7b90.htm">Playbooks</a></li> 
+<li><a class="dropdown-item" href="42bc992862d20ea7.htm">Framework Mappings</a></li> 
+<li><a class="dropdown-item" href="e93aebb35fa20550.htm">Metamodel Patterns</a></li> 
+<li><a class="dropdown-item" href="d599fe87602b2b85.htm">References</a></li> 
+<li><a class="dropdown-item" href="333f3a7f5dde11de.htm">Legend</a></li> 
+</ul>									                                            
+</li>
+</ul>
+</div>
+<div class="col-sm-auto"><a class="nav-link search" href="#" onclick=showHideSearch("search-section-fuse")><i class="fa fa-search mr-1 form-control-feedback"></i></a></div>
+</div>
+</nav>
+<div id="search-section-fuse" style="display:none">>
+<div class="search_header"><span class="closesearch">&times;</span>
+<nav class="breadcrumb">
+<a class="breadcrumb-item" href="../index.htm">Home </a> 
+<span class="breadcrumb-item active">Search</span> 
+</nav>
+</div>
+<input id="search-fuse" placeholder="Search..."  name="q" onfocus="this.value=''" type="search">
+<div class="searchresults-fuse"></div>
+</div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>function showHideSearch(elementId) {var contentDivs = document.getElementsByClassName('content');var footerDivs = document.getElementsByClassName('footer'); var containerDivs = document.getElementsByClassName('container');var containerfluidDivs = document.getElementsByClassName('container-fluid');var x = document.getElementById(elementId);if (x.style.display === "none") {x.style.display = "block";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "none";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "none";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "none";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "none";}} else {x.style.display = "none";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "block";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "block";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "block";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "block";}}} ;<!-- END WIDGET DRILL DOWN --></script><script>$(document).ready(function() {$(window).scroll(function() {if ($(this).scrollTop() > 100) {$('.scrollup').fadeIn();} else {$('.scrollup').fadeOut();}});$('.scrollup').click(function() {$("html, body").animate({scrollTop: 0}, 600);return false;});});</script><script>
+var modal = document.getElementById("search-section-fuse");
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = "none";
+}
+}
+$(document).on('click', '.closesearch', function() {
+showHideSearch("search-section-fuse");
+
+
+
+
+
+});</script><div class="container-fluid col-lg-11"><nav class="breadcrumb"><a class="breadcrumb-item" href="../index.htm">Home </a> <span class="breadcrumb-item active"> MetaModel / Logical Data Area Model</span> </nav></div>
+<div class="container-fluid col-lg-11 content">
+<section class="fadeInDown animated">
+<a href="#det" class="btn btn-d">IDENTITY</a> 
+<a href="#des" class="btn btn-d">METAMODEL DESCRIPTION</a> 
+<a href="#core" class="btn btn-d">CORE METACLASSES</a> 
+<a href="#ctx" class="btn btn-d">CONTEXTUAL METACLASSES</a</section>
+<a class="object-section-anchor" id="det"></a>
+<section class="object-section">
+<h4>IDENTITY - Logical Data Area Model</h4> 
+<hr class="sectionbreak" />
+<table class="table table-vertical-headers table-set-col-width">
+<tr><th>Description</th><td></td></tr>       
+<tr><th>Represented Concept Domain</th><td><img src="../standard/dic_graph.ico.gif">&nbsp;
+<a  href="325c30135eb0227e.htm" target="_top">Logical Application Architecture</a></td></tr>
+</table>
+</section>
+<h4>METAMODEL DESCRIPTION</h4>
+<hr class="sectionbreak" />
+<section> 
+<a href="#" class="btn btn-d" value="Diag1" onclick="showDiagOnClick(this)">(1) Logical Data Area Model</a>  
+<a href="#" class="btn btn-d" value="Diag2" onclick="showDiagOnClick(this)">(2) Logical Data Map</a>  
+<div class="diag" id="Diag1" style="display:block; text-align:left"><p></p><div id="ZoomTable" class="Zoom" style="text-align:left">
+<a href="../images/25DF289A59422811_25DF28AC59422835_i.png" target="_blank" download><span class="fa fa-download" style="cursor: pointer;color:#000" id="ZoomButton" class="ZoomButton" title="Export Diagram"></span></a>&nbsp&nbsp<img style="display:none" src="../standard/ws_fitheight.gif" onclick="SizeToHeight(1);"id="ZoomButton" class="ZoomButton" title="Fit to height"></img>
+<span class="fa fa-arrows-alt-v" style="cursor: pointer;" onclick="SizeToHeight(1);"  id="ZoomButton" class="ZoomButton" title="Fit to height"></span>&nbsp&nbsp<img style="display:none" src="../standard/ws_fitwidth.gif" onclick="SizeToWidth(1);"  id="ZoomButton" class="ZoomButton" title="Fit to width"></img>
+<span class="fa fa-arrows-alt-h" style="cursor: pointer;" onclick="SizeToWidth(1);"  id="ZoomButton" class="ZoomButton" title="Fit to width"></span>&nbsp&nbsp<img style="display:none" src="../standard/ws_actual.gif" onclick="OriginalSize(1);" id="ZoomButton" class="ZoomButton" title=""></img>
+<span class="fa fa-arrows-alt" style="cursor: pointer;" onclick="OriginalSize(1);" id="ZoomButton" class="ZoomButton" title=""></span>&nbsp&nbsp<img style="display:none;" src="../standard/ws_zoomin.gif" onclick="ZoomIn(1)" id="ZoomButton" class="ZoomButton" title="Zoom in"></img>
+<span class="fa fa-plus-circle" style="cursor: pointer;" onclick="ZoomIn(1)" id="ZoomButton" class="ZoomButton" title="Zoom in"></span>&nbsp&nbsp<img style="display:none" src="../standard/ws_zoomout.gif" onclick="ZoomOut(1)" id="ZoomButton" class="ZoomButton" title="Zoom out"></img>
+<span class="fa fa-minus-circle" style="cursor: pointer;" onclick="ZoomOut(1)" id="ZoomButton" class="ZoomButton" title="Zoom out"></span>&nbsp&nbsp</div> <br>
+<map  name="25DF28AC59422835">
+  <area  href=#OBMKD053F1795E1D81CA shape="polygon" coords="886, 103, 886, 90, 991, 90, 991, 103, 886, 103"    title="-">
+  
+  <area  href=#OBMKD053F3935E1D8378 shape="polygon" coords="906, 121, 1000, 121, 1000, 132, 906, 132"    title="-">
+  
+  <area  href=#OBMKD053F3935E1D8376 shape="polygon" coords="719, 121, 1000, 121, 1000, 132, 719, 132"    title="-">
+  
+  <area  href=#OBMKD053F1795E1D81C9 shape="polygon" coords="710, 173, 710, 160, 869, 160, 869, 173, 710, 173"    title="-">
+  
+  <area  href=#OBMKD053F3935E1D8377 shape="polygon" coords="719, 121, 813, 121, 813, 132, 719, 132"    title="-">
+  
+  <area  href=#OBMK25DF2C4B59422C81 shape="polygon" coords="232, 332, 232, 319, 341, 319, 341, 332, 232, 332"    title="-">
+  
+  <area  href=#OBMK25DF2E6159422EA2 shape="polygon" coords="318, 361, 214, 361, 214, 350, 318, 350"    title="-">
+  
+  <area  href=#OBMK25DF2E6159422EA0 shape="polygon" coords="526, 361, 214, 361, 214, 350, 526, 350"    title="-">
+  
+  <area  href=#OBMK25DF2C4B59422C80 shape="polygon" coords="446, 392, 446, 379, 520, 379, 520, 392, 446, 392"    title="-">
+  
+  <area  href=#OBMK25DF2E6159422EA1 shape="polygon" coords="526, 361, 422, 361, 422, 350, 526, 350"    title="-">
+  
+  <area  href=#OBMK25DF2BA359422BD6 shape="polygon" coords="362, 224, 362, 211, 508, 211, 508, 224, 362, 224"    title="-">
+  
+  <area  href=#OBMK25DF2E4E59422E20 shape="polygon" coords="421, 241, 525, 241, 525, 252, 421, 252"    title="-">
+  
+  <area  href=#OBMK25DF2E4E59422E1E shape="polygon" coords="214, 241, 525, 241, 525, 252, 214, 252"    title="-">
+  
+  <area  href=#OBMK25DF2BA359422BD5 shape="polygon" coords="220, 284, 220, 271, 306, 271, 306, 284, 220, 284"    title="-">
+  
+  <area  href=#OBMK25DF2E4E59422E1F shape="polygon" coords="214, 241, 317, 241, 317, 252, 214, 252"    title="-">
+  
+  <area  href=#OBMK0D4C206B489B02C3 shape="polygon" coords="527, 260, 527, 247, 717, 247, 717, 260, 527, 260"   target="_self"  title="-">
+  
+  <area  href=25df2b7f59422b90.htm#OBMK25DF2B7F59422B90 shape="polygon" coords="573, 228, 573, 217, 671, 217, 671, 228, 573, 228"   target="_self"  title="-">
+  
+  <area  href="25df2dd359422d9e.htm" shape="rect" coords="525, 217, 719, 378"   target="_self"  title="-">
+  
+  <area  href=#OBMK650BC620550FD179 shape="polygon" coords="905, 16, 905, 3, 991, 3, 991, 16, 905, 16"    title="-">
+  
+  <area  href=#OBMKEB39ED6D5530093C shape="polygon" coords="906, 37, 1000, 37, 1000, 48, 906, 48"    title="-">
+  
+  <area  href=#OBMKEB39ED6D5530093A shape="polygon" coords="719, 37, 1000, 37, 1000, 48, 719, 48"    title="-">
+  
+  <area  href=#OBMK650BC620550FD178 shape="polygon" coords="729, 80, 729, 67, 846, 67, 846, 80, 729, 80"    title="-">
+  
+  <area  href=#OBMKEB39ED6D5530093B shape="polygon" coords="719, 37, 813, 37, 813, 48, 719, 48"    title="-">
+  
+  <area  href=12da1da359311eae.htm#OBMK12DA1DA359311EAE shape="polygon" coords="1005, 29, 1005, 16, 1161, 16, 1161, 29, 1005, 29"   target="_self"  title="-">
+  
+  <area  href=650bc5d9550fd138.htm#OBMK650BC5D9550FD138 shape="polygon" coords="1050, 42, 1050, 29, 1115, 29, 1115, 42, 1050, 42"   target="_self"  title="-">
+  
+  <area  href=DF6BE05958226CA7.htm#OBMKDF6BE05958226CA7 shape="polygon" coords="1042, 55, 1042, 42, 1123, 42, 1123, 55, 1042, 55"   target="_self"  title="-">
+  
+  <area  href="944AAAD850604936.htm" shape="rect" coords="1000, 17, 1166, 142"   target="_self"  title="-">
+  
+  <area  href=#OBMK650B64E9550CCA28 shape="polygon" coords="367, 20, 367, 6, 510, 6, 510, 20, 367, 20"    title="-">
+  
+  <area  href=#OBMK443D254B54B4EE37 shape="polygon" coords="421, 37, 525, 37, 525, 48, 421, 48"    title="-">
+  
+  <area  href=#OBMK443D254B54B4EE35 shape="polygon" coords="214, 37, 525, 37, 525, 48, 214, 48"    title="-">
+  
+  <area  href=#OBMK650B64E9550CCA27 shape="polygon" coords="219, 82, 219, 69, 333, 69, 333, 82, 219, 82"    title="-">
+  
+  <area  href=#OBMK443D254B54B4EE36 shape="polygon" coords="214, 37, 317, 37, 317, 48, 214, 48"    title="-">
+  
+  <area  href=#OBMK0D4C206B489B02C3 shape="polygon" coords="527, 65, 527, 52, 717, 52, 717, 65, 527, 65"   target="_self"  title="-">
+  
+  <area  href=650B6484550CC9F4.htm#OBMK650B6484550CC9F4 shape="polygon" coords="573, 33, 573, 22, 671, 22, 671, 33, 573, 33"   target="_self"  title="-">
+  
+  <area  href="443d24f354b4edff.htm" shape="rect" coords="525, 22, 719, 154"   target="_self"  title="-">
+  
+  <area  href=#OBMK000000004000006A shape="polygon" coords="2, 58, 2, 45, 212, 45, 212, 58, 2, 58"   target="_self"  title="-">
+  
+  <area  href=c014c8d255301e73.htm#OBMKC014C8D255301E73 shape="polygon" coords="2, 75, 2, 61, 212, 61, 212, 75, 2, 75"   target="_self"  title="An Application data area represents a set of data&#160; defined in entity-relationship format and used in the technical architecture of an application.">
+  
+  <area  href=c014c8b155301e47.htm#OBMKC014C8B155301E47 shape="polygon" coords="2, 88, 2, 75, 212, 75, 212, 88, 2, 88"   target="_self"  title="A logical data area is used to define a logical data structure made up of classes and data views.">
+  
+  <area  href=66fe6c5c52b833c1.htm#OBMK66FE6C5C52B833C1 shape="polygon" coords="77, 13, 77, 0, 137, 0, 137, 13, 77, 13"   target="_self"  title="A&#160; Data Area is subset of the enterprise&rsquo;s data that are meant to be manipulated together in the context of business operations.">
+  
+  <area  href=924CC40459B67675.htm#OBMK924CC40459B67675 shape="polygon" coords="55, 26, 55, 13, 159, 13, 159, 26, 55, 26"   target="_self"  title="-">
+  
+  <area  href="443d1df254b4e651.htm" shape="rect" coords="0, 0, 214, 393"   target="_self"  title="-">
+  
+</map>
+<img  src="../images/25DF289A59422811_25DF28AC59422835_i.png" alt="../images/25df289a59422811_25df28ac59422835_i.png" usemap="#25DF28AC59422835" height="403" width="1166" border=0>
+
+<script>var cont=true; while (cont) {cont=zoomOutUntilFitToWindow(1); if (cont) {ZoomOut(1);}}</script>
+<p>
+<br/>
+<h4>CORE METACLASSES</h4>
+<table class="table  table-set-col-width">
+<thead>
+<tr><th>MetaClass	</th><th>Represented Concept</th><th style="white-space: nowrap">Categories</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="944AAAD850604936.htm" target="_top">ER Data Entity</a></td>
+<td style="white-space: nowrap">  </td>
+<td style="white-space: nowrap">
+<ul>
+<li>Class of Building Block</li>
+<li>Content Repository Object</li>
+<li>Enterprise Description Blocks</li>
+<li>MetaModel-Overview - Exclusion</li>
+</ul>  </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="443d1df254b4e651.htm" target="_top">ER Data Domain</a></td>
+<td style="white-space: nowrap">  </td>
+<td style="white-space: nowrap">
+<ul>
+<li>Content Repository Object</li>
+<li>Information</li>
+<li>MetaModel-Overview - Exclusion</li>
+<li>Workflow</li>
+</ul>  </td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<br/>
+<br/>
+<table class="table  table-set-col-width">
+<thead>
+<h4>Composition-MetaClasses</h4>
+<tr><th>MetaClass	</th><th>Represented Concept</th><th style="white-space: nowrap">Categories</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="../standard/metaclasspart_concrete.ico.gif"/>&nbsp;
+<a  href="25df289a59422811.htm" target="_top">Logical Data Area Model</a></td>
+<td style="white-space: nowrap"><ul><li><img src="../standard/ctx-concepttype.ico.gif"/>&nbsp;
+<a  href="f4bee9605ee1c292.htm" target="_top">Logical Data Area Component</a></li></ul>  </td>
+<td style="white-space: nowrap">
+<ul>
+<li>Content Repository Object</li>
+<li>Structured Object</li>
+</ul>  </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/metaclasspart_concrete.ico.gif"/>&nbsp;
+<a  href="25df289a59422811.htm" target="_top">Logical Data Area Model</a></td>
+<td style="white-space: nowrap"><ul><li><img src="../standard/ctx-concepttype.ico.gif"/>&nbsp;
+<a  href="F4BE4C025EE18D1E.htm" target="_top">Physical Domain Component</a></li></ul>  </td>
+<td style="white-space: nowrap">
+<ul>
+<li>Content Repository Object</li>
+<li>Structured Object</li>
+</ul>  </td>
+<td></td>
+</tr>
+</tbody>
+</table></p></div> 
+<div class="diag" id="Diag2" style="display:none"><p></p><div id="ZoomTable" class="Zoom" style="text-align:left">
+<a href="../images/25DF289A59422811_B017B14F59427A7E_i.png" target="_blank" download><span class="fa fa-download" style="cursor: pointer;color:#000" id="ZoomButton" class="ZoomButton" title="Export Diagram"></span></a>&nbsp&nbsp<img style="display:none" src="../standard/ws_fitheight.gif" onclick="SizeToHeight(2);"id="ZoomButton" class="ZoomButton" title="Fit to height"></img>
+<span class="fa fa-arrows-alt-v" style="cursor: pointer;" onclick="SizeToHeight(2);"  id="ZoomButton" class="ZoomButton" title="Fit to height"></span>&nbsp&nbsp<img style="display:none" src="../standard/ws_fitwidth.gif" onclick="SizeToWidth(2);"  id="ZoomButton" class="ZoomButton" title="Fit to width"></img>
+<span class="fa fa-arrows-alt-h" style="cursor: pointer;" onclick="SizeToWidth(2);"  id="ZoomButton" class="ZoomButton" title="Fit to width"></span>&nbsp&nbsp<img style="display:none" src="../standard/ws_actual.gif" onclick="OriginalSize(2);" id="ZoomButton" class="ZoomButton" title=""></img>
+<span class="fa fa-arrows-alt" style="cursor: pointer;" onclick="OriginalSize(2);" id="ZoomButton" class="ZoomButton" title=""></span>&nbsp&nbsp<img style="display:none;" src="../standard/ws_zoomin.gif" onclick="ZoomIn(2)" id="ZoomButton" class="ZoomButton" title="Zoom in"></img>
+<span class="fa fa-plus-circle" style="cursor: pointer;" onclick="ZoomIn(2)" id="ZoomButton" class="ZoomButton" title="Zoom in"></span>&nbsp&nbsp<img style="display:none" src="../standard/ws_zoomout.gif" onclick="ZoomOut(2)" id="ZoomButton" class="ZoomButton" title="Zoom out"></img>
+<span class="fa fa-minus-circle" style="cursor: pointer;" onclick="ZoomOut(2)" id="ZoomButton" class="ZoomButton" title="Zoom out"></span>&nbsp&nbsp</div> <br>
+<map  name="B017B14F59427A7E">
+  <area  href=#OBMKBB16D0B05A7D4737 shape="polygon" coords="818, 343, 818, 330, 928, 330, 928, 343, 818, 343"    title="-">
+  
+  <area  href=#OBMKBB16D3865A7D48F8 shape="polygon" coords="852, 365, 936, 365, 936, 376, 852, 376"    title="-">
+  
+  <area  href=#OBMKBB16D3865A7D48F6 shape="polygon" coords="684, 365, 936, 365, 936, 376, 684, 376"    title="-">
+  
+  <area  href=#OBMKBB16D0B05A7D4736 shape="polygon" coords="691, 421, 691, 408, 799, 408, 799, 421, 691, 421"    title="-">
+  
+  <area  href=#OBMKBB16D3865A7D48F7 shape="polygon" coords="684, 365, 768, 365, 768, 376, 684, 376"    title="-">
+  
+  <area  href=#OBMKBB16D0895A7D46CB shape="polygon" coords="359, 345, 359, 332, 504, 332, 504, 345, 359, 345"    title="-">
+  
+  <area  href=#OBMKBB16D2AF5A7D4851 shape="polygon" coords="399, 366, 515, 366, 515, 377, 399, 377"    title="-">
+  
+  <area  href=#OBMKBB16D2AF5A7D484F shape="polygon" coords="167, 366, 515, 366, 515, 377, 167, 377"    title="-">
+  
+  <area  href=#OBMKBB16D0895A7D46CA shape="polygon" coords="173, 432, 173, 419, 256, 419, 256, 432, 173, 432"    title="-">
+  
+  <area  href=#OBMKBB16D2AF5A7D4850 shape="polygon" coords="167, 366, 283, 366, 283, 377, 167, 377"    title="-">
+  
+  <area  href="BB16D0535A7D4668.htm" shape="rect" coords="507, 263, 680, 297"   target="_self"  title="-">
+  
+  <area  href=#OBMK0D4C206B489B02C3 shape="polygon" coords="517, 365, 517, 352, 682, 352, 682, 365, 517, 365"   target="_self"  title="-">
+  
+  <area  href="bb16d2735a7d47f1.htm" shape="rect" coords="515, 333, 684, 408"   target="_self"  title="-">
+  
+  <area  href="68C6D4EB59426CFA.htm" shape="rect" coords="486, 2, 676, 33"   target="_self"  title="-">
+  
+  <area  href="68c6d4cf59426ca0.htm" shape="rect" coords="0, 3, 170, 37"   target="_self"  title="A logical data map is an urbanization tool for logical information. It represents a set of data areas in a particular context.">
+  
+  <area  href="66fe6c5c52b833c1.htm" shape="rect" coords="937, 0, 1072, 32"   target="_self"  title="A&#160; Data Area is subset of the enterprise&rsquo;s data that are meant to be manipulated together in the context of business operations.">
+  
+  <area  href=#OBMK0AFB1AC6588A1B46 shape="polygon" coords="794, 123, 794, 110, 921, 110, 921, 123, 794, 123"    title="-">
+  
+  <area  href=#OBMK5C828A85588B2F0A shape="polygon" coords="854, 139, 936, 139, 936, 150, 854, 150"    title="-">
+  
+  <area  href=#OBMK5C828A85588B2F08 shape="polygon" coords="690, 139, 936, 139, 936, 150, 690, 150"    title="-">
+  
+  <area  href=#OBMK0AFB1AC6588A1B45 shape="polygon" coords="696, 184, 696, 170, 839, 170, 839, 184, 696, 184"    title="-">
+  
+  <area  href=#OBMK5C828A85588B2F09 shape="polygon" coords="690, 139, 772, 139, 772, 150, 690, 150"    title="-">
+  
+  <area  href="443d1df254b4e651.htm" shape="rect" coords="935, 96, 1077, 426"   target="_self"  title="-">
+  
+  <area  href=#OBMK0AFB1AAF588A1AFF shape="polygon" coords="328, 126, 328, 113, 490, 113, 490, 126, 328, 126"    title="-">
+  
+  <area  href=#OBMK5C828A75588B2EBB shape="polygon" coords="384, 142, 493, 142, 493, 153, 384, 153"    title="-">
+  
+  <area  href=#OBMK5C828A75588B2EB9 shape="polygon" coords="167, 142, 493, 142, 493, 153, 167, 153"    title="-">
+  
+  <area  href=#OBMK0AFB1AAF588A1AFE shape="polygon" coords="174, 195, 174, 182, 292, 182, 292, 195, 174, 195"    title="-">
+  
+  <area  href=#OBMK5C828A75588B2EBA shape="polygon" coords="167, 142, 276, 142, 276, 153, 167, 153"    title="-">
+  
+  <area  href=#OBMK0D4C206B489B02C3 shape="polygon" coords="495, 138, 495, 125, 688, 125, 688, 138, 495, 138"   target="_self"  title="-">
+  
+  <area  href="5c828963588b2e59.htm" shape="rect" coords="494, 107, 691, 190"   target="_self"  title="-">
+  
+  <area  href=#OBMK000000004000006A shape="polygon" coords="11, 113, 11, 100, 165, 100, 165, 113, 11, 113"   target="_self"  title="-">
+  
+  <area  href="5c8262f7588b2da2.htm" shape="rect" coords="9, 81, 167, 435"   target="_self"  title="-">
+  
+</map>
+<img  src="../images/25DF289A59422811_B017B14F59427A7E_i.png" alt="../images/25df289a59422811_b017b14f59427a7e_i.png" usemap="#B017B14F59427A7E" height="445" width="1078" border=0>
+
+<script>var cont=true; while (cont) {cont=zoomOutUntilFitToWindow(2); if (cont) {ZoomOut(2);}}</script>
+<p>
+<br/>
+<h4>CORE METACLASSES</h4>
+<table class="table  table-set-col-width">
+<thead>
+<tr><th>MetaClass	</th><th>Represented Concept</th><th style="white-space: nowrap">Categories</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="66fe6c5c52b833c1.htm" target="_top">Data Area</a></td>
+<td style="white-space: nowrap"><ul><li><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="325C32165EB02A4A.htm" target="_top">Data Domain</a></li></ul>  </td>
+<td style="white-space: nowrap">
+<ul>
+<li>Content Repository Object</li>
+<li>Information</li>
+<li>MetaModel-Overview - Exclusion</li>
+<li>Workflow</li>
+</ul>  </td>
+<td><div align="left" style="min-height: 12pt; ">A&#160; Data Area is subset of the enterprise&rsquo;s data that are meant to be manipulated together in the context of business operations.</div><div align="left" style="min-height: 12pt; ">For instance, a &quot;Sales&quot; Data Area contains at least the following entities: Customers, Orders, Products.</div><div align="left" style="min-height: 12pt; ">Each entity in a&#160; Data Area has CRUD characteristics. For instance, Products in a &quot;Sales&quot; Data Area, while Customers and Orders have all CRUD characteristics.</div><div align="left" style="min-height: 12pt; ">Data Areas define functional data boundaries used both for Data Allocation to applications (see Data Stores) and Data Governance for data stewardship.</div></td>
+</tr>
+<tr>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="443d1df254b4e651.htm" target="_top">ER Data Domain</a></td>
+<td style="white-space: nowrap">  </td>
+<td style="white-space: nowrap">
+<ul>
+<li>Content Repository Object</li>
+<li>Information</li>
+<li>MetaModel-Overview - Exclusion</li>
+<li>Workflow</li>
+</ul>  </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="5c8262f7588b2da2.htm" target="_top">Data Domain Map</a></td>
+<td style="white-space: nowrap"><ul><li><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="325c30de5eb0244c.htm" target="_top">Logical Data Map</a></li></ul>  </td>
+<td style="white-space: nowrap">
+<ul>
+<li>Content Repository Object</li>
+<li>Model Building Blocks</li>
+</ul>  </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="68c6d4cf59426ca0.htm" target="_top">Data Map</a></td>
+<td style="white-space: nowrap"><ul><li><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="6d2b80db5fbb700b.htm" target="_top">Data Map</a></li></ul>  </td>
+<td style="white-space: nowrap">
+<ul>
+<li>Information</li>
+<li>MetaModel-Overview - Exclusion</li>
+<li>Workflow</li>
+</ul>  </td>
+<td>A logical data map is an urbanization tool for logical information. It represents a set of data areas in a particular context.</td>
+</tr>
+</tbody>
+</table>
+<br/>
+<br/>
+<table class="table  table-set-col-width">
+<thead>
+<h4>Composition-MetaClasses</h4>
+<tr><th>MetaClass	</th><th>Represented Concept</th><th style="white-space: nowrap">Categories</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="../standard/metaclasspart_concrete.ico.gif"/>&nbsp;
+<a  href="25df289a59422811.htm" target="_top">Logical Data Area Model</a></td>
+<td style="white-space: nowrap">  </td>
+<td style="white-space: nowrap">
+<ul>
+<li>Content Repository Object</li>
+<li>Structured Object</li>
+</ul>  </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/metaclasspart_abstract.ico.gif"/>&nbsp;
+<a  href="25df289a59422811.htm" target="_top">Logical Data Area Model</a></td>
+<td style="white-space: nowrap">  </td>
+<td style="white-space: nowrap">
+<ul>
+<li>Content Repository Object</li>
+<li>Structured Object</li>
+</ul>  </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/metaclasspart_abstract.ico.gif"/>&nbsp;
+<a  href="25df289a59422811.htm" target="_top">Logical Data Area Model</a></td>
+<td style="white-space: nowrap">  </td>
+<td style="white-space: nowrap">
+<ul>
+<li>Content Repository Object</li>
+<li>Structured Object</li>
+</ul>  </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/metaclasspart_concrete.ico.gif"/>&nbsp;
+<a  href="25df289a59422811.htm" target="_top">Logical Data Area Model</a></td>
+<td style="white-space: nowrap">  </td>
+<td style="white-space: nowrap">
+<ul>
+<li>Content Repository Object</li>
+<li>Structured Object</li>
+</ul>  </td>
+<td></td>
+</tr>
+</tbody>
+</table></p></div>
+</section> </div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>window.onscroll = function() {scrollFunction()};$(document).on('click', 'a[href^="#"]', function (event) {event.preventDefault();$('html, body').animate({scrollTop: $($.attr(this, 'href')).offset().top}, 500);});</script></html>

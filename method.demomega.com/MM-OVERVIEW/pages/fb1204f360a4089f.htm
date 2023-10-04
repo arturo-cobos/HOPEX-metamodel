@@ -1,0 +1,397 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="keywords" content="">
+<meta name="description" content="">    
+<LINK REL="icon" HREF="../standard/assets/img/favicon.ico">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/bootstrap.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nav.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/eaportal.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/font-awesome.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/animate.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/datatables.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/grid.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nae.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/custom.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/chosen.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/prism.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery.dataTables.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jsTreeStyle.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.theme.css" media="screen" />
+<script type="text/javascript" src="../standard/assets/js/jquery-3.2.1.min.js" ></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-ui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.columnFilter.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3-force.v2.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.gui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.search.js"></script> 
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.util.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-2.1.1.min.js"></script>
+<script src="../standard/assets/js/ws_zoomtemplate_firefox.js"></script>
+<script src="../standard/assets/js/bootstrap.min.js"></script>
+<script src="../standard/assets/js/datatables.min.js"></script>
+<script src="../standard/assets/js/moment.min.js"></script>
+<script src="../standard/assets/js/datetime-moment.js"></script>
+<script src="../standard/assets/js/chartjs.min.js"></script>
+<script src="../standard/assets/js/searchindexcontent.json"></script>
+<script src="../standard/assets/js/anls.js"></script>
+<script src="../../../cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script src="../standard/assets/js/gauge.js"></script> 
+<script src="../standard/assets/js/domesticApi.js"></script> 
+<script src="../standard/assets/js/piecelabel.js"></script>
+<script src="../standard/assets/js/popper.min.js"></script>
+<script src="../standard/assets/js/custom.js"></script>
+<script src="../standard/assets/js/chosen.jquery.js"></script>
+<script src="../standard/assets/js/prism.js"></script>
+<script src="../standard/assets/js/init-chosen.js"></script>
+<script src="../standard/assets/js/chart-data-flow.js"></script>
+<script src="../standard/assets/js/chart-data-gantt.js"></script>
+<script type="module" src="../standard/assets/js/Fuse.esm.min.js"></script>
+<script type="module">
+import Fuse from '../standard/assets/js/Fuse.esm.min.js';
+$(document).ready(function () {
+console.log('getjson');
+window.$.getJSON('../standard/assets/js/searchindexcontent.json', function (response) {
+console.log('getjson ok');
+var isIndex = "";
+var url = window.location.pathname;
+var filename = url.substring(url.lastIndexOf('/')+1);
+if( filename.includes("index") || filename === "" ){
+isIndex = "pages/";
+} else {
+isIndex = "";
+}
+const fuse = new Fuse(response, {
+keys: ['title','text'],
+shouldSort: true,
+includeMatches : true,
+findAllMatches : true
+});
+$('#search-fuse').on('keyup', function () {
+let result = fuse.search($(this).val());
+console.log(result);
+let resultdiv = $('div.searchresults-fuse');
+if (result.length === 0) {
+resultdiv.hide();
+} else {
+resultdiv.empty();
+resultdiv.append('<table class="table-search" width="100%" cellspacing="0"><thead ><tr><th>Name</th><th>Object Type</th><th>Modification date</th></tr></thead><tbody>');
+
+for (let obj in result.slice(0,10)) {
+
+let searchObj = '<tr><td><a href="./'+ isIndex + result[obj].item.url + '">' + result[obj].item.title +'</a></td><td>' + result[obj].item.ObjectType + '</td><td>' + result[obj].item.ModificationDate + '</td></tr>' ;
+
+
+resultdiv.find('tbody').append(searchObj);
+}
+resultdiv.append('</tbody></table>');
+resultdiv.show();
+}
+});
+});
+});
+</script>
+<title>HOPEX Metamodel Overview (Beta Version)</title>
+</head>
+<nav class="navbar navbar-expand-md navbar-dark  navbar-mega"><!-- Brand --><!--<a class="navbar-brand" href="#">Navbar</a>--><a class="" href="../index.htm"><img class="logo-mega" src="../standard/assets/img/logo.png"  alt="">(Beta Version)</a><!-- Toggler/collapsibe Button --><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><!-- Navbar links -->
+<div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsibleNavbar"><div class="col-sm-auto col-md-auto col-lg-5"></div>
+<div class="col-sm-auto">
+<ul class="navbar-nav">      
+<li><a class="dropdown-item" href="ad30ce115ebf7e90.htm">EA Grid</a></li> 
+<li><a class="dropdown-item" href="fdd5018459bc3c6a.htm">EA Domains</a></li> 
+<li><a class="dropdown-item" href="07e731775ecc93f4.htm">Solutions</a></li> 
+<li><a class="dropdown-item" href="c5dfc62c54810c2c.htm">Glossary</a></li> 
+<li class="nav-item dropdown mx-1">
+<a class="nav-link" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</a>
+<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<li><a class="dropdown-item" href="5446555d5f88c32e.htm">Outcome Driven Metamodel</a></li> 
+<li><a class="dropdown-item" href="e1ccfc295f8f7b90.htm">Playbooks</a></li> 
+<li><a class="dropdown-item" href="42bc992862d20ea7.htm">Framework Mappings</a></li> 
+<li><a class="dropdown-item" href="e93aebb35fa20550.htm">Metamodel Patterns</a></li> 
+<li><a class="dropdown-item" href="d599fe87602b2b85.htm">References</a></li> 
+<li><a class="dropdown-item" href="333f3a7f5dde11de.htm">Legend</a></li> 
+</ul>									                                            
+</li>
+</ul>
+</div>
+<div class="col-sm-auto"><a class="nav-link search" href="#" onclick=showHideSearch("search-section-fuse")><i class="fa fa-search mr-1 form-control-feedback"></i></a></div>
+</div>
+</nav>
+<div id="search-section-fuse" style="display:none">>
+<div class="search_header"><span class="closesearch">&times;</span>
+<nav class="breadcrumb">
+<a class="breadcrumb-item" href="../index.htm">Home </a> 
+<span class="breadcrumb-item active">Search</span> 
+</nav>
+</div>
+<input id="search-fuse" placeholder="Search..."  name="q" onfocus="this.value=''" type="search">
+<div class="searchresults-fuse"></div>
+</div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>function showHideSearch(elementId) {var contentDivs = document.getElementsByClassName('content');var footerDivs = document.getElementsByClassName('footer'); var containerDivs = document.getElementsByClassName('container');var containerfluidDivs = document.getElementsByClassName('container-fluid');var x = document.getElementById(elementId);if (x.style.display === "none") {x.style.display = "block";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "none";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "none";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "none";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "none";}} else {x.style.display = "none";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "block";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "block";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "block";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "block";}}} ;<!-- END WIDGET DRILL DOWN --></script><script>$(document).ready(function() {$(window).scroll(function() {if ($(this).scrollTop() > 100) {$('.scrollup').fadeIn();} else {$('.scrollup').fadeOut();}});$('.scrollup').click(function() {$("html, body").animate({scrollTop: 0}, 600);return false;});});</script><script>
+var modal = document.getElementById("search-section-fuse");
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = "none";
+}
+}
+$(document).on('click', '.closesearch', function() {
+showHideSearch("search-section-fuse");
+
+
+
+
+
+});</script><div class="container-fluid col-lg-11"><nav class="breadcrumb"><a class="breadcrumb-item" href="../index.htm">Home </a> <span class="breadcrumb-item active"> MetaModel / Appraisal Pattern</span> </nav></div>
+<div class="container-fluid col-lg-11 content">
+<section class="fadeInDown animated">
+<a href="#det" class="btn btn-d">IDENTITY</a> 
+<a href="#des" class="btn btn-d">METAMODEL DESCRIPTION</a> 
+<a href="#core" class="btn btn-d">CORE METACLASSES</a> 
+<a href="#ctx" class="btn btn-d">CONTEXTUAL METACLASSES</a</section>
+<a class="object-section-anchor" id="det"></a>
+<section class="object-section">
+<h4>IDENTITY - Appraisal Pattern</h4> 
+<hr class="sectionbreak" />
+<table class="table table-vertical-headers table-set-col-width">
+<tr><th>Description</th><td></td></tr>       
+<tr><th>Represented Concept Domain</th><td><img src="../standard/dic_graph.ico.gif">&nbsp;
+<a  href="83BB9D706192357B.htm" target="_top">Appraisal Pattern</a></td></tr>
+</table>
+</section>
+<h4>METAMODEL DESCRIPTION</h4>
+<hr class="sectionbreak" />
+<section> 
+<a href="#" class="btn btn-d" value="Diag1" onclick="showDiagOnClick(this)">(1) Appraisal Pattern</a>  
+<div class="diag" id="Diag1" style="display:block; text-align:left"><p></p><div id="ZoomTable" class="Zoom" style="text-align:left">
+<a href="../images/FB1204F360A4089F_FB12050660A408CB_i.png" target="_blank" download><span class="fa fa-download" style="cursor: pointer;color:#000" id="ZoomButton" class="ZoomButton" title="Export Diagram"></span></a>&nbsp&nbsp<img style="display:none" src="../standard/ws_fitheight.gif" onclick="SizeToHeight(1);"id="ZoomButton" class="ZoomButton" title="Fit to height"></img>
+<span class="fa fa-arrows-alt-v" style="cursor: pointer;" onclick="SizeToHeight(1);"  id="ZoomButton" class="ZoomButton" title="Fit to height"></span>&nbsp&nbsp<img style="display:none" src="../standard/ws_fitwidth.gif" onclick="SizeToWidth(1);"  id="ZoomButton" class="ZoomButton" title="Fit to width"></img>
+<span class="fa fa-arrows-alt-h" style="cursor: pointer;" onclick="SizeToWidth(1);"  id="ZoomButton" class="ZoomButton" title="Fit to width"></span>&nbsp&nbsp<img style="display:none" src="../standard/ws_actual.gif" onclick="OriginalSize(1);" id="ZoomButton" class="ZoomButton" title=""></img>
+<span class="fa fa-arrows-alt" style="cursor: pointer;" onclick="OriginalSize(1);" id="ZoomButton" class="ZoomButton" title=""></span>&nbsp&nbsp<img style="display:none;" src="../standard/ws_zoomin.gif" onclick="ZoomIn(1)" id="ZoomButton" class="ZoomButton" title="Zoom in"></img>
+<span class="fa fa-plus-circle" style="cursor: pointer;" onclick="ZoomIn(1)" id="ZoomButton" class="ZoomButton" title="Zoom in"></span>&nbsp&nbsp<img style="display:none" src="../standard/ws_zoomout.gif" onclick="ZoomOut(1)" id="ZoomButton" class="ZoomButton" title="Zoom out"></img>
+<span class="fa fa-minus-circle" style="cursor: pointer;" onclick="ZoomOut(1)" id="ZoomButton" class="ZoomButton" title="Zoom out"></span>&nbsp&nbsp</div> <br>
+<map  name="FB12050660A408CB">
+  <area  href=#OBMK14191BEE58AB6952 shape="polygon" coords="332, 16, 332, 3, 462, 3, 462, 16, 332, 16"    title="-">
+  
+  <area  href=#OBMKB5CDBBF760C94061 shape="polygon" coords="397, 29, 477, 29, 477, 39, 397, 39"    title="-">
+  
+  <area  href=#OBMKB5CDBBF760C9405F shape="polygon" coords="237, 29, 477, 29, 477, 39, 237, 39"    title="-">
+  
+  <area  href=#OBMK14191BEE58AB6951 shape="polygon" coords="249, 74, 249, 61, 381, 61, 381, 74, 249, 74"    title="-">
+  
+  <area  href=#OBMKB5CDBBF760C94060 shape="polygon" coords="237, 29, 317, 29, 317, 39, 237, 39"    title="-">
+  
+  <area  href=EBE0EDBD502C39D0.htm#OBMKEBE0EDBD502C39D0 shape="polygon" coords="485, 17, 485, 4, 658, 4, 658, 17, 485, 17"   target="_self"  title="Abstract MetaClass inherited by assessable objects, enabling planning in the context of a session or assessment campaign.">
+  
+  <area  href=54685b4d580a2ca2.htm#OBMK54685B4D580A2CA2 shape="polygon" coords="501, 30, 501, 17, 642, 17, 642, 30, 501, 30"   target="_self"  title="Repository Items are all objects wich make up the content of Hopex repositories excluding technical objects such as: logs, _TransferredObject, _collection... ">
+  
+  <area  href="AFA910C94DAF4374.htm" shape="rect" coords="477, 3, 665, 71"   target="_self"  title="Object to which assessment relates. ">
+  
+  <area  href=#OBMKC03FC8DA60A77033 shape="polygon" coords="661, 547, 661, 534, 793, 534, 793, 547, 661, 547"    title="-">
+  
+  <area  href=#OBMK041DA66B60B85A02 shape="polygon" coords="731, 555, 805, 556, 805, 566, 731, 566"    title="-">
+  
+  <area  href=#OBMK041DA66B60B85A00 shape="polygon" coords="584, 554, 805, 556, 805, 566, 584, 565"    title="-">
+  
+  <area  href=#OBMKC03FC8DA60A77032 shape="polygon" coords="591, 597, 591, 584, 742, 584, 742, 597, 591, 597"    title="-">
+  
+  <area  href=#OBMK041DA66B60B85A01 shape="polygon" coords="584, 554, 657, 555, 657, 565, 584, 565"    title="-">
+  
+  <area  href=#OBMKEFF6EB6160773A57 shape="polygon" coords="811, 539, 811, 526, 934, 526, 934, 539, 811, 539"   target="_self"  title="-">
+  
+  <area  href="19e0548f608037f4.htm" shape="rect" coords="805, 526, 940, 602"   target="_self"  title="-">
+  
+  <area  href=#OBMK0F7415EE594A4470 shape="polygon" coords="322, 537, 322, 524, 395, 524, 395, 537, 322, 537"    title="-">
+  
+  <area  href=#OBMK041D924B60B85963 shape="polygon" coords="355, 549, 413, 549, 413, 560, 355, 560"    title="-">
+  
+  <area  href=#OBMK041D924B60B85961 shape="polygon" coords="239, 549, 413, 549, 413, 560, 239, 560"    title="-">
+  
+  <area  href=#OBMK0F7415EE594A446F shape="polygon" coords="261, 593, 261, 580, 375, 580, 375, 593, 261, 593"    title="-">
+  
+  <area  href=#OBMK041D924B60B85962 shape="polygon" coords="239, 549, 297, 549, 297, 560, 239, 560"    title="-">
+  
+  <area  href=0F7415C9594A4425.htm#OBMK0F7415C9594A4425 shape="polygon" coords="474, 545, 474, 532, 523, 532, 523, 545, 474, 545"   target="_self"  title="A ~jHt39NXIPL2H[Feature] is a repository object with is the characteristic of another repository object.">
+  
+  <area  href="041d91e960b858f7.htm" shape="rect" coords="414, 532, 585, 591"   target="_self"  title="-">
+  
+  <area  href=041dc2a460b7529d.htm#OBMK041DC2A460B7529D shape="polygon" coords="116, 532, 116, 519, 174, 519, 174, 532, 116, 532"   target="_self"  title="-">
+  
+  <area  href=0f7411af594a4228.htm#OBMK0F7411AF594A4228 shape="polygon" coords="98, 545, 98, 532, 192, 532, 192, 545, 98, 545"   target="_self"  title="Group of features objects have inclusion relationships with other features.">
+  
+  <area  href="041d91a860b8588d.htm" shape="rect" coords="51, 519, 239, 602"   target="_self"  title="-">
+  
+  <area  href=#OBMK3F119E65607D6619 shape="polygon" coords="352, 133, 352, 120, 464, 120, 464, 133, 352, 133"    title="-">
+  
+  <area  href=#OBMK041D838A60B8563E shape="polygon" coords="399, 145, 479, 145, 479, 155, 399, 155"    title="-">
+  
+  <area  href=#OBMK041D838A60B8563C shape="polygon" coords="237, 145, 479, 145, 479, 155, 237, 155"    title="-">
+  
+  <area  href=#OBMK3F119E65607D6618 shape="polygon" coords="249, 186, 249, 173, 380, 173, 380, 186, 249, 186"    title="-">
+  
+  <area  href=#OBMK041D838A60B8563D shape="polygon" coords="237, 145, 318, 145, 318, 155, 237, 155"    title="-">
+  
+  <area  href=54685b4d580a2ca2.htm#OBMK54685B4D580A2CA2 shape="polygon" coords="48, 15, 48, 2, 189, 2, 189, 15, 48, 15"   target="_self"  title="Repository Items are all objects wich make up the content of Hopex repositories excluding technical objects such as: logs, _TransferredObject, _collection... ">
+  
+  <area  href=#OBMKC395D12960611F82 shape="polygon" coords="2, 47, 2, 33, 235, 33, 235, 47, 2, 47"   target="_self"  title="-">
+  
+  <area  href="041dc2a460b7529d.htm" shape="rect" coords="1, 2, 238, 177"   target="_self"  title="-">
+  
+  <area  href=#OBMKFB12B69660A41029 shape="polygon" coords="756, 421, 756, 408, 872, 408, 872, 421, 756, 421"    title="-">
+  
+  <area  href=#OBMKEB1FB51060A808B7 shape="polygon" coords="803, 432, 886, 432, 886, 442, 803, 442"    title="-">
+  
+  <area  href=#OBMKEB1FB51060A808B5 shape="polygon" coords="636, 432, 886, 432, 886, 442, 636, 442"    title="-">
+  
+  <area  href=#OBMKFB12B69660A41028 shape="polygon" coords="643, 473, 643, 460, 766, 460, 766, 473, 643, 473"    title="-">
+  
+  <area  href=#OBMKEB1FB51060A808B6 shape="polygon" coords="636, 432, 720, 432, 720, 442, 636, 442"    title="-">
+  
+  <area  href=#OBMKCFE324D760633347 shape="polygon" coords="606, 343, 606, 330, 733, 330, 733, 343, 606, 343"    title="-">
+  
+  <area  href=#OBMKEB1FB45C60A8084A shape="polygon" coords="585, 335, 585, 306, 596, 306, 596, 335"    title="-">
+  
+  <area  href=#OBMKEB1FB45C60A80848 shape="polygon" coords="585, 392, 585, 306, 596, 306, 596, 392"    title="-">
+  
+  <area  href=#OBMKCFE324D760633346 shape="polygon" coords="605, 376, 605, 363, 734, 363, 734, 376, 605, 376"    title="-">
+  
+  <area  href=#OBMKEB1FB45C60A80849 shape="polygon" coords="585, 392, 585, 363, 596, 363, 596, 392"    title="-">
+  
+  <area  href=#OBMKCFE324D760633347 shape="polygon" coords="983, 340, 983, 327, 1110, 327, 1110, 340, 983, 340"    title="-">
+  
+  <area  href=#OBMKEB1FB42B60A807F8 shape="polygon" coords="963, 341, 963, 307, 973, 307, 973, 341"    title="-">
+  
+  <area  href=#OBMKEB1FB42B60A807F6 shape="polygon" coords="963, 408, 963, 307, 973, 307, 973, 408"    title="-">
+  
+  <area  href=#OBMKCFE324D760633346 shape="polygon" coords="983, 389, 983, 376, 1112, 376, 1112, 389, 983, 389"    title="-">
+  
+  <area  href=#OBMKEB1FB42B60A807F7 shape="polygon" coords="963, 408, 963, 374, 973, 374, 973, 408"    title="-">
+  
+  <area  href=19e0548f608037f4.htm#OBMK19E0548F608037F4 shape="polygon" coords="526, 405, 526, 394, 601, 394, 601, 405, 526, 405"    title="-">
+  
+  <area  href=#OBMKBA24BCA260A83E1C shape="polygon" coords="493, 424, 635, 424, 635, 450, 493, 450, 493, 424"    title="-">
+  
+  <area  href=#OBMKBA24BCAB60A83E50 shape="polygon" coords="493, 463, 493, 450, 635, 450, 635, 463, 493, 463"    title="-">
+  
+  <area  href="#OBMKEB1FB33D60A80703" shape="rect" coords="492, 394, 637, 474"    title="-">
+  
+  <area  href=fb12b65f60a40fbd.htm#OBMKFB12B65F60A40FBD shape="polygon" coords="924, 421, 924, 410, 992, 410, 992, 421, 924, 421"    title="-">
+  
+  <area  href=#OBMK000000004000006A shape="polygon" coords="888, 453, 888, 440, 1028, 440, 1028, 453, 888, 453"    title="-">
+  
+  <area  href="#OBMKEB1FB2C660A8068F" shape="rect" coords="886, 410, 1030, 478"    title="-">
+  
+  <area  href=#OBMK8063D027609B5E37 shape="polygon" coords="1155, 81, 1155, 68, 1239, 68, 1239, 81, 1155, 81"    title="-">
+  
+  <area  href=#OBMK309C3D7660A51A6D shape="polygon" coords="1179, 90, 1259, 91, 1259, 102, 1179, 101"    title="-">
+  
+  <area  href=#OBMK309C3D7660A51A6B shape="polygon" coords="1018, 89, 1259, 91, 1259, 102, 1018, 99"    title="-">
+  
+  <area  href=#OBMK8063D027609B5E36 shape="polygon" coords="1028, 128, 1028, 115, 1117, 115, 1117, 128, 1028, 128"    title="-">
+  
+  <area  href=#OBMK309C3D7660A51A6C shape="polygon" coords="1018, 89, 1098, 90, 1098, 100, 1018, 99"    title="-">
+  
+  <area  href=#OBMKEBE7EF074B2000FD shape="polygon" coords="1304, 69, 1304, 58, 1368, 58, 1368, 69, 1304, 69"    title="Any element that are owned by a system library.">
+  
+  <area  href=#OBMK8063CFB8609B5DC6 shape="polygon" coords="1280, 80, 1280, 69, 1392, 69, 1392, 80, 1280, 80"    title="-">
+  
+  <area  href=#OBMK000000004000006A shape="polygon" coords="1261, 111, 1261, 98, 1410, 98, 1410, 111, 1261, 111"    title="-">
+  
+  <area  href="#OBMK309C3CEF60A519AC" shape="rect" coords="1260, 58, 1413, 141"    title="-">
+  
+  <area  href=#OBMK9F20BF996079756F shape="polygon" coords="834, 149, 834, 136, 941, 136, 941, 149, 834, 149"    title="-">
+  
+  <area  href=#OBMK309C3CAC60A51961 shape="polygon" coords="947, 160, 947, 132, 957, 132, 957, 160"    title="-">
+  
+  <area  href=#OBMK309C3CAC60A5195F shape="polygon" coords="947, 215, 947, 132, 957, 132, 957, 215"    title="-">
+  
+  <area  href=#OBMK9F20BF996079756E shape="polygon" coords="968, 197, 968, 184, 1089, 184, 1089, 197, 968, 197"    title="-">
+  
+  <area  href=#OBMK309C3CAC60A51960 shape="polygon" coords="947, 215, 947, 187, 957, 187, 957, 215"    title="-">
+  
+  <area  href=#OBMK8063D47C609B6096 shape="polygon" coords="769, 40, 769, 27, 900, 27, 900, 40, 769, 40"    title="-">
+  
+  <area  href=#OBMK0DDF39D260A2787C shape="polygon" coords="924, 14, 916, 14, 916, 56, 905, 56, 905, 3, 924, 3"    title="-">
+  
+  <area  href=#OBMK0DDF39D260A2787B shape="polygon" coords="994, 56, 994, 14, 916, 14, 916, 56, 905, 56, 905, 3, 1004, 3, 1004, 56"    title="-">
+  
+  <area  href=#OBMK8063D47C609B6097 shape="polygon" coords="1012, 41, 1012, 28, 1149, 28, 1149, 41, 1012, 41"    title="-">
+  
+  <area  href=#OBMK0DDF39D260A2787D shape="polygon" coords="994, 56, 994, 14, 985, 14, 985, 3, 1004, 3, 1004, 56"    title="-">
+  
+  <area  href=#OBMKEBE7EF074B2000FD shape="polygon" coords="919, 69, 919, 58, 983, 58, 983, 69, 919, 69"    title="Any element that are owned by a system library.">
+  
+  <area  href=#OBMK9F20BF5860797516 shape="polygon" coords="913, 80, 913, 69, 990, 69, 990, 80, 913, 80"    title="-">
+  
+  <area  href=#OBMK000000004000006A shape="polygon" coords="886, 112, 886, 99, 1016, 99, 1016, 112, 886, 112"    title="-">
+  
+  <area  href="#OBMKEFF6F624607631C4" shape="rect" coords="884, 58, 1018, 134"    title="-">
+  
+  <area  href=#OBMKCFE324D760633347 shape="polygon" coords="1118, 239, 1118, 226, 1245, 226, 1245, 239, 1118, 239"    title="-">
+  
+  <area  href=#OBMKFB12BB2160A41310 shape="polygon" coords="1184, 248, 1257, 248, 1257, 259, 1184, 259"    title="-">
+  
+  <area  href=#OBMKFB12BB2160A4130E shape="polygon" coords="1038, 248, 1257, 248, 1257, 259, 1038, 259"    title="-">
+  
+  <area  href=#OBMKCFE324D760633346 shape="polygon" coords="1044, 287, 1044, 274, 1173, 274, 1173, 287, 1044, 287"    title="-">
+  
+  <area  href=#OBMKFB12BB2160A4130F shape="polygon" coords="1038, 248, 1111, 248, 1111, 259, 1038, 259"    title="-">
+  
+  <area  href="#OBMK0000000080000019" shape="rect" coords="1257, 216, 1371, 292"    title="A metaclass is a class whose instances are classes. Metaclasses are typically used to construct metamodels. The objects you create are stored in the repository in the metaclass corresponding to their types. Metaclasses are used in the explorer when searching for objects in the repository and when the metamodel is extended to include a new type of object. Example: message, org-unit, etc.">
+  
+  <area  href=#OBMK9F20BF996079756F shape="polygon" coords="765, 234, 765, 221, 872, 221, 872, 234, 765, 234"    title="-">
+  
+  <area  href=#OBMKCFE32520606333A9 shape="polygon" coords="740, 247, 740, 234, 872, 234, 872, 247, 740, 247"    title="-">
+  
+  <area  href=#OBMKFB12B69660A41029 shape="polygon" coords="813, 256, 887, 256, 887, 266, 813, 266"    title="-">
+  
+  <area  href=#OBMKFB12B69660A41027 shape="polygon" coords="665, 256, 887, 256, 887, 266, 665, 266"    title="-">
+  
+  <area  href=#OBMK9F20BF996079756E shape="polygon" coords="673, 295, 673, 282, 794, 282, 794, 295, 673, 295"    title="-">
+  
+  <area  href=#OBMKCFE32520606333A8 shape="polygon" coords="673, 308, 673, 295, 771, 295, 771, 308, 673, 308"    title="-">
+  
+  <area  href=#OBMKFB12B69660A41028 shape="polygon" coords="665, 256, 739, 256, 739, 266, 665, 266"    title="-">
+  
+  <area  href=#OBMKEBE7EF074B2000FD shape="polygon" coords="923, 230, 923, 217, 1002, 217, 1002, 230, 923, 230"   target="_self"  title="Any element that are owned by a system library.">
+  
+  <area  href=#OBMK9F20BF5860797516 shape="polygon" coords="915, 243, 915, 230, 1010, 230, 1010, 243, 915, 243"   target="_self"  title="-">
+  
+  <area  href="fb12b65f60a40fbd.htm" shape="rect" coords="887, 217, 1038, 309"   target="_self"  title="-">
+  
+  <area  href=#OBMK041D838A60B8563E shape="polygon" coords="345, 252, 345, 239, 467, 239, 467, 252, 345, 252"    title="-">
+  
+  <area  href=#OBMK7D43C7DE60A36E36 shape="polygon" coords="400, 262, 479, 262, 479, 273, 400, 273"    title="-">
+  
+  <area  href=#OBMK7D43C7DE60A36E34 shape="polygon" coords="242, 262, 479, 262, 479, 273, 242, 273"    title="-">
+  
+  <area  href=#OBMK041D838A60B8563D shape="polygon" coords="254, 304, 254, 291, 344, 291, 344, 304, 254, 304"    title="-">
+  
+  <area  href=#OBMK7D43C7DE60A36E35 shape="polygon" coords="242, 262, 321, 262, 321, 273, 242, 273"    title="-">
+  
+  <area  href=#OBMKEFF6EB6160773A57 shape="polygon" coords="511, 134, 511, 121, 634, 121, 634, 134, 511, 134"   target="_self"  title="-">
+  
+  <area  href="19e0548f608037f4.htm" shape="rect" coords="479, 122, 665, 309"   target="_self"  title="-">
+  
+  <area  href=041dc2a460b7529d.htm#OBMK041DC2A460B7529D shape="polygon" coords="119, 240, 119, 227, 177, 227, 177, 240, 119, 240"   target="_self"  title="-">
+  
+  <area  href="fd3228c660709158.htm" shape="rect" coords="54, 227, 243, 308"   target="_self"  title="the classification of someone or something with respect to its worth.">
+  
+</map>
+<img  src="../images/FB1204F360A4089F_FB12050660A408CB_i.png" alt="../images/fb1204f360a4089f_fb12050660a408cb_i.png" usemap="#FB12050660A408CB" height="612" width="1412" border=0>
+
+<script>var cont=true; while (cont) {cont=zoomOutUntilFitToWindow(1); if (cont) {ZoomOut(1);}}</script>
+<p>
+<br/>
+<br/>
+<br/></p></div>
+</section> </div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>window.onscroll = function() {scrollFunction()};$(document).on('click', 'a[href^="#"]', function (event) {event.preventDefault();$('html, body').animate({scrollTop: $($.attr(this, 'href')).offset().top}, 500);});</script></html>

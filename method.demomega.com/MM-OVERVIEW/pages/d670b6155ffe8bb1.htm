@@ -1,0 +1,726 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="keywords" content="">
+<meta name="description" content="">    
+<LINK REL="icon" HREF="../standard/assets/img/favicon.ico">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/bootstrap.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nav.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/eaportal.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/font-awesome.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/animate.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/datatables.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/grid.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nae.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/custom.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/chosen.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/prism.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery.dataTables.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jsTreeStyle.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.theme.css" media="screen" />
+<script type="text/javascript" src="../standard/assets/js/jquery-3.2.1.min.js" ></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-ui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.columnFilter.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3-force.v2.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.gui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.search.js"></script> 
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.util.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-2.1.1.min.js"></script>
+<script src="../standard/assets/js/ws_zoomtemplate_firefox.js"></script>
+<script src="../standard/assets/js/bootstrap.min.js"></script>
+<script src="../standard/assets/js/datatables.min.js"></script>
+<script src="../standard/assets/js/moment.min.js"></script>
+<script src="../standard/assets/js/datetime-moment.js"></script>
+<script src="../standard/assets/js/chartjs.min.js"></script>
+<script src="../standard/assets/js/searchindexcontent.json"></script>
+<script src="../standard/assets/js/anls.js"></script>
+<script src="../../../cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script src="../standard/assets/js/gauge.js"></script> 
+<script src="../standard/assets/js/domesticApi.js"></script> 
+<script src="../standard/assets/js/piecelabel.js"></script>
+<script src="../standard/assets/js/popper.min.js"></script>
+<script src="../standard/assets/js/custom.js"></script>
+<script src="../standard/assets/js/chosen.jquery.js"></script>
+<script src="../standard/assets/js/prism.js"></script>
+<script src="../standard/assets/js/init-chosen.js"></script>
+<script src="../standard/assets/js/chart-data-flow.js"></script>
+<script src="../standard/assets/js/chart-data-gantt.js"></script>
+<script type="module" src="../standard/assets/js/Fuse.esm.min.js"></script>
+<script type="module">
+import Fuse from '../standard/assets/js/Fuse.esm.min.js';
+$(document).ready(function () {
+console.log('getjson');
+window.$.getJSON('../standard/assets/js/searchindexcontent.json', function (response) {
+console.log('getjson ok');
+var isIndex = "";
+var url = window.location.pathname;
+var filename = url.substring(url.lastIndexOf('/')+1);
+if( filename.includes("index") || filename === "" ){
+isIndex = "pages/";
+} else {
+isIndex = "";
+}
+const fuse = new Fuse(response, {
+keys: ['title','text'],
+shouldSort: true,
+includeMatches : true,
+findAllMatches : true
+});
+$('#search-fuse').on('keyup', function () {
+let result = fuse.search($(this).val());
+console.log(result);
+let resultdiv = $('div.searchresults-fuse');
+if (result.length === 0) {
+resultdiv.hide();
+} else {
+resultdiv.empty();
+resultdiv.append('<table class="table-search" width="100%" cellspacing="0"><thead ><tr><th>Name</th><th>Object Type</th><th>Modification date</th></tr></thead><tbody>');
+
+for (let obj in result.slice(0,10)) {
+
+let searchObj = '<tr><td><a href="./'+ isIndex + result[obj].item.url + '">' + result[obj].item.title +'</a></td><td>' + result[obj].item.ObjectType + '</td><td>' + result[obj].item.ModificationDate + '</td></tr>' ;
+
+
+resultdiv.find('tbody').append(searchObj);
+}
+resultdiv.append('</tbody></table>');
+resultdiv.show();
+}
+});
+});
+});
+</script>
+<title>HOPEX Metamodel Overview (Beta Version)</title>
+</head>
+<nav class="navbar navbar-expand-md navbar-dark  navbar-mega"><!-- Brand --><!--<a class="navbar-brand" href="#">Navbar</a>--><a class="" href="../index.htm"><img class="logo-mega" src="../standard/assets/img/logo.png"  alt="">(Beta Version)</a><!-- Toggler/collapsibe Button --><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><!-- Navbar links -->
+<div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsibleNavbar"><div class="col-sm-auto col-md-auto col-lg-5"></div>
+<div class="col-sm-auto">
+<ul class="navbar-nav">      
+<li><a class="dropdown-item" href="ad30ce115ebf7e90.htm">EA Grid</a></li> 
+<li><a class="dropdown-item" href="fdd5018459bc3c6a.htm">EA Domains</a></li> 
+<li><a class="dropdown-item" href="07e731775ecc93f4.htm">Solutions</a></li> 
+<li><a class="dropdown-item" href="c5dfc62c54810c2c.htm">Glossary</a></li> 
+<li class="nav-item dropdown mx-1">
+<a class="nav-link" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</a>
+<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<li><a class="dropdown-item" href="5446555d5f88c32e.htm">Outcome Driven Metamodel</a></li> 
+<li><a class="dropdown-item" href="e1ccfc295f8f7b90.htm">Playbooks</a></li> 
+<li><a class="dropdown-item" href="42bc992862d20ea7.htm">Framework Mappings</a></li> 
+<li><a class="dropdown-item" href="e93aebb35fa20550.htm">Metamodel Patterns</a></li> 
+<li><a class="dropdown-item" href="d599fe87602b2b85.htm">References</a></li> 
+<li><a class="dropdown-item" href="333f3a7f5dde11de.htm">Legend</a></li> 
+</ul>									                                            
+</li>
+</ul>
+</div>
+<div class="col-sm-auto"><a class="nav-link search" href="#" onclick=showHideSearch("search-section-fuse")><i class="fa fa-search mr-1 form-control-feedback"></i></a></div>
+</div>
+</nav>
+<div id="search-section-fuse" style="display:none">>
+<div class="search_header"><span class="closesearch">&times;</span>
+<nav class="breadcrumb">
+<a class="breadcrumb-item" href="../index.htm">Home </a> 
+<span class="breadcrumb-item active">Search</span> 
+</nav>
+</div>
+<input id="search-fuse" placeholder="Search..."  name="q" onfocus="this.value=''" type="search">
+<div class="searchresults-fuse"></div>
+</div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>function showHideSearch(elementId) {var contentDivs = document.getElementsByClassName('content');var footerDivs = document.getElementsByClassName('footer'); var containerDivs = document.getElementsByClassName('container');var containerfluidDivs = document.getElementsByClassName('container-fluid');var x = document.getElementById(elementId);if (x.style.display === "none") {x.style.display = "block";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "none";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "none";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "none";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "none";}} else {x.style.display = "none";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "block";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "block";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "block";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "block";}}} ;<!-- END WIDGET DRILL DOWN --></script><script>$(document).ready(function() {$(window).scroll(function() {if ($(this).scrollTop() > 100) {$('.scrollup').fadeIn();} else {$('.scrollup').fadeOut();}});$('.scrollup').click(function() {$("html, body").animate({scrollTop: 0}, 600);return false;});});</script><script>
+var modal = document.getElementById("search-section-fuse");
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = "none";
+}
+}
+$(document).on('click', '.closesearch', function() {
+showHideSearch("search-section-fuse");
+
+
+
+
+
+});</script><div class="container-fluid col-lg-11"><nav class="breadcrumb"><a class="breadcrumb-item" href="../index.htm">Home</a> <span class="breadcrumb-item active">
+<a  href="c5dfc62c54810c2c.htm" target="_top">Dictionary of HOPEX concepts</a>&nbsp;/&nbsp;EA Pattern - Business Resource Operating Pattern</span></nav></div>
+<div class="container-fluid col-lg-11 content">
+<section class="fadeInDown animated"><a href="#idt" class="btn btn-d">DEFINITION</a> <a href="#grf" class="btn btn-d">CONCEPT GRAPH</a> <a href="#des" class="btn btn-d">CONCEPT DESCRIPTIONS</a> 
+</section>
+<a class="object-section-anchor" id="idt"></a>
+<section class="object-section">
+<h4>CONCEPT DOMAIN - EA Pattern - Business Resource Operating Pattern</h4><hr class="sectionbreak" /><table class="table table-vertical-headers table-set-col-width"><tr><th>Description</th><td class="description-text"><i>Pattern Domain</i><br/><div align="left" style="min-height: 12pt; ">The&#160;<b> EA Pattern - Business Resource Operating Pattern</b> domain defines concepts and relationships used to model how physical resources (<a href="62466ea661b80d09.htm" target="_top"><b><u>Resource Operating Asset</u></b></a>s) operates/functions in <a href="2b6f332061bae622.htm" target="_top"><b><u>Resource Ecosystem</u></b></a>s to deliver <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; "><a href="62466ea661b80d09.htm" target="_top"><b><u>Resource Operating Asset</u></b></a> is an abstraction for <a href="076d15425a5e158c.htm" target="_top"><b><u>Human Resource</u></b></a>, <a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a>, <a href="c30bf4015a5da72b.htm" target="_top"><b><u>Hardware System</u></b></a> and <a href="26b8384f5eeae33c.htm" target="_top"><b><u>Network connectivity</u></b></a> and their behaviors (<a href="7c40c3c85527466b.htm" target="_top"><b><u>Resource Process</u></b></a>, <a href="230b35b461d8884d.htm" target="_top"><b><u>Resource Interaction Scenario</u></b></a>).</div><div align="left" style="min-height: 12pt; ">The&#160;<b> EA Pattern - Business Resource Operating Pattern</b> is used as a template for all concrete operating domains such as <a href="1ce356355c48c0e2.htm" target="_top"><b><u>People &amp; Accountability</u></b></a> or <a href="d5e6d6b05c4648d8.htm" target="_top"><b><u>Application Functional Architecture</u></b></a>.</div><div></div></td></tr><tr><th>Dictionary</th><td><img src="../standard/dicsubjectarea.ico.gif"/>&nbsp;
+<a  href="c5dfc62c54810c2c.htm" target="_top">Dictionary of HOPEX concepts</a></td></tr><tr><th>Parent Domain</th><td></td></tr>
+<tr><th>Imported Domains</th><td><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="e2ef086d62147802.htm" target="_top">EA Pattern - Business Operating Pattern</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="2b58a67a5eec0662.htm" target="_top">EA Pattern - Data Domain</a>&nbsp;</td></tr>
+<tr><th>Domain dependencies</th><td><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="36166b8c6157b6b4.htm" target="_top">Aggregate Syntax</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="19dc1a30555649d9.htm" target="_top">Conceptual Operating Model</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="c2dbd7985b02607c.htm" target="_top">EA Module - Enterprise Capabilites</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="e2ef086d62147802.htm" target="_top">EA Pattern - Business Operating Pattern</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="2b58a67a5eec0662.htm" target="_top">EA Pattern - Data Domain</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="02af0a4b5a182417.htm" target="_top">Operating Semantic</a>&nbsp;</td></tr></table></section>
+<a class="object-section-anchor" id="grf"></a>
+<section class="object-section">
+<h4>DOMAIN CONCEPT GRAPH</h4>
+<hr class="sectionbreak" />
+<a href="#" class="btn btn-d" value="Relationship1" onclick="showDiagOnClick(this)">Diagram</a>
+<a href="#" class="btn btn-d" value="Relationship2" onclick="showDiagOnClick(this)">Graph</a>
+<div class="Relationship" id="Relationship1">
+
+<map  name="D670B62F5FFE8C48">
+  <area  href=#OBMK8619880B637244C4 shape="polygon" coords="1220, 813, 1220, 744, 1231, 744, 1231, 813"    title="-">
+  
+  <area  href=62466ea661b80d09.htm#OBMK62466EA661B80D09 shape="polygon" coords="1182, 826, 1182, 815, 1296, 815, 1296, 826, 1182, 826"   target="_top"  title="&#160;Resource Operating Assets comprise physical assets which contribute to the delivery of Business Outcomes of the enterprise. This includes Resource Agents, their behaviors (Resource Behavior:&#160; Resource Process, Resource Interaction Scenario), and Natural Resources.">
+  
+  <area  href="861987db6372446e.htm" shape="rect" coords="1179, 814, 1299, 857"   target="_top"  title="A&#160; Natural Resource is a kind of Resource Operating Asset that occurs in nature such as oil, water, gas or coal.">
+  
+  <area  href=#OBMK62FF764263765920 shape="polygon" coords="469, 850, 450, 861, 445, 852, 464, 841"    title="-">
+  
+  <area  href=#OBMK5754805751545CA3 shape="polygon" coords="520, 780, 520, 767, 605, 767, 605, 780, 520, 780"    title="-">
+  
+  <area  href=#OBMK62FF75FE637658DD shape="polygon" coords="547, 793, 547, 752, 557, 752, 557, 793"    title="-">
+  
+  <area  href=43ee620e63725a56.htm#OBMK43EE620E63725A56 shape="polygon" coords="984, 60, 984, 49, 1072, 49, 1072, 60, 984, 60"   target="_top"  title="A&#160; Value Added Object is an aspect of Architecture Block (Type)s which can be the subject of business transactions.">
+  
+  <area  href="43ee3c7963725899.htm" shape="rect" coords="973, 47, 1083, 111"   target="_top"  title="A&#160; Business Object is an aspect of any tangible or intanglible resource or state of such resource, that can be the subject of a business transaction.">
+  
+  <area  href=b283b7f362a559f8.htm#OBMKB283B7F362A559F8 shape="polygon" coords="994, 301, 975, 301, 975, 315, 823, 315, 823, 301, 994, 301"   target="_top"  title="-">
+  
+  <area  href=bc5bd98b61fbc4bc.htm shape="polygon" coords="889, 348, 889, 263, 899, 263, 899, 348"   target="_top"  title="-">
+  
+  <area  href=b283b9fc62a55c71.htm#OBMKB283B9FC62A55C71 shape="polygon" coords="1385, 298, 1387, 298, 1387, 312, 1234, 312, 1234, 298, 1385, 298"   target="_top"  title="-">
+  
+  <area  href=A6E949EB633589E5.htm shape="polygon" coords="1100, 663, 1288, 663, 1288, 246, 1299, 246, 1299, 673, 1100, 673"   target="_top"  title="-">
+  
+  <area  href=7d337d67628134c5.htm#OBMK7D337D67628134C5 shape="polygon" coords="1227, 195, 1227, 184, 1351, 184, 1351, 195, 1227, 195"   target="_top"  title="A&#160; Business Operating Scenario is a story that describes how the components of an Business Operating Agent interacts to produce Business Outcomes.">
+  
+  <area  href=f97e3119632b25f8.htm#OBMKF97E3119632B25F8 shape="polygon" coords="1244, 206, 1244, 195, 1335, 195, 1335, 206, 1244, 206"   target="_top"  title="A&#160; Conceptual Behavior is a Conceptual Operating Asset that describes any action or reaction of a Conceptual Agent to external or internal circumstances. This includes Value Streams (actions), Conceptual Interaction Scenarios (stories) or Business Service Interfaces (Service Interfaces).">
+  
+  <area  href="f97e3146632b266e.htm" shape="rect" coords="1214, 181, 1364, 246"   target="_top"  title="A&#160; Conceptual Interaction Scenario is a story that describes how the components of an Enterprise Agent interacts to achieve Business Outcomes.">
+  
+  <area  href=#OBMK6DC39B0261C08DA3 shape="polygon" coords="1376, 542, 1433, 542, 1433, 552, 1376, 552"    title="-">
+  
+  <area  href=6dc39b0261c08d88.htm shape="polygon" coords="1261, 543, 1433, 542, 1433, 552, 1261, 553"   target="_top"  title="-">
+  
+  <area  href=#OBMK6DC39B0461C08DFD shape="polygon" coords="1261, 543, 1318, 542, 1319, 553, 1261, 553"    title="-">
+  
+  <area  href=f8e61e02621db929.htm#OBMKF8E61E02621DB929 shape="polygon" coords="568, 299, 565, 299, 565, 312, 412, 312, 412, 299, 568, 299"   target="_top"  title="-">
+  
+  <area  href=ef080bc65fffbaff.htm shape="polygon" coords="485, 348, 485, 242, 495, 242, 495, 348"   target="_top"  title="-">
+  
+  <area  href=#OBMK1CB71F416282D0F2 shape="polygon" coords="1033, 628, 1071, 542, 1081, 547, 1043, 632"    title="-">
+  
+  <area  href=#OBMK24034F6D5FC79C44 shape="polygon" coords="600, 377, 641, 377, 641, 401, 630, 401, 630, 388, 600, 388"    title="-">
+  
+  <area  href=24034F6D5FC79C3F.htm shape="polygon" coords="504, 401, 504, 377, 641, 377, 641, 401, 630, 401, 630, 388, 515, 388, 515, 401"   target="_top"  title="-">
+  
+  <area  href=#OBMK24034F6D5FC79C87 shape="polygon" coords="504, 401, 504, 377, 545, 377, 545, 388, 515, 388, 515, 401"    title="-">
+  
+  <area  href=#OBMKD69191D06228ED0D shape="polygon" coords="1081, 512, 1082, 556, 1082, 545, 1071, 545, 1071, 534, 1071, 513"    title="-">
+  
+  <area  href=e2ef095b62147bf9.htm#OBMKE2EF095B62147BF9 shape="polygon" coords="1042, 440, 1042, 429, 1165, 429, 1165, 440, 1042, 440"   target="_top"  title="A&#160; Business Operating Process is a Process that describes a typical course of action intended to produce Business Outcomes, through the involvement of Business Operating Agents (Participant Operating Agent).">
+  
+  <area  href=b4ebbf3e5ffdccdf.htm#OBMKB4EBBF3E5FFDCCDF shape="polygon" coords="1062, 451, 1062, 440, 1145, 440, 1145, 451, 1062, 451"   target="_top"  title="A&#160; Resource Behavior is a Resource Operating Asset that describes any action or reaction of a Resource Agent to external or internal circumstances. This includes Resource Processes (actions), Resource Interaction Scenarios (stories) or service interactions (Business Service Interface).">
+  
+  <area  href=add1bbc74bc5020b.htm#OBMKADD1BBC74BC5020B shape="polygon" coords="1063, 483, 1063, 470, 1143, 470, 1143, 483, 1063, 483"   target="_top"  title="This is the generic definition of process types organizational or system.">
+  
+  <area  href="7c40c3c85527466b.htm" shape="rect" coords="1007, 426, 1199, 512"   target="_top"  title="A&#160; Resource Process is a Business Operating Process which is conducted by Resource Agents (physical resources such as Human Resource, System of Resources ,Business Systems) and which describes how these entities act to deliver Business Outcomes.">
+  
+  <area  href=#OBMKB4EBBF6F5FFDCDBF shape="polygon" coords="1082, 534, 1082, 545, 1071, 545, 1071, 534"    title="-">
+  
+  <area  href=B4EBBF6E5FFDCDAC.htm shape="polygon" coords="1082, 513, 1082, 545, 1071, 545, 1071, 513"   target="_top"  title="-">
+  
+  <area  href=#OBMKB4EBBF6F5FFDCDFC shape="polygon" coords="1082, 513, 1082, 523, 1071, 523, 1071, 513"    title="-">
+  
+  <area  href=f8e642e8621fe5e4.htm#OBMKF8E642E8621FE5E4 shape="polygon" coords="215, 307, 217, 307, 217, 321, 47, 321, 47, 307, 215, 307"   target="_top"  title="-">
+  
+  <area  href=E98E7A126220207C.htm shape="polygon" coords="125, 412, 126, 274, 137, 274, 136, 412"   target="_top"  title="-">
+  
+  <area  href=d6cd0fd95ab9744b.htm#OBMKD6CD0FD95AB9744B shape="polygon" coords="89, 227, 89, 216, 175, 216, 175, 227, 89, 227"   target="_top"  title="An&#160; Agent Environment is an Operating Eco-System which defines the interactions ( Service Channel) of an Agent with its partners (Partner Agent).">
+  
+  <area  href=99c2b5d055b05b0d.htm#OBMK99C2B5D055B05B0D shape="polygon" coords="63, 259, 63, 246, 201, 246, 201, 259, 63, 259"   target="_top"  title="Environment context for a business function architecture and its interacting partners.">
+  
+  <area  href="7c4097c855271c8e.htm" shape="rect" coords="44, 214, 220, 275"   target="_top"  title="A&#160; Conceptual Environment&#160; is an operating context which defines the interactions ( Business Interaction) of an Activity Domain with its partners (Customers).">
+  
+  <area  href=#OBMK5754805751545CA3 shape="polygon" coords="415, 783, 415, 769, 500, 769, 500, 783, 415, 783"    title="-">
+  
+  <area  href=#OBMK66F86986620B1793 shape="polygon" coords="456, 817, 456, 583, 467, 583, 467, 817"    title="-">
+  
+  <area  href=#OBMK66F868E2620B1501 shape="polygon" coords="488, 889, 504, 889, 504, 874, 515, 874, 515, 900, 488, 900"    title="-">
+  
+  <area  href=66f868de620b14e6.htm shape="polygon" coords="430, 874, 430, 889, 504, 889, 504, 874, 515, 874, 515, 900, 420, 900, 420, 874"   target="_top"  title="-">
+  
+  <area  href=#OBMK66F868E4620B155C shape="polygon" coords="430, 874, 430, 889, 446, 889, 446, 900, 420, 900, 420, 874"    title="-">
+  
+  <area  href=9e3837e46192fcad.htm#OBMK9E3837E46192FCAD shape="polygon" coords="431, 831, 431, 820, 503, 820, 503, 831, 431, 831"   target="_top"  title="A&#160; Deployed Agent is an entity that exists in space/time and that is able to participate actively to Processes and/or to conduct Processes.">
+  
+  <area  href=62ff75f363765899.htm#OBMK62FF75F363765899 shape="polygon" coords="408, 842, 408, 831, 526, 831, 526, 842, 408, 842"   target="_top"  title="-">
+  
+  <area  href="66f8685a620b1440.htm" shape="rect" coords="381, 818, 553, 875"   target="_top"  title="-">
+  
+  <area  href=#OBMKB4EBD0E45FFDEF21 shape="polygon" coords="1123, 707, 1123, 804, 1112, 804, 1112, 707"    title="-">
+  
+  <area  href=b4ebd0e45ffdef12.htm shape="polygon" coords="1123, 513, 1123, 804, 1112, 804, 1112, 513"   target="_top"  title="-">
+  
+  <area  href=#OBMKB4EBD0E45FFDEF62 shape="polygon" coords="1123, 513, 1123, 610, 1112, 610, 1112, 513"    title="-">
+  
+  <area  href=e2ef091962147ad7.htm#OBMKE2EF091962147AD7 shape="polygon" coords="638, 187, 638, 176, 752, 176, 752, 187, 638, 187"   target="_top"  title="&#160;Business Operating Agent is the supertype of all types of Agents that produce Business Outcomes which benefit to internal or external parties (especially Customers) of the enterprise.">
+  
+  <area  href=c8b2238961e5385a.htm#OBMKC8B2238961E5385A shape="polygon" coords="634, 198, 634, 187, 756, 187, 756, 198, 634, 198"   target="_top"  title="A&#160; Conceptual Operating Asset is an Operating Asset&#160; used to describe the Conceptual Operating Model of the enterprise.">
+  
+  <area  href=b3c7b9b656497db2.htm#OBMKB3C7B9B656497DB2 shape="polygon" coords="645, 230, 645, 217, 745, 217, 745, 230, 645, 230"   target="_top"  title="-">
+  
+  <area  href="7c40987055271d04.htm" shape="rect" coords="600, 173, 790, 233"   target="_top"  title="A&#160; Conceptual Agent is a type of Business Operating Agent that depicts a functional division of labor within an enterprise, influencing the formation of its business operating model.">
+  
+  <area  href=#OBMK9DCEA2805EC769C4 shape="polygon" coords="609, 630, 609, 617, 749, 617, 749, 630, 609, 630"    title="-">
+  
+  <area  href=#OBMKE2C593A561DEE618 shape="polygon" coords="706, 588, 706, 696, 686, 696, 686, 685, 696, 685, 696, 588"    title="-">
+  
+  <area  href=#OBMK9DCEA28C5EC76A0A shape="polygon" coords="485, 613, 485, 600, 617, 600, 617, 613, 485, 613"    title="-">
+  
+  <area  href=#OBMKE2C593B161DEE653 shape="polygon" coords="524, 588, 524, 685, 541, 685, 541, 696, 513, 696, 513, 588"    title="-">
+  
+  <area  href=ee0cee7f3919000d.htm#OBMKEE0CEE7F3919000D shape="polygon" coords="568, 709, 568, 696, 659, 696, 659, 709, 568, 709"   target="_top"  title="A exchange contract is a template of a contract between organizational entities.">
+  
+  <area  href=24ae31b55ed1c66d.htm#OBMK24AE31B55ED1C66D shape="polygon" coords="576, 683, 576, 672, 652, 672, 652, 683, 576, 683"   target="_top"  title="A&#160; Service Interface is a communication Behavior that describes a typical course of interactions, coordinated by Events and Outcomes, and intended to produce Value Added Objects, through the involvement of Agents.">
+  
+  <area  href="9dcea2655ec768ee.htm" shape="rect" coords="542, 639, 687, 744"   target="_top"  title="A&#160; Business Service Interface is a communication behavior that describes a typical course of interactions intended to produce Business Outcomes, through the involvement of Business Operating Agents.">
+  
+  <area  href=#OBMK230B405D61D89513 shape="polygon" coords="1018, 577, 1027, 577, 1027, 508, 1037, 508, 1037, 588, 1018, 588"    title="-">
+  
+  <area  href=#OBMK230B3F9B61D893D6 shape="polygon" coords="911, 567, 823, 567, 823, 556, 911, 556"    title="-">
+  
+  <area  href=230b3f9061d8937b.htm shape="polygon" coords="1012, 630, 1012, 567, 823, 567, 823, 556, 1023, 556, 1023, 630"   target="_top"  title="-">
+  
+  <area  href=#OBMK230B3F9061D89396 shape="polygon" coords="1012, 630, 1012, 567, 999, 567, 999, 556, 1023, 556, 1023, 630"    title="-">
+  
+  <area  href=#OBMK230B35ED61D8895F shape="polygon" coords="801, 657, 801, 585, 811, 585, 811, 657"    title="-">
+  
+  <area  href=230B35ED61D88944.htm shape="polygon" coords="941, 672, 801, 672, 801, 585, 811, 585, 811, 661, 941, 661"   target="_top"  title="-">
+  
+  <area  href=#OBMK230B35EE61D889BA shape="polygon" coords="941, 672, 869, 672, 869, 661, 941, 661"    title="-">
+  
+  <area  href=7d337d67628134c5.htm#OBMK7D337D67628134C5 shape="polygon" coords="959, 644, 959, 633, 1083, 633, 1083, 644, 959, 644"   target="_top"  title="A&#160; Business Operating Scenario is a story that describes how the components of an Business Operating Agent interacts to produce Business Outcomes.">
+  
+  <area  href=b4ebbf3e5ffdccdf.htm#OBMKB4EBBF3E5FFDCCDF shape="polygon" coords="979, 655, 979, 644, 1062, 644, 1062, 655, 979, 655"   target="_top"  title="A&#160; Resource Behavior is a Resource Operating Asset that describes any action or reaction of a Resource Agent to external or internal circumstances. This includes Resource Processes (actions), Resource Interaction Scenarios (stories) or service interactions (Business Service Interface).">
+  
+  <area  href=8d5f8de058de03ec.htm#OBMK8D5F8DE058DE03EC shape="polygon" coords="945, 687, 945, 673, 1096, 673, 1096, 687, 1061, 687, 1061, 696, 981, 696, 981, 687, 945, 687"   target="_top"  title="-">
+  
+  <area  href="230b35b461d8884d.htm" shape="rect" coords="942, 631, 1101, 706"   target="_top"  title="A&#160; Resource Interaction Scenario is a story involving the components of a Resource Agent interacting in order to produce Business Outcomes.">
+  
+  <area  href=3be69d8c63037c0f.htm#OBMK3BE69D8C63037C0F shape="polygon" coords="1443, 528, 1443, 517, 1549, 517, 1549, 528, 1443, 528"   target="_top"  title="An&#160; Business Operating Rule is a Behavioral Rule that is enforced by Business Operating Assets.">
+  
+  <area  href=75cb8c1758b6482f.htm#OBMK75CB8C1758B6482F shape="polygon" coords="1459, 560, 1459, 547, 1533, 547, 1533, 560, 1459, 560"   target="_top"  title="-">
+  
+  <area  href="6dc39a5661c08c55.htm" shape="rect" coords="1433, 515, 1559, 579"   target="_top"  title="A&#160; Resource Rule is an Business Operating Rule that is enforced by Resource Operating Assets of the Enterprise.">
+  
+  <area  href=#OBMK2B705D5061BA00D6 shape="polygon" coords="122, 520, 128, 484, 139, 485, 132, 522"    title="-">
+  
+  <area  href=#OBMK2B6F5C4261BAFE18 shape="polygon" coords="372, 528, 447, 528, 447, 539, 372, 539"    title="-">
+  
+  <area  href=2b6f5c4161bafdfd.htm shape="polygon" coords="221, 528, 447, 528, 447, 539, 221, 539"   target="_top"  title="-">
+  
+  <area  href=#OBMK2B6F5C4461BAFE72 shape="polygon" coords="221, 528, 297, 528, 297, 539, 221, 539"    title="-">
+  
+  <area  href=f8e7d8be621f0722.htm#OBMKF8E7D8BE621F0722 shape="polygon" coords="233, 501, 224, 501, 224, 515, 44, 515, 44, 501, 233, 501"   target="_top"  title="-">
+  
+  <area  href=2b6f37c161baeeed.htm shape="polygon" coords="119, 521, 119, 471, 130, 471, 130, 521"   target="_top"  title="-">
+  
+  <area  href=#OBMK2B6F35BC61BAECDF shape="polygon" coords="372, 563, 449, 563, 449, 574, 372, 574"    title="-">
+  
+  <area  href=2b6f35bc61baecc4.htm shape="polygon" coords="217, 563, 449, 563, 449, 574, 217, 574"   target="_top"  title="-">
+  
+  <area  href=#OBMK2B6F35BE61BAED39 shape="polygon" coords="217, 563, 294, 563, 294, 574, 217, 574"    title="-">
+  
+  <area  href=#OBMK2B6F350061BAEA7D shape="polygon" coords="365, 421, 448, 421, 448, 431, 365, 431"    title="-">
+  
+  <area  href=2b6f350061baea62.htm shape="polygon" coords="201, 421, 448, 421, 448, 431, 201, 431"   target="_top"  title="-">
+  
+  <area  href=#OBMK2B6F350161BAEAD7 shape="polygon" coords="201, 421, 283, 421, 283, 431, 201, 431"    title="-">
+  
+  <area  href=#OBMK2B6F34C861BAE95C shape="polygon" coords="365, 450, 447, 450, 447, 461, 365, 461"    title="-">
+  
+  <area  href=2b6f34c861bae941.htm shape="polygon" coords="201, 450, 447, 450, 447, 461, 201, 461"   target="_top"  title="-">
+  
+  <area  href=#OBMK2B6F34CB61BAE9B6 shape="polygon" coords="201, 450, 283, 450, 283, 461, 201, 461"    title="-">
+  
+  <area  href=f8e62fc5621fdcf4.htm#OBMKF8E62FC5621FDCF4 shape="polygon" coords="61, 425, 61, 415, 200, 415, 200, 425, 61, 425"   target="_top"  title="A&#160; Business Operating Environment is an operating context which defines the interactions ( Business Service Channel) of an Business Operating Agent with its partners (Partner Operating Agent).">
+  
+  <area  href=2b6f332061bae622.htm#OBMK2B6F332061BAE622 shape="polygon" coords="83, 436, 83, 425, 177, 425, 177, 436, 83, 436"   target="_top"  title="A&#160; Resource Ecosystem is an Operating Eco-System&#160; that describes the operating context in which a Resource Agent exists or lives for a specific purpose.">
+  
+  <area  href="2b6f33a561bae7ab.htm" shape="rect" coords="57, 412, 203, 471"   target="_top"  title="A&#160; Resource Agent Environment is an operating context which defines the interactions ( Business Service Channel) of a Resource Agent with its partners (Partner Resource Agent).">
+  
+  <area  href=f8e68967621ff519.htm#OBMKF8E68967621FF519 shape="polygon" coords="44, 535, 44, 524, 220, 524, 220, 535, 44, 535"   target="_top"  title="A&#160; Business Operating Environment Scenario is a story that describes how an Business Operating Agent interacts with its partners (Partner Operating Agent) to achieve Business Outcomes in a specific Operating Eco-System (Business Operating Environment).">
+  
+  <area  href=2b6f332061bae622.htm#OBMK2B6F332061BAE622 shape="polygon" coords="85, 546, 85, 535, 179, 535, 179, 546, 85, 546"   target="_top"  title="A&#160; Resource Ecosystem is an Operating Eco-System&#160; that describes the operating context in which a Resource Agent exists or lives for a specific purpose.">
+  
+  <area  href="2b6f337e61bae6d6.htm" shape="rect" coords="42, 522, 223, 581"   target="_top"  title="A&#160; Resource Environment Scenario is a story that describes how a Resource Agent interacts with its partners (Partner Resource Agents) to achieve Business Outcomes in a specific Eco-System (Resource Agent Environment).">
+  
+  <area  href=f8e64b51621dd3f3.htm#OBMKF8E64B51621DD3F3 shape="polygon" coords="67, 383, 67, 372, 201, 372, 201, 383, 67, 383"   target="_top"  title="An&#160; Business Operating Ecosystem is an operating context in which an Business Operating Agent exists or lives for a specific purpose.">
+  
+  <area  href="2b6f332061bae622.htm" shape="rect" coords="19, 370, 248, 601"   target="_top"  title="A&#160; Resource Ecosystem is an Operating Eco-System&#160; that describes the operating context in which a Resource Agent exists or lives for a specific purpose.">
+  
+  <area  href=f8e6227b621dc464.htm#OBMKF8E6227B621DC464 shape="polygon" coords="775, 297, 764, 297, 764, 311, 627, 311, 627, 297, 775, 297"   target="_top"  title="-">
+  
+  <area  href=d770dadf5ef4bc20.htm shape="polygon" coords="684, 401, 684, 233, 695, 233, 695, 401"   target="_top"  title="-">
+  
+  <area  href=#OBMK9DCEA49D5EC76F24 shape="polygon" coords="402, 153, 402, 140, 549, 140, 549, 153, 402, 153"    title="-">
+  
+  <area  href=#OBMK9DCEA7D35EC770D3 shape="polygon" coords="484, 191, 484, 78, 659, 78, 659, 89, 495, 89, 495, 191"    title="-">
+  
+  <area  href=d9fdded9582953e7.htm#OBMKD9FDDED9582953E7 shape="polygon" coords="667, 109, 667, 96, 772, 96, 772, 109, 667, 109"   target="_top"  title="-">
+  
+  <area  href=0185cc626221bb37.htm#OBMK0185CC626221BB37 shape="polygon" coords="685, 72, 685, 61, 755, 61, 755, 72, 685, 72"   target="_top"  title="A&#160; Business Event is a type of business change that is used to coordinate Business Behaviors.">
+  
+  <area  href=30223b5c5ec90c01.htm#OBMK30223B5C5EC90C01 shape="polygon" coords="697, 83, 697, 72, 743, 72, 743, 83, 697, 83"   target="_top"  title="An&#160; Outcome is an Event that indicates the availability of an expected change in the state of a Value Added Object brought about by a specific Behavior,">
+  
+  <area  href="9dcea4535ec76e6c.htm" shape="rect" coords="660, 38, 781, 133"   target="_top"  title="A&#160; Business Outcome is a Business Event that indicates the availability of an expected change in the state of a Business Object, produced by a Business Operating Agent, for the benefits of an internal or external consumer (especially Customers).">
+  
+  <area  href=bc5bd98b61fbc4bc.htm#OBMKBC5BD98B61FBC4BC shape="polygon" coords="1173, 297, 1195, 297, 1195, 311, 1021, 311, 1021, 297, 1173, 297"   target="_top"  title="-">
+  
+  <area  href=ba91c8c35fe0838e.htm shape="polygon" coords="1092, 427, 1092, 239, 1103, 239, 1103, 427"   target="_top"  title="-">
+  
+  <area  href=e2ef095b62147bf9.htm#OBMKE2EF095B62147BF9 shape="polygon" coords="1035, 193, 1035, 182, 1157, 182, 1157, 193, 1035, 193"   target="_top"  title="A&#160; Business Operating Process is a Process that describes a typical course of action intended to produce Business Outcomes, through the involvement of Business Operating Agents (Participant Operating Agent).">
+  
+  <area  href=f97e3119632b25f8.htm#OBMKF97E3119632B25F8 shape="polygon" coords="1051, 204, 1051, 193, 1141, 193, 1141, 204, 1051, 204"   target="_top"  title="A&#160; Conceptual Behavior is a Conceptual Operating Asset that describes any action or reaction of a Conceptual Agent to external or internal circumstances. This includes Value Streams (actions), Conceptual Interaction Scenarios (stories) or Business Service Interfaces (Service Interfaces).">
+  
+  <area  href=ac83ad5a481000b0.htm#OBMKAC83AD5A481000B0 shape="polygon" coords="1065, 236, 1065, 223, 1127, 223, 1127, 236, 1065, 236"   target="_top"  title="An end-to-end collection of Value Stages that creates an outcome for a customer, who may be the ultimate customer or an internal end-user of the value stream.">
+  
+  <area  href="57dfc5f555093444.htm" shape="rect" coords="1030, 179, 1162, 239"   target="_top"  title="&#160;Value Streams are used to frame the Conceptual Operating Model of the enterprise: they describe how the enterprise operates at the conceptual level and helps chunking responsibilities between Conceptual Agents (Activity Domain or Business Function) .">
+  
+  <area  href=aea4936060645978.htm#OBMKAEA4936060645978 shape="polygon" coords="427, 204, 427, 193, 555, 193, 555, 204, 427, 204"   target="_top"  title="A&#160; Business Operating Capability is a Capability that benefits to Customers (internal or external) of the enterprise. It expresses an ability to deliver Business Outcomes.This includes Business Capability, Functionality, Hardware Capability and Skill.">
+  
+  <area  href=da99dae349820097.htm#OBMKDA99DAE349820097 shape="polygon" coords="449, 236, 449, 223, 532, 223, 532, 236, 449, 236"   target="_top"  title="A Business Capability is a set of features that can be made available by a system (an enterprise or an automated system).">
+  
+  <area  href="9810abf3551135c4.htm" shape="rect" coords="425, 191, 558, 242"   target="_top"  title="A&#160; Business Capability is a Capability that benefits to Customers (internal or external) of the enterprise. It expresses an ability to deliver Business Outcomes.">
+  
+  <area  href=#OBMKB4EBBE325FFDCA4D shape="polygon" coords="887, 496, 823, 496, 823, 485, 887, 485"    title="-">
+  
+  <area  href=b4ebbe325ffdca40.htm shape="polygon" coords="1013, 496, 823, 496, 823, 485, 1013, 485"   target="_top"  title="-">
+  
+  <area  href=#OBMKB4EBBE325FFDCA90 shape="polygon" coords="1013, 496, 950, 496, 950, 485, 1013, 485"    title="-">
+  
+  <area  href=#OBMK240353B45FC7A145 shape="polygon" coords="949, 447, 1011, 447, 1011, 457, 949, 457"    title="-">
+  
+  <area  href=240353b45fc7a13f.htm shape="polygon" coords="823, 447, 1011, 447, 1011, 457, 823, 457"   target="_top"  title="-">
+  
+  <area  href=#OBMK240353B45FC7A187 shape="polygon" coords="823, 447, 886, 447, 886, 457, 823, 457"    title="-">
+  
+  <area  href=#OBMKB4EBBE6C5FFDCB67 shape="polygon" coords="1186, 545, 1186, 493, 1197, 493, 1197, 545"    title="-">
+  
+  <area  href=b4ebbe6b5ffdcb19.htm shape="polygon" coords="1149, 513, 1149, 551, 1186, 551, 1186, 493, 1197, 493, 1197, 562, 1138, 562, 1138, 513"   target="_top"  title="-">
+  
+  <area  href=#OBMKB4EBBE6C5FFDCB24 shape="polygon" coords="1149, 513, 1149, 551, 1151, 551, 1151, 562, 1138, 562, 1138, 513"    title="-">
+  
+  <area  href=#OBMKCA9DF5C35FCF5ABC shape="polygon" coords="779, 732, 779, 804, 768, 804, 768, 732"    title="-">
+  
+  <area  href=CA9DF5BB5FCF5A75.htm shape="polygon" coords="779, 588, 779, 804, 768, 804, 768, 588"   target="_top"  title="-">
+  
+  <area  href=#OBMKCA9DF5BC5FCF5A86 shape="polygon" coords="779, 588, 779, 660, 768, 660, 768, 588"    title="-">
+  
+  <area  href=30efb18261f374d5.htm#OBMK30EFB18261F374D5 shape="polygon" coords="922, 817, 922, 807, 976, 807, 976, 817, 922, 817"   target="_top"  title="A&#160; Data Asset is an Information Asset used for the description of data consumed and produced by Software Systems.">
+  
+  <area  href=d6cd116d5ab97525.htm#OBMKD6CD116D5AB97525 shape="polygon" coords="905, 828, 905, 817, 993, 817, 993, 828, 905, 828"   target="_top"  title="An&#160; Information Domain is a group of Information Entity(ies) which constitutes a unit a knowlege required by an Agent to operate or required during a Process execution.">
+  
+  <area  href=66fe6c5c52b833c1.htm#OBMK66FE6C5C52B833C1 shape="polygon" coords="924, 860, 924, 847, 974, 847, 974, 860, 924, 860"   target="_top"  title="A&#160; Data Area is subset of the enterprise&rsquo;s data that are meant to be manipulated together in the context of business operations.">
+  
+  <area  href="325C32165EB02A4A.htm" shape="rect" coords="743, 804, 1155, 863"   target="_top"  title="A&#160; Data Domain is subset of the enterprise&rsquo;s data that are meant to be manipulated together in the context of business operations.">
+  
+  <area  href=e2ef091962147ad7.htm#OBMKE2EF091962147AD7 shape="polygon" coords="579, 415, 579, 404, 692, 404, 692, 415, 579, 415"   target="_top"  title="&#160;Business Operating Agent is the supertype of all types of Agents that produce Business Outcomes which benefit to internal or external parties (especially Customers) of the enterprise.">
+  
+  <area  href=62466ea661b80d09.htm#OBMK62466EA661B80D09 shape="polygon" coords="578, 425, 578, 415, 692, 415, 692, 425, 578, 425"   target="_top"  title="&#160;Resource Operating Assets comprise physical assets which contribute to the delivery of Business Outcomes of the enterprise. This includes Resource Agents, their behaviors (Resource Behavior:&#160; Resource Process, Resource Interaction Scenario), and Natural Resources.">
+  
+  <area  href=79a98236563c7174.htm#OBMK79A98236563C7174 shape="polygon" coords="548, 455, 548, 441, 723, 441, 723, 455, 548, 455"   target="_top"  title="-">
+  
+  <area  href="bcebd31f5491302c.htm" shape="rect" coords="447, 402, 823, 589"   target="_top"  title="A&#160; Resource Agent is a Business Operating Agent which represents physical resources that produce Business Outcomes of the enterprise.">
+  
+  <area  href=f8e61da0621db6fa.htm#OBMKF8E61DA0621DB6FA shape="polygon" coords="934, 173, 934, 163, 1047, 163, 1047, 173, 934, 173"   target="_top"  title="&#160;Business Operating Assets comprise all resources which contributes to the delivery of Business Outcomes of the enterprise.">
+  
+  <area  href="c8b2238961e5385a.htm" shape="rect" coords="588, 161, 1395, 263"   target="_top"  title="A&#160; Conceptual Operating Asset is an Operating Asset&#160; used to describe the Conceptual Operating Model of the enterprise.">
+  
+  <area  href=0185cd936221bd72.htm#OBMK0185CD936221BD72 shape="polygon" coords="1035, 387, 1035, 376, 1117, 376, 1117, 387, 1035, 387"   target="_top"  title="An&#160; Business Behavior is an Business Operating Asset that describes any action or reaction of an Business Operating Agent to external or internal circumstances. This includes Business Operating Processes (actions), Business Operating Scenarios (stories) or service interactions (Business Service Interface).">
+  
+  <area  href=62466ea661b80d09.htm#OBMK62466EA661B80D09 shape="polygon" coords="1019, 398, 1019, 387, 1133, 387, 1133, 398, 1019, 398"   target="_top"  title="&#160;Resource Operating Assets comprise physical assets which contribute to the delivery of Business Outcomes of the enterprise. This includes Resource Agents, their behaviors (Resource Behavior:&#160; Resource Process, Resource Interaction Scenario), and Natural Resources.">
+  
+  <area  href="b4ebbf3e5ffdccdf.htm" shape="rect" coords="926, 375, 1227, 715"   target="_top"  title="A&#160; Resource Behavior is a Resource Operating Asset that describes any action or reaction of a Resource Agent to external or internal circumstances. This includes Resource Processes (actions), Resource Interaction Scenarios (stories) or service interactions (Business Service Interface).">
+  
+  <area  href=43ee3c7963725899.htm#OBMK43EE3C7963725899 shape="polygon" coords="791, 361, 791, 350, 865, 350, 865, 361, 791, 361"   target="_top"  title="A&#160; Business Object is an aspect of any tangible or intanglible resource or state of such resource, that can be the subject of a business transaction.">
+  
+  <area  href=f8e61da0621db6fa.htm#OBMKF8E61DA0621DB6FA shape="polygon" coords="772, 372, 772, 361, 885, 361, 885, 372, 772, 372"   target="_top"  title="&#160;Business Operating Assets comprise all resources which contributes to the delivery of Business Outcomes of the enterprise.">
+  
+  <area  href=6dfa892056b416f4.htm#OBMK6DFA892056B416F4 shape="polygon" coords="772, 398, 772, 385, 885, 385, 885, 398, 772, 398"   target="_top"  title="-">
+  
+  <area  href="62466ea661b80d09.htm" shape="rect" coords="396, 348, 1261, 752"   target="_top"  title="&#160;Resource Operating Assets comprise physical assets which contribute to the delivery of Business Outcomes of the enterprise. This includes Resource Agents, their behaviors (Resource Behavior:&#160; Resource Process, Resource Interaction Scenario), and Natural Resources.">
+  
+  <area  href="62ff75f363765899.htm" shape="rect" coords="305, 793, 591, 922"   target="_top"  title="-">
+  
+  <area  href="d670b6155ffe8bb1.htm" shape="rect" coords="0, 0, 1638, 941"   target="_top"  title="The&#160; EA Pattern - Business Resource Operating Pattern domain defines concepts and relationships used to model how physical resources (Resource Operating Assets) operates/functions in Resource Ecosystems to deliver Business Outcomes.">
+  
+</map>
+<img  src="../images/d670b6155ffe8bb1_d670b62f5ffe8c48_i.png" alt="../images/d670b6155ffe8bb1_d670b62f5ffe8c48_i.png" usemap="#D670B62F5FFE8C48" height="941" width="1638" border=0>
+
+</div>
+<div class="Relationship" id="Relationship2">
+<div id="klmm" style="width: 100vw; height: 100vh;" ></div>
+<!-- <script src="../standard/assets/js/keylines_domain.js"></script> -->
+<script >
+const data = {
+ type: 'LinkChart',
+  items: [
+  //nodes
+    {type: 'node', id:'D670B6155FFE8BB1', t:"EA Pattern - Business Resource Operating Pattern", sh:'box', d:"The EA Pattern - Business Resource Operating Pattern domain defines concepts and relationships used to model how physical resources (Resource Operating Assets) operates/functions in Resource Ecosystems to deliver Business Outcomes."},
+    {type: 'node', id:'230B35B461D8884D', t:"Resource Interaction Scenario", parentId:'B4EBBF3E5FFDCCDF', sh:'circle', d:"A Resource Interaction Scenario is a story involving the components of a Resource Agent interacting in order to produce Business Outcomes."},
+    {type: 'node', id:'19DC1A30555649D9', t:"Conceptual Operating Model", sh:'box', d:"A Conceptual Operating Model serves as a strategic framework for the enterprise, directing its functional division of labor to fulfill its missions and purposes."},
+    {type: 'node', id:'F97E3146632B266E', t:"Conceptual Interaction Scenario", parentId:'19DC1A30555649D9', sh:'circle', d:"A Conceptual Interaction Scenario is a story that describes how the components of an Enterprise Agent interacts to achieve Business Outcomes."},
+    {type: 'node', id:'861987DB6372446E', t:"Natural Resource", parentId:'62466EA661B80D09', sh:'circle', d:"A Natural Resource is a kind of Resource Operating Asset that occurs in nature such as oil, water, gas or coal."},
+    {type: 'node', id:'7C40C3C85527466B', t:"Resource Process", parentId:'B4EBBF3E5FFDCCDF', sh:'circle', d:"A Resource Process is a Business Operating Process which is conducted by Resource Agents (physical resources such as Human Resource, System of Resources ,Business Systems) and which describes how these entities act to deliver Business Outcomes."},
+    {type: 'node', id:'57DFC5F555093444', t:"Value Stream", parentId:'19DC1A30555649D9', sh:'circle', d:"Value Streams are used to frame the Conceptual Operating Model of the enterprise: they describe how the enterprise operates at the conceptual level and helps chunking responsibilities between Conceptual Agents (Activity Domain or Business Function) ."},
+    {type: 'node', id:'2B58A67A5EEC0662', t:"EA Pattern - Data Domain", sh:'box', d:"The EA Pattern - Data Domain comprises abstract concepts used to describe the logical and physical structure of Information Objects."},
+    {type: 'node', id:'325C32165EB02A4A', t:"Data Domain", parentId:'2B58A67A5EEC0662', sh:'circle', d:"A Data Domain is subset of the enterprises data that are meant to be manipulated together in the context of business operations."},
+    {type: 'node', id:'62466EA661B80D09', t:"Resource Operating Asset", parentId:'F8E61DA0621DB6FA', sh:'circle', d:"Resource Operating Assets comprise physical assets which contribute to the delivery of Business Outcomes of the enterprise. This includes Resource Agents, their behaviors (Resource Behavior:  Resource Process, Resource Interaction Scenario), and Natural Resources."},
+    {type: 'node', id:'C2DBD7985B02607C', t:"EA Module - Enterprise Capabilites", sh:'box', d:""},
+    {type: 'node', id:'9810ABF3551135C4', t:"Business Capability", parentId:'C2DBD7985B02607C', sh:'circle', d:"A Business Capability is a Capability that benefits to Customers (internal or external) of the enterprise. It expresses an ability to deliver Business Outcomes."},
+    {type: 'node', id:'C8B2238961E5385A', t:"Conceptual Operating Asset", parentId:'19DC1A30555649D9', sh:'circle', d:"A Conceptual Operating Asset is an Operating Asset  used to describe the Conceptual Operating Model of the enterprise."},
+    {type: 'node', id:'2B6F332061BAE622', t:"Resource Ecosystem", parentId:'D670B6155FFE8BB1', sh:'circle', d:"A Resource Ecosystem is an Operating Eco-System  that describes the operating context in which a Resource Agent exists or lives for a specific purpose."},
+    {type: 'node', id:'2B6F337E61BAE6D6', t:"Resource Environment Scenario", parentId:'2B6F332061BAE622', sh:'circle', d:"A Resource Environment Scenario is a story that describes how a Resource Agent interacts with its partners (Partner Resource Agents) to achieve Business Outcomes in a specific Eco-System (Resource Agent Environment)."},
+    {type: 'node', id:'2B6F33A561BAE7AB', t:"Resource Agent Environment", parentId:'2B6F332061BAE622', sh:'circle', d:"A Resource Agent Environment is an operating context which defines the interactions (Business Service Channel) of a Resource Agent with its partners (Partner Resource Agent)."},
+    {type: 'node', id:'7C4097C855271C8E', t:"Conceptual Environment", parentId:'19DC1A30555649D9', sh:'circle', d:"A Conceptual Environment  is an operating context which defines the interactions (Business Interaction) of an Activity Domain with its partners (Customers)."},
+    {type: 'node', id:'6DC39A5661C08C55', t:"Resource Rule", parentId:'D670B6155FFE8BB1', sh:'circle', d:"A Resource Rule is an Business Operating Rule that is enforced by Resource Operating Assets of the Enterprise."},
+    {type: 'node', id:'B4EBBF3E5FFDCCDF', t:"Resource Behavior", parentId:'62466EA661B80D09', sh:'circle', d:"A Resource Behavior is a Resource Operating Asset that describes any action or reaction of a Resource Agent to external or internal circumstances. This includes Resource Processes (actions), Resource Interaction Scenarios (stories) or service interactions (Business Service Interface)."},
+    {type: 'node', id:'BCEBD31F5491302C', t:"Resource Agent", parentId:'62466EA661B80D09', sh:'circle', d:"A Resource Agent is a Business Operating Agent which represents physical resources that produce Business Outcomes of the enterprise."},
+    {type: 'node', id:'7C40987055271D04', t:"Conceptual Agent", parentId:'19DC1A30555649D9', sh:'circle', d:"A Conceptual Agent is a type of Business Operating Agent that depicts a functional division of labor within an enterprise, influencing the formation of its business operating model."},
+    {type: 'node', id:'66F8685A620B1440', t:"Deployed Resource Agent", parentId:'62FF75F363765899', sh:'circle', d:""},
+    {type: 'node', id:'F8E61DA0621DB6FA', t:"Business Operating Asset", parentId:'D670B6155FFE8BB1', sh:'circle', d:"Business Operating Assets comprise all resources which contributes to the delivery of Business Outcomes of the enterprise."},
+    {type: 'node', id:'E2EF086D62147802', t:"EA Pattern - Business Operating Pattern", sh:'box', d:"The EA Pattern - Business Operating Pattern domain defines concepts and relationships used to model how a Business Operating Agent operates/functions in its Operating Eco-System to produce Business Outcomes."},
+    {type: 'node', id:'AEA4936060645978', t:"Business Operating Capability", parentId:'E2EF086D62147802', sh:'circle', d:"A Business Operating Capability is a Capability that benefits to Customers (internal or external) of the enterprise. It expresses an ability to deliver Business Outcomes."},
+    {type: 'node', id:'2CFF31375EDA90BD', t:"Process Family", parentId:'E2EF086D62147802', sh:'circle', d:"A  Process Family is a category of Process."},
+    {type: 'node', id:'16E327BE5BF83E3B', t:"Operational Risk Type", parentId:'E2EF086D62147802', sh:'circle', d:"An Operational Risk Type is a kind of Risk Type that refers to the potential for loss due to the enterprises inadequate functioning."},
+    {type: 'node', id:'3BE69D8C63037C0F', t:"Business Operating Rule", parentId:'E2EF086D62147802', sh:'circle', d:"An Business Operating Rule is a Behavioral Rule that is enforced by Business Operating Assets."},
+    {type: 'node', id:'62FF75F363765899', t:"Resource Asset (Individual)", parentId:'D670B6155FFE8BB1', sh:'circle', d:""},
+  //edges
+    { type: 'link', id:'230B35B461D8884D-A6E949EB633589E5', id1:'230B35B461D8884D', id2:'F97E3146632B266E', t:"Realized Logical Scenario"},
+    { type: 'link', id:'230B35B461D8884D-164C747761F96C60', id1:'230B35B461D8884D', id2:'230B35B461D8884D', t:"Specialized Resource Scenario"},
+    { type: 'link', id:'230B35B461D8884D-230B35ED61D88944', id1:'230B35B461D8884D', id2:'BCEBD31F5491302C', t:"Participant Resource Agent"},
+    { type: 'link', id:'230B35B461D8884D-230B3F9061D8937B', id1:'230B35B461D8884D', id2:'BCEBD31F5491302C', t:"Described Resource Agent"},
+    { type: 'link', id:'7C40C3C85527466B-B283C11F62A56214', id1:'7C40C3C85527466B', id2:'7C40C3C85527466B', t:"Specialized Resource Process"},
+    { type: 'link', id:'7C40C3C85527466B-BA91C8C35FE0838E', id1:'7C40C3C85527466B', id2:'57DFC5F555093444', t:"Fulfilling Value Stream"},
+    { type: 'link', id:'7C40C3C85527466B-B4EBBE325FFDCA40', id1:'7C40C3C85527466B', id2:'BCEBD31F5491302C', t:"Participant Resource Agent"},
+    { type: 'link', id:'7C40C3C85527466B-B4EBBE6B5FFDCB19', id1:'7C40C3C85527466B', id2:'7C40C3C85527466B', t:"Sub-Resource Process"},
+    { type: 'link', id:'7C40C3C85527466B-B4EBBF6E5FFDCDAC', id1:'7C40C3C85527466B', id2:'B4EBBF3E5FFDCCDF', t:"Resource Activity"},
+    { type: 'link', id:'7C40C3C85527466B-B4EBD0E45FFDEF12', id1:'7C40C3C85527466B', id2:'325C32165EB02A4A', t:"Resource Store"},
+    { type: 'link', id:'62466EA661B80D09-EF080BC65FFFBAFF', id1:'62466EA661B80D09', id2:'9810ABF3551135C4', t:"Fulfilled Business Capability"},
+    { type: 'link', id:'62466EA661B80D09-B283BB8E62A55EFA', id1:'62466EA661B80D09', id2:'62466EA661B80D09', t:"Specialized Resource Asset"},
+    { type: 'link', id:'62466EA661B80D09-BC5BD98B61FBC4BC', id1:'62466EA661B80D09', id2:'C8B2238961E5385A', t:"Realized Logical Operating Asset"},
+    { type: 'link', id:'62466EA661B80D09-6DC39B0261C08D88', id1:'62466EA661B80D09', id2:'6DC39A5661C08C55', t:"Resource Rule Enforcement"},
+    { type: 'link', id:'2B6F332061BAE622-95129626620B544C', id1:'2B6F332061BAE622', id2:'62466EA661B80D09', t:"Resource Ecosystem Component"},
+    { type: 'link', id:'2B6F337E61BAE6D6-2B6F37C161BAEEED', id1:'2B6F337E61BAE6D6', id2:'2B6F33A561BAE7AB', t:"Scenarized Resource Environment"},
+    { type: 'link', id:'2B6F337E61BAE6D6-2B6F35BC61BAECC4', id1:'2B6F337E61BAE6D6', id2:'BCEBD31F5491302C', t:"Partner Resource Agent"},
+    { type: 'link', id:'2B6F337E61BAE6D6-2B6F5C4161BAFDFD', id1:'2B6F337E61BAE6D6', id2:'BCEBD31F5491302C', t:"Subject Resource Agent"},
+    { type: 'link', id:'2B6F33A561BAE7AB-E98E797D62201E46', id1:'2B6F33A561BAE7AB', id2:'2B6F33A561BAE7AB', t:"Specialized Resource Agent Environment"},
+    { type: 'link', id:'2B6F33A561BAE7AB-E98E7A126220207C', id1:'2B6F33A561BAE7AB', id2:'7C4097C855271C8E', t:"Realized Logical Environment"},
+    { type: 'link', id:'2B6F33A561BAE7AB-2B6F34C861BAE941', id1:'2B6F33A561BAE7AB', id2:'BCEBD31F5491302C', t:"Partner Resource Agent"},
+    { type: 'link', id:'2B6F33A561BAE7AB-2B6F350061BAEA62', id1:'2B6F33A561BAE7AB', id2:'BCEBD31F5491302C', t:"Subject Resource Agent"},
+    { type: 'link', id:'B4EBBF3E5FFDCCDF-B283BF1062A56053', id1:'B4EBBF3E5FFDCCDF', id2:'B4EBBF3E5FFDCCDF', t:"Specialized Resource Behavior"},
+    { type: 'link', id:'BCEBD31F5491302C-6DC3956361C08439', id1:'BCEBD31F5491302C', id2:'BCEBD31F5491302C', t:"Specialized Resource Agent"},
+    { type: 'link', id:'BCEBD31F5491302C-D770DADF5EF4BC20', id1:'BCEBD31F5491302C', id2:'7C40987055271D04', t:"Realized Business Function"},
+    { type: 'link', id:'BCEBD31F5491302C-24034F6D5FC79C3F', id1:'BCEBD31F5491302C', id2:'BCEBD31F5491302C', t:"Resource Agent Component"},
+    { type: 'link', id:'BCEBD31F5491302C-240353B45FC7A13F', id1:'BCEBD31F5491302C', id2:'7C40C3C85527466B', t:"Performed Resource Process"},
+    { type: 'link', id:'BCEBD31F5491302C-CA9DF5BB5FCF5A75', id1:'BCEBD31F5491302C', id2:'325C32165EB02A4A', t:"Resource Agent Store"},
+    { type: 'link', id:'66F8685A620B1440-66F86986620B1793', id1:'66F8685A620B1440', id2:'BCEBD31F5491302C', t:"Resource Agent"},
+    { type: 'link', id:'66F8685A620B1440-66F868DE620B14E6', id1:'66F8685A620B1440', id2:'66F8685A620B1440', t:"Deployed Resource Agent Component"},
+    { type: 'link', id:'F8E61DA0621DB6FA-F8E61E02621DB929', id1:'F8E61DA0621DB6FA', id2:'AEA4936060645978', t:"Fulfilled Operating Capability"},
+    { type: 'link', id:'F8E61DA0621DB6FA-8CD094CD609B1D4E', id1:'F8E61DA0621DB6FA', id2:'2CFF31375EDA90BD', t:"Supported Process Family"},
+    { type: 'link', id:'F8E61DA0621DB6FA-7A22A7DA5FDBBDDC', id1:'F8E61DA0621DB6FA', id2:'2CFF31375EDA90BD', t:"Process Category"},
+    { type: 'link', id:'F8E61DA0621DB6FA-B283B6BE62A557E8', id1:'F8E61DA0621DB6FA', id2:'F8E61DA0621DB6FA', t:"Realized Enterprise Asset"},
+    { type: 'link', id:'F8E61DA0621DB6FA-B283B6CF62A55844', id1:'F8E61DA0621DB6FA', id2:'F8E61DA0621DB6FA', t:"Specialized Enterprise Asset"},
+    { type: 'link', id:'F8E61DA0621DB6FA-11FF628664EF4679', id1:'F8E61DA0621DB6FA', id2:'16E327BE5BF83E3B', t:"Operational Risk"},
+    { type: 'link', id:'F8E61DA0621DB6FA-3BE69DEE63037CEF', id1:'F8E61DA0621DB6FA', id2:'3BE69D8C63037C0F', t:"Operating Rule Enforcement"},
+    { type: 'link', id:'62FF75F363765899-62FF75FE637658DD', id1:'62FF75F363765899', id2:'62466EA661B80D09', t:"Resource Operating Asset"}
+  ]
+}
+</script>
+<script src="../standard/assets/js/keylines_domain.js" type="module"></script>
+</div>
+</section>
+<a class="object-section-anchor" id="des"></a>
+<section class="object-section">
+<h4>CONCEPT DESCRIPTIONS</h4> 
+<hr class="sectionbreak" />
+<h5>Concrete Concepts</h5>
+<table class="table  table-set-col-width">
+<thead>
+<tr><th>Concept</th><th>Description</th><th>HOPEX Metaclass</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="9810abf3551135c4.htm" target="_top">Business Capability</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Business Capability</b> is a <a href="b181b98c54891882.htm" target="_top"><b><u>Capability</u></b></a> that benefits to Customers (internal or external) of the enterprise. It expresses an ability to deliver <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Business Capability</b> is defined by its intended <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s and the conditions (<a href="63f8870255ae1ba2.htm" target="_top"><b><u>Constraining Property</u></b></a>) under which the delivery of the <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s shall be proceeded.<br />The actual <a href="7c40a5b455272bb4.htm" target="_top"><b><u>Constraint Value</u></b></a>s for a given&#160;<b> Business Capability</b> at the different <a href="036a3de3548f229e.htm" target="_top"><b><u>Enterprise Stage</u></b></a>s is given by their exhibition (<b> Exhibited Capability</b>).</div><i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Capability"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - Capability</a></li> <li><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_28"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Definition - Business Capability</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="da99dae349820097.htm" target="_top">Business Capability</a></td>
+</tr>
+<tr>
+<td><img src="../standard/relationship-concepttype.ico.gif"/>&nbsp;
+<a  href="9dcea4535ec76e6c.htm" target="_top">Business Outcome</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Business Outcome</b> is a <a href="0185cc626221bb37.htm" target="_top"><b><u>Business Event</u></b></a> that indicates the availability of an expected change in the state of a <a href="43ee3c7963725899.htm" target="_top"><b><u>Business Object</u></b></a>, produced by a <a href="e2ef091962147ad7.htm" target="_top"><b><u>Business Operating Agent</u></b></a>, for the benefits of an internal or external consumer (especially <a href="d6cdfdbc5ab86331.htm" target="_top"><b><u>Customer</u></b></a>s).</div><div align="left" style="min-height: 12pt; "><a href="43ee3c7963725899.htm" target="_top"><b><u>Business Object</u></b></a>s range from <a href="e6f250185f772ee1.htm" target="_top"><b><u>Information Object</u></b></a>s to any organizational constructs (<a href="1ce356355c48c0e2.htm" target="_top"><b><u>People &amp; Accountability</u></b></a>) or <a href="62466ea661b80d09.htm" target="_top"><b><u>Resource Operating Asset</u></b></a>s offered, produced and delivered by an <a href="b181b82a54891668.htm" target="_top"><b><u>Enterprise</u></b></a>.</div><i><ul>References:<li><a href="../../../www.omg.org/spec/BACM/1.0/Beta1/dtc-22-06-01.pdf#page=28"><img src="../standard/extr.ico.gif">&nbsp;OMG - BACM - Outcome</a></li> <li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#Effect"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - Effect</a></li> <li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#operationalsignal"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - OperationalSignal</a></li> <li><a href="https://publications.opengroup.org/w161"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - IT4IT - Defining Service Reference Architecture</a></li> <li><a href="https://pubs.opengroup.org/architecture/o-aa-standard/definitions.html#Outcome"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - OAA - Definition - Outcome</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="d9fdded9582953e7.htm" target="_top">Class of Work Product</a></td>
+</tr>
+<tr>
+<td><img src="../standard/relationship-concepttype.ico.gif"/>&nbsp;
+<a  href="9dcea2655ec768ee.htm" target="_top">Business Service Interface</a></td>
+<td class="description-text">A&#160;<b> Business Service Interface</b> is a communication behavior that describes a typical course of interactions intended to produce <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s, through the involvement of <a href="e2ef091962147ad7.htm" target="_top"><b><u>Business Operating Agent</u></b></a>s.<i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#OperationalInterface"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - Operational Interface</a></li> <li><a href="https://publications.opengroup.org/w161"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - IT4IT - Defining Service Reference Architecture</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="ee0cee7f3919000d.htm" target="_top">Exchange Contract</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="7c4097c855271c8e.htm" target="_top">Conceptual Environment</a></td>
+<td class="description-text">A&#160;<b> Conceptual Environment</b>&#160; is an operating context which defines the interactions (<b> Business Interaction</b>) of an <a href="9810b060551137d0.htm" target="_top"><b><u>Activity Domain</u></b></a> with its partners (<a href="e8bfec5b5ebb80db.htm" target="_top"><b><u>Customer</u></b></a>s).<i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#OperationalArchitecture"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - OperationalArchitecture</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="99c2b5d055b05b0d.htm" target="_top">Business Architecture Environment</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="f97e3146632b266e.htm" target="_top">Conceptual Interaction Scenario</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Conceptual Interaction Scenario</b> is a story that describes how the components of an Enterprise Agent interacts to achieve Business Outcomes.</div><div align="left" style="min-height: 12pt; ">This includes:</div><div align="left" style="min-height: 12pt; ">1) A course of events represented by Business Object Flows depicting the steps towards the delivery of expected Business Outcomes.</div><div align="left" style="min-height: 12pt; ">2) Interacting Enterprise Agents who participate to the story.</div>       </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="861987db6372446e.htm" target="_top">Natural Resource</a></td>
+<td class="description-text">A&#160;<b> Natural Resource</b> is a kind of <a href="62466ea661b80d09.htm" target="_top"><b><u>Resource Operating Asset</u></b></a> that occurs in nature such as oil, water, gas or coal.<i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#NaturalResource"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - NaturalResource</a></li></ul></i>        </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="57dfc5f555093444.htm" target="_top">Value Stream</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; "><b>&#160;Value Stream</b>s are used to frame the <a href="19dc1a30555649d9.htm" target="_top"><b><u>Conceptual Operating Model</u></b></a> of the enterprise: they describe how the enterprise operates at the conceptual level and helps chunking responsibilities between <a href="7c40987055271d04.htm" target="_top"><b><u>Conceptual Agent</u></b></a>s (<a href="9810b060551137d0.htm" target="_top"><b><u>Activity Domain</u></b></a> or <a href="7c4094d2552717db.htm" target="_top"><b><u>Business Function</u></b></a>) .</div><div align="left" style="min-height: 12pt; "></div><div align="left" style="min-height: 12pt; ">A&#160;<b> Value Stream</b> is a conceptual <a href="d682ef5e56144e77.htm" target="_top"><b><u>Process</u></b></a>&#160; performed by <a href="7c40987055271d04.htm" target="_top"><b><u>Conceptual Agent</u></b></a>s to produce a <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>. It is depicted as a sequence of <a href="3b4b40da5ebc2bce.htm" target="_top"><b><u>Value Stream Activity</u></b></a>s, controlled by events and conditions.</div><div align="left" style="min-height: 12pt; "><a href="3b4b40da5ebc2bce.htm" target="_top"><b><u>Value Stream Activity</u></b></a>s are carried out by the involvment of <a href="7c40987055271d04.htm" target="_top"><b><u>Conceptual Agent</u></b></a>s as participants in the&#160;<b> Value Stream</b>.</div><div align="left" style="min-height: 12pt; ">During its course of action, a&#160;<b> Value Stream</b> consumes, produces or stores <a href="43ee3c7963725899.htm" target="_top"><b><u>Business Object</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">1) It may read or write <a href="43ee3c7963725899.htm" target="_top"><b><u>Business Object</u></b></a>s in its <a href="48d14ae75ebc11bc.htm" target="_top"><b><u>Business Object Store</u></b></a>.</div><div align="left" style="min-height: 12pt; ">2) It may receive <a href="43ee3c7963725899.htm" target="_top"><b><u>Business Object</u></b></a>s at its boundary:&#160; Consumed <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">3) It may produce <a href="43ee3c7963725899.htm" target="_top"><b><u>Business Object</u></b></a>s at its boundary:&#160; Delivered <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">The course of actions of a&#160;<b> Value Stream</b> is constrained by the application of rules (<a href="3b4b44685ebc333e.htm" target="_top"><b><u>Conceptual Rule Enforcement</u></b></a>) that define what is allowed and not allowed to do.</div><div align="left" style="min-height: 12pt; "><br />There are traditionnaly two kinds of&#160;<b> Value Stream</b>s:</div><div align="left" style="min-height: 12pt; ">1) Development development&#160;<b> Value Stream</b>s define all of the actions, both value-creating and nonvalue-creating, required to bring a <a href="215cceda606c35c6.htm" target="_top"><b><u>Product</u></b></a> from concept to launch.<br />2)&#160; Operational&#160;<b> Value Stream</b>s define define all of the actions, both value-creating and nonvalue-creating, required from order to delivery. These include actions to process information from the <a href="d6cdfdbc5ab86331.htm" target="_top"><b><u>Customer</u></b></a> and actions to transform the product on its way to the <a href="d6cdfdbc5ab86331.htm" target="_top"><b><u>Customer</u></b></a>.</div><i><ul>References:<li><a href="https://www.lean.org/lexicon-terms/value-stream/"><img src="../standard/extr.ico.gif">&nbsp;Lean.org - Value Stream</a></li> <li><a href="../../../www.omg.org/spec/BPMN/2.0.2/formal-13-12-09.pdf#page=173"><img src="../standard/extr.ico.gif">&nbsp;OMG - BPMN - Process</a></li> <li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#OperationalActivity"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - Operational Activity</a></li> <li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#OperationalActivity"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - OperationalActivity</a></li> <li><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_84"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Definition - Value Stream</a></li> <li><a href="https://www.scaledagileframework.com/value-streams/"><img src="../standard/extr.ico.gif">&nbsp;SAFe&copy; - Value Stream</a></li> <li><a href="https://en.wikipedia.org/wiki/Value_stream"><img src="../standard/extr.ico.gif">&nbsp;Wikipedia - Value Stream</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="ac83ad5a481000b0.htm" target="_top">Value Stream</a></td>
+</tr>  
+</tbody>
+</table>
+<hr class="sectionbreak" />
+<h5>Abstract Concepts</h5>
+<table class="table  table-set-col-width">
+<thead >
+<tr><th>Concept</th><th>Description</th><th>HOPEX Metaclass</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="43ee3c7963725899.htm" target="_top">Business Object</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Business Object</b> is an aspect of any tangible or intanglible resource or state of such resource, that can be the subject of a business transaction.</div><div align="left" style="min-height: 12pt; ">As such, a&#160;<b> Business Object</b> can be improved or transformed in some way by a producer <a href="e2ef091962147ad7.htm" target="_top"><b><u>Business Operating Agent</u></b></a>, resulting in an increase in value (<a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>) that benefits (utility) to a user <a href="e2ef091962147ad7.htm" target="_top"><b><u>Business Operating Agent</u></b></a>.</div><div align="left" style="min-height: 12pt; "><b>&#160;Business Object</b>s include <a href="e2ef091962147ad7.htm" target="_top"><b><u>Business Operating Agent</u></b></a>s themselves, their Behaviors (<a href="0185cd936221bd72.htm" target="_top"><b><u>Business Behavior</u></b></a>) as well as <a href="e6f250185f772ee1.htm" target="_top"><b><u>Information Object</u></b></a>s and <a href="861987db6372446e.htm" target="_top"><b><u>Natural Resource</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">Examples:</div><div align="left" style="min-height: 12pt; ">- A new process (<a href="0185cd936221bd72.htm" target="_top"><b><u>Business Behavior</u></b></a>) that is the result of a refactoring activity done by a consulting organization (producer Agent) for the benefit of a business unit (user Agent).</div><div align="left" style="min-height: 12pt; ">- A new application (<a href="e2ef091962147ad7.htm" target="_top"><b><u>Business Operating Agent</u></b></a>) that is the result of the development and sales activitiies of a software company (producer Agent) for the benefit of an end user (user Agent).</div><i><ul>References:<li><a href="../../../www.omg.org/spec/BACM/1.0/Beta1/dtc-22-06-01.pdf#page=37"><img src="../standard/extr.ico.gif">&nbsp;OMG - BACM - Business Object</a></li></ul></i>        </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="7c40987055271d04.htm" target="_top">Conceptual Agent</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Conceptual Agent</b> is a type of <a href="e2ef091962147ad7.htm" target="_top"><b><u>Business Operating Agent</u></b></a> that depicts a functional division of labor within an enterprise, influencing the formation of its business operating model.</div><div align="left" style="min-height: 12pt; ">The concrete realizations of&#160;<b> Conceptual Agent</b> come in the form of <a href="9810b060551137d0.htm" target="_top"><b><u>Activity Domain</u></b></a> (a macro&#160;<b> Conceptual Agent</b>) and <a href="7c4094d2552717db.htm" target="_top"><b><u>Business Function</u></b></a> (a mezzo&#160;<b> Conceptual Agent</b>).</div><i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#OperationalAgent"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - OperationalAgent</a></li> <li><a href="../resources/Ackoff-Towards-a-system-of-systems-concepts.pdf#FunctionalDivisionOfLabor"><img src="../standard/extr.ico.gif">&nbsp;Russell Ackoff - System of concepts - FunctionalDivisionOfLabor</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="b3c7b9b656497db2.htm" target="_top">Class of Business Agent</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="c8b2238961e5385a.htm" target="_top">Conceptual Operating Asset</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Conceptual Operating Asset</b> is an <a href="a371a43b5b865817.htm" target="_top"><b><u>Operating Asset</u></b></a>&#160; used to describe the <a href="19dc1a30555649d9.htm" target="_top"><b><u>Conceptual Operating Model</u></b></a> of the enterprise.</div><div align="left" style="min-height: 12pt; ">It includes <a href="57dfc5f555093444.htm" target="_top"><b><u>Value Stream</u></b></a>s, <a href="9810b060551137d0.htm" target="_top"><b><u>Activity Domain</u></b></a>s and <a href="7c4094d2552717db.htm" target="_top"><b><u>Business Function</u></b></a>s and the way they contribute to the delivery of <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s.</div><i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#operationalasset"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - OperationalAsset</a></li></ul></i>        </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="325C32165EB02A4A.htm" target="_top">Data Domain</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Data Domain</b> is subset of the enterprise&rsquo;s data that are meant to be manipulated together in the context of business operations.</div><div align="left" style="min-height: 12pt; ">For instance, a &quot;Sales&quot;&#160;<b> Data Domain</b> contains at least the following entities: Customers, Orders, Products.</div><div align="left" style="min-height: 12pt; ">Each <a href="325c32fc5eb02d02.htm" target="_top"><b><u>Data Entity</u></b></a> in a&#160;<b> Data Domain</b> has CRUD characteristics. For instance, Products are read-only in a &quot;Sales&quot;&#160;<b> Data Domain</b>, while Customers and Orders have all CRUD characteristics.</div><div align="left" style="min-height: 12pt; "><b>&#160;Data Domain</b>s define functional data boundaries used both for Data Allocation to <a href="278675d65b252f4d.htm" target="_top"><b><u>Business System</u></b></a>s (see Data Stores) and Data Governance for data stewardship (<a href="9152d8875ed741ef.htm" target="_top"><b><u>Data Catalog</u></b></a>s).</div>       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="66fe6c5c52b833c1.htm" target="_top">Data Area</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="66f8685a620b1440.htm" target="_top">Deployed Resource Agent</a></td>
+<td class="description-text">        </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="bcebd31f5491302c.htm" target="_top">Resource Agent</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Resource Agent</b> is a <a href="e2ef091962147ad7.htm" target="_top"><b><u>Business Operating Agent</u></b></a> which represents physical resources that produce <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s of the enterprise.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Resource Agent</b> can be a <a href="076d15425a5e158c.htm" target="_top"><b><u>Human Resource</u></b></a> (<a href="076d151c5a5e1561.htm" target="_top"><b><u>Organizational Position</u></b></a> or <a href="7c408aa155270eea.htm" target="_top"><b><u>Org-Unit</u></b></a>), a <a href="278675d65b252f4d.htm" target="_top"><b><u>Business System</u></b></a> (<a href="d6cd02865ab966e8.htm" target="_top"><b><u>Software System</u></b></a> or <a href="c30bf4015a5da72b.htm" target="_top"><b><u>Hardware System</u></b></a>) or a <a href="d1600c7062e093eb.htm" target="_top"><b><u>Capability Configuration</u></b></a> (an assembly of <a href="076d15425a5e158c.htm" target="_top"><b><u>Human Resource</u></b></a>s and <a href="278675d65b252f4d.htm" target="_top"><b><u>Business System</u></b></a>s.)</div><i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#resourceperformer"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - ResourcePerformer</a></li> <li><a href="https://pubs.opengroup.org/togaf-standard/introduction/apdxb.html#tag_06_03"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Definition - Business System</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="79a98236563c7174.htm" target="_top">Class of Enterprise Resource Agent Assembly</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="2b6f33a561bae7ab.htm" target="_top">Resource Agent Environment</a></td>
+<td class="description-text">A&#160;<b> Resource Agent Environment</b> is an operating context which defines the interactions (<b> Business Service Channel</b>) of a <a href="bcebd31f5491302c.htm" target="_top"><b><u>Resource Agent</u></b></a> with its partners (<a href="2b6f34c861bae941.htm" target="_top"><b><u>Partner Resource Agent</u></b></a>).       </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="62ff75f363765899.htm" target="_top">Resource Asset (Individual)</a></td>
+<td class="description-text">        </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="b4ebbf3e5ffdccdf.htm" target="_top">Resource Behavior</a></td>
+<td class="description-text">A&#160;<b> Resource Behavior</b> is a <a href="62466ea661b80d09.htm" target="_top"><b><u>Resource Operating Asset</u></b></a> that describes any action or reaction of a <a href="bcebd31f5491302c.htm" target="_top"><b><u>Resource Agent</u></b></a> to external or internal circumstances. This includes <a href="7c40c3c85527466b.htm" target="_top"><b><u>Resource Process</u></b></a>es (actions), <a href="230b35b461d8884d.htm" target="_top"><b><u>Resource Interaction Scenario</u></b></a>s (stories) or service interactions (<a href="9dcea2655ec768ee.htm" target="_top"><b><u>Business Service Interface</u></b></a>).       </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="2b6f332061bae622.htm" target="_top">Resource Ecosystem</a></td>
+<td class="description-text">A&#160;<b> Resource Ecosystem</b> is an <a href="ca35f48a5fc48686.htm" target="_top"><b><u>Operating Eco-System</u></b></a>&#160; that describes the operating context in which a <a href="bcebd31f5491302c.htm" target="_top"><b><u>Resource Agent</u></b></a> exists or lives for a specific purpose.       </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="2b6f337e61bae6d6.htm" target="_top">Resource Environment Scenario</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Resource Environment Scenario</b> is a story that describes how a <a href="bcebd31f5491302c.htm" target="_top"><b><u>Resource Agent</u></b></a> interacts with its partners (<a href="2b6f35bc61baecc4.htm" target="_top"><b><u>Partner Resource Agent</u></b></a>s) to achieve <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s in a specific Eco-System (<a href="2b6f33a561bae7ab.htm" target="_top"><b><u>Resource Agent Environment</u></b></a>).</div><div align="left" style="min-height: 12pt; ">This includes:</div><div align="left" style="min-height: 12pt; ">1) A course of events represented by&#160;<b> Business Object Flow</b>s depicting the story towards the delivery of expected <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">2) Interacting&#160; <a href="bcebd31f5491302c.htm" target="_top"><b><u>Resource Agent</u></b></a>s who participate to the story in the considered Eco-System.</div>       </td>
+<td></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="230b35b461d8884d.htm" target="_top">Resource Interaction Scenario</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Resource Interaction Scenario</b> is a story involving the components of a <a href="bcebd31f5491302c.htm" target="_top"><b><u>Resource Agent</u></b></a> interacting in order to produce <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">This includes:</div><div align="left" style="min-height: 12pt; ">1) A course of events represented by&#160;<b> Resource Flow</b>s depicting the steps towards the delivery of expected <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">2) Component <a href="bcebd31f5491302c.htm" target="_top"><b><u>Resource Agent</u></b></a>s that participate to the story.</div>       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="8d5f8de058de03ec.htm" target="_top">Scenario of Enterprise Resource Agent Flow Internal Structure</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="62466ea661b80d09.htm" target="_top">Resource Operating Asset</a></td>
+<td class="description-text"><b>&#160;Resource Operating Asset</b>s comprise physical assets which contribute to the delivery of <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s of the enterprise. This includes <a href="bcebd31f5491302c.htm" target="_top"><b><u>Resource Agent</u></b></a>s, their behaviors (<a href="b4ebbf3e5ffdccdf.htm" target="_top"><b><u>Resource Behavior</u></b></a>:&#160; <a href="7c40c3c85527466b.htm" target="_top"><b><u>Resource Process</u></b></a>, <a href="230b35b461d8884d.htm" target="_top"><b><u>Resource Interaction Scenario</u></b></a>), and <a href="861987db6372446e.htm" target="_top"><b><u>Natural Resource</u></b></a>s.<i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#CapableElement"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - CapableElement</a></li> <li><a href="https://pubs.opengroup.org/togaf-standard/introduction/chap04.html#tag_04_73"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Definition - Solution Building Block</a></li> <li><a href="https://pubs.opengroup.org/togaf-standard/architecture-content/chap05.html#tag_05_02_04"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Guide - Solution Building Blocks</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="6dfa892056b416f4.htm" target="_top">Class of Operating Resource</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="7c40c3c85527466b.htm" target="_top">Resource Process</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Resource Process</b> is a <a href="e2ef095b62147bf9.htm" target="_top"><b><u>Business Operating Process</u></b></a> which is conducted by <a href="bcebd31f5491302c.htm" target="_top"><b><u>Resource Agent</u></b></a>s (physical resources such as <a href="076d15425a5e158c.htm" target="_top"><b><u>Human Resource</u></b></a>, <a href="f4be11b15ee1e0fa.htm" target="_top"><b><u>System of Resources</u></b></a> ,<a href="278675d65b252f4d.htm" target="_top"><b><u>Business System</u></b></a>s) and which describes how these entities act to deliver <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; "><b>&#160;Resource Process</b>es include <a href="57dfc52d550932ef.htm" target="_top"><b><u>Business Process</u></b></a>es and <a href="46194939560d374f.htm" target="_top"><b><u>System Process</u></b></a>es.</div>       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="add1bbc74bc5020b.htm" target="_top">Resource Process</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="6dc39a5661c08c55.htm" target="_top">Resource Rule</a></td>
+<td class="description-text">A&#160;<b> Resource Rule</b> is an <a href="3be69d8c63037c0f.htm" target="_top"><b><u>Business Operating Rule</u></b></a> that is enforced by <a href="62466ea661b80d09.htm" target="_top"><b><u>Resource Operating Asset</u></b></a>s of the Enterprise.<i><ul>References:<li><a href="../../../www.omg.org/spec/BMM/1.3/formal-15-05-19.pdf#page=46"><img src="../standard/extr.ico.gif">&nbsp;OMG - BMM - Business Rule</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="75cb8c1758b6482f.htm" target="_top">Operational Rule</a></td>
+</tr>  
+</tbody>
+</table>
+<section>
+
+</div>
+<button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button>
+<script>window.onscroll = function() {scrollFunction()};$(document).on('click', 'a[href^="#"]', function (event) {event.preventDefault();$('html, body').animate({scrollTop: $($.attr(this, 'href')).offset().top}, 500);});function showDiagOnClick(elem){ var x = document.getElementsByClassName('Relationship');var e = elem.getAttribute("value"); for (var i=0; i < x.length ;i++){x[i].style.display="none"; if (x[i].id == e){x[i].style.display="block";x[i].style.textAlign="left";}}}
+</script></html>

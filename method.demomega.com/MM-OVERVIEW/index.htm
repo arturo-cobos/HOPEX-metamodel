@@ -1,0 +1,252 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="keywords" content="">
+<meta name="description" content="">    
+<LINK REL="icon" HREF="standard/assets/img/favicon.ico">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="standard/assets/css/bootstrap.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="standard/assets/css/nav.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="standard/assets/css/eaportal.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="standard/assets/css/font-awesome.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="standard/assets/css/animate.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="standard/assets/css/datatables.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="standard/assets/css/Chart.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="standard/assets/css/Chart.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="standard/assets/css/grid.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="standard/assets/css/nae.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="standard/assets/css/custom.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="standard/assets/css/chosen.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="standard/assets/css/prism.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="standard/assets/css/d3-collapsible-tree.css">
+<link rel="stylesheet" type="text/css" href="standard/assets/css/jquery.dataTables.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="standard/assets/css/jsTreeStyle.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="standard/assets/css/jquery-ui.structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="standard/assets/css/jquery-ui.theme.css" media="screen" />
+<script type="text/javascript" src="standard/assets/js/jquery-3.2.1.min.js" ></script>
+<script type="text/javascript" src="standard/assets/js/jquery-ui.js"></script>
+<script type="text/javascript" src="standard/assets/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="standard/assets/js/jquery.dataTables.columnFilter.js"></script>
+<script type="text/javascript" src="standard/assets/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="standard/assets/js/d3-force.v2.min.js"></script>
+<script type="text/javascript" src="standard/assets/js/jquery.muk.gui.js"></script>
+<script type="text/javascript" src="standard/assets/js/jquery.muk.search.js"></script> 
+<script type="text/javascript" src="standard/assets/js/jquery.muk.util.js"></script>
+<script type="text/javascript" src="standard/assets/js/concept-graph2.js"></script>
+<script type="text/javascript" src="standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="standard/assets/js/jquery-2.1.1.min.js"></script>
+<script src="standard/assets/js/ws_zoomtemplate_firefox.js"></script>
+<script src="standard/assets/js/bootstrap.min.js"></script>
+<script src="standard/assets/js/datatables.min.js"></script>
+<script src="standard/assets/js/moment.min.js"></script>
+<script src="standard/assets/js/datetime-moment.js"></script>
+<script src="standard/assets/js/chartjs.min.js"></script>
+<script src="standard/assets/js/searchindexcontent.json"></script>
+<script src="standard/assets/js/anls.js"></script>
+<script src="../../cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script src="standard/assets/js/gauge.js"></script> 
+<script src="standard/assets/js/domesticApi.js"></script> 
+<script src="standard/assets/js/piecelabel.js"></script>
+<script src="standard/assets/js/popper.min.js"></script>
+<script src="standard/assets/js/custom.js"></script>
+<script src="standard/assets/js/chosen.jquery.js"></script>
+<script src="standard/assets/js/prism.js"></script>
+<script src="standard/assets/js/init-chosen.js"></script>
+<script src="standard/assets/js/chart-data-flow.js"></script>
+<script src="standard/assets/js/chart-data-gantt.js"></script>
+<script type="module" src="standard/assets/js/Fuse.esm.min.js"></script>
+<script type="module">
+import Fuse from './standard/assets/js/Fuse.esm.min.js';
+$(document).ready(function () {
+console.log('getjson');
+window.$.getJSON('./standard/assets/js/searchindexcontent.json', function (response) {
+console.log('getjson ok');
+var isIndex = "";
+var url = window.location.pathname;
+var filename = url.substring(url.lastIndexOf('/')+1);
+if( filename.includes("index") || filename === "" ){
+isIndex = "pages/";
+} else {
+isIndex = "";
+}
+const fuse = new Fuse(response, {
+keys: ['title','text'],
+shouldSort: true,
+includeMatches : true,
+findAllMatches : true
+});
+$('#search-fuse').on('keyup', function () {
+let result = fuse.search($(this).val());
+console.log(result);
+let resultdiv = $('div.searchresults-fuse');
+if (result.length === 0) {
+resultdiv.hide();
+} else {
+resultdiv.empty();
+resultdiv.append('<table class="table-search" width="100%" cellspacing="0"><thead ><tr><th>Name</th><th>Object Type</th><th>Modification date</th></tr></thead><tbody>');
+
+for (let obj in result.slice(0,10)) {
+
+let searchObj = '<tr><td><a href="./'+ isIndex + result[obj].item.url + '">' + result[obj].item.title +'</a></td><td>' + result[obj].item.ObjectType + '</td><td>' + result[obj].item.ModificationDate + '</td></tr>' ;
+
+
+resultdiv.find('tbody').append(searchObj);
+}
+resultdiv.append('</tbody></table>');
+resultdiv.show();
+}
+});
+});
+});
+</script>
+<title>HOPEX Metamodel Overview (Beta Version)</title>
+</head>
+<nav class="navbar navbar-expand-md navbar-dark  navbar-mega"><!-- Brand --><!--<a class="navbar-brand" href="#">Navbar</a>--><a class="" href="index.htm"><img class="logo-mega" src="standard/assets/img/logo.png"  alt="">(Beta Version)</a><!-- Toggler/collapsibe Button --><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><!-- Navbar links -->
+<div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsibleNavbar"><div class="col-sm-auto col-md-auto col-lg-5"></div>
+<div class="col-sm-auto">
+<ul class="navbar-nav">      
+<li><a class="dropdown-item" href="pages/ad30ce115ebf7e90.htm">EA Grid</a></li> 
+<li><a class="dropdown-item" href="pages/fdd5018459bc3c6a.htm">EA Domains</a></li> 
+<li><a class="dropdown-item" href="pages/07e731775ecc93f4.htm">Solutions</a></li> 
+<li><a class="dropdown-item" href="pages/c5dfc62c54810c2c.htm">Glossary</a></li> 
+<li class="nav-item dropdown mx-1">
+<a class="nav-link" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</a>
+<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<li><a class="dropdown-item" href="pages/5446555d5f88c32e.htm">Outcome Driven Metamodel</a></li> 
+<li><a class="dropdown-item" href="pages/e1ccfc295f8f7b90.htm">Playbooks</a></li> 
+<li><a class="dropdown-item" href="pages/42bc992862d20ea7.htm">Framework Mappings</a></li> 
+<li><a class="dropdown-item" href="pages/e93aebb35fa20550.htm">Metamodel Patterns</a></li> 
+<li><a class="dropdown-item" href="pages/d599fe87602b2b85.htm">References</a></li> 
+<li><a class="dropdown-item" href="pages/333f3a7f5dde11de.htm">Legend</a></li> 
+</ul>									                                            
+</li>
+</ul>
+</div>
+<div class="col-sm-auto"><a class="nav-link search" href="#" onclick=showHideSearch("search-section-fuse")><i class="fa fa-search mr-1 form-control-feedback"></i></a></div>
+</div>
+</nav>
+<div id="search-section-fuse" style="display:none">>
+<div class="search_header"><span class="closesearch">&times;</span>
+<nav class="breadcrumb">
+<a class="breadcrumb-item" href="index.htm">Home </a> 
+<span class="breadcrumb-item active">Search</span> 
+</nav>
+</div>
+<input id="search-fuse" placeholder="Search..."  name="q" onfocus="this.value=''" type="search">
+<div class="searchresults-fuse"></div>
+</div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="standard/assets/img/glyphicons-chevron-up.png"></button><script>function showHideSearch(elementId) {var contentDivs = document.getElementsByClassName('content');var footerDivs = document.getElementsByClassName('footer'); var containerDivs = document.getElementsByClassName('container');var containerfluidDivs = document.getElementsByClassName('container-fluid');var x = document.getElementById(elementId);if (x.style.display === "none") {x.style.display = "block";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "none";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "none";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "none";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "none";}} else {x.style.display = "none";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "block";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "block";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "block";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "block";}}} ;<!-- END WIDGET DRILL DOWN --></script><script>$(document).ready(function() {$(window).scroll(function() {if ($(this).scrollTop() > 100) {$('.scrollup').fadeIn();} else {$('.scrollup').fadeOut();}});$('.scrollup').click(function() {$("html, body").animate({scrollTop: 0}, 600);return false;});});</script><script>
+var modal = document.getElementById("search-section-fuse");
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = "none";
+}
+}
+$(document).on('click', '.closesearch', function() {
+showHideSearch("search-section-fuse");
+
+
+
+
+
+});</script>
+<!--./standard/assets/fonts/montserrat-semibold.otf-->
+<!--./standard/assets/fonts/calibri.ttf">
+<!--./standard/assets/fonts/fontawesome-webfont.woff-->
+<!--./standard/assets/fonts/fontawesome-webfont.ttf-->
+<!--./standard/assets/fonts/fontawesome-webfont.woff2-->
+<!---->
+<!--./standard/assets/img/home_bg_img.png-->
+<body>
+<!--============================= FIND PLACES =============================-->
+<section class="main-block home_bg_img">
+<div class="container home_tiles_container">
+<div class="row find-img-align">
+<div class="col-md-2">
+<div class="row find-img-align">
+<a href="pages/ad30ce115ebf7e90.htm">
+<div class="tiles_homepage tiles_blue">
+<div class="grid"><!-- <figure class="effect-ruby"> --><!-- <img src="./standard/assets/img/find-place1.jpg" class="img-fluid" alt="img13" /> --><!-- <figcaption> -->
+<div class="home_icon">
+<svg class="svg-icons" version="1.1" id="Layer_1"xmlns="http://www.w3.org/2000/svg"xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 256 256" style="enable-background:new 0 0 256 256;" xml:space="preserve"><style type="text/css">.st0{fill:#2FB672;}</style><path id="Path_20499" class="st0" d="M128.5,93.1c-19,0-34.5,15.4-34.5,34.5c0,19,15.4,34.5,34.5,34.5s34.5-15.4,34.5-34.5C163,108.5,147.5,93.1,128.5,93.1z M128.5,154.3c-14.8,0-26.8-12-26.8-26.8s12-26.8,26.8-26.8c14.8,0,26.8,12,26.8,26.8v0C155.3,142.3,143.3,154.3,128.5,154.3z"/><path id="Path_20500" class="st0" d="M212.7,70.1h30.6c2.1,0,3.8-1.7,3.8-3.8V35.7c0-2.1-1.7-3.8-3.8-3.8h-30.6c-2.1,0-3.8,1.7-3.8,3.8v11.5h-11.5c-2.1,0-3.8,1.7-3.8,3.8v72.7h-3.8v-3.8c0-1.9-1.4-3.5-3.3-3.8l-9.8-1.3c-1.1-4.3-2.8-8.4-5.1-12.2l6-7.9c1.2-1.5,1-3.7-0.3-5l-10.8-10.8c-1.4-1.4-3.5-1.5-5-0.3l-7.9,6c-3.8-2.2-7.9-3.9-12.2-5.1l-1.3-9.8c-0.3-1.9-1.9-3.3-3.8-3.3h-15.3c-1.9,0-3.5,1.4-3.8,3.3l-1.3,9.8c-4.3,1.1-8.4,2.8-12.2,5.1l-7.9-6c-1.5-1.2-3.7-1-5,0.3L79.8,89.7c-1.4,1.4-1.5,3.5-0.3,5l6,7.9c-2.2,3.8-3.9,7.9-5.1,12.2l-9.8,1.3c-1.9,0.3-3.3,1.9-3.3,3.8v3.8h-3.8V51c0-2.1-1.7-3.8-3.8-3.8H48.1V35.7c0-2.1-1.7-3.8-3.8-3.8H13.7c-2.1,0-3.8,1.7-3.8,3.8c0,0,0,0,0,0v30.6c0,2.1,1.7,3.8,3.8,3.8h30.6c2.1,0,3.8-1.7,3.8-3.8V54.8h7.7v68.9h-7.7v-11.5c0-2.1-1.7-3.8-3.8-3.8H13.7c-2.1,0-3.8,1.7-3.8,3.8v30.6c0,2.1,1.7,3.8,3.8,3.8h30.6c2.1,0,3.8-1.7,3.8-3.8v-11.5h7.7v68.9h-7.7v-11.5c0-2.1-1.7-3.8-3.8-3.8H13.7c-2.1,0-3.8,1.7-3.8,3.8v30.6c0,2.1,1.7,3.8,3.8,3.8h30.6c2.1,0,3.8-1.7,3.8-3.8v-11.5h11.5c2.1,0,3.8-1.7,3.8-3.8v-72.7h3.8v3.8c0,1.9,1.4,3.5,3.3,3.8l9.8,1.3c1.1,4.3,2.8,8.4,5.1,12.2l-6,7.9c-1.2,1.5-1,3.7,0.3,5l10.8,10.8c1.4,1.4,3.5,1.5,5,0.3l7.9-6c3.8,2.2,7.9,3.9,12.2,5.1l1.3,9.8c0.3,1.9,1.9,3.3,3.8,3.3h15.3c1.9,0,3.5-1.4,3.8-3.3l1.3-9.8c4.3-1.1,8.4-2.8,12.2-5.1l7.9,6c1.5,1.2,3.7,1,5-0.3l10.8-10.8c1.4-1.4,1.5-3.5,0.3-5l-6-7.9c2.2-3.8,3.9-7.9,5.1-12.2l9.8-1.3c1.9-0.3,3.3-1.9,3.3-3.8v-3.8h3.8v72.7c0,2.1,1.7,3.8,3.8,3.8h11.5v11.5c0,2.1,1.7,3.8,3.8,3.8h30.6c2.1,0,3.8-1.7,3.8-3.8v-30.6c0-2.1-1.7-3.8-3.8-3.8h-30.6c-2.1,0-3.8,1.7-3.8,3.8v11.5h-7.7v-68.9h7.7v11.5c0,2.1,1.7,3.8,3.8,3.8h30.6c2.1,0,3.8-1.7,3.8-3.8c0,0,0,0,0,0v-30.6c0-2.1-1.7-3.8-3.8-3.8h-30.6c-2.1,0-3.8,1.7-3.8,3.8v11.5h-7.7V54.8h7.7v11.5C208.9,68.4,210.6,70.1,212.7,70.1L212.7,70.1z M216.6,39.5h23v23h-23V39.5z M40.5,62.5h-23v-23h23V62.5zM40.5,139h-23v-23h23V139z M40.5,215.6h-23v-23h23V215.6z M182.1,131.9l-9.1,1.2c-1.6,0.2-2.9,1.4-3.2,3c-1.1,5.2-3.1,10.1-6.1,14.6c-0.9,1.4-0.8,3.1,0.2,4.4l5.6,7.3l-6.1,6.1l-7.3-5.6c-1.3-1-3.1-1.1-4.4-0.2c-4.4,2.9-9.4,5-14.6,6.1c-1.6,0.3-2.8,1.6-3,3.2l-1.2,9.1h-8.6L123,172c-0.2-1.6-1.4-2.9-3-3.2c-5.2-1.1-10.1-3.1-14.6-6.1c-1.4-0.9-3.1-0.8-4.4,0.2l-7.3,5.6l-6.1-6.1l5.6-7.3c1-1.3,1.1-3.1,0.2-4.4c-2.9-4.4-5-9.4-6.1-14.6c-0.3-1.6-1.6-2.8-3.2-3l-9.1-1.2v-8.6L84,122c1.6-0.2,2.9-1.4,3.2-3c1.1-5.2,3.1-10.1,6.1-14.6c0.9-1.4,0.8-3.1-0.2-4.4l-5.6-7.3l6.1-6.1l7.3,5.6c1.3,1,3.1,1.1,4.4,0.2c4.4-2.9,9.4-5,14.6-6.1c1.6-0.3,2.8-1.6,3-3.2l1.2-9.1h8.6l1.2,9.1c0.2,1.6,1.4,2.9,3,3.2c5.2,1.1,10.1,3.1,14.6,6.1c1.4,0.9,3.1,0.8,4.4-0.2l7.3-5.6l6.1,6.1l-5.6,7.3c-1,1.3-1.1,3.1-0.2,4.4c2.9,4.4,5,9.4,6.1,14.6c0.3,1.6,1.6,2.8,3.2,3l9.1,1.2V131.9z M216.6,192.6h23v23h-23V192.6z M216.6,116.1h23v23h-23V116.1z"/>
+</svg>
+</div>
+<div><h5>EA Grid</h5><p class="viewMore_white">View More</p></div><!-- </figcaption> --><!-- </figure> -->
+</div>
+</div>
+</a>
+</div>
+</div>
+<div class="col-md-2">
+<div class="row find-img-align">
+<a href="pages/07e731775ecc93f4.htm">
+<div class="tiles_homepage tiles_white">
+<div class="grid"><!-- <figure class="effect-ruby"> --><!-- <img src="./standard/assets/img/find-place1.jpg" class="img-fluid" alt="img13" /> --><!-- <figcaption> -->
+<div class="home_icon">
+<svg class="svg-icons"  version="1.1" id="Layer_1"xmlns="http://www.w3.org/2000/svg"xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 256 256" style="enable-background:new 0 0 256 256;" xml:space="preserve">.st0{fill:#2FB672;}																				</style><path id="Path_20501" class="st0" d="M242.3,152.8h-19.4v-25.1c0.1-2.5-1.7-4.6-4.2-4.7c-0.2,0-0.4,0-0.5,0h-83.8v-20.4h19.4c5.4,0.1,9.8-4.1,9.9-9.5c0-0.2,0-0.3,0-0.5V44.8c0.1-5.4-4.1-9.8-9.5-9.9c-0.2,0-0.3,0-0.5,0h-48.3c-5.4-0.1-9.8,4.1-9.9,9.5c0,0.2,0,0.3,0,0.5v48.3c-0.1,5.4,4.1,9.8,9.5,9.9c0.2,0,0.3,0,0.5,0h19.4V123H41c-2.5-0.2-4.6,1.7-4.8,4.2c0,0.2,0,0.4,0,0.6v25.1H16.8c-5.4-0.1-9.8,4.1-9.9,9.5c0,0.2,0,0.3,0,0.5v48.3c-0.1,5.4,4.1,9.8,9.5,9.9c0.2,0,0.3,0,0.5,0h48.3c5.4,0.1,9.8-4.1,9.9-9.5c0-0.2,0-0.3,0-0.5v-48.3c0.1-5.4-4.1-9.8-9.5-9.9c-0.2,0-0.3,0-0.5,0H45.7v-20.4h79.1v20.4h-19.4c-5.4-0.1-9.8,4.1-9.9,9.5c0,0.2,0,0.3,0,0.5v48.3c-0.1,5.4,4.1,9.8,9.5,9.9c0.2,0,0.3,0,0.5,0h48.3c5.4,0.1,9.8-4.1,9.9-9.5c0-0.2,0-0.3,0-0.5v-48.3c0.1-5.4-4.1-9.8-9.5-9.9c-0.2,0-0.3,0-0.5,0h-19.4v-20.4h79.1v20.4h-19.4c-5.4-0.1-9.8,4.1-9.9,9.5c0,0.2,0,0.3,0,0.5v48.3c-0.1,5.4,4.1,9.8,9.5,9.9c0.2,0,0.3,0,0.5,0h48.3c5.4,0.1,9.8-4.1,9.9-9.5c0-0.2,0-0.3,0-0.5v-48.3C252.2,157.3,247.7,152.9,242.3,152.8z M104.9,92.7V44.8c0-0.5,0-0.5,0.5-0.5h48.3c0.5,0,0.5,0,0.5,0.5v48.3c0,0.5,0,0.5-0.5,0.5L104.9,92.7C105.4,93.2,104.9,93.2,104.9,92.7z M65.6,162.8v48.3c0,0.5,0,0.5-0.5,0.5H16.8c-0.5,0-0.5,0-0.5-0.5v-48.3c0-0.5,0-0.5,0.5-0.5L65.6,162.8C65.1,162.3,65.6,162.3,65.6,162.8z M154.2,162.8v48.3c0,0.5,0,0.5-0.5,0.5h-48.3c-0.5,0-0.5,0-0.5-0.5v-48.3c0-0.5,0-0.5,0.5-0.5L154.2,162.8C153.7,162.3,154.2,162.3,154.2,162.8L154.2,162.8z M242.8,210.7C242.8,211.1,242.3,211.1,242.8,210.7l-48.8,0.5c-0.5,0-0.5,0-0.5-0.5v-47.9c0-0.5,0-0.5,0.5-0.5h48.3c0.5,0,0.5,0,0.5,0.5L242.8,210.7z"/>
+</svg>
+</div>
+<div><h5>Solution</h5><p class="viewMore">View More</p></div><!-- </figcaption> --><!-- </figure> -->
+</div>
+</div>
+</a>
+</div>
+</div>
+<div class="col-md-2">
+<div class="row find-img-align">
+<a href="pages/fdd5018459bc3c6a.htm">
+<div class="tiles_homepage tiles_blue">
+<div class="grid"><!-- <figure class="effect-ruby"> --><!-- <img src="./standard/assets/img/find-place2.jpg" class="img-fluid" alt="img13" /> --><!-- <figcaption> -->
+<div class="home_icon">
+<svg class="svg-icons" version="1.1" id="Layer_3" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"viewBox="0 0 256 256" style="enable-background:new 0 0 256 256;" xml:space="preserve"><style type="text/css">.st0{fill:#2FB672;}</style><path id="Path_15" class="st0" d="M66.6,108.4v-7.8c-19.4,0-35.2-15.8-35.2-35.2h-7.8C23.6,89.2,42.9,108.4,66.6,108.4L66.6,108.4z"	/><path id="Path_16" class="st0" d="M66.6,92.8C81.7,92.8,94,80.5,94,65.4S81.7,38,66.6,38c-15.1,0-27.4,12.3-27.4,27.4c0,0,0,0,0,0C39.3,80.5,51.5,92.8,66.6,92.8z M66.6,45.9c10.8,0,19.6,8.8,19.6,19.6c0,10.8-8.8,19.6-19.6,19.6c-10.8,0-19.6-8.8-19.6-19.6C47.1,54.6,55.8,45.9,66.6,45.9z"/><path id="Path_17" class="st0" d="M66.6,77.1c6.5,0,11.7-5.3,11.7-11.7c0-6.5-5.3-11.7-11.7-11.7c-6.5,0-11.7,5.2-11.7,11.7C54.9,71.9,60.1,77.1,66.6,77.1L66.6,77.1z M66.6,61.5c2.2,0,3.9,1.7,3.9,3.9c0,2.2-1.7,3.9-3.9,3.9c-2.2,0-3.9-1.7-3.9-3.9C62.7,63.2,64.5,61.5,66.6,61.5z"/><path id="Path_18" class="st0" d="M250.4,193.3v-29l-10.6-3.7c-1.2-3.9-2.7-7.6-4.6-11.2l4.9-10.1l-3.8-3.8c-2.1-2.6-4.4-5.1-6.8-7.5c-2.7-2.7-5.8-5.7-7.9-7.6l-26-22.8l2.2-6.7l9.1,4.5l15.1-15.1l-4.5-9.1l9.6-3.2V46.9l-9.6-3.2l4.5-9.1l-15.1-15.1l-9.1,4.5l-3.2-9.6h-21.3l-3.2,9.6l-9.1-4.5l-15,15.1l4.5,9.1l-9.6,3.2v3l-32.2-28.1c-11.1-9.7-25.3-15-40-15v0.1c-0.7,0-1.4-0.1-2.1-0.1C34.3,6.8,8,33,7.9,65.4c0,0.7,0.1,1.4,0.1,2.1H7.9c0,14.7,5.3,28.9,15,40l28.2,32.2h-3l-3.2,9.6l-9.1-4.5l-15.1,15.1l4.5,9.1l-9.6,3.2v21.3l9.6,3.2l-4.5,9.1l15.1,15.1l9.1-4.5l3.2,9.6h21.3l3.2-9.6l9.1,4.5l15.1-15.1l-4.5-9.1l6.7-2.2l22.7,25.9c1.8,2,4.4,4.9,7,7.4c2.6,2.6,5.3,5.1,8.1,7.4l3.8,3.8l10.1-4.9c3.6,1.9,7.3,3.5,11.2,4.6l3.7,10.6h29l3.7-10.6c3.9-1.2,7.6-2.7,11.2-4.6l10.1,4.9l20.5-20.5l-4.9-10.1c1.9-3.6,3.5-7.3,4.6-11.2L250.4,193.3z M124.9,149.4c-1.9,3.6-3.5,7.3-4.6,11.2l-10.6,3.7v29l10.6,3.7c1.2,3.9,2.7,7.6,4.6,11.2l-1.2,2.4l-79.8-91.2c29.9,12.6,64.3-1.4,76.8-31.3c6.1-14.6,6.1-31,0-45.6l91.3,79.8l-2.5,1.2c-3.6-1.9-7.3-3.5-11.2-4.6l-3.7-10.6h-29l-3.7,10.6c-3.9,1.2-7.6,2.7-11.2,4.6l-10.1-4.9L120,139.3L124.9,149.4z M148.7,52.6l9-3l0.7-1.7c0.2-0.5,0.4-1,0.6-1.5l0.8-1.7l-4.2-8.5l7.1-7.1l8.5,4.2l1.7-0.8c0.5-0.2,1-0.4,1.5-0.6l1.7-0.7l3-9h10l3,9l1.7,0.7c0.5,0.2,1,0.4,1.5,0.6l1.7,0.8l8.5-4.2l7.1,7.1l-4.2,8.5l0.8,1.7c0.2,0.5,0.4,1,0.6,1.5l0.7,1.7l9,3v10l-9,3l-0.7,1.7c-0.2,0.5-0.4,1-0.6,1.5l-0.8,1.7l4.2,8.5l-7.1,7.1l-8.5-4.2l-1.7,0.8c-0.5,0.2-1,0.4-1.5,0.6l-1.7,0.7l-2.8,8.3l-40.4-35.4L148.7,52.6z M66.6,14.5c28.1,0,50.8,22.8,50.8,50.8s-22.8,50.8-50.8,50.8c-28.1,0-50.8-22.8-50.8-50.8v0C15.8,37.3,38.5,14.6,66.6,14.5z M85,190.7l-0.7,1.7c-0.2,0.5-0.4,1-0.6,1.5l-0.8,1.7l4.2,8.5l-7.1,7.1l-8.5-4.2l-1.7,0.8c-0.5,0.2-1,0.4-1.5,0.6l-1.7,0.7l-3,9h-10l-3-9l-1.7-0.7c-0.5-0.2-1-0.4-1.5-0.6l-1.7-0.8l-8.5,4.2l-7.1-7.1l4.2-8.5l-0.8-1.7c-0.2-0.5-0.4-1-0.6-1.5l-0.7-1.7l-9-3v-10l9-3l0.7-1.7c0.2-0.5,0.4-1,0.6-1.5l0.8-1.7l-4.2-8.5l7.1-7.1l8.5,4.2l1.7-0.8c0.5-0.2,1-0.4,1.5-0.6l1.7-0.7l3-9H58l35.4,40.4L85,190.7z M233.4,191l-0.5,2c-1.2,4.6-3.1,9.1-5.5,13.2l-1,1.8l4.2,8.8L218,229.4l-8.8-4.2l-1.8,1c-4.1,2.4-8.6,4.2-13.2,5.5l-2,0.5l-3.2,9.2h-17.9l-3.2-9.2l-2-0.5c-4.6-1.2-9.1-3.1-13.2-5.5l-1.8-1l-8.8,4.2l-12.7-12.7l4.2-8.8l-1-1.8c-2.4-4.1-4.2-8.6-5.5-13.2l-0.5-2l-9.2-3.2v-17.9l9.2-3.2l0.5-2c1.2-4.6,3.1-9.1,5.5-13.2l1-1.8l-4.2-8.8l12.7-12.7l8.8,4.2l1.8-1c4.1-2.4,8.6-4.2,13.2-5.5l2-0.5l3.2-9.2H189l3.2,9.2l2,0.5c4.6,1.2,9.1,3.1,13.2,5.5l1.8,1l8.8-4.2l12.7,12.7l-4.2,8.8l1,1.8c2.4,4.1,4.2,8.6,5.5,13.2l0.5,2l9.2,3.2v17.9L233.4,191z"/><path id="Path_19" class="st0" d="M180,139.7c-21.6,0-39.1,17.5-39.1,39.1s17.5,39.1,39.1,39.1c21.6,0,39.1-17.5,39.1-39.1C219.1,157.2,201.6,139.7,180,139.7z M180,210.1c-17.3,0-31.3-14-31.3-31.3s14-31.3,31.3-31.3s31.3,14,31.3,31.3C211.3,196.1,197.3,210.1,180,210.1L180,210.1z"/><path id="Path_20" class="st0" d="M180,155.3c-13,0-23.5,10.5-23.5,23.5s10.5,23.5,23.5,23.5s23.5-10.5,23.5-23.5l0,0C203.5,165.9,193,155.4,180,155.3z M180,194.5c-8.6,0-15.6-7-15.6-15.6s7-15.6,15.6-15.6c8.6,0,15.6,7,15.6,15.6v0C195.7,187.4,188.7,194.4,180,194.5z"/><path id="Path_21" class="st0" d="M203.5,57.6c0-10.8-8.8-19.6-19.6-19.6c-10.8,0-19.6,8.8-19.6,19.6s8.8,19.6,19.6,19.6l0,0C194.7,77.1,203.5,68.4,203.5,57.6z M172.2,57.6c0-6.5,5.3-11.7,11.7-11.7c6.5,0,11.7,5.3,11.7,11.7c0,6.5-5.3,11.7-11.7,11.7C177.5,69.3,172.2,64,172.2,57.6z"/><path id="Path_22" class="st0" d="M39.2,182.7c0,10.8,8.8,19.6,19.6,19.6s19.6-8.8,19.6-19.6c0-10.8-8.8-19.6-19.6-19.6l0,0C48,163.2,39.2,171.9,39.2,182.7z M70.5,182.7c0,6.5-5.3,11.7-11.7,11.7c-6.5,0-11.7-5.3-11.7-11.7c0-6.5,5.3-11.7,11.7-11.7C65.3,171,70.5,176.2,70.5,182.7z"/>
+</svg>
+</div>
+<div>
+<h5>EA Domains</h5>
+<p class="viewMore_white">View More</p>
+</div><!-- </figcaption> --><!-- </figure> -->
+</div>
+</div>
+</a>
+</div>
+</div>
+</div>
+<div class="row find-img-align">
+<div class="col-md-2">
+<div class="row find-img-align">
+<a href="pages/5446555d5f88c32e.htm">
+<div class="tiles_homepage tiles_blue">
+<div class="grid"><!-- <figure class="effect-ruby"> --><!-- <img src="./standard/assets/img/find-place1.jpg" class="img-fluid" alt="img13" /> --><!-- <figcaption> -->
+<div class="home_icon">
+<svg width="50px" height="50px" class="svg-icons" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 256 256" style="enable-background:new 0 0 256 256;" xml:space="preserve"><style type="text/css">.st0{fill:#2FB672;}</style>		<!-- <path id="Path_23050" class="st0"  d="m315.808594 33.949219h-80.355469c-9.105469-20.632813-29.535156-33.949219-52.089844-33.949219-22.558593 0-42.988281 13.316406-52.09375 33.949219h-80.359375c-30.3125.035156-54.875 24.601562-54.910156 54.914062v356.222657c.035156 30.3125 24.597656 54.878906 54.910156 54.914062h264.898438c30.3125-.035156 54.878906-24.601562 54.914062-54.914062v-356.222657c-.035156-30.3125-24.601562-54.878906-54.914062-54.914062zm-175.496094 25c5.867188 0 10.945312-4.082031 12.207031-9.820313 3.070313-13.976562 16.042969-24.128906 30.84375-24.128906s27.769531 10.152344 30.839844 24.128906c1.257813 5.738282 6.335937 9.820313 12.210937 9.820313h24.785157v10.96875c-.019531 16.511719-13.398438 29.890625-29.910157 29.910156h-75.855468c-16.515625-.019531-29.894532-13.398437-29.914063-29.910156v-10.96875zm205.410156 386.136719c-.015625 16.515624-13.398437 29.898437-29.914062 29.914062h-264.898438c-16.511718-.015625-29.890625-13.398438-29.910156-29.914062v-356.222657c.019531-16.515625 13.398438-29.894531 29.910156-29.914062h39.609375v10.96875c.035157 30.3125 24.601563 54.875 54.914063 54.910156h75.855468c30.3125-.035156 54.875-24.597656 54.910157-54.910156v-10.96875h39.609375c16.515625.019531 29.894531 13.398437 29.914062 29.914062zm0 0"/> --><!-- <path id="Path_23051" class="st0"   d="m245.226562 230.957031-82.0625 80.125-41.671874-40.675781c-4.902344-4.796875-12.753907-4.738281-17.59375.121094-4.835938 4.863281-4.855469 12.714844-.039063 17.597656l.167969.164062 50.398437 49.210938c4.859375 4.742188 12.613281 4.742188 17.46875 0l90.792969-88.648438c4.910156-4.828124 4.988281-12.714843.183594-17.640624-4.8125-4.925782-12.695313-5.035157-17.644532-.246094zm0 0"/> --><!-- <path id="Path_15" class="st0" d="M66.6,108.4v-7.8c-19.4,0-35.2-15.8-35.2-35.2h-7.8C23.6,89.2,42.9,108.4,66.6,108.4L66.6,108.4z"	/> --><!-- <path id="Path_16" class="st0" d="M66.6,92.8C81.7,92.8,94,80.5,94,65.4S81.7,38,66.6,38c-15.1,0-27.4,12.3-27.4,27.4c0,0,0,0,0,0C39.3,80.5,51.5,92.8,66.6,92.8z M66.6,45.9c10.8,0,19.6,8.8,19.6,19.6c0,10.8-8.8,19.6-19.6,19.6c-10.8,0-19.6-8.8-19.6-19.6C47.1,54.6,55.8,45.9,66.6,45.9z"/> --><!-- <path id="Path_17" class="st0" d="M66.6,77.1c6.5,0,11.7-5.3,11.7-11.7c0-6.5-5.3-11.7-11.7-11.7c-6.5,0-11.7,5.2-11.7,11.7C54.9,71.9,60.1,77.1,66.6,77.1L66.6,77.1z M66.6,61.5c2.2,0,3.9,1.7,3.9,3.9c0,2.2-1.7,3.9-3.9,3.9c-2.2,0-3.9-1.7-3.9-3.9C62.7,63.2,64.5,61.5,66.6,61.5z"/> --><!-- <path id="Path_18" class="st0" d="M250.4,193.3v-29l-10.6-3.7c-1.2-3.9-2.7-7.6-4.6-11.2l4.9-10.1l-3.8-3.8c-2.1-2.6-4.4-5.1-6.8-7.5c-2.7-2.7-5.8-5.7-7.9-7.6l-26-22.8l2.2-6.7l9.1,4.5l15.1-15.1l-4.5-9.1l9.6-3.2V46.9l-9.6-3.2l4.5-9.1l-15.1-15.1l-9.1,4.5l-3.2-9.6h-21.3l-3.2,9.6l-9.1-4.5l-15,15.1l4.5,9.1l-9.6,3.2v3l-32.2-28.1c-11.1-9.7-25.3-15-40-15v0.1c-0.7,0-1.4-0.1-2.1-0.1C34.3,6.8,8,33,7.9,65.4c0,0.7,0.1,1.4,0.1,2.1H7.9c0,14.7,5.3,28.9,15,40l28.2,32.2h-3l-3.2,9.6l-9.1-4.5l-15.1,15.1l4.5,9.1l-9.6,3.2v21.3l9.6,3.2l-4.5,9.1l15.1,15.1l9.1-4.5l3.2,9.6h21.3l3.2-9.6l9.1,4.5l15.1-15.1l-4.5-9.1l6.7-2.2l22.7,25.9c1.8,2,4.4,4.9,7,7.4c2.6,2.6,5.3,5.1,8.1,7.4l3.8,3.8l10.1-4.9c3.6,1.9,7.3,3.5,11.2,4.6l3.7,10.6h29l3.7-10.6c3.9-1.2,7.6-2.7,11.2-4.6l10.1,4.9l20.5-20.5l-4.9-10.1c1.9-3.6,3.5-7.3,4.6-11.2L250.4,193.3z M124.9,149.4c-1.9,3.6-3.5,7.3-4.6,11.2l-10.6,3.7v29l10.6,3.7c1.2,3.9,2.7,7.6,4.6,11.2l-1.2,2.4l-79.8-91.2c29.9,12.6,64.3-1.4,76.8-31.3c6.1-14.6,6.1-31,0-45.6l91.3,79.8l-2.5,1.2c-3.6-1.9-7.3-3.5-11.2-4.6l-3.7-10.6h-29l-3.7,10.6c-3.9,1.2-7.6,2.7-11.2,4.6l-10.1-4.9L120,139.3L124.9,149.4z M148.7,52.6l9-3l0.7-1.7c0.2-0.5,0.4-1,0.6-1.5l0.8-1.7l-4.2-8.5l7.1-7.1l8.5,4.2l1.7-0.8c0.5-0.2,1-0.4,1.5-0.6l1.7-0.7l3-9h10l3,9l1.7,0.7c0.5,0.2,1,0.4,1.5,0.6l1.7,0.8l8.5-4.2l7.1,7.1l-4.2,8.5l0.8,1.7c0.2,0.5,0.4,1,0.6,1.5l0.7,1.7l9,3v10l-9,3l-0.7,1.7c-0.2,0.5-0.4,1-0.6,1.5l-0.8,1.7l4.2,8.5l-7.1,7.1l-8.5-4.2l-1.7,0.8c-0.5,0.2-1,0.4-1.5,0.6l-1.7,0.7l-2.8,8.3l-40.4-35.4L148.7,52.6z M66.6,14.5c28.1,0,50.8,22.8,50.8,50.8s-22.8,50.8-50.8,50.8c-28.1,0-50.8-22.8-50.8-50.8v0C15.8,37.3,38.5,14.6,66.6,14.5z M85,190.7l-0.7,1.7c-0.2,0.5-0.4,1-0.6,1.5l-0.8,1.7l4.2,8.5l-7.1,7.1l-8.5-4.2l-1.7,0.8c-0.5,0.2-1,0.4-1.5,0.6l-1.7,0.7l-3,9h-10l-3-9l-1.7-0.7c-0.5-0.2-1-0.4-1.5-0.6l-1.7-0.8l-8.5,4.2l-7.1-7.1l4.2-8.5l-0.8-1.7c-0.2-0.5-0.4-1-0.6-1.5l-0.7-1.7l-9-3v-10l9-3l0.7-1.7c0.2-0.5,0.4-1,0.6-1.5l0.8-1.7l-4.2-8.5l7.1-7.1l8.5,4.2l1.7-0.8c0.5-0.2,1-0.4,1.5-0.6l1.7-0.7l3-9H58l35.4,40.4L85,190.7z M233.4,191l-0.5,2c-1.2,4.6-3.1,9.1-5.5,13.2l-1,1.8l4.2,8.8L218,229.4l-8.8-4.2l-1.8,1c-4.1,2.4-8.6,4.2-13.2,5.5l-2,0.5l-3.2,9.2h-17.9l-3.2-9.2l-2-0.5c-4.6-1.2-9.1-3.1-13.2-5.5l-1.8-1l-8.8,4.2l-12.7-12.7l4.2-8.8l-1-1.8c-2.4-4.1-4.2-8.6-5.5-13.2l-0.5-2l-9.2-3.2v-17.9l9.2-3.2l0.5-2c1.2-4.6,3.1-9.1,5.5-13.2l1-1.8l-4.2-8.8l12.7-12.7l8.8,4.2l1.8-1c4.1-2.4,8.6-4.2,13.2-5.5l2-0.5l3.2-9.2H189l3.2,9.2l2,0.5c4.6,1.2,9.1,3.1,13.2,5.5l1.8,1l8.8-4.2l12.7,12.7l-4.2,8.8l1,1.8c2.4,4.1,4.2,8.6,5.5,13.2l0.5,2l9.2,3.2v17.9L233.4,191z"/> --><!-- <path id="Path_19" class="st0" d="M180,139.7c-21.6,0-39.1,17.5-39.1,39.1s17.5,39.1,39.1,39.1c21.6,0,39.1-17.5,39.1-39.1C219.1,157.2,201.6,139.7,180,139.7z M180,210.1c-17.3,0-31.3-14-31.3-31.3s14-31.3,31.3-31.3s31.3,14,31.3,31.3C211.3,196.1,197.3,210.1,180,210.1L180,210.1z"/> --><!-- <path id="Path_20" class="st0" d="M180,155.3c-13,0-23.5,10.5-23.5,23.5s10.5,23.5,23.5,23.5s23.5-10.5,23.5-23.5l0,0C203.5,165.9,193,155.4,180,155.3z M180,194.5c-8.6,0-15.6-7-15.6-15.6s7-15.6,15.6-15.6c8.6,0,15.6,7,15.6,15.6v0C195.7,187.4,188.7,194.4,180,194.5z"/> --><!-- <path id="Path_21" class="st0" d="M203.5,57.6c0-10.8-8.8-19.6-19.6-19.6c-10.8,0-19.6,8.8-19.6,19.6s8.8,19.6,19.6,19.6l0,0C194.7,77.1,203.5,68.4,203.5,57.6z M172.2,57.6c0-6.5,5.3-11.7,11.7-11.7c6.5,0,11.7,5.3,11.7,11.7c0,6.5-5.3,11.7-11.7,11.7C177.5,69.3,172.2,64,172.2,57.6z"/> --><!-- <path id="Path_22" class="st0" d="M39.2,182.7c0,10.8,8.8,19.6,19.6,19.6s19.6-8.8,19.6-19.6c0-10.8-8.8-19.6-19.6-19.6l0,0C48,163.2,39.2,171.9,39.2,182.7z M70.5,182.7c0,6.5-5.3,11.7-11.7,11.7c-6.5,0-11.7-5.3-11.7-11.7c0-6.5,5.3-11.7,11.7-11.7C65.3,171,70.5,176.2,70.5,182.7z"/> --><g id="Group_58300" transform="translate(0.386 -0.237)"><g id="Group_900" transform="translate(0 0)"><g><g id="Group_800" transform="translate(0 0)" class="st0"><path id="Path_2300" class="st1" d="M246.1,111.2c-2.5-3.8-6.5-6.6-11-7.6c4.6-8.7,1.2-19.5-7.5-24.1c-1.4-0.7-2.9-1.3-4.4-1.6c4.6-8.7,1.2-19.5-7.5-24.1c-1.4-0.7-2.9-1.3-4.4-1.6c4.6-8.7,1.2-19.5-7.5-24.1c-5.8-3-12.7-2.7-18.2,0.9l-17.8,11.8c-9.5-4.8-19.6-8.2-30-10.1c-3.3-5-7.1-9.7-11.4-13.8l-7.3-7.1c-6.4-6.2-16.5-6-22.7,0.3c-5.3,5.4-6,13.8-1.9,20.1c0.2,0.3,0.4,0.6,0.6,0.9C34.6,43.3-4.5,102.4,7.8,163c12.3,60.6,71.4,99.7,132,87.4c38.2-7.8,69.7-34.9,82.9-71.6c0.7-2-0.3-4.2-2.3-4.9c-2-0.7-4.2,0.3-4.9,2.3c-19.2,53.2-77.3,81.3-131,63.5l31.3-20.7l0,0l26-17.2l0,0c4.8-3.2,6.2-9.7,3-14.5c0,0,0,0,0,0l-0.3-0.5l5-3.4c3.6-2.4,8-3.3,12.2-2.6c6.2,1,12.5-0.4,17.7-3.8l41.9-27.8c-0.3,3.6-0.8,7.2-1.4,10.8c-0.4,2.1,1,4.1,3.1,4.5c0.2,0,0.5,0.1,0.7,0.1c1.9,0,3.4-1.3,3.8-3.1c1.1-5.8,1.7-11.6,1.8-17.5l11.8-7.8C249.2,130.5,251.5,119.4,246.1,111.2C246.1,111.2,246.1,111.2,246.1,111.2L246.1,111.2z M160.5,45.8l-11.8,7.8l-2.3-6.2c-1-2.6-2.1-5.2-3.3-7.6C149.1,41.2,154.9,43.3,160.5,45.8L160.5,45.8z M38.7,72.5c15.6-18,36.8-30.1,60.2-34.3c3.8,9.1,4.6,19.2,2.4,28.8l-9.4,40.5c-3.5-3.7-9.2-4.4-13.4-1.6l-26.6,17.6l0,0l-38.3,25.4c-0.2-2.7-0.3-5.4-0.3-8.1C13.2,115.6,22.3,91.4,38.7,72.5L38.7,72.5z M138.8,193.5c-0.1,0.7-0.6,1.4-1.2,1.8l0,0l-22.8,15.1l-42.4-63.3c-1.2-1.8-3.6-2.2-5.3-1c-1.8,1.2-2.2,3.6-1,5.3l42.4,63.2l-32.6,21.6c-32.5-14.2-55.5-43.9-61.2-78.9L52.9,132l4.4,6.6c0.7,1.1,1.9,1.7,3.2,1.7c0.8,0,1.5-0.2,2.1-0.6c1.8-1.2,2.2-3.6,1.1-5.3l-4.4-6.5l23.3-15.4c1.3-0.9,3-0.5,3.9,0.8c0,0,0,0,0,0l51.8,78.3C138.8,192,138.9,192.7,138.8,193.5L138.8,193.5z M241.2,123.1c-0.5,2.6-2.1,5-4.3,6.4l-13.5,9l0,0l-48.2,31.9c-3.6,2.4-8,3.3-12.2,2.6c-6.2-1-12.5,0.4-17.7,3.8l-5,3.4l-42.5-64.1l11-47.4c2.8-12.2,1.4-25-4-36.3c0-0.1-0.1-0.2-0.2-0.3c-1-2.1-2.2-4.2-3.5-6.2c-2.5-3.9-1.4-9.1,2.6-11.6c3.2-2.1,7.5-1.7,10.3,1l7.3,7.1c8,7.8,14.1,17.2,18,27.6l4,10.8v0.1l0,0.1c0,0.1,0.1,0.1,0.1,0.2c0.1,0.2,0.2,0.3,0.3,0.5c1.2,1.8,3.6,2.3,5.3,1.1l41-27.2c4.6-3.2,10.9-2.1,14.1,2.5c3.2,4.6,2.1,10.9-2.5,14.1c-0.1,0.1-0.3,0.2-0.5,0.3l-3.6,2.4l0,0l-7.9,5.3h0l-0.1,0.1c-1.7,1.2-2.1,3.7-0.9,5.4c1.2,1.7,3.5,2.1,5.3,0.9l7.9-5.3c4.7-3.1,11-1.8,14.1,2.9c3.1,4.7,1.8,11-2.9,14.1l0,0l-11.5,7.6c-1.8,1.2-2.3,3.6-1.1,5.3c1.2,1.8,3.6,2.3,5.3,1.1l1.8-1.2l6.2-4.1c4.6-3.2,10.9-2,14.1,2.6c3.2,4.6,2,10.9-2.6,14.1c-0.1,0.1-0.2,0.1-0.3,0.2l-5.7,3.8l-0.1,0.1l-5.7,3.8c-1.8,1.2-2.3,3.6-1.1,5.3c1.2,1.8,3.6,2.3,5.3,1.1l0,0l1.8-1.2l0,0l6.2-4.1c4.7-3.1,11-1.8,14.1,2.9C241.2,117.7,241.7,120.5,241.2,123.1L241.2,123.1z"/></g></g></g></g>
+</svg>
+</div>
+<div><h5>Outcome Centric Metamodel</h5><p class="viewMore_white">View More</p></div>
+</div>
+</div>
+</a>
+</div>									
+</div>
+</div>
+</div>
+</section>
+<div class="container home_tiles_container">
+<table style="border-style:none;  width:85% ;margin-left:10%; margin-right:5%;">
+<tr>
+<td style="width:45%; font-size:16px;color:#22334C;">
+<h4>Disclaimer</h4>
+<ul style="list-style-type: circle; padding:20px;">
+<li style="padding-bottom: 1.0em;">This website is a <b>work in progress</b> and is intended for education purposes only.</li>
+<li style="padding-bottom: 1.0em;">The enterprise architecture models and methodologies presented on this website are subject to change without notice and may not reflect the latest HOPEX product releases.</li>
+<li>By using this website, you acknowledge and agree to the above disclaimer and understand that the content presented on this website is not the official documentation of HOPEX solutions.</li>
+</ul>
+</td>
+<td>
+<a href="resources/home/home-animation.pdf" target="_blank"><img src="resources/home/home-animation.gif" style="width:auto; height:350px"></a>
+</td>
+</tr>
+</table>             
+</div>
+</body></html>

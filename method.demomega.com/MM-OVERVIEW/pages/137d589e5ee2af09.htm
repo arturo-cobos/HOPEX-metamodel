@@ -1,0 +1,481 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="keywords" content="">
+<meta name="description" content="">    
+<LINK REL="icon" HREF="../standard/assets/img/favicon.ico">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/bootstrap.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nav.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/eaportal.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/font-awesome.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/animate.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/datatables.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/Chart.min.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/grid.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/nae.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/custom.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/chosen.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/prism.css">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../standard/assets/css/d3-collapsible-tree.css">
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery.dataTables.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jsTreeStyle.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../standard/assets/css/jquery-ui.theme.css" media="screen" />
+<script type="text/javascript" src="../standard/assets/js/jquery-3.2.1.min.js" ></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-ui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.dataTables.columnFilter.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3-force.v2.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.gui.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.search.js"></script> 
+<script type="text/javascript" src="../standard/assets/js/jquery.muk.util.js"></script>
+<script type="text/javascript" src="../standard/assets/js/concept-graph2.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.layout.js"></script>
+<script type="text/javascript" src="../standard/assets/js/d3.min.js"></script>
+<script type="text/javascript" src="../standard/assets/js/jquery-2.1.1.min.js"></script>
+<script src="../standard/assets/js/ws_zoomtemplate_firefox.js"></script>
+<script src="../standard/assets/js/bootstrap.min.js"></script>
+<script src="../standard/assets/js/datatables.min.js"></script>
+<script src="../standard/assets/js/moment.min.js"></script>
+<script src="../standard/assets/js/datetime-moment.js"></script>
+<script src="../standard/assets/js/chartjs.min.js"></script>
+<script src="../standard/assets/js/searchindexcontent.json"></script>
+<script src="../standard/assets/js/anls.js"></script>
+<script src="../../../cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script src="../standard/assets/js/gauge.js"></script> 
+<script src="../standard/assets/js/domesticApi.js"></script> 
+<script src="../standard/assets/js/piecelabel.js"></script>
+<script src="../standard/assets/js/popper.min.js"></script>
+<script src="../standard/assets/js/custom.js"></script>
+<script src="../standard/assets/js/chosen.jquery.js"></script>
+<script src="../standard/assets/js/prism.js"></script>
+<script src="../standard/assets/js/init-chosen.js"></script>
+<script src="../standard/assets/js/chart-data-flow.js"></script>
+<script src="../standard/assets/js/chart-data-gantt.js"></script>
+<script type="module" src="../standard/assets/js/Fuse.esm.min.js"></script>
+<script type="module">
+import Fuse from '../standard/assets/js/Fuse.esm.min.js';
+$(document).ready(function () {
+console.log('getjson');
+window.$.getJSON('../standard/assets/js/searchindexcontent.json', function (response) {
+console.log('getjson ok');
+var isIndex = "";
+var url = window.location.pathname;
+var filename = url.substring(url.lastIndexOf('/')+1);
+if( filename.includes("index") || filename === "" ){
+isIndex = "pages/";
+} else {
+isIndex = "";
+}
+const fuse = new Fuse(response, {
+keys: ['title','text'],
+shouldSort: true,
+includeMatches : true,
+findAllMatches : true
+});
+$('#search-fuse').on('keyup', function () {
+let result = fuse.search($(this).val());
+console.log(result);
+let resultdiv = $('div.searchresults-fuse');
+if (result.length === 0) {
+resultdiv.hide();
+} else {
+resultdiv.empty();
+resultdiv.append('<table class="table-search" width="100%" cellspacing="0"><thead ><tr><th>Name</th><th>Object Type</th><th>Modification date</th></tr></thead><tbody>');
+
+for (let obj in result.slice(0,10)) {
+
+let searchObj = '<tr><td><a href="./'+ isIndex + result[obj].item.url + '">' + result[obj].item.title +'</a></td><td>' + result[obj].item.ObjectType + '</td><td>' + result[obj].item.ModificationDate + '</td></tr>' ;
+
+
+resultdiv.find('tbody').append(searchObj);
+}
+resultdiv.append('</tbody></table>');
+resultdiv.show();
+}
+});
+});
+});
+</script>
+<title>HOPEX Metamodel Overview (Beta Version)</title>
+</head>
+<nav class="navbar navbar-expand-md navbar-dark  navbar-mega"><!-- Brand --><!--<a class="navbar-brand" href="#">Navbar</a>--><a class="" href="../index.htm"><img class="logo-mega" src="../standard/assets/img/logo.png"  alt="">(Beta Version)</a><!-- Toggler/collapsibe Button --><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><!-- Navbar links -->
+<div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsibleNavbar"><div class="col-sm-auto col-md-auto col-lg-5"></div>
+<div class="col-sm-auto">
+<ul class="navbar-nav">      
+<li><a class="dropdown-item" href="ad30ce115ebf7e90.htm">EA Grid</a></li> 
+<li><a class="dropdown-item" href="fdd5018459bc3c6a.htm">EA Domains</a></li> 
+<li><a class="dropdown-item" href="07e731775ecc93f4.htm">Solutions</a></li> 
+<li><a class="dropdown-item" href="c5dfc62c54810c2c.htm">Glossary</a></li> 
+<li class="nav-item dropdown mx-1">
+<a class="nav-link" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</a>
+<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<li><a class="dropdown-item" href="5446555d5f88c32e.htm">Outcome Driven Metamodel</a></li> 
+<li><a class="dropdown-item" href="e1ccfc295f8f7b90.htm">Playbooks</a></li> 
+<li><a class="dropdown-item" href="42bc992862d20ea7.htm">Framework Mappings</a></li> 
+<li><a class="dropdown-item" href="e93aebb35fa20550.htm">Metamodel Patterns</a></li> 
+<li><a class="dropdown-item" href="d599fe87602b2b85.htm">References</a></li> 
+<li><a class="dropdown-item" href="333f3a7f5dde11de.htm">Legend</a></li> 
+</ul>									                                            
+</li>
+</ul>
+</div>
+<div class="col-sm-auto"><a class="nav-link search" href="#" onclick=showHideSearch("search-section-fuse")><i class="fa fa-search mr-1 form-control-feedback"></i></a></div>
+</div>
+</nav>
+<div id="search-section-fuse" style="display:none">>
+<div class="search_header"><span class="closesearch">&times;</span>
+<nav class="breadcrumb">
+<a class="breadcrumb-item" href="../index.htm">Home </a> 
+<span class="breadcrumb-item active">Search</span> 
+</nav>
+</div>
+<input id="search-fuse" placeholder="Search..."  name="q" onfocus="this.value=''" type="search">
+<div class="searchresults-fuse"></div>
+</div><button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button><script>function showHideSearch(elementId) {var contentDivs = document.getElementsByClassName('content');var footerDivs = document.getElementsByClassName('footer'); var containerDivs = document.getElementsByClassName('container');var containerfluidDivs = document.getElementsByClassName('container-fluid');var x = document.getElementById(elementId);if (x.style.display === "none") {x.style.display = "block";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "none";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "none";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "none";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "none";}} else {x.style.display = "none";for( i=0; i< contentDivs.length; i++ ) { var contentDiv = contentDivs[i];contentDiv.style.display = "block";}for( i=0; i< containerfluidDivs.length; i++ ) { var containerfluidDiv = containerfluidDivs[i];containerfluidDiv.style.display = "block";}for( i=0; i< containerDivs.length; i++ ) { var containerDiv = containerDivs[i];containerDiv.style.display = "block";}for( i=0; i< footerDivs.length; i++ ) { var footerDiv = footerDivs[i];footerDiv.style.display = "block";}}} ;<!-- END WIDGET DRILL DOWN --></script><script>$(document).ready(function() {$(window).scroll(function() {if ($(this).scrollTop() > 100) {$('.scrollup').fadeIn();} else {$('.scrollup').fadeOut();}});$('.scrollup').click(function() {$("html, body").animate({scrollTop: 0}, 600);return false;});});</script><script>
+var modal = document.getElementById("search-section-fuse");
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = "none";
+}
+}
+$(document).on('click', '.closesearch', function() {
+showHideSearch("search-section-fuse");
+
+
+
+
+
+});</script><div class="container-fluid col-lg-11"><nav class="breadcrumb"><a class="breadcrumb-item" href="../index.htm">Home</a> <span class="breadcrumb-item active">
+<a  href="c5dfc62c54810c2c.htm" target="_top">Dictionary of HOPEX concepts</a>&nbsp;/&nbsp;Hardware Asset Management</span></nav></div>
+<div class="container-fluid col-lg-11 content">
+<section class="fadeInDown animated"><a href="#idt" class="btn btn-d">DEFINITION</a> <a href="#grf" class="btn btn-d">CONCEPT GRAPH</a> <a href="#des" class="btn btn-d">CONCEPT DESCRIPTIONS</a> 
+</section>
+<a class="object-section-anchor" id="idt"></a>
+<section class="object-section">
+<h4>CONCEPT DOMAIN - Hardware Asset Management</h4><hr class="sectionbreak" /><table class="table table-vertical-headers table-set-col-width"><tr><th>Description</th><td class="description-text"><div></div></td></tr><tr><th>Dictionary</th><td><img src="../standard/dicsubjectarea.ico.gif"/>&nbsp;
+<a  href="c5dfc62c54810c2c.htm" target="_top">Dictionary of HOPEX concepts</a></td></tr><tr><th>Parent Domain</th><td><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="f8e671d5621feded.htm" target="_top">Business System ArcDevOps</a>&nbsp;</td></tr>
+<tr><th>Domain dependencies</th><td><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="c2dbd7985b02607c.htm" target="_top">EA Module - Enterprise Capabilites</a>&nbsp;<br/><img src="../standard/dic_graph.ico.gif"/>&nbsp;
+<a  href="c30bf38f5a5da645.htm" target="_top">Hardware System ArcDevOps</a>&nbsp;</td></tr></table></section>
+<a class="object-section-anchor" id="grf"></a>
+<section class="object-section">
+<h4>DOMAIN CONCEPT GRAPH</h4>
+<hr class="sectionbreak" />
+<a href="#" class="btn btn-d" value="Relationship1" onclick="showDiagOnClick(this)">Diagram</a>
+<a href="#" class="btn btn-d" value="Relationship2" onclick="showDiagOnClick(this)">Graph</a>
+<div class="Relationship" id="Relationship1">
+
+<map  name="137D58D65EE2AFE7">
+  <area  href=#OBMK9BB4A184626A922C shape="polygon" coords="416, 330, 381, 330, 381, 344, 293, 344, 293, 330, 416, 330"    title="-">
+  
+  <area  href=#OBMKABBDFAAF62A91D49 shape="polygon" coords="335, 273, 335, 610, 324, 610, 324, 273"    title="-">
+  
+  <area  href=3B539CBB551E4C2A.htm#OBMK3B539CBB551E4C2A shape="polygon" coords="331, 230, 331, 219, 392, 219, 392, 230, 331, 230"   target="_top"  title="An&#160; Assessment is the result of the act of judging or assessing an aspect of the enterprise, based on an enterprise description and on the comparison of this description with the actual state of the enterprise.">
+  
+  <area  href=9500e0484e37c835.htm#OBMK9500E0484E37C835 shape="polygon" coords="321, 256, 321, 243, 402, 243, 402, 256, 321, 256"   target="_top"  title="Objects of this type are created either at assessment session deployment or at aggregation. Objects created at deployment are owned by the session and enable determination of the object that will be evaluated, by whom and where. It is also associated with values calculated from answers given in the assessor questionnaire for each of the assessed characteristics. ">
+  
+  <area  href="abbdfa3262a91c73.htm" shape="rect" coords="287, 216, 438, 273"   target="_top"  title="-">
+  
+  <area  href=18a81ed15eeb5d60.htm#OBMK18A81ED15EEB5D60 shape="polygon" coords="215, 245, 177, 245, 177, 259, 77, 259, 77, 245, 215, 245"   target="_top"  title="-">
+  
+  <area  href=ae7c9c45602351bc.htm shape="polygon" coords="132, 133, 132, 356, 122, 356, 122, 133"   target="_top"  title="-">
+  
+  <area  href=bcdbc52b617a5d27.htm#OBMKBCDBC52B617A5D27 shape="polygon" coords="752, 230, 752, 219, 841, 219, 841, 230, 752, 230"   target="_top"  title="A&#160; Team Responsibility is an assignment of a Functional Asset to a Stakeholder for management or governance purposes.">
+  
+  <area  href=0000000080000040.htm#OBMK0000000080000040 shape="polygon" coords="743, 256, 743, 243, 850, 243, 850, 256, 743, 256"   target="_top"  title="-">
+  
+  <area  href="BCDBC555617A5DCC.htm" shape="rect" coords="707, 216, 888, 274"   target="_top"  title="A&#160; Responsibility Assignment is a governing duty assigned to a Individual Stakeholder on a particular asset (Functional Asset).">
+  
+  <area  href=bcdbc5a3617a5e6a.htm shape="polygon" coords="194, 109, 776, 109, 776, 165, 765, 165, 765, 119, 194, 119"   target="_top"  title="-">
+  
+  <area  href=bcdbc6c6617a5fe1.htm shape="polygon" coords="871, 223, 871, 79, 788, 79, 788, 69, 882, 69, 882, 223"   target="_top"  title="-">
+  
+  <area  href=#OBMKBCDBC563617A5E24 shape="polygon" coords="792, 242, 787, 233, 797, 228, 801, 237"    title="-">
+  
+  <area  href=8a228c0e550a3122.htm#OBMK8A228C0E550A3122 shape="polygon" coords="744, 178, 744, 167, 841, 167, 841, 178, 744, 178"   target="_top"  title="&#160;Governance Resources include Governing Teams, Governance Activitys, Governance Events and Measures used to guide and steer Initiatives.">
+  
+  <area  href=c9a2db04605d623b.htm#OBMKC9A2DB04605D623B shape="polygon" coords="746, 204, 746, 191, 838, 191, 838, 204, 746, 204"   target="_top"  title="-">
+  
+  <area  href="bcdbc52b617a5d27.htm" shape="rect" coords="685, 165, 899, 296"   target="_top"  title="A&#160; Team Responsibility is an assignment of a Functional Asset to a Stakeholder for management or governance purposes.">
+  
+  <area  href=ff0500605b253f1b.htm#OBMKFF0500605B253F1B shape="polygon" coords="416, 137, 424, 137, 424, 151, 288, 151, 288, 137, 416, 137"   target="_top"  title="-">
+  
+  <area  href=1737b6025fe27ee8.htm shape="polygon" coords="194, 109, 365, 109, 365, 165, 354, 165, 354, 119, 194, 119"   target="_top"  title="-">
+  
+  <area  href=8a228c0e550a3122.htm#OBMK8A228C0E550A3122 shape="polygon" coords="311, 178, 311, 167, 408, 167, 408, 178, 311, 178"   target="_top"  title="&#160;Governance Resources include Governing Teams, Governance Activitys, Governance Events and Measures used to guide and steer Initiatives.">
+  
+  <area  href=15c050c95ffc4c53.htm#OBMK15C050C95FFC4C53 shape="polygon" coords="331, 204, 331, 191, 388, 191, 388, 204, 331, 204"   target="_top"  title="-">
+  
+  <area  href="1737b50b5fe27cba.htm" shape="rect" coords="255, 165, 464, 284"   target="_top"  title="A&#160; Governance Event is any event that has an impact on the management and governance of an Enduring Initiative.">
+  
+  <area  href=f594f72e61f736e1.htm#OBMKF594F72E61F736E1 shape="polygon" coords="331, 69, 343, 69, 343, 83, 214, 83, 214, 69, 331, 69"   target="_top"  title="-">
+  
+  <area  href=b0d7b34f5ea02f2c.htm shape="polygon" coords="200, 71, 373, 71, 373, 81, 200, 81"   target="_top"  title="-">
+  
+  <area  href=ff0501b65b253fdd.htm#OBMKFF0501B65B253FDD shape="polygon" coords="82, 62, 82, 51, 156, 51, 156, 62, 82, 62"   target="_top"  title="A&#160; Governing Team consists of a collection of individuals and resources, including personnel and committees, assembled to effectively manage and sustain an Enduring Initiative.">
+  
+  <area  href=7cae244a5a739f96.htm#OBMK7CAE244A5A739F96 shape="polygon" coords="84, 88, 84, 75, 155, 75, 155, 88, 84, 88"   target="_top"  title="-">
+  
+  <area  href="05b091f46006f913.htm" shape="rect" coords="37, 48, 202, 133"   target="_top"  title="A&#160; Solution Team is a Governing Team&#160; responsible for overseeing the administration of a Management System.">
+  
+  <area  href=#OBMK24AE430D5ED1F6B1 shape="polygon" coords="622, 71, 663, 71, 663, 81, 622, 81"    title="-">
+  
+  <area  href=24ae430d5ed1f6aa.htm shape="polygon" coords="540, 71, 663, 71, 663, 81, 540, 81"   target="_top"  title="Role of a person in a Governance Committee.">
+  
+  <area  href=#OBMK24AE430E5ED1F81C shape="polygon" coords="540, 71, 581, 71, 581, 81, 540, 81"    title="-">
+  
+  <area  href=bcebd0175491272a.htm#OBMKBCEBD0175491272A shape="polygon" coords="697, 58, 697, 47, 753, 47, 753, 58, 697, 58"   target="_top"  title="A&#160; Stakeholder is an individual, team, organization, or classes thereof, having an interest in the enterprise.">
+  
+  <area  href=000000008000001d.htm#OBMK000000008000001D shape="polygon" coords="687, 84, 687, 71, 763, 71, 763, 84, 687, 84"   target="_top"  title="A Person is defined by her/his name and email.">
+  
+  <area  href="2cc9718655263c44.htm" shape="rect" coords="662, 44, 788, 104"   target="_top"  title="An&#160; Individual Stakeholder is a person with a Stakeholder role in architecture &amp; assurance activities.">
+  
+  <area  href=bcebd0175491272a.htm#OBMKBCEBD0175491272A shape="polygon" coords="429, 58, 429, 47, 485, 47, 485, 58, 429, 58"   target="_top"  title="A&#160; Stakeholder is an individual, team, organization, or classes thereof, having an interest in the enterprise.">
+  
+  <area  href=b09fc6ae56bd201e.htm#OBMKB09FC6AE56BD201E shape="polygon" coords="420, 84, 420, 71, 493, 71, 493, 84, 420, 84"   target="_top"  title="An EA Organization is a governance body regrouping several persons or organizations.">
+  
+  <area  href="2cc9717155263b89.htm" shape="rect" coords="373, 44, 540, 104"   target="_top"  title="A&#160; Governance Committee is a group of Stakeholders that contributes to architecture and assurance activities and governs Enduring Initiatives.">
+  
+  <area  href=#OBMK6934759F60051CA1 shape="polygon" coords="125, 555, 125, 542, 143, 542, 143, 552, 135, 552, 135, 555"    title="-">
+  
+  <area  href=#OBMK26B850DB5EEAAA38 shape="polygon" coords="186, 637, 265, 637, 265, 648, 186, 648"    title="-">
+  
+  <area  href=#OBMK26B850DB5EEAAA33 shape="polygon" coords="136, 538, 136, 637, 265, 637, 265, 648, 125, 648, 125, 538"    title="-">
+  
+  <area  href=#OBMK26B850DB5EEAAA76 shape="polygon" coords="136, 538, 136, 618, 125, 618, 125, 538"    title="-">
+  
+  <area  href=f8e61e02621db929.htm#OBMKF8E61E02621DB929 shape="polygon" coords="561, 616, 557, 616, 557, 630, 403, 630, 403, 616, 561, 616"   target="_top"  title="-">
+  
+  <area  href=ae26d3225acd4603.htm shape="polygon" coords="393, 633, 574, 633, 574, 644, 393, 644"   target="_top"  title="-">
+  
+  <area  href=278675d65b252f4d.htm#OBMK278675D65B252F4D shape="polygon" coords="291, 624, 291, 613, 369, 613, 369, 624, 291, 624"   target="_top"  title="A&#160; Business System is a man made artifact (Hardware System or Software System) which exposes Functionalityies and can produce Business Outcomes.">
+  
+  <area  href=a81cbcbf58947e56.htm#OBMKA81CBCBF58947E56 shape="polygon" coords="304, 656, 304, 643, 355, 643, 355, 656, 304, 656"   target="_top"  title="Non-IT Hardware can embed Computers. Together with their embedded computers, they provide information and IS services.">
+  
+  <area  href="c30bf4015a5da72b.htm" shape="rect" coords="265, 611, 394, 676"   target="_top"  title="A&#160; Hardware System is a man made tangible artifact which exposes Hardware Capability(ies) and can produce Physical Outcomes.">
+  
+  <area  href=#OBMK137D5C9A5EE2BB73 shape="polygon" coords="197, 486, 546, 486, 546, 497, 197, 497"    title="-">
+  
+  <area  href=26b8889c5eea8ab7.htm#OBMK26B8889C5EEA8AB7 shape="polygon" coords="96, 478, 96, 467, 165, 467, 165, 478, 96, 478"   target="_top"  title="An&#160; Asset Portfolio is a Management System aimed at developing and maintaining in operational conditions a set of Resource Operating Assets delivering functionalities required by Business Operations.">
+  
+  <area  href=b082b0d44e041967.htm#OBMKB082B0D44E041967 shape="polygon" coords="106, 504, 106, 491, 154, 491, 154, 504, 106, 504"   target="_top"  title="A portfolio enables representation of all investments of an enterprise (or department) necessary to carry out changes required to achieve strategic objectives. It comprises a set of initiatives to be compared based on comparison criteria associated with the portfolio.">
+  
+  <area  href="137d5bac5ee2b904.htm" shape="rect" coords="63, 464, 198, 538"   target="_top"  title="A portfolio enables representation of all investments of an enterprise (or department) necessary to carry out changes required to achieve strategic objectives. It comprises a set of initiatives to be compared based on comparison criteria associated with the portfolio.">
+  
+  <area  href=#OBMK4CF14D5C5EBC272A shape="polygon" coords="747, 600, 747, 633, 706, 633, 706, 622, 736, 622, 736, 600"    title="-">
+  
+  <area  href=4cf14d5c5ebc2726.htm shape="polygon" coords="651, 598, 651, 575, 747, 575, 747, 633, 706, 633, 706, 622, 736, 622, 736, 585, 662, 585, 662, 598"   target="_top"  title="-">
+  
+  <area  href=#OBMK4CF14D5C5EBC274F shape="polygon" coords="651, 598, 651, 575, 700, 575, 700, 585, 662, 585, 662, 598"    title="-">
+  
+  <area  href=#OBMK4CF14DEB5EBC2998 shape="polygon" coords="628, 572, 628, 598, 617, 598, 617, 572"    title="-">
+  
+  <area  href=4cf14deb5ebc2994.htm shape="polygon" coords="628, 522, 628, 598, 617, 598, 617, 522"   target="_top"  title="-">
+  
+  <area  href=#OBMK4CF14DEB5EBC29B2 shape="polygon" coords="628, 522, 628, 547, 617, 547, 617, 522"    title="-">
+  
+  <area  href=#OBMKC334E2D65ECB8FCE shape="polygon" coords="713, 668, 713, 655, 855, 655, 855, 668, 713, 668"    title="-">
+  
+  <area  href=#OBMKC334E34D5ECB90F5 shape="polygon" coords="699, 656, 887, 656, 887, 667, 699, 667"    title="-">
+  
+  <area  href=8df59576591126d7.htm#OBMK8DF59576591126D7 shape="polygon" coords="880, 653, 880, 640, 991, 640, 991, 653, 880, 653"   target="_top"  title="-">
+  
+  <area  href=9dcea4535ec76e6c.htm#OBMK9DCEA4535EC76E6C shape="polygon" coords="893, 627, 893, 616, 978, 616, 978, 627, 893, 627"   target="_top"  title="A&#160; Business Outcome is a Business Event that indicates the availability of an expected change in the state of a Business Object, produced by a Business Operating Agent, for the benefits of an internal or external consumer (especially Customers).">
+  
+  <area  href="c334e2925ecb8db4.htm" shape="rect" coords="878, 587, 993, 684"   target="_top"  title="A&#160; Physical Outcome is a Business Outcome that indicates the availability of an expected change in the state of a physical resource offered by the enterprise or one of its sub-system, for the benefits of an internal or external party.">
+  
+  <area  href=aea4936060645978.htm#OBMKAEA4936060645978 shape="polygon" coords="577, 611, 577, 600, 705, 600, 705, 611, 577, 611"   target="_top"  title="A&#160; Business Operating Capability is a Capability that benefits to Customers (internal or external) of the enterprise. It expresses an ability to deliver Business Outcomes.This includes Business Capability, Functionality, Hardware Capability and Skill.">
+  
+  <area  href=38683ca958936a67.htm#OBMK38683CA958936A67 shape="polygon" coords="592, 643, 592, 630, 689, 630, 689, 643, 592, 643"   target="_top"  title="A hardware functionality is the ability to deliver a physical outcome which is required by an organizational resource in order to perform its work. This hardware functionality is generally necessary within an organizational process in order to execute a specific operation. ">
+  
+  <area  href="0b3016c05a1876d2.htm" shape="rect" coords="575, 599, 708, 680"   target="_top"  title="A&#160; Hardware Capability is a Business Operating Capability offered by Hardware Systems and aimed at delivering Physical Outcomes.">
+  
+  <area  href=fc96001c601c54d0.htm#OBMKFC96001C601C54D0 shape="polygon" coords="568, 482, 568, 471, 679, 471, 679, 482, 568, 482"   target="_top"  title="Top level assembly of&#160; Resource Capabilityies&#160; and their dependencies that, together, provide a functional scope for asset portfolios and solution roadmaps.">
+  
+  <area  href=0ab1365058b40d4d.htm#OBMK0AB1365058B40D4D shape="polygon" coords="566, 514, 566, 501, 681, 501, 681, 514, 566, 514"   target="_top"  title="Assembly of hardware functionalities and their dependencies that, together, defines the scope of a hardware architecture.">
+  
+  <area  href="0b3016ae5a1876b3.htm" shape="rect" coords="546, 468, 702, 522"   target="_top"  title="Assembly of hardware functionalities and their dependencies that, together, defines the scope of a hardware architecture.">
+  
+  <area  href=29df3f4060084c07.htm#OBMK29DF3F4060084C07 shape="polygon" coords="87, 420, 87, 410, 182, 410, 182, 420, 87, 420"   target="_top"  title="A&#160; Management System is an Enduring Initiative within an Enterprise, aimed at creating, maintaining, evaluating, evolving, and operating a collection of essential Functional Assets of the Enterprise.">
+  
+  <area  href=b082b0d44e041967.htm#OBMKB082B0D44E041967 shape="polygon" coords="110, 447, 110, 434, 159, 434, 159, 447, 110, 447"   target="_top"  title="A portfolio enables representation of all investments of an enterprise (or department) necessary to carry out changes required to achieve strategic objectives. It comprises a set of initiatives to be compared based on comparison criteria associated with the portfolio.">
+  
+  <area  href="26b8889c5eea8ab7.htm" shape="rect" coords="49, 407, 220, 703"   target="_top"  title="An&#160; Asset Portfolio is a Management System aimed at developing and maintaining in operational conditions a set of Resource Operating Assets delivering functionalities required by Business Operations.">
+  
+  <area  href=d321c226601262ae.htm#OBMKD321C226601262AE shape="polygon" coords="104, 369, 104, 358, 183, 358, 183, 369, 104, 369"   target="_top"  title="An&#160; Enduring Initiative is a long term Initiative which involves roadmapping and governance. Enterprises and their Management Systems are typical&#160; Enduring Initiatives.">
+  
+  <area  href=fa47fbab5e695547.htm#OBMKFA47FBAB5E695547 shape="polygon" coords="100, 396, 100, 382, 186, 382, 186, 396, 100, 396"   target="_top"  title="-">
+  
+  <area  href="29df3f4060084c07.htm" shape="rect" coords="36, 356, 250, 737"   target="_top"  title="A&#160; Management System is an Enduring Initiative within an Enterprise, aimed at creating, maintaining, evaluating, evolving, and operating a collection of essential Functional Assets of the Enterprise.">
+  
+  <area  href="137d589e5ee2af09.htm" shape="rect" coords="0, 0, 1024, 756"   target="_top"  title="-">
+  
+</map>
+<img  src="../images/137d589e5ee2af09_137d58d65ee2afe7_i.png" alt="../images/137d589e5ee2af09_137d58d65ee2afe7_i.png" usemap="#137D58D65EE2AFE7" height="756" width="1024" border=0>
+
+</div>
+<div class="Relationship" id="Relationship2">
+<div id="klmm" style="width: 100vw; height: 100vh;" ></div>
+<!-- <script src="../standard/assets/js/keylines_domain.js"></script> -->
+<script >
+const data = {
+ type: 'LinkChart',
+  items: [
+  //nodes
+    {type: 'node', id:'137D589E5EE2AF09', t:"Hardware Asset Management", sh:'box', d:""},
+    {type: 'node', id:'0B3016AE5A1876B3', t:"Hardware Capability Map", parentId:'137D589E5EE2AF09', sh:'circle', d:"Assembly of hardware functionalities and their dependencies that, together, defines the scope of a hardware architecture."},
+    {type: 'node', id:'C30BF38F5A5DA645', t:"Hardware System ArcDevOps", sh:'box', d:"The Hardware System ArcDevOps domain describes a set of concepts used in practices that combines Hardware System development (Dev) and Hardware System operations (Ops). "},
+    {type: 'node', id:'0B3016C05A1876D2', t:"Hardware Capability", parentId:'C30BF38F5A5DA645', sh:'circle', d:"A Hardware Capability is a Business Operating Capability offered by Hardware Systems and aimed at delivering Physical Outcomes."},
+    {type: 'node', id:'137D5BAC5EE2B904', t:"Hardware Portolio", parentId:'26B8889C5EEA8AB7', sh:'circle', d:"A portfolio enables representation of all investments of an enterprise (or department) necessary to carry out changes required to achieve strategic objectives. It comprises a set of initiatives to be compared based on comparison criteria associated with the portfolio."},
+    {type: 'node', id:'C30BF4015A5DA72B', t:"Hardware System", parentId:'C30BF38F5A5DA645', sh:'circle', d:"A Hardware System is a man made tangible artifact which exposes Hardware Capability(ies) and can produce Physical Outcomes."},
+    {type: 'node', id:'26B8889C5EEA8AB7', t:"Asset Portfolio", parentId:'137D589E5EE2AF09', sh:'circle', d:"An Asset Portfolio is a Management System aimed at developing and maintaining in operational conditions a set of Resource Operating Assets delivering functionalities required by Business Operations."},
+    {type: 'node', id:'FC96001C601C54D0', t:"Enterprise Capability Map", parentId:'137D589E5EE2AF09', sh:'circle', d:"Top level assembly of Resource Capabilityies  and their dependencies that, together, provide a functional scope for asset portfolios and solution roadmaps."},
+    {type: 'node', id:'FE663F0D61817C3E', t:"Asset Portfolio Pattern", sh:'box', d:""},
+    {type: 'node', id:'F277F5EE601BE715', t:"Asset Portfolio Stage", parentId:'FE663F0D61817C3E', sh:'circle', d:""},
+    {type: 'node', id:'02AF0A4B5A182417', t:"Operating Semantic", sh:'box', d:"The Operating Semantic domain is used to model how a system (Agent) operates/functions (Behavior) in its Operating Eco-System to produce Outcomes that benefit (value) to other Agents or affect (have an effect upon) these Agents."},
+    {type: 'node', id:'07CA0F015DD84EFA', t:"Functional Asset", parentId:'02AF0A4B5A182417', sh:'circle', d:"Functional Assets encompasse Architecture Blocks used to describe how an enterprise function. This includes the purposes of an enterprise (Capability) and the way the enterprise operates to fulfill these purposes (Agents and their  Behaviors)."},
+  //edges
+    { type: 'link', id:'0B3016AE5A1876B3-4CF14DEB5EBC2994', id1:'0B3016AE5A1876B3', id2:'0B3016C05A1876D2', t:"hardware functionality map component"},
+    { type: 'link', id:'137D5BAC5EE2B904-137D5C9A5EE2BB73', id1:'137D5BAC5EE2B904', id2:'0B3016AE5A1876B3', t:"Porfolio Hardware Map"},
+    { type: 'link', id:'137D5BAC5EE2B904-26B850DB5EEAAA33', id1:'137D5BAC5EE2B904', id2:'C30BF4015A5DA72B', t:"Managed Hardware"},
+    { type: 'link', id:'26B8889C5EEA8AB7-BCDBBD42617A4F79', id1:'26B8889C5EEA8AB7', id2:'FC96001C601C54D0', t:"Portfolio Functional Scope"},
+    { type: 'link', id:'26B8889C5EEA8AB7-F277FA24601BEF67', id1:'26B8889C5EEA8AB7', id2:'F277F5EE601BE715', t:"Owned Portfolio Stage"},
+    { type: 'link', id:'26B8889C5EEA8AB7-F57AF6CA62D21904', id1:'26B8889C5EEA8AB7', id2:'07CA0F015DD84EFA', t:"Managed Asset"}
+  ]
+}
+</script>
+<script src="../standard/assets/js/keylines_domain.js" type="module"></script>
+</div>
+</section>
+<a class="object-section-anchor" id="des"></a>
+<section class="object-section">
+<h4>CONCEPT DESCRIPTIONS</h4> 
+<hr class="sectionbreak" />
+<h5>Concrete Concepts</h5>
+<table class="table  table-set-col-width">
+<thead>
+<tr><th>Concept</th><th>Description</th><th>HOPEX Metaclass</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="2cc9717155263b89.htm" target="_top">Governance Committee</a></td>
+<td class="description-text">A&#160;<b> Governance Committee</b> is a group of <a href="bcebd0175491272a.htm" target="_top"><b><u>Stakeholder</u></b></a>s that contributes to architecture and assurance activities and governs <a href="d321c226601262ae.htm" target="_top"><b><u>Enduring Initiative</u></b></a>s.       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="b09fc6ae56bd201e.htm" target="_top">EA Organization</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="abbdfa3262a91c73.htm" target="_top">Hardware Asset Assessment</a></td>
+<td class="description-text">        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="9500e0484e37c835.htm" target="_top">Assessment Node</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="0b3016c05a1876d2.htm" target="_top">Hardware Capability</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Hardware Capability</b> is a <a href="aea4936060645978.htm" target="_top"><b><u>Business Operating Capability</u></b></a> offered by <a href="c30bf4015a5da72b.htm" target="_top"><b><u>Hardware System</u></b></a>s and aimed at delivering <a href="c334e2925ecb8db4.htm" target="_top"><b><u>Physical Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">A <a href="c30bf4015a5da72b.htm" target="_top"><b><u>Hardware System</u></b></a> describes WHAT a <a href="c30bf4015a5da72b.htm" target="_top"><b><u>Hardware System</u></b></a> can provide.</div><div align="left" style="min-height: 12pt; "><b>&#160;Hardware Capability</b>(ies) are used to express the features required by people when performing their job.</div><div align="left" style="min-height: 12pt; ">For internal customers, these jobs correspond to&#160;<b> Operation</b>s described in <a href="57dfc52d550932ef.htm" target="_top"><b><u>Business Process</u></b></a>es (see <a href="0f9213345ebc1a67.htm" target="_top"><b><u>Instrument</u></b></a>).</div><div align="left" style="min-height: 12pt; ">For enterprise Customers, these jobs correspond to <a href="d17034875be85304.htm" target="_top"><b><u>Job-to-be-done</u></b></a> in the context of <a href="d170d6a25be734ed.htm" target="_top"><b><u>Customer Journey</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">Examples: </div><div align="left" style="min-height: 12pt; ">- 3D Printing.</div><div align="left" style="min-height: 12pt; ">-&#160; Automated Parcel Delivery.</div><div align="left" style="min-height: 12pt; ">- Metal Shaping.</div>       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="38683ca958936a67.htm" target="_top">Hardware Functionality</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="0b3016ae5a1876b3.htm" target="_top">Hardware Capability Map</a></td>
+<td class="description-text">Assembly of hardware functionalities and their dependencies that, together, defines the scope of a hardware architecture.       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="0ab1365058b40d4d.htm" target="_top">Hardware Functionality Map</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="137d5bac5ee2b904.htm" target="_top">Hardware Portolio</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A portfolio enables representation of all investments of an enterprise (or department) necessary to carry out changes required to achieve strategic objectives. It comprises a set of initiatives to be compared based on comparison criteria associated with the portfolio.</div><div align="left" style="min-height: 12pt; "></div>       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="b082b0d44e041967.htm" target="_top">Portfolio</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concepttype.ico.gif"/>&nbsp;
+<a  href="c30bf4015a5da72b.htm" target="_top">Hardware System</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Hardware System</b> is a man made tangible artifact which exposes <a href="0b3016c05a1876d2.htm" target="_top"><b><u>Hardware Capability</u></b></a>(ies) and can produce <a href="c334e2925ecb8db4.htm" target="_top"><b><u>Physical Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Hardware System</b> performs <a href="46194939560d374f.htm" target="_top"><b><u>System Process</u></b></a>es and participates to <a href="46194939560d374f.htm" target="_top"><b><u>System Process</u></b></a>es or to <a href="57dfc52d550932ef.htm" target="_top"><b><u>Business Process</u></b></a>es.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Hardware System</b> can embed <a href="f4be0eda5ee1d6c0.htm" target="_top"><b><u>Computational Aspect</u></b></a>s. Together with its embedded <a href="f4be0eda5ee1d6c0.htm" target="_top"><b><u>Computational Aspect</u></b></a>s, a&#160;<b> Hardware System</b> can also deliver <a href="302238be5ec9020a.htm" target="_top"><b><u>Information Outcome</u></b></a>s.</div><div align="left" style="min-height: 12pt; ">A&#160;<b> Hardware System</b> may be based on a set of <a href="3b364dc363d9bda7.htm" target="_top"><b><u>Hardware Technology</u></b></a>(ies).</div><div align="left" style="min-height: 12pt; ">Examples:</div><div align="left" style="min-height: 12pt; ">- Connected Drone with Online Payment App.</div><div align="left" style="min-height: 12pt; ">- 3D printer.</div><div align="left" style="min-height: 12pt; ">- Automated Guided Vehicles (AGVs)</div><div align="left" style="min-height: 12pt; ">- Connected fridge providing ordering <a href="598272e954c622f4.htm" target="_top"><b><u>Functionality</u></b></a> and of course a freezing <a href="0b3016c05a1876d2.htm" target="_top"><b><u>Hardware Capability</u></b></a>.</div><div align="left" style="min-height: 12pt; ">- Production equipment in an assembly line (metal forging machine)</div><div align="left" style="min-height: 12pt; ">- Car</div><i><ul>References:<li><a href="../../../www.omg.org/spec/UAF/1.2/Beta1/DMM/dtc-21-12-06.pdf#System"><img src="../standard/extr.ico.gif">&nbsp;OMG - UAF - System</a></li> <li><a href="https://pubs.opengroup.org/architecture/o-aa-standard/definitions.html#_hardware"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - OAA - Hardware</a></li></ul></i>        </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="a81cbcbf58947e56.htm" target="_top">Hardware</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="2cc9718655263c44.htm" target="_top">Individual Stakeholder</a></td>
+<td class="description-text">An&#160;<b> Individual Stakeholder</b> is a person with a <a href="bcebd0175491272a.htm" target="_top"><b><u>Stakeholder</u></b></a> role in architecture &amp; assurance activities.       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="000000008000001d.htm" target="_top">Person (System)</a></td>
+</tr>
+<tr>
+<td><img src="../standard/relationship-concepttype.ico.gif"/>&nbsp;
+<a  href="c334e2925ecb8db4.htm" target="_top">Physical Outcome</a></td>
+<td class="description-text">A&#160;<b> Physical Outcome</b> is a <a href="9dcea4535ec76e6c.htm" target="_top"><b><u>Business Outcome</u></b></a> that indicates the availability of an expected change in the state of a physical resource offered by the enterprise or one of its sub-system, for the benefits of an internal or external party.       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="8df59576591126d7.htm" target="_top">Hardware Work Product</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="BCDBC555617A5DCC.htm" target="_top">Responsibility Assignment</a></td>
+<td class="description-text">A&#160;<b> Responsibility Assignment</b> is a governing duty assigned to a <a href="2cc9718655263c44.htm" target="_top"><b><u>Individual Stakeholder</u></b></a> on a particular asset (<a href="07ca0f015dd84efa.htm" target="_top"><b><u>Functional Asset</u></b></a>).       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="0000000080000040.htm" target="_top">Responsibility Assignment</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="05b091f46006f913.htm" target="_top">Solution Team</a></td>
+<td class="description-text">A&#160;<b> Solution Team</b> is a <a href="ff0501b65b253fdd.htm" target="_top"><b><u>Governing Team</u></b></a>&#160; responsible for overseeing the administration of a <a href="29df3f4060084c07.htm" target="_top"><b><u>Management System</u></b></a>.       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="7cae244a5a739f96.htm" target="_top">Portfolio Team</a></td>
+</tr>  
+</tbody>
+</table>
+<hr class="sectionbreak" />
+<h5>Abstract Concepts</h5>
+<table class="table  table-set-col-width">
+<thead >
+<tr><th>Concept</th><th>Description</th><th>HOPEX Metaclass</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="26b8889c5eea8ab7.htm" target="_top">Asset Portfolio</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">An&#160;<b> Asset Portfolio</b> is a <a href="29df3f4060084c07.htm" target="_top"><b><u>Management System</u></b></a> aimed at developing and maintaining in operational conditions a set of <a href="62466ea661b80d09.htm" target="_top"><b><u>Resource Operating Asset</u></b></a>s delivering functionalities required by <a href="2d1874635ac352f3.htm" target="_top"><b><u>Business Operations</u></b></a>.</div><div align="left" style="min-height: 12pt; ">The purpose of&#160;<b> Asset Portfolio</b>s is <u>efficiency</u>: managed assets must provide expected functionalities in the best cost / performance ratio.</div>       </td>
+<td><img src="../standard/metaclas.ico.gif"/>&nbsp;
+<a  href="b082b0d44e041967.htm" target="_top">Portfolio</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="1737b50b5fe27cba.htm" target="_top">Governance Event</a></td>
+<td class="description-text"><div align="left" style="min-height: 12pt; ">A&#160;<b> Governance Event</b> is any event that has an impact on the management and governance of an <a href="d321c226601262ae.htm" target="_top"><b><u>Enduring Initiative</u></b></a>.</div><div align="left" style="min-height: 12pt; ">This includes the result of <a href="3B539CBB551E4C2A.htm" target="_top"><b><u>Assessment</u></b></a>s, <a href="D7F9FCC95F720EE0.htm" target="_top"><b><u>Decision</u></b></a>s, recorded <a href="d059da695ef11294.htm" target="_top"><b><u>Incident</u></b></a>s, <a href="bcebd0565491287e.htm" target="_top"><b><u>Driver</u></b></a>s, etc.</div>       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="15c050c95ffc4c53.htm" target="_top">Team Event</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dicdefinition.ico.gif"/>&nbsp;
+<a  href="29df3f4060084c07.htm" target="_top">Management System</a></td>
+<td class="description-text">A&#160;<b> Management System</b> is an <a href="d321c226601262ae.htm" target="_top"><b><u>Enduring Initiative</u></b></a> within an <a href="b181b82a54891668.htm" target="_top"><b><u>Enterprise</u></b></a>, aimed at creating, maintaining, evaluating, evolving, and operating a collection of essential <a href="07ca0f015dd84efa.htm" target="_top"><b><u>Functional Asset</u></b></a>s of the <a href="b181b82a54891668.htm" target="_top"><b><u>Enterprise</u></b></a>.<i><ul>References:<li><a href="https://www.iso.org/obp/ui/#iso:std:iso:22301:ed-2:v1:en"><img src="../standard/extr.ico.gif">&nbsp;ISO 22301 - Management System</a></li> <li><a href="https://pubs.opengroup.org/togaf-standard/introduction/apdxb.html#tag_06_30"><img src="../standard/extr.ico.gif">&nbsp;OpenGroup - TOGAF - Definition - Portfolio</a></li> <li><a href="https://www.scaledagileframework.com/large-solution-safe/"><img src="../standard/extr.ico.gif">&nbsp;SAFe&copy; - Large Solution SAFe</a></li> <li><a href="https://www.scaledagileframework.com/enterprise-solution-delivery/"><img src="../standard/extr.ico.gif">&nbsp;SAFe&copy; -Enterprise Solution Delivery</a></li></ul></i>        </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="fa47fbab5e695547.htm" target="_top">Enterprise Portfolio</a></td>
+</tr>
+<tr>
+<td><img src="../standard/dic_concept_archgov.ico.gif"/>&nbsp;
+<a  href="bcdbc52b617a5d27.htm" target="_top">Team Responsibility</a></td>
+<td class="description-text">A&#160;<b> Team Responsibility</b> is an assignment of a <a href="07ca0f015dd84efa.htm" target="_top"><b><u>Functional Asset</u></b></a> to a <a href="bcebd0175491272a.htm" target="_top"><b><u>Stakeholder</u></b></a> for management or governance purposes.       </td>
+<td><img src="../standard/metaclasabs.ico.gif"/>&nbsp;
+<a  href="c9a2db04605d623b.htm" target="_top">Team Responsibilities</a></td>
+</tr>  
+</tbody>
+</table>
+<section>
+
+</div>
+<button onclick="topFunction()" id="scrollToTopBtn" title="Go to top"><img style="width:20px;" src="../standard/assets/img/glyphicons-chevron-up.png"></button>
+<script>window.onscroll = function() {scrollFunction()};$(document).on('click', 'a[href^="#"]', function (event) {event.preventDefault();$('html, body').animate({scrollTop: $($.attr(this, 'href')).offset().top}, 500);});function showDiagOnClick(elem){ var x = document.getElementsByClassName('Relationship');var e = elem.getAttribute("value"); for (var i=0; i < x.length ;i++){x[i].style.display="none"; if (x[i].id == e){x[i].style.display="block";x[i].style.textAlign="left";}}}
+</script></html>
